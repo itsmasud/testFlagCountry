@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -45,7 +46,6 @@ import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
-import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -96,6 +96,7 @@ import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
@@ -129,6 +130,11 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
+    private static final String DIALOG_DELETE_WORKLOG = TAG + ".deleteWorkLogDialog";
+    private static final String DIALOG_DELETE_SHIPMENT = TAG + ".deleteShipmentDialog";
+    private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
+    private static final String DIALOG_DELETE_EXPENSE = TAG + ".deleteExpenseDialog";
+    private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
 
     // saved state keys
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
@@ -341,7 +347,6 @@ public class WorkFragment extends WorkorderFragment {
     public void onStart() {
         super.onStart();
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
-        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
@@ -374,6 +379,11 @@ public class WorkFragment extends WorkorderFragment {
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
     }
@@ -404,6 +414,11 @@ public class WorkFragment extends WorkorderFragment {
         HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
         super.onStop();
@@ -836,26 +851,20 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
-            final long timeLogId = timeLog.getId();
-            _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
-                    getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkordersWebApi.deleteTimeLog(App.get(), _workOrderId, (int) timeLogId, App.get().getSpUiContext());
-                            setLoading(true);
-                        }
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_WORKLOG,
+                    R.string.dialog_delete_worklog_title,
+                    R.string.dialog_delete_worklog_body,
+                    R.string.btn_yes,
+                    R.string.btn_no, true, timeLog);
+        }
+    };
 
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteWorkLog = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            WorkordersWebApi.deleteTimeLog(App.get(), _workOrderId, ((TimeLog) extraData).getId(), App.get().getSpUiContext());
+            setLoading(true);
         }
     };
 
@@ -1037,25 +1046,10 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDelete(WorkOrder workOrder, final Shipment shipment) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_shipment_title),
-                    getString(R.string.dialog_delete_shipment_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-                            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, shipment.getId(), App.get().getSpUiContext());
-                            setLoading(true);
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SHIPMENT,
+                    R.string.dialog_delete_shipment_title,
+                    R.string.dialog_delete_shipment_body,
+                    R.string.btn_yes, R.string.btn_no, true, shipment);
         }
 
         @Override
@@ -1063,6 +1057,15 @@ public class WorkFragment extends WorkorderFragment {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
             // TODO present a picker of the tasks that this can be assigned too
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteShipment = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, ((Shipment) extraData).getId(), App.get().getSpUiContext());
+            setLoading(true);
         }
     };
 
@@ -1089,25 +1092,19 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_signature_title),
-                    getString(R.string.dialog_delete_signature_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-                            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, signature.getId(), App.get().getSpUiContext());
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SIGNATURE,
+                    R.string.dialog_delete_signature_title,
+                    R.string.dialog_delete_signature_body,
+                    R.string.btn_yes, R.string.btn_no, true, signature);
             return true;
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteSignature = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
+            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
         }
     };
 
@@ -1155,24 +1152,18 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void expenseLongClick(final Expense expense) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_expense_title),
-                    getString(R.string.dialog_delete_expense_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-                            WorkordersWebApi.deleteExpense(App.get(), _workOrderId, expense.getId(), App.get().getSpUiContext());
-                        }
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_EXPENSE,
+                    R.string.dialog_delete_expense_title,
+                    R.string.dialog_delete_expense_body,
+                    R.string.btn_yes, R.string.btn_no, true, expense);
+        }
+    };
 
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteExpense = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+            WorkordersWebApi.deleteExpense(App.get(), _workOrderId, ((Expense) extraData).getId(), App.get().getSpUiContext());
         }
     };
 
@@ -1190,24 +1181,18 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void discountLongClick(final PayModifier discount) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
-                    getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, discount.getId(), App.get().getSpUiContext());
-                        }
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_DISCOUNT,
+                    R.string.dialog_delete_discount_title,
+                    R.string.dialog_delete_discount_body,
+                    R.string.btn_yes, R.string.btn_no, true, discount);
+        }
+    };
 
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteDiscount = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData).getId(), App.get().getSpUiContext());
         }
     };
 
@@ -1218,7 +1203,6 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
         }
     };
-
 
 
     /*-*********************************-*/

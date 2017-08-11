@@ -317,7 +317,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     private final TwoButtonDialog.OnPrimaryListener _coiDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
-        public void onPrimary() {
+        public void onPrimary(Parcelable extraData) {
             _profileBounceProtect = false;
             App.get().setCoiReminded();
             new Handler().post(new Runnable() {
@@ -331,7 +331,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     private final TwoButtonDialog.OnSecondaryListener _coiDialog_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
         @Override
-        public void onSecondary() {
+        public void onSecondary(Parcelable extraData) {
             _profileBounceProtect = false;
             App.get().setNeverRemindCoi();
             new Handler().post(new Runnable() {

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -177,7 +178,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                     getView().getResources().getString(R.string.delete_file),
                     getView().getResources().getString(R.string.dialog_delete_message),
                     getView().getResources().getString(R.string.btn_yes),
-                    getView().getResources().getString(R.string.btn_no), false, null);
+                    getView().getResources().getString(R.string.btn_no), true, null);
         }
 
         @Override
@@ -234,7 +235,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
-        public void onPrimary() {
+        public void onPrimary(Parcelable extraData) {
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _selectedAttachment.getFolderId(),
                     _selectedAttachment.getId(), App.get().getSpUiContext());
         }
