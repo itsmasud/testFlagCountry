@@ -26,7 +26,6 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
@@ -45,9 +44,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_WHATS_NEW_DIALOG = TAG_BASE + ".whatsNewDialog";
     private static final String DIALOG_NOT_PROVIDER = TAG_BASE + ".notProviderDialog";
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
-
-    // UI
-    private ContactUsDialog _contactUsDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -88,8 +84,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (TAG.equals(TAG_BASE)) {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
-
-        _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         onFinishCreate(savedInstanceState);
     }
@@ -373,7 +367,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subGotProfile();
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
-            _globalClient.subShowContactUsDialog();
             _globalClient.subProfileInvalid(App.get());
             ProfileClient.get(App.get());
         }
@@ -397,15 +390,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onShutdown() {
             finish();
-        }
-
-        @Override
-        public void onShowContactUsDialog(String source) {
-            try {
-                _contactUsDialog.show(source);
-            } catch (Exception ex) {
-                Log.logException(ex);
-            }
         }
 
         @Override

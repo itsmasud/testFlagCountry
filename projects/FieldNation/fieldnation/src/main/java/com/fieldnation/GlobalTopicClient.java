@@ -102,21 +102,6 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         TopicService.dispatchEvent(context, TOPIC_ID_FINISH_ACTIVITY, null, Sticky.NONE);
     }
 
-    // ContactUs dialog
-    public static void showContactUsDialog(Context context, String source) {
-        if (context == null)
-            return;
-
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_CONTACT_US_SOURCE, source);
-
-        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_CONTACT_US, bundle, Sticky.NONE);
-    }
-
-    public boolean subShowContactUsDialog() {
-        return register(TOPIC_ID_SHOW_CONTACT_US);
-    }
-
     // NETWORK STATE
     public static void networkDisconnected(Context context) {
         Log.v(STAG, "networkDisconnected");
@@ -224,9 +209,6 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                 case TOPIC_ID_FINISH_ACTIVITY:
                     onFinish();
                     break;
-                case TOPIC_ID_SHOW_CONTACT_US:
-                    onShowContactUsDialog(((Bundle) payload).getString(PARAM_CONTACT_US_SOURCE));
-                    break;
                 case TOPIC_ID_SHOW_LOADING:
                     setLoading(((Bundle) payload).getBoolean(PARAM_IS_LOADING));
                     break;
@@ -269,9 +251,6 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         }
 
         public void onFinish() {
-        }
-
-        public void onShowContactUsDialog(String source) {
         }
 
         public void onNetworkDisconnected() {
