@@ -13,6 +13,7 @@ import android.webkit.WebView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by mc on 8/11/17.
@@ -85,11 +86,51 @@ public class WebViewDialog extends FullScreenDialog {
         }
     };
 
+    @Override
+    public void dismiss(boolean animate) {
+        _onClosedDispatcher.dispatch(getUid());
+        super.dismiss(animate);
+    }
+
     public static void show(Context context, String title, String html) {
         Bundle params = new Bundle();
         params.putString("title", title);
         params.putString("html", html);
 
         Controller.show(context, null, WebViewDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, String title, String html) {
+        Bundle params = new Bundle();
+        params.putString("title", title);
+        params.putString("html", html);
+
+        Controller.show(context, uid, WebViewDialog.class, params);
+    }
+
+    /*-*************************-*/
+    /*-         Closed          -*/
+    /*-*************************-*/
+    public interface OnClosedListener {
+        void onClosed();
+    }
+
+    private static KeyedDispatcher<OnClosedListener> _onClosedDispatcher = new KeyedDispatcher<OnClosedListener>() {
+        @Override
+        public void onDispatch(OnClosedListener listener, Object... parameters) {
+            listener.onClosed();
+        }
+    };
+
+    public static void addOnClosedListener(String uid, OnClosedListener onClosedListener) {
+        _onClosedDispatcher.add(uid, onClosedListener);
+    }
+
+    public static void removeOnClosedListener(String uid, OnClosedListener onClosedListener) {
+        _onClosedDispatcher.remove(uid, onClosedListener);
+    }
+
+    public static void removeAllOnClosedListener(String uid) {
+        _onClosedDispatcher.removeAll(uid);
     }
 }

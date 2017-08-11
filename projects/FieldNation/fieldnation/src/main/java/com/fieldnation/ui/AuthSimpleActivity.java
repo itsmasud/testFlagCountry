@@ -209,15 +209,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             Log.v(TAG, "show release notes");
-            _profileBounceProtect = false;
-            App.get().setReleaseNoteShownReminded();
             WhatsNewDialog.show(App.get(), DIALOG_WHATS_NEW_DIALOG);
             return;
         }
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {
             Log.v(TAG, "_termsAndConditionsDialog");
-            _profileBounceProtect = false;
             TermsAndConditionsDialog.show(this, DIALOG_TOC);
             return;
         }
@@ -267,6 +264,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final TermsAndConditionsDialog.OnOkListener _termsAndConditionsDialog_onOk = new TermsAndConditionsDialog.OnOkListener() {
         @Override
         public void onOk() {
+            _profileBounceProtect = false;
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -279,6 +277,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final WhatsNewDialog.OnClosedListener _whatsNewDialog_onClosed = new WhatsNewDialog.OnClosedListener() {
         @Override
         public void onClosed() {
+            _profileBounceProtect = false;
+            App.get().setReleaseNoteShownReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
