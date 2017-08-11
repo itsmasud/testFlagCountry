@@ -124,6 +124,15 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState.containsKey("folders")) {
+            folders = savedState.getParcelable("folders");
+            adapter.setAttachments(folders);
+        }
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
     public void onPause() {
         if (_docClient != null) _docClient.disconnect(App.get());
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
@@ -132,6 +141,13 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
         super.onPause();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        outState.putParcelable("folders", folders);
+
+        super.onSaveDialogState(outState);
     }
 
     // Utils
