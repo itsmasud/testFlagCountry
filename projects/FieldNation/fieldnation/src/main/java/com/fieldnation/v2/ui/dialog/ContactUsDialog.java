@@ -53,7 +53,6 @@ public class ContactUsDialog extends FullScreenDialog {
     private String _source;
     private int _spinnerPosition = -1;
     private String _internalTeamParam;
-    private boolean _clear = false;
 
     /*-*********----------**********-*/
     /*-         Life Cycle          -*/
@@ -88,14 +87,6 @@ public class ContactUsDialog extends FullScreenDialog {
     public void onResume() {
         super.onResume();
         populateSpinners();
-        if (_clear) {
-            _reasonSpinner.clearSelection();
-            _explanationEditText.setText("");
-            _explanationEditText.setHint(R.string.dialog_explanation_default);
-            _reasonSpinner_onItemClick.onItemSelected(null, null, -1, 0);
-            _clear = false;
-            return;
-        }
 
         if (!misc.isEmptyOrNull(_message))
             _explanationEditText.setText(_message);
@@ -243,7 +234,7 @@ public class ContactUsDialog extends FullScreenDialog {
     public static void show(Context context, String uid, String source) {
         Bundle params = new Bundle();
         params.putString("source", source);
-        Controller.show(context, uid, ContactListDialog.class, params);
+        Controller.show(context, uid, ContactUsDialog.class, params);
     }
 
     /*-*********************-*/
