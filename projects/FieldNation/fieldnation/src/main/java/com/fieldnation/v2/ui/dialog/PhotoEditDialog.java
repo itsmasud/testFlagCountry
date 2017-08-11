@@ -1,6 +1,8 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,6 +55,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         View v = inflater.inflate(R.layout.dialog_photo_edit, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
@@ -94,6 +97,8 @@ public class PhotoEditDialog extends FullScreenDialog {
                 FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
         }
         _name = params.getString("name");
+
+        populateUi();
     }
 
     @Override
@@ -102,6 +107,8 @@ public class PhotoEditDialog extends FullScreenDialog {
             _cachedUri = savedState.getParcelable("_cachedUri");
 
         super.onRestoreDialogState(savedState);
+
+        populateUi();
     }
 
     @Override
@@ -145,26 +152,30 @@ public class PhotoEditDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+            _uCropView.setVisibility(View.GONE);
             _uCropView.setEnabled(false);
             _progressBar.setVisibility(View.VISIBLE);
-            _uCropView.getCropImageView().cropAndSaveImage(Bitmap.CompressFormat.JPEG, 99, new BitmapCropCallback() {
-                @Override
-                public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY, int imageWidth, int imageHeight) {
-                    _onSaveDispatcher.dispatch(getUid(), _name, resultUri);
-                    dismiss(true);
-                }
-
-                @Override
-                public void onCropFailure(@NonNull Throwable t) {
-                    ToastClient.toast(App.get(), "Failure cropping image", Toast.LENGTH_SHORT);
-                    Log.v(TAG, t);
-                    _uCropView.setEnabled(true);
-                    _progressBar.setVisibility(View.GONE);
-                }
-
-            });
+            _uCropView.getCropImageView().cropAndSaveImage(Bitmap.CompressFormat.JPEG, 99, _cropCallBack);
             return true;
         }
+    };
+
+    private final BitmapCropCallback _cropCallBack = new BitmapCropCallback() {
+        @Override
+        public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY, int imageWidth, int imageHeight) {
+            _onSaveDispatcher.dispatch(getUid(), _name, resultUri);
+            ((Activity) getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+            Controller.dismiss(App.get(), getUid());
+        }
+
+        @Override
+        public void onCropFailure(@NonNull Throwable t) {
+            ToastClient.toast(App.get(), "Failure cropping image", Toast.LENGTH_SHORT);
+            Log.v(TAG, t);
+            _uCropView.setEnabled(true);
+            _progressBar.setVisibility(View.GONE);
+        }
+
     };
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
