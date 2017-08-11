@@ -1,64 +1,60 @@
 package com.fieldnation.ui;
 
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.content.Context;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 
 /**
- * Created by michael.carver on 12/3/2014.
+ * Created by michael.carver on 12/9/2014.
  */
-public class ThankYouFragment extends FragmentBase {
-    private static final String TAG = "ThankYouFragment";
+public class SorryScreen extends RelativeLayout {
+    private static final String TAG = "SorryScreen";
 
     // Ui
     private Button _doneButton;
 
     // Data
-    private Handler _handler;
     private Listener _listener;
 
-    private String _name;
-    private String _signatureJson;
-    private String _workorder;
-
-    private boolean _uploadComplete = false;
     private boolean _timerComplete = false;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
     /*-*********************************-*/
-    public static ThankYouFragment getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, ThankYouFragment.class);
+    public SorryScreen(Context context) {
+        super(context);
+        init();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_thank_you, container, false);
+    public SorryScreen(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
 
-        _doneButton = (Button) v.findViewById(R.id.done_button);
+    public SorryScreen(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.screen_reject_work, this);
+
+        if (isInEditMode()) return;
+
+        _doneButton = findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);
-
-        _handler = new Handler();
-
-        return v;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    public void startTimer() {
         _timerComplete = false;
-        _uploadComplete = false;
 
         _doneButton.setVisibility(View.GONE);
-        _handler.postDelayed(new Runnable() {
+        postDelayed(new Runnable() {
             @Override
             public void run() {
                 _timerComplete = true;
@@ -67,19 +63,11 @@ public class ThankYouFragment extends FragmentBase {
         }, 5000);
     }
 
-    public void setUploadComplete() {
-        _uploadComplete = true;
-        showDoneButton();
-    }
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
     private void showDoneButton() {
-//        if (!_uploadComplete)
-//            return;
-
         if (!_timerComplete)
             return;
 
@@ -101,5 +89,4 @@ public class ThankYouFragment extends FragmentBase {
     public interface Listener {
         void onDoneClick();
     }
-
 }

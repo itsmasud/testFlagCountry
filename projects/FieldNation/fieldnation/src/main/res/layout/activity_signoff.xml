@@ -7,7 +7,31 @@
     <FrameLayout
         android:id="@+id/container_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <com.fieldnation.ui.SignOffScreen
+            android:id="@+id/signOff_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.fieldnation.ui.ThankYouScreen
+            android:id="@+id/thankYou_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <com.fieldnation.ui.SorryScreen
+            android:id="@+id/sorry_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <com.fieldnation.ui.SignatureScreen
+            android:id="@+id/signature_screen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </FrameLayout>
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
