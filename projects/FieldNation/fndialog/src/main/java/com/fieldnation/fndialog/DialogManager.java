@@ -117,10 +117,13 @@ public class DialogManager extends FrameLayout implements Constants {
         // add it to the container
         addView(dialogHolder.dialog.getView());
 
+        dialogHolder.dialog.setSavedState(dialogHolder.savedState);
+
         // move to correct state
-        if (_lastState == STATE_START)
+        if (_lastState == STATE_START) {
             dialogHolder.dialog.onStart();
-        else if (_lastState == STATE_RESUME) {
+            return;
+        } else if (_lastState == STATE_RESUME) {
             dialogHolder.dialog.onStart();
             dialogHolder.dialog.onResume();
         }
@@ -192,6 +195,7 @@ public class DialogManager extends FrameLayout implements Constants {
 
         _lastState = STATE_START;
         for (DialogHolder holder : _dialogStack) {
+            holder.dialog.setSavedState(holder.savedState);
             holder.dialog.onStart();
         }
     }
@@ -203,6 +207,12 @@ public class DialogManager extends FrameLayout implements Constants {
 
         for (DialogHolder holder : _dialogStack) {
             holder.dialog.onResume();
+
+            // call show
+            holder.dialog.show(holder.params, false);
+            // call restoreDialogState
+            if (holder.savedState != null)
+                holder.dialog.onRestoreDialogState(holder.savedState);
         }
     }
 
@@ -250,8 +260,6 @@ public class DialogManager extends FrameLayout implements Constants {
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
         _dialogServer.unSub();
-
-        removeAllViews();
         super.onDetachedFromWindow();
     }
 
@@ -292,7 +300,7 @@ public class DialogManager extends FrameLayout implements Constants {
         public Dialog dialog;
         public Bundle params;
         public String uid;
-        public Bundle savedState;
+        public Bundle savedState = null;
 
         DialogHolder(Dialog dialog) {
             this.dialog = dialog;

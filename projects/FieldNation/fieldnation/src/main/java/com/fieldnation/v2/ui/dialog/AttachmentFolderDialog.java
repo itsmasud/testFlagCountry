@@ -10,8 +10,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +28,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -55,7 +56,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     // Ui
     private Toolbar _toolbar;
-    private RecyclerView _list;
+    private OverScrollRecyclerView _list;
 
     // Services
     private DocumentClient _docClient;
@@ -81,10 +82,11 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setTitle("Attachments");
+        _toolbar.setTitle("Attached Files");
 
         _list = v.findViewById(R.id.list);
-        _list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        _list.setItemAnimator(new DefaultItemAnimator());
+        _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return v;
     }

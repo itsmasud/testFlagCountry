@@ -35,6 +35,8 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
 
+import java.io.File;
+
 /**
  * @author shoaib.ahmed
  */
@@ -321,11 +323,10 @@ public class PhotoUploadDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             Intent intent;
-            if (_cachedUri == null) {
+            if (_cachedUri != null) {
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(_cachedUri, "image/*");
+                intent.setDataAndType(App.getUriFromFile(new File(_cachedUri.getPath())), "image/*");
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
             } else {
                 intent = new Intent(Intent.ACTION_VIEW, _sourceUri);
             }
