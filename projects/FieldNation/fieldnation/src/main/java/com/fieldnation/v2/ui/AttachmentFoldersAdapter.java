@@ -228,6 +228,7 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 AttachmentFolder af = (AttachmentFolder) objects.get(position).object;
                 view.setTitle(af.getName());
+                break;
             }
             case AttachedFilesViewHolder.TYPE_ATTACHMENT: {
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
