@@ -3,7 +3,6 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.webkit.WebView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
-import com.fieldnation.fntools.misc;
 
 /**
  * Created by mc on 8/11/17.
@@ -64,7 +62,7 @@ public class WebViewDialog extends FullScreenDialog {
         super.show(params, animate);
         String html = params.getString("html");
         _toolbar.setTitle(params.getString("title"));
-        _webView.loadData(misc.linkifyHtml(html, Linkify.ALL).toString(), "text/html", "utf-8");
+        _webView.loadData(html, "text/html", "utf-8");
     }
 
     private View.OnAttachStateChangeListener _onAttachState = new View.OnAttachStateChangeListener() {

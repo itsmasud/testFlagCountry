@@ -16,7 +16,9 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.text.Html;
 import android.text.TextUtils;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +47,6 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -97,6 +98,7 @@ import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
+import com.fieldnation.v2.ui.dialog.WebViewDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
@@ -165,10 +167,6 @@ public class WorkFragment extends WorkorderFragment {
     private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
-
-    // Dialogs
-    private TermsScrollingDialog _termsScrollingDialog;
-    private TwoButtonDialog _yesNoDialog;
 
     // Data
     private WorkordersWebApi _workOrderApi;
@@ -346,8 +344,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onStart() {
         super.onStart();
-        _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
-
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
 
@@ -820,19 +816,22 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void showConfidentialInfo(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
-            _termsScrollingDialog.show(getString(R.string.dialog_confidential_information_title), body);
+            WebViewDialog.show(App.get(), getString(R.string.dialog_confidential_information_title),
+                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
 
         @Override
         public void showCustomerPolicies(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
-            _termsScrollingDialog.show(getString(R.string.dialog_policy_title), body);
+            WebViewDialog.show(App.get(), getString(R.string.dialog_policy_title),
+                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
 
         @Override
         public void showStandardInstructions(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
-            _termsScrollingDialog.show(getString(R.string.dialog_standard_instruction_title), body);
+            WebViewDialog.show(App.get(), getString(R.string.dialog_standard_instruction_title),
+                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
     };
 
