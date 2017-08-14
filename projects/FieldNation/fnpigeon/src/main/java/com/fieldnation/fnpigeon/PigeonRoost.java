@@ -35,6 +35,12 @@ public class PigeonRoost {
         }
     }
 
+    /**
+     * Subscribes a pigeon to the address
+     *
+     * @param pigeon
+     * @param address
+     */
     public static void sub(Pigeon pigeon, String address) {
         synchronized (TAG) {
             // Add to the tables
@@ -49,6 +55,12 @@ public class PigeonRoost {
         }
     }
 
+    /**
+     * Unsubscripes a specific pigeon from a specific address
+     *
+     * @param pigeon
+     * @param address
+     */
     public static void unsub(Pigeon pigeon, String address) {
         synchronized (TAG) {
             if (_pigeonByAddress.containsKey(address)) {
@@ -61,6 +73,11 @@ public class PigeonRoost {
         }
     }
 
+    /**
+     * Unsubscribes a specific pigeon from all addresses
+     *
+     * @param pigeon
+     */
     public static void unsub(Pigeon pigeon) {
         if (_addressByPigeon.containsKey(pigeon)) {
             Set<String> topics = _addressByPigeon.get(pigeon);
@@ -73,6 +90,13 @@ public class PigeonRoost {
         }
     }
 
+    /**
+     * Sends a message to all pigeons subscribed to the given address
+     *
+     * @param address
+     * @param message
+     * @param sticky
+     */
     public static void sendMessage(String address, Object message, Sticky sticky) {
         String[] addressTree = address.split("/");
         synchronized (TAG) {
