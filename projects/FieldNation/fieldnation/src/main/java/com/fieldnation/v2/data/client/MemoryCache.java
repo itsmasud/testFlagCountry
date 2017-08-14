@@ -18,7 +18,7 @@ public class MemoryCache {
 
         public Node(Object object) {
             this.object = object;
-            ttl = System.currentTimeMillis() + 5000;
+            ttl = System.currentTimeMillis() + 30000;
         }
     }
 
