@@ -174,7 +174,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             OAuth auth = _service.getAuth();
 
             if (auth == null) {
-                AuthTopicClient.requestCommand(ContextProvider.get());
+                AuthTopicClient.requestCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
@@ -183,7 +183,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthTopicClient.invalidateCommand(ContextProvider.get());
+                AuthTopicClient.invalidateCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);

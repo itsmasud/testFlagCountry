@@ -50,7 +50,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
-    private AuthTopicClient _authTopicClient;
 
     // Data
     private Profile _profile;
@@ -126,8 +125,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         startService(new Intent(this, TopicService.class));
         startService(new Intent(this, WebCrawlerService.class));
 
-        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
-        _authTopicClient.connect(App.get());
+        _authTopicClient.subNeedUsernameAndPassword();
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
         _activityRequestHandler.sub();
@@ -145,7 +143,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
         if (_globalClient != null) _globalClient.disconnect(App.get());
-        if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
+        _authTopicClient.unsubNeedUsernameAndPassword();
         _toastClient.unSubToast();
         _toastClient.unSubSnackbar();
         _activityRequestHandler.unsub();
@@ -298,14 +296,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final OneButtonDialog.OnPrimaryListener _notProvider_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
-            AuthTopicClient.removeCommand(AuthSimpleActivity.this);
+            AuthTopicClient.removeCommand();
         }
     };
 
     private final OneButtonDialog.OnCanceledListener _notProvider_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
         public void onCanceled() {
-            AuthTopicClient.removeCommand(AuthSimpleActivity.this);
+            AuthTopicClient.removeCommand();
         }
     };
 
@@ -344,12 +342,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _authTopicClient.subNeedUsernameAndPassword();
-        }
-
+    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
             AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);

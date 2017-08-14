@@ -155,7 +155,7 @@ public class MessageRcvdView extends RelativeLayout {
             ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = android.content.ClipData.newPlainText("Copied Text", _message.getMessage());
             clipboard.setPrimaryClip(clip);
-            ToastClient.toast(App.get(), getResources().getString(R.string.toast_copied_to_clipboard), Toast.LENGTH_LONG);
+            ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
             return true;
         }
     };

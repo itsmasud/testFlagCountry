@@ -325,22 +325,22 @@ public class ShipmentAddDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_tracking_number), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_tracking_number, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (_carrierPosition == -1) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_carrier_not_selected, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_description, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (_directionPosition == -1) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_direction_not_selected, Toast.LENGTH_SHORT);
                 return;
             }
 

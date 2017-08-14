@@ -322,7 +322,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             }
 
             if (!App.get().isFreeSpaceAvailable()) {
-                Toast.makeText(getContext(), getResources().getString(R.string.toast_no_disk_space), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.toast_no_disk_space, Toast.LENGTH_LONG).show();
                 return;
             }
 

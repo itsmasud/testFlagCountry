@@ -89,7 +89,6 @@ public class App extends Application {
     private Profile _profile;
     private GlobalTopicClient _globalTopicClient;
     private ProfileClient _profileClient;
-    private AuthTopicClient _authTopicClient;
     private int _memoryClass;
     private Typeface _iconFont;
     private final Handler _handler = new Handler();
@@ -221,8 +220,8 @@ public class App extends Application {
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(this);
 
-        _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(this);
+        _authTopicClient.subAuthStateChange();
+        AuthTopicClient.requestCommand();
         Log.v(TAG, "start topic clients time: " + watch.finishAndRestart());
 
 //        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -282,9 +281,9 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         MemoryCache.purgeNodes();
-        _profileClient.disconnect(this);
-        _globalTopicClient.disconnect(this);
-        _authTopicClient.disconnect(this);
+        if (_profileClient != null) _profileClient.disconnect(this);
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(this);
+        _authTopicClient.unsubAuthStateChange();
         super.onTerminate();
         _context = null;
     }
@@ -312,13 +311,7 @@ public class App extends Application {
         }
     }
 
-    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "onConnected");
-            _authTopicClient.subAuthStateChange();
-            AuthTopicClient.requestCommand(App.this);
-        }
+    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
@@ -330,7 +323,7 @@ public class App extends Application {
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
             setAuth(null);
-            AuthTopicClient.requestCommand(App.this);
+            AuthTopicClient.requestCommand();
         }
     };
 
@@ -423,8 +416,8 @@ public class App extends Application {
         public void onNetworkConnected() {
             _isConnected = true;
             Log.v(TAG, "onNetworkConnected");
-            AuthTopicClient.requestCommand(App.this);
-            ToastClient.dismissSnackbar(App.this, 1);
+            AuthTopicClient.requestCommand();
+            ToastClient.dismissSnackbar(1);
         }
 
         @Override
@@ -433,7 +426,7 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnect() {
-            AuthTopicClient.requestCommand(App.this);
+            AuthTopicClient.requestCommand();
             startService(new Intent(App.this, WebTransactionService.class));
         }
 

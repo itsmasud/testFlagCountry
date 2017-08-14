@@ -90,8 +90,8 @@ public abstract class WebTransactionListener {
         if (httpResult != null) {
             if (!httpResult.isFile() && (httpResult.getString() != null && httpResult.getString().contains("You must provide a valid OAuth token to make a request"))) {
                 Log.v(TAG, "Reauth");
-                AuthTopicClient.invalidateCommand(context);
-                AuthTopicClient.requestCommand(context);
+                AuthTopicClient.invalidateCommand();
+                AuthTopicClient.requestCommand();
                 return Result.RETRY;
 
             } else if (httpResult.getResponseCode() == 400) {
@@ -103,8 +103,8 @@ public abstract class WebTransactionListener {
 
                 } else {
                     Log.v(TAG, "1");
-                    AuthTopicClient.invalidateCommand(context);
-                    AuthTopicClient.requestCommand(context);
+                    AuthTopicClient.invalidateCommand();
+                    AuthTopicClient.requestCommand();
                     return Result.RETRY;
                 }
 
@@ -112,8 +112,8 @@ public abstract class WebTransactionListener {
                 // 401 usually means bad auth token
                 if (HttpJsonBuilder.isFieldNation(request)) {
                     Log.v(TAG, "Reauth 2");
-                    AuthTopicClient.invalidateCommand(context);
-                    AuthTopicClient.requestCommand(context);
+                    AuthTopicClient.invalidateCommand();
+                    AuthTopicClient.requestCommand();
                     return Result.RETRY;
 
                 } else {

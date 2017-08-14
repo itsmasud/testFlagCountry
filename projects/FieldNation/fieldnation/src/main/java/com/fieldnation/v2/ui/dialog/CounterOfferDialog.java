@@ -548,7 +548,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                     request.counterNotes(_reason);
 
                 if (_pay == null && _schedule == null && !(exp != null && exp.length > 0)) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_empty_counter_offer), Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), R.string.toast_empty_counter_offer, Toast.LENGTH_SHORT);
                     _refreshView.refreshComplete();
                     return false;
                 }

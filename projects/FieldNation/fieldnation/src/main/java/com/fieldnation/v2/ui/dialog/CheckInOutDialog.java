@@ -303,7 +303,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             test.set(year, monthOfYear, dayOfMonth);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_future_datetime_not_allowed, Toast.LENGTH_SHORT);
                 _startDatePicker.show();
 
             } else {
@@ -328,7 +328,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                     test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_future_datetime_not_allowed, Toast.LENGTH_SHORT);
                 _startTimePicker.show();
             } else {
                 _startCalendar = test;

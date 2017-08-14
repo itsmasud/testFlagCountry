@@ -317,7 +317,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
-            AuthTopicClient.removeCommand(getContext());
+            AuthTopicClient.removeCommand();
         }
     };
 

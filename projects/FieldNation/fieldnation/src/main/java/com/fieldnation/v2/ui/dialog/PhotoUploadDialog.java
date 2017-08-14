@@ -237,12 +237,12 @@ public class PhotoUploadDialog extends SimpleDialog {
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_insert_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
             if (!FileUtils.isValidFileName(_newFileName)) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_invalid_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_invalid_file_name, Toast.LENGTH_LONG);
                 return;
             }
 

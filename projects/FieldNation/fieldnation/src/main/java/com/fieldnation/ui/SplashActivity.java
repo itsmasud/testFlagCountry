@@ -37,7 +37,6 @@ public class SplashActivity extends AuthSimpleActivity {
     private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
-    private AuthTopicClient _authClient;
     private boolean _gotConfirmList = false;
 
     public SplashActivity() {
@@ -107,7 +106,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
         if (!profile.isProvider()) {
             Toast.makeText(SplashActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
-            AuthTopicClient.removeCommand(SplashActivity.this);
+            AuthTopicClient.removeCommand();
             return;
         }
         _profile = profile;
@@ -120,8 +119,7 @@ public class SplashActivity extends AuthSimpleActivity {
         super.onResume();
         _calledMyWork = false;
 
-        _authClient = new AuthTopicClient(_authTopic_listener);
-        _authClient.connect(App.get());
+        _authTopicClient.subAuthStateChange();
 
         _workOrdersApi.sub();
         GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
@@ -131,12 +129,12 @@ public class SplashActivity extends AuthSimpleActivity {
         opts.setPage(1);
         WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
 
-        AuthTopicClient.requestCommand(App.get());
+        AuthTopicClient.requestCommand();
     }
 
     @Override
     protected void onStop() {
-        if (_authClient != null) _authClient.disconnect(App.get());
+        _authTopicClient.unsubAuthStateChange();
         _workOrdersApi.unsub();
         super.onStop();
     }
@@ -151,12 +149,7 @@ public class SplashActivity extends AuthSimpleActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     }
 
-    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _authClient.subAuthStateChange();
-        }
-
+    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "onAuthenticated");
@@ -167,7 +160,7 @@ public class SplashActivity extends AuthSimpleActivity {
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-            AuthTopicClient.requestCommand(SplashActivity.this);
+            AuthTopicClient.requestCommand();
         }
     };
 

@@ -29,7 +29,6 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     private static final Object AUTH_LOCK = new Object();
 
     private OAuth _auth;
-    private AuthTopicClient _authTopicClient;
     private GlobalTopicClient _globalTopicClient;
     private ThreadManager _manager;
 
@@ -47,8 +46,8 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
             threadCount = 8;
         }
 
-        _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(ContextProvider.get());
+        _authTopicClient.subAuthStateChange();
+        AuthTopicClient.requestCommand();
 
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
         _globalTopicClient.connect(ContextProvider.get());
@@ -79,7 +78,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        if (_authTopicClient != null) _authTopicClient.disconnect(ContextProvider.get());
+        _authTopicClient.unsubAuthStateChange();
 
         if (_globalTopicClient != null) _globalTopicClient.disconnect(ContextProvider.get());
 
@@ -120,14 +119,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
     };
 
-    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "AuthTopicClient.onConnected");
-            _authTopicClient.subAuthStateChange();
-            AuthTopicClient.requestCommand(WebTransactionService.this);
-        }
-
+    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");

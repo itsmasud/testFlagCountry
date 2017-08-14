@@ -87,7 +87,7 @@ public abstract class ToastClient extends Pigeon {
         PigeonRoost.sendMessage(ADDRESS_SNACKBAR, message, Sticky.NONE);
     }
 
-    public static void dismissSnackbar(Context context, long id) {
+    public static void dismissSnackbar(long id) {
         Bundle message = new Bundle();
         message.putString(PARAM_ACTION, PARAM_ACTION_DISMISS_SNACKBAR);
         message.putLong(PARAM_MESSAGE_ID, id);
@@ -107,7 +107,6 @@ public abstract class ToastClient extends Pigeon {
         message.putString(PARAM_ACTION, PARAM_ACTION_TOAST);
         message.putString(PARAM_TITLE, title);
         message.putInt(PARAM_DURATION, duration);
-
         PigeonRoost.sendMessage(ADDRESS_TOAST, message, Sticky.NONE);
     }
 

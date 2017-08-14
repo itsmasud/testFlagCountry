@@ -203,9 +203,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                 _selectedFolder = attachmentFolder;
                 startAppPickerDialog();
             } else {
-                ToastClient.toast(App.get(),
-                        getView().getResources().getString(R.string.toast_external_storage_needed),
-                        Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
             }
         }
     };
