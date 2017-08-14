@@ -76,6 +76,7 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onFinishCreate");
         _signOffScreen = (SignOffScreen) findViewById(R.id.signOff_screen);
         _signOffScreen.setListener(_signOff_listener);
         _sigScreen = (SignatureScreen) findViewById(R.id.signature_screen);
@@ -111,6 +112,7 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
         outState.putInt(STATE_TASK_ID, _taskId);
         outState.putBoolean(STATE_COMPLETE_WORKORDER, _completeWorkorder);
@@ -129,6 +131,7 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(TAG, "onRestoreInstanceState");
         super.onRestoreInstanceState(savedInstanceState);
 
         if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
@@ -153,6 +156,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     private void populateUi() {
+        Log.v(TAG, "populateUi");
         _sorryScreen.setVisibility(View.GONE);
         _signOffScreen.setVisibility(View.GONE);
         _sigScreen.setVisibility(View.GONE);
@@ -160,20 +164,16 @@ public class SignOffActivity extends AuthSimpleActivity {
 
         switch (_displayMode) {
             case DISPLAY_SIGNATURE:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 _sigScreen.setVisibility(View.VISIBLE);
                 break;
             case DISPLAY_SORRY:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 _sorryScreen.setVisibility(View.VISIBLE);
                 _sorryScreen.startTimer();
                 break;
             case DISPLAY_SUMMARY:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 _signOffScreen.setVisibility(View.VISIBLE);
                 break;
             case DISPLAY_THANK_YOU:
-                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 _thankYouScreen.setVisibility(View.VISIBLE);
                 _thankYouScreen.startTimer();
                 break;
@@ -186,6 +186,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     private void sendSignature() {
+        Log.v(TAG, "sendSignature");
         try {
             Signature signature = new Signature();
             signature.name(_name);
@@ -216,12 +217,15 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final SignOffScreen.Listener _signOff_listener = new SignOffScreen.Listener() {
         @Override
         public void signOffOnClick() {
+            Log.v(TAG, "SignOffScreen.signOffOnClick");
             _displayMode = DISPLAY_SIGNATURE;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             populateUi();
         }
 
         @Override
         public void rejectOnClick() {
+            Log.v(TAG, "SignOffScreen.rejectOnClick");
             _displayMode = DISPLAY_SORRY;
             populateUi();
         }
@@ -230,19 +234,22 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final SignatureScreen.Listener _signature_listener = new SignatureScreen.Listener() {
         @Override
         public void onBack() {
+            Log.v(TAG, "SignatureScreen.onBack");
             _displayMode = DISPLAY_SUMMARY;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             populateUi();
         }
 
         @Override
         public void onSubmit(String name, String signatureSvg) {
+            Log.v(TAG, "SignatureScreen.onSubmit");
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureSvg = signatureSvg;
 
             sendSignature();
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             populateUi();
         }
     };
@@ -250,7 +257,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final ThankYouScreen.Listener _thankyou_listener = new ThankYouScreen.Listener() {
         @Override
         public void onDoneClick() {
-            Log.v(TAG, "_thankyou_listener.onDone");
+            Log.v(TAG, "ThankYouScreen.onDoneClick");
             if (getParent() == null) {
                 Log.v(TAG, "no Parent");
                 setResult(RESULT_OK);
@@ -265,6 +272,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final SorryScreen.Listener _sorry_listener = new SorryScreen.Listener() {
         @Override
         public void onDoneClick() {
+            Log.v(TAG, "SorryScreen.onDoneClick");
             if (getParent() == null) {
                 setResult(RESULT_CANCELED);
             } else {
@@ -276,6 +284,7 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     public void onBackPressed() {
+        Log.v(TAG, "onBackPressed");
         if (_displayMode == DISPLAY_SIGNATURE) {
             populateUi();
             return;
