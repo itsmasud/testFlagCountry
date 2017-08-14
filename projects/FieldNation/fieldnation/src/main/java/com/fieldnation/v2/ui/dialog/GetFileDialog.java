@@ -65,6 +65,7 @@ public class GetFileDialog extends SimpleDialog {
     /*-*****************************-*/
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_get_file, container, false);
         _items = v.findViewById(R.id.apps_listview);
         return v;
@@ -73,6 +74,7 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
+        Log.v(TAG, "onStart");
         _items.setAdapter(new GetFilePackageAdapter(_activityList, _app_onClick));
 
         _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
@@ -80,7 +82,14 @@ public class GetFileDialog extends SimpleDialog {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume");
+    }
+
+    @Override
     public void show(Bundle payload, boolean animate) {
+        Log.v(TAG, "show");
         Parcelable[] intents = payload.getParcelableArray("intents");
         if (intents != null)
             for (Parcelable parcelable : intents) {
@@ -92,8 +101,8 @@ public class GetFileDialog extends SimpleDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onRestoreDialogState");
         super.onRestoreDialogState(savedState);
-
         if (savedState.containsKey("_sourceUri"))
             _sourceUri = savedState.getParcelable("_sourceUri");
         if (savedState.containsKey("_cameraIntent"))
@@ -102,6 +111,7 @@ public class GetFileDialog extends SimpleDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveDialogState");
         if (_sourceUri != null)
             outState.putParcelable("_sourceUri", _sourceUri);
         if (_cameraIntent != null)
@@ -110,14 +120,22 @@ public class GetFileDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
+        Log.v(TAG, "onPause");
         super.onPause();
     }
 
     @Override
     public void onStop() {
+        Log.v(TAG, "onStop");
         if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
         if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
         super.onStop();
+    }
+
+    @Override
+    public void dismiss(boolean animate) {
+        Log.v(TAG, "dismiss");
+        super.dismiss(animate);
     }
 
     private void addIntent(GetFileIntent appIntent) {
@@ -183,6 +201,7 @@ public class GetFileDialog extends SimpleDialog {
     };
 
     public static void show(Context context, String uid, GetFileIntent[] intents) {
+        Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelableArray("intents", intents);
 
@@ -267,8 +286,9 @@ public class GetFileDialog extends SimpleDialog {
                     }
                 }
 
+                Log.v(TAG, "Dispatch _onFileDispatcher");
                 _onFileDispatcher.dispatch(getUid(), fileUris);
-                dismiss(true);
+                dismiss(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 Log.logException(ex);
