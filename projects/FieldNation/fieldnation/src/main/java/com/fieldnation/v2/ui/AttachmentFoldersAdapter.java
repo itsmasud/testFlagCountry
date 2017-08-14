@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
@@ -36,7 +37,8 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 Attachment attachment = (Attachment) tuple.object;
                 if (attachment.getId() == attachmentId) {
                     tuple.downloading = true;
-                    notifyItemChanged(i);
+                    notifyDataSetChanged();
+                    //notifyItemChanged(i);
                     return;
                 }
             }
@@ -53,7 +55,8 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 Attachment attachment = (Attachment) tuple.object;
                 if (attachment.getId() == attachmentId) {
                     tuple.downloading = false;
-                    notifyItemChanged(i);
+                    notifyDataSetChanged();
+                    //notifyItemChanged(i);
                     return;
                 }
             }
@@ -276,6 +279,7 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
     private final View.OnLongClickListener _attachment_onLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
+            Log.v(TAG, "AttachmentFoldersAdapters");
             ListItemTwoVertView v = (ListItemTwoVertView) view;
             Attachment a = (Attachment) v.getTag();
             if (a.getActionsSet().contains(Attachment.ActionsEnum.DELETE) && _listener != null) {
