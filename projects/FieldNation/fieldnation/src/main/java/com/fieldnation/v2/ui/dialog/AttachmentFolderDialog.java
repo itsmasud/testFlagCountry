@@ -134,6 +134,12 @@ public class AttachmentFolderDialog extends FullScreenDialog {
             folders = savedState.getParcelable("folders");
             adapter.setAttachments(folders);
         }
+        if (savedState.containsKey("selectedFolder"))
+            _selectedFolder = savedState.getParcelable("selectedFolder");
+        if (savedState.containsKey("selectedAttachment"))
+            _selectedAttachment = savedState.getParcelable("selectedAttachment");
+
+
         super.onRestoreDialogState(savedState);
     }
 
@@ -153,6 +159,11 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
         outState.putParcelable("folders", folders);
+        if (_selectedFolder != null)
+            outState.putParcelable("selectedFolder", _selectedFolder);
+        if (_selectedAttachment != null)
+            outState.putParcelable("selectedAttachment", _selectedAttachment);
+        
         super.onSaveDialogState(outState);
     }
 
