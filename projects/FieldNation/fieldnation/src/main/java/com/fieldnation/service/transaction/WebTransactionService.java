@@ -91,7 +91,8 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         synchronized (AUTH_LOCK) {
             _auth = auth;
         }
-        _manager.wakeUp();
+        if (_manager != null)
+            _manager.wakeUp();
         Log.v(TAG, "setAuth end");
     }
 
