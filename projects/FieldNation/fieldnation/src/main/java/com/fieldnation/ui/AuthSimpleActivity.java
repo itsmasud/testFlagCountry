@@ -25,7 +25,7 @@ import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -125,7 +125,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         startService(new Intent(this, TopicService.class));
         startService(new Intent(this, WebCrawlerService.class));
 
-        _authTopicClient.subNeedUsernameAndPassword();
+        _authClient.subNeedUsernameAndPassword();
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
         _activityRequestHandler.sub();
@@ -143,7 +143,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
         if (_globalClient != null) _globalClient.disconnect(App.get());
-        _authTopicClient.unsubNeedUsernameAndPassword();
+        _authClient.unsubNeedUsernameAndPassword();
         _toastClient.unSubToast();
         _toastClient.unSubSnackbar();
         _activityRequestHandler.unsub();
@@ -296,14 +296,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final OneButtonDialog.OnPrimaryListener _notProvider_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
-            AuthTopicClient.removeCommand();
+            AuthClient.removeCommand();
         }
     };
 
     private final OneButtonDialog.OnCanceledListener _notProvider_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
         public void onCanceled() {
-            AuthTopicClient.removeCommand();
+            AuthClient.removeCommand();
         }
     };
 
@@ -342,7 +342,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
             AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);

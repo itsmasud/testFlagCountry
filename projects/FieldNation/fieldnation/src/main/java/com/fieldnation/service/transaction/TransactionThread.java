@@ -28,7 +28,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
 import java.text.ParseException;
@@ -174,7 +174,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             OAuth auth = _service.getAuth();
 
             if (auth == null) {
-                AuthTopicClient.requestCommand();
+                AuthClient.requestCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
@@ -183,7 +183,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthTopicClient.invalidateCommand();
+                AuthClient.invalidateCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);

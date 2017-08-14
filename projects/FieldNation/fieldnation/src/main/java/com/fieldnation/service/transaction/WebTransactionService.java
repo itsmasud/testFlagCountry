@@ -13,7 +13,7 @@ import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
 import java.util.List;
@@ -46,8 +46,8 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
             threadCount = 8;
         }
 
-        _authTopicClient.subAuthStateChange();
-        AuthTopicClient.requestCommand();
+        _authClient.subAuthStateChange();
+        AuthClient.requestCommand();
 
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
         _globalTopicClient.connect(ContextProvider.get());
@@ -78,7 +78,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _authTopicClient.unsubAuthStateChange();
+        _authClient.unsubAuthStateChange();
 
         if (_globalTopicClient != null) _globalTopicClient.disconnect(ContextProvider.get());
 
@@ -119,7 +119,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
     };
 
-    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");

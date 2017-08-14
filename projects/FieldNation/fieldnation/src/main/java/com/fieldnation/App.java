@@ -42,7 +42,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.RegistrationIntentService;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -220,8 +220,8 @@ public class App extends Application {
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(this);
 
-        _authTopicClient.subAuthStateChange();
-        AuthTopicClient.requestCommand();
+        _authClient.subAuthStateChange();
+        AuthClient.requestCommand();
         Log.v(TAG, "start topic clients time: " + watch.finishAndRestart());
 
 //        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -283,7 +283,7 @@ public class App extends Application {
         MemoryCache.purgeNodes();
         if (_profileClient != null) _profileClient.disconnect(this);
         if (_globalTopicClient != null) _globalTopicClient.disconnect(this);
-        _authTopicClient.unsubAuthStateChange();
+        _authClient.unsubAuthStateChange();
         super.onTerminate();
         _context = null;
     }
@@ -311,7 +311,7 @@ public class App extends Application {
         }
     }
 
-    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
+    private final AuthClient _authClient = new AuthClient() {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
@@ -323,7 +323,7 @@ public class App extends Application {
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
             setAuth(null);
-            AuthTopicClient.requestCommand();
+            AuthClient.requestCommand();
         }
     };
 
@@ -416,7 +416,7 @@ public class App extends Application {
         public void onNetworkConnected() {
             _isConnected = true;
             Log.v(TAG, "onNetworkConnected");
-            AuthTopicClient.requestCommand();
+            AuthClient.requestCommand();
             ToastClient.dismissSnackbar(1);
         }
 
@@ -426,7 +426,7 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnect() {
-            AuthTopicClient.requestCommand();
+            AuthClient.requestCommand();
             startService(new Intent(App.this, WebTransactionService.class));
         }
 

@@ -54,10 +54,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     public void onCreate() {
         Log.v(TAG, "onCreate");
         super.onCreate();
-        _authTopicClient.subInvalidateCommand();
-        _authTopicClient.subRemoveCommand();
-        _authTopicClient.subRequestCommand();
-        _authTopicClient.subAccountAddedCommand();
+        _authClient.subInvalidateCommand();
+        _authClient.subRemoveCommand();
+        _authClient.subRequestCommand();
+        _authClient.subAccountAddedCommand();
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClientListener);
         _globalTopicClient.connect(App.get());
@@ -81,10 +81,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _authTopicClient.unsubInvalidateCommand();
-        _authTopicClient.unsubRemoveCommand();
-        _authTopicClient.unsubRequestCommand();
-        _authTopicClient.unsubAccountAddedCommand();
+        _authClient.unsubInvalidateCommand();
+        _authClient.unsubRemoveCommand();
+        _authClient.unsubRequestCommand();
+        _authClient.unsubAccountAddedCommand();
 
         _globalTopicClient.disconnect(App.get());
         //setState(AuthState.NOT_AUTHENTICATED);
@@ -100,9 +100,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _state = state;
             Log.v(TAG, state.name());
             if (_state == AuthState.AUTHENTICATED) {
-                AuthTopicClient.authenticated(_authToken);
+                AuthClient.authenticated(_authToken);
             } else {
-                AuthTopicClient.authStateChange(_state);
+                AuthClient.authStateChange(_state);
             }
         }
     }
@@ -121,7 +121,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     };
 
-    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onCommandInvalidate() {
             Log.v(TAG, "onCommandInvalidate");
@@ -229,7 +229,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
         Log.v(TAG, "onNeedUserNameAndPassword");
-        AuthTopicClient.needUsernameAndPassword(authenticatorResponse);
+        AuthClient.needUsernameAndPassword(authenticatorResponse);
     }
 
     /**

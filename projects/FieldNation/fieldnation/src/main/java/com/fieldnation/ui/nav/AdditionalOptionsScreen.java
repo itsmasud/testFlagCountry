@@ -21,7 +21,7 @@ import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.IconFontButton;
@@ -317,7 +317,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
-            AuthTopicClient.removeCommand();
+            AuthClient.removeCommand();
         }
     };
 

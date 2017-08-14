@@ -10,8 +10,8 @@ import com.fieldnation.fnpigeon.Sticky;
 /**
  * Created by Michael Carver on 3/17/2015.
  */
-public abstract class AuthTopicClient extends Pigeon implements AuthTopicConstants {
-    private static final String TAG = "AuthTopicClient";
+public abstract class AuthClient extends Pigeon implements AuthTopicConstants {
+    private static final String TAG = "AuthClient";
 
     // State
     public static void authStateChange(AuthState state) {
@@ -136,7 +136,7 @@ public abstract class AuthTopicClient extends Pigeon implements AuthTopicConstan
                 Bundle bundle = (Bundle) message;
                 if (bundle.containsKey(PARAM_AUTHENTICATOR_RESPONSE)
                         && bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE) != null) {
-                    AuthTopicClient.needUsernameAndPassword(null);
+                    AuthClient.needUsernameAndPassword(null);
                     onNeedUsernameAndPassword(bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE));
                 }
                 break;

@@ -38,7 +38,7 @@ import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -329,7 +329,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.setResult(RESULT_OK, intent);
                         AuthActivity.this.finish();
 
-                        AuthTopicClient.addedAccountCommand();
+                        AuthClient.addedAccountCommand();
                         SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);

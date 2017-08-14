@@ -14,7 +14,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MemUtils;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ncns.ConfirmActivity;
@@ -106,7 +106,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
         if (!profile.isProvider()) {
             Toast.makeText(SplashActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
-            AuthTopicClient.removeCommand();
+            AuthClient.removeCommand();
             return;
         }
         _profile = profile;
@@ -119,7 +119,7 @@ public class SplashActivity extends AuthSimpleActivity {
         super.onResume();
         _calledMyWork = false;
 
-        _authTopicClient.subAuthStateChange();
+        _authClient.subAuthStateChange();
 
         _workOrdersApi.sub();
         GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
@@ -129,12 +129,12 @@ public class SplashActivity extends AuthSimpleActivity {
         opts.setPage(1);
         WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
 
-        AuthTopicClient.requestCommand();
+        AuthClient.requestCommand();
     }
 
     @Override
     protected void onStop() {
-        _authTopicClient.unsubAuthStateChange();
+        _authClient.unsubAuthStateChange();
         _workOrdersApi.unsub();
         super.onStop();
     }
@@ -149,7 +149,7 @@ public class SplashActivity extends AuthSimpleActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
     }
 
-    private final AuthTopicClient _authTopicClient = new AuthTopicClient() {
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "onAuthenticated");
@@ -160,7 +160,7 @@ public class SplashActivity extends AuthSimpleActivity {
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-            AuthTopicClient.requestCommand();
+            AuthClient.requestCommand();
         }
     };
 
