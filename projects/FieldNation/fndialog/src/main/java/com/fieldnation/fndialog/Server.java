@@ -1,7 +1,6 @@
 package com.fieldnation.fndialog;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
@@ -26,7 +25,7 @@ abstract class Server extends Pigeon implements Constants {
     }
 
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
 
         Bundle bundle = (Bundle) message;
         if (address.startsWith(ADDRESS_SHOW_DIALOG)) {

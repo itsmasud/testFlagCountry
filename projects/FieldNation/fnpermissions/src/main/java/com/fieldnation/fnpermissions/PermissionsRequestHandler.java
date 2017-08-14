@@ -3,7 +3,6 @@ package com.fieldnation.fnpermissions;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 
 import com.fieldnation.fnlog.Log;
@@ -41,7 +40,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
     /*-             Listener             -*/
     /*-**********************************-*/
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
         Log.v(TAG, "onMessage");
         if (address.equals(TOPIC_ID_REQUESTS)) {
             PigeonRoost.clearAddressCacheAll(TOPIC_ID_REQUESTS);

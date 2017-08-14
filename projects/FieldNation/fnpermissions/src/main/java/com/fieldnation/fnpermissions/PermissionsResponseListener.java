@@ -1,7 +1,6 @@
 package com.fieldnation.fnpermissions;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -30,7 +29,7 @@ public abstract class PermissionsResponseListener extends Pigeon {
     }
 
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
         if (address.equals(TOPIC_ID_COMPLETE)) {
             Bundle bundle = (Bundle) message;
             onComplete(bundle.getString("permission"),

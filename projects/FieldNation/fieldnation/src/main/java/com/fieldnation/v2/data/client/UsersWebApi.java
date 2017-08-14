@@ -3,7 +3,6 @@ package com.fieldnation.v2.data.client;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -1118,7 +1117,7 @@ public abstract class UsersWebApi extends Pigeon {
     /*-             Listener             -*/
     /*-**********************************-*/
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
         Log.v(TAG, "Listener " + address);
 
         Bundle bundle = (Bundle) message;

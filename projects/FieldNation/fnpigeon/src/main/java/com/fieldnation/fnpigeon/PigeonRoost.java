@@ -1,7 +1,5 @@
 package com.fieldnation.fnpigeon;
 
-import android.os.Parcelable;
-
 import com.fieldnation.fnlog.Log;
 
 import java.util.HashSet;
@@ -13,7 +11,7 @@ import java.util.Set;
  */
 
 public class PigeonRoost {
-    public static final String TAG = "Manager";
+    public static final String TAG = "PigeonRoost";
 
     private static Hashtable<String, StickyContainer> _stickies = new Hashtable<>();
     private static Hashtable<Pigeon, Set<String>> _addressByPigeon = new Hashtable<>();
@@ -75,7 +73,7 @@ public class PigeonRoost {
         }
     }
 
-    public static void sendMessage(String address, Parcelable message, Sticky sticky) {
+    public static void sendMessage(String address, Object message, Sticky sticky) {
         String[] addressTree = address.split("/");
         synchronized (TAG) {
             // Fill stickies
@@ -161,11 +159,11 @@ public class PigeonRoost {
     }
 
     private static class StickyContainer {
-        public Parcelable message;
+        public Object message;
         public long createdDate;
         public Sticky stickyType;
 
-        public StickyContainer(Parcelable message, Sticky stickyType) {
+        public StickyContainer(Object message, Sticky stickyType) {
             createdDate = System.currentTimeMillis();
             this.stickyType = stickyType;
             this.message = message;

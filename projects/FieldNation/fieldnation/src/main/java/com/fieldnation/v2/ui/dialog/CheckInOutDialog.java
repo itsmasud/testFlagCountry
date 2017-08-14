@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -431,7 +430,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onMessage(String address, Parcelable message) {
+        public void onMessage(String address, Object message) {
             PigeonRoost.clearAddressCacheAll(address);
             super.onMessage(address, message);
         }

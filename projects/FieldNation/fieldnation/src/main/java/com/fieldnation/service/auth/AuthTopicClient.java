@@ -98,7 +98,7 @@ public abstract class AuthTopicClient extends Pigeon implements AuthTopicConstan
     }
 
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
 
         switch (address) {
             case ADDRESS_AUTH_STATE: {

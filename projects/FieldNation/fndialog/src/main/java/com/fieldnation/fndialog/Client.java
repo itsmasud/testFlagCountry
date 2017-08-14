@@ -1,7 +1,6 @@
 package com.fieldnation.fndialog;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -51,7 +50,7 @@ abstract class Client extends Pigeon implements Constants {
     abstract String getUid();
 
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
         Bundle bundle = (Bundle) message;
 
         if (getUid() != null && bundle.containsKey(PARAM_DIALOG_UID) && bundle.getString(PARAM_DIALOG_UID) != null) {

@@ -2,7 +2,6 @@ package com.fieldnation.fnactivityresult;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
@@ -27,7 +26,7 @@ public class ActivityResultListener extends Pigeon implements ActivityResultCons
     /*-             Listener             -*/
     /*-**********************************-*/
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
         if (address.startsWith(ADDRESS_ON_ACTIVITY_RESULT)) {
             preOnActivityResult((Bundle) message);
         }

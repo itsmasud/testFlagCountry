@@ -3,7 +3,6 @@ package com.fieldnation.fnactivityresult;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
@@ -40,7 +39,7 @@ public abstract class ActivityRequestHandler extends Pigeon implements ActivityR
     /*-             Listener             -*/
     /*-**********************************-*/
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
         if (address.startsWith(ADDRESS_START_ACTIVITY_FOR_RESULT)) {
             startActivityForResult((Bundle) message);
         } else if (address.startsWith(ADDRESS_START_ACTIVITY)) {

@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -133,7 +132,7 @@ public abstract class ToastClient extends Pigeon {
     public abstract Activity getActivity();
 
     @Override
-    public void onMessage(String address, Parcelable message) {
+    public void onMessage(String address, Object message) {
 
         switch (address) {
             case ADDRESS_SNACKBAR:
