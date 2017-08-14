@@ -112,7 +112,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
-        outState.putLong(STATE_TASK_ID, _taskId);
+        outState.putInt(STATE_TASK_ID, _taskId);
         outState.putBoolean(STATE_COMPLETE_WORKORDER, _completeWorkorder);
 
         if (_name != null)

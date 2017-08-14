@@ -311,6 +311,7 @@ public class DialogManager extends FrameLayout implements Constants {
             Bundle savedState = new Bundle();
             Bundle dialogState = new Bundle();
             dialog.onSaveDialogState(dialogState);
+            this.savedState = dialogState;
             savedState.putParcelable("savedState", dialogState);
             savedState.putString("className", dialog.getClass().getName());
             savedState.setClassLoader(dialog.getClass().getClassLoader());
