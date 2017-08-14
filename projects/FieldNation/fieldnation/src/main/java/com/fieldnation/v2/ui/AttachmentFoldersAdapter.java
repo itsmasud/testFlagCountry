@@ -37,8 +37,7 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 Attachment attachment = (Attachment) tuple.object;
                 if (attachment.getId() == attachmentId) {
                     tuple.downloading = true;
-                    notifyDataSetChanged();
-                    //notifyItemChanged(i);
+                    notifyItemChanged(i);
                     return;
                 }
             }
@@ -55,8 +54,7 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 Attachment attachment = (Attachment) tuple.object;
                 if (attachment.getId() == attachmentId) {
                     tuple.downloading = false;
-                    notifyDataSetChanged();
-                    //notifyItemChanged(i);
+                    notifyItemChanged(i);
                     return;
                 }
             }
