@@ -3,7 +3,6 @@ package com.fieldnation;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
-import android.app.PendingIntent;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +24,7 @@ import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
@@ -87,7 +87,6 @@ public class App extends Application {
     private static App _context;
 
     private Profile _profile;
-    private GlobalTopicClient _globalTopicClient;
     private ProfileClient _profileClient;
     private int _memoryClass;
     private Typeface _iconFont;
@@ -214,8 +213,9 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalTopicClient.connect(this);
+        _globalTopicClient.subProfileInvalid();
+        _globalTopicClient.subNetworkConnect();
+        _globalTopicClient.subNetworkState();
 
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(this);
@@ -282,7 +282,9 @@ public class App extends Application {
     public void onTerminate() {
         MemoryCache.purgeNodes();
         if (_profileClient != null) _profileClient.disconnect(this);
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(this);
+        _globalTopicClient.unsubProfileInvalid();
+        _globalTopicClient.unsubNetworkConnect();
+        _globalTopicClient.unsubNetworkState();
         _authClient.unsubAuthStateChange();
         super.onTerminate();
         _context = null;
@@ -399,14 +401,7 @@ public class App extends Application {
         return _isConnected;
     }
 
-    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subProfileInvalid(App.this);
-            _globalTopicClient.subNetworkConnect();
-            _globalTopicClient.subNetworkState();
-        }
-
+    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
         @Override
         public void onProfileInvalid() {
             ProfileClient.get(App.this);
@@ -434,11 +429,12 @@ public class App extends Application {
         public void onNetworkDisconnected() {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
-            Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
-            if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.this, App.secureRandom.nextInt(), intent, 0);
-                ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            }
+            ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    GlobalTopicClient.networkConnect();
+                }
+            }, Snackbar.LENGTH_INDEFINITE);
         }
     };
 
@@ -474,10 +470,10 @@ public class App extends Application {
                     deviceToken = null;
                 }
 
-                GlobalTopicClient.gotProfile(App.this, profile);
+                GlobalTopicClient.gotProfile(profile);
 
                 if (_switchingUser) {
-                    GlobalTopicClient.userSwitched(App.this, profile);
+                    GlobalTopicClient.userSwitched(profile);
                     _switchingUser = false;
                 }
 

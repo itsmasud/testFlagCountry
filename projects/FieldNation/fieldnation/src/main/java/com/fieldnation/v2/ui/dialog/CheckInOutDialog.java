@@ -1,6 +1,5 @@
 package com.fieldnation.v2.ui.dialog;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -23,6 +22,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -243,9 +243,13 @@ public class CheckInOutDialog extends FullScreenDialog {
             return;
 
         if (!App.get().isLocationEnabled()) {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
-            ToastClient.snackbar(App.get(), getView().getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+            ToastClient.snackbar(App.get(), getView().getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                }
+            }, Snackbar.LENGTH_INDEFINITE);
         }
 
         if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {

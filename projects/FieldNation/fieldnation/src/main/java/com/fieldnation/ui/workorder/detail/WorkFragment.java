@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,6 +30,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -682,9 +682,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onMyWay() {
             if (!App.get().isLocationEnabled()) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
             }
 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);

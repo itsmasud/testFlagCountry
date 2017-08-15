@@ -48,9 +48,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_NOT_PROVIDER = TAG_BASE + ".notProviderDialog";
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
 
-    // Services
-    private GlobalTopicClient _globalClient;
-
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
@@ -126,8 +123,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         startService(new Intent(this, WebCrawlerService.class));
 
         _authClient.subNeedUsernameAndPassword();
-        _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(App.get());
+
+        _globalClient.subGotProfile();
+        _globalClient.subUpdateApp();
+        _globalClient.subAppShutdown();
+        _globalClient.subProfileInvalid();
+        ProfileClient.get(App.get());
+
         _activityRequestHandler.sub();
 
         DialogManager dialogManager = getDialogManager();
@@ -142,7 +144,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        if (_globalClient != null) _globalClient.disconnect(App.get());
+        _globalClient.unsubGotProfile();
+        _globalClient.unsubUpdateApp();
+        _globalClient.unsubAppShutdown();
+        _globalClient.unsubProfileInvalid();
+
         _authClient.unsubNeedUsernameAndPassword();
         _toastClient.unSubToast();
         _toastClient.unSubSnackbar();
@@ -349,20 +355,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalClient.subGotProfile();
-            _globalClient.subUpdateApp();
-            _globalClient.subAppShutdown();
-            _globalClient.subProfileInvalid(App.get());
-            ProfileClient.get(App.get());
-        }
-
+    private final GlobalTopicClient _globalClient = new GlobalTopicClient() {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile();
+            AuthSimpleActivity.this.gotProfile();
         }
 
         @Override

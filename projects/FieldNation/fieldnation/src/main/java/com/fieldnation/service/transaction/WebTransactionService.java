@@ -9,7 +9,6 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
@@ -29,7 +28,6 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     private static final Object AUTH_LOCK = new Object();
 
     private OAuth _auth;
-    private GlobalTopicClient _globalTopicClient;
     private ThreadManager _manager;
 
     @Override
@@ -49,8 +47,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         _authClient.subAuthStateChange();
         AuthClient.requestCommand();
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalTopicClient.connect(ContextProvider.get());
+        _globalTopicClient.subNetworkConnect();
 
         _manager = new ThreadManager();
         TransactionThread t = new TransactionThread(_manager, this, false);
@@ -80,7 +77,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         Log.v(TAG, "onDestroy");
         _authClient.unsubAuthStateChange();
 
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(ContextProvider.get());
+        _globalTopicClient.unsubNetworkConnect();
 
         _manager.shutdown();
         super.onDestroy();
@@ -108,12 +105,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         return 1;
     }
 
-    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subNetworkConnect();
-        }
-
+    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
         @Override
         public void onNetworkConnect() {
             _manager.wakeUp();

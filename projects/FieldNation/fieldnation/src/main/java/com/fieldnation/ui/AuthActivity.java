@@ -73,9 +73,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     // animation
     private Animation _fadeout;
 
-    // Services
-    private GlobalTopicClient _globalClient;
-
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -155,8 +152,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(App.get());
+        _globalClient.subUpdateApp();
         _activityRequestHandler.sub();
 
         _dialogManager.onResume();
@@ -166,7 +162,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
 
-        if (_globalClient != null) _globalClient.disconnect(App.get());
+        _globalClient.unsubUpdateApp();
         _activityRequestHandler.unsub();
         _dialogManager.onPause();
 
@@ -196,7 +192,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             return;
         }
 
-        GlobalTopicClient.appShutdown(this);
+        GlobalTopicClient.appShutdown();
 
         super.onBackPressed();
     }
@@ -215,13 +211,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalClient.subUpdateApp();
-            _globalClient.subGotProfile();
-        }
-
+    private final GlobalTopicClient _globalClient = new GlobalTopicClient() {
         @Override
         public void onNeedAppUpdate() {
             UpdateDialog.show(App.get());
@@ -287,7 +277,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
 
-                        GlobalTopicClient.networkConnected(AuthActivity.this);
+                        GlobalTopicClient.networkConnected();
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
@@ -300,7 +290,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 protected void onPostExecute(OAuth auth) {
                     if (auth == null) {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        GlobalTopicClient.networkDisconnected(AuthActivity.this);
+                        GlobalTopicClient.networkDisconnected();
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                         _stiltView.setVisibility(View.VISIBLE);
@@ -310,7 +300,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     String error = auth.getErrorType();
 
                     if ("invalid_client".equals(error)) {
-                        GlobalTopicClient.updateApp(AuthActivity.this);
+                        GlobalTopicClient.updateApp();
                     } else if (authToken != null) {
                         Log.v(TAG, "have authtoken");
                         Account account = new Account(_username, getString(R.string.auth_account_type));

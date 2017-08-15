@@ -11,10 +11,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimatorListener;
 import com.fieldnation.fntools.UniqueTag;
 
@@ -38,9 +36,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     private Animation _rotateRevAnim;
     private int _state;
     private Listener _listener;
-
-    // Data
-    private GlobalTopicClient _globalClient;
 
     private boolean _completeWhenAble = false;
 
@@ -72,15 +67,13 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         _rotateAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_cw);
         _rotateRevAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_ccw);
 
-        _globalClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalClient.connect(App.get());
-
+        _globalClient.subLoading();
         _state = STATE_IDLE;
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalClient != null) _globalClient.disconnect(App.get());
+        _globalClient.unsubLoading();
 
         super.onDetachedFromWindow();
     }
@@ -277,15 +270,9 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         refreshComplete();
     }
 
-    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
-
+    private final GlobalTopicClient _globalClient = new GlobalTopicClient() {
         @Override
-        public void onConnected() {
-            _globalClient.subLoading();
-        }
-
-        @Override
-        public void setLoading(boolean isLoading) {
+        public void onSetLoading(boolean isLoading) {
             //Log.v(TAG, "setLoading()");
             if (isLoading) {
                 startRefreshing();

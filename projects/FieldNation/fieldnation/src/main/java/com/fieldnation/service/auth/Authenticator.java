@@ -55,7 +55,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
         try {
             if (auth == null) {
                 auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
-                GlobalTopicClient.networkConnected(_context);
+                GlobalTopicClient.networkConnected();
             }
 
         } catch (Exception ex) {

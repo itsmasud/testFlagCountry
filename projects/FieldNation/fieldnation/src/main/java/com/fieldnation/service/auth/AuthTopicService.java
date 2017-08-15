@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
@@ -33,7 +32,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private Account _account = null;
     private OAuth _authToken = null;
     private AuthState _state = null;
-    private GlobalTopicClient _globalTopicClient;
 
     // Services
     private AccountManager _accountManager;
@@ -59,8 +57,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         _authClient.subRequestCommand();
         _authClient.subAccountAddedCommand();
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClientListener);
-        _globalTopicClient.connect(App.get());
+        _globalTopicClient.subAppShutdown();
 
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
@@ -86,7 +83,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         _authClient.unsubRequestCommand();
         _authClient.unsubAccountAddedCommand();
 
-        _globalTopicClient.disconnect(App.get());
+        _globalTopicClient.unsubAppShutdown();
         //setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
@@ -107,13 +104,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     }
 
-    private final GlobalTopicClient.Listener _globalTopicClientListener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "GlobalTopicClient.onConnected");
-            _globalTopicClient.subAppShutdown();
-        }
-
+    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
         @Override
         public void onShutdown() {
             Log.v(TAG, "GlobalTopicClient.onShutdown");
@@ -224,7 +215,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-*********************************-*/
     private void onAppIsOld() {
         Log.v(TAG, "onAppIsOld");
-        GlobalTopicClient.updateApp(this);
+        GlobalTopicClient.updateApp();
     }
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {

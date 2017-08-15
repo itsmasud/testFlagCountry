@@ -26,9 +26,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     private ViewStub _switchUserOverlayViewStub;
     private SwitchUserOverlayView _switchUserOverlay = null;
 
-    // Services
-    private GlobalTopicClient _globalTopicClient;
-
     @Override
     public int getLayoutResource() {
         return R.layout.activity_additional_options;
@@ -66,15 +63,13 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _globalTopicClient = new GlobalTopicClient(_profileSwitchListener);
-        _globalTopicClient.connect(App.get());
+        _globalTopicClient.subUserSwitched();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        _globalTopicClient.unsubUserSwitched();
     }
 
     private final AdditionalOptionsScreen.Listener _screen_listener = new AdditionalOptionsScreen.Listener() {
@@ -88,12 +83,7 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         }
     };
 
-    private final GlobalTopicClient.ProfileSwitchListener _profileSwitchListener = new GlobalTopicClient.ProfileSwitchListener() {
-        @Override
-        public GlobalTopicClient getGlobalTopicClient() {
-            return _globalTopicClient;
-        }
-
+    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             //startNew(App.get());

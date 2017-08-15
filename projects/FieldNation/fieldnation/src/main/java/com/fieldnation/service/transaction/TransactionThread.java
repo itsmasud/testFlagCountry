@@ -114,11 +114,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
             Log.v(TAG, "Testing connection");
             try {
                 HttpJson.run(_service, TEST_QUERY);
-                GlobalTopicClient.networkConnected(_service);
+                GlobalTopicClient.networkConnected();
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
                 Log.v(TAG, "Testing connection... failed!");
-                GlobalTopicClient.networkDisconnected(_service);
+                GlobalTopicClient.networkDisconnected();
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ex) {

@@ -1,6 +1,5 @@
 package com.fieldnation.v2.ui.dialog;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +20,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
@@ -162,7 +162,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
             outState.putParcelable("selectedFolder", _selectedFolder);
         if (_selectedAttachment != null)
             outState.putParcelable("selectedAttachment", _selectedAttachment);
-        
+
         super.onSaveDialogState(outState);
     }
 
@@ -305,14 +305,18 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);
 
-                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    final Intent folderIntent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
-                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityClient.startActivity(folderIntent);
+                            }
+                        }, Snackbar.LENGTH_LONG);
                     } else {
                         ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
                     }

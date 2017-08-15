@@ -256,7 +256,7 @@ public class DeclineDialog extends FullScreenDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
+                    GlobalTopicClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
@@ -269,7 +269,7 @@ public class DeclineDialog extends FullScreenDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
+                    GlobalTopicClient.finishActivity();
                 }
             } else {
                 if (_declinePosition == -1) {
@@ -278,15 +278,14 @@ public class DeclineDialog extends FullScreenDialog {
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
+                    GlobalTopicClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
-
+                    GlobalTopicClient.finishActivity();
                 }
             }
             dismiss(true);

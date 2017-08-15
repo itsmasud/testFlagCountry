@@ -38,7 +38,6 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private SavedList[] _list;
 
     private WorkordersWebApi _workOrderClient;
-    private GlobalTopicClient _globalTopicClient;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -73,14 +72,13 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         _workOrdersApi.sub();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
+        _globalTopicClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _workOrdersApi.unsub();
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        _globalTopicClient.unsubUserSwitched();
 
         super.onDetachedFromWindow();
     }
@@ -213,12 +211,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subUserSwitched();
-        }
-
+    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             WorkordersWebApi.getWorkOrderLists(App.get(), false, false);

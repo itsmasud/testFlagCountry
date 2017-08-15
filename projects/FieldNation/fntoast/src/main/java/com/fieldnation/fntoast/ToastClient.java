@@ -1,9 +1,7 @@
 package com.fieldnation.fntoast;
 
 import android.app.Activity;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -19,8 +17,10 @@ import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fntools.UniqueTag;
 
 import java.security.SecureRandom;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Michael Carver on 7/17/2015.
@@ -54,8 +54,8 @@ public abstract class ToastClient extends Pigeon {
         snackbar(context, id, context.getString(titleResId), duration);
     }
 
-    public static void snackbar(Context context, long id, int titleResId, int buttonTextResId, PendingIntent buttonIntent, int duration) {
-        snackbar(context, id, context.getString(titleResId), context.getString(buttonTextResId), buttonIntent, duration);
+    public static void snackbar(Context context, long id, int titleResId, int buttonTextResId, View.OnClickListener buttonListener, int duration) {
+        snackbar(context, id, context.getString(titleResId), context.getString(buttonTextResId), buttonListener, duration);
     }
 
     public static void snackbar(Context context, String title, int duration) {
@@ -66,22 +66,22 @@ public abstract class ToastClient extends Pigeon {
         snackbar(context, 0, context.getString(titleResId), duration);
     }
 
-    public static void snackbar(Context context, int titleResId, int buttonTextResId, PendingIntent buttonIntent, int duration) {
-        snackbar(context, 0, context.getString(titleResId), context.getString(buttonTextResId), buttonIntent, duration);
+    public static void snackbar(Context context, int titleResId, int buttonTextResId, View.OnClickListener buttonListener, int duration) {
+        snackbar(context, 0, context.getString(titleResId), context.getString(buttonTextResId), buttonListener, duration);
     }
 
-    public static void snackbar(Context context, String title, String buttonText, PendingIntent buttonIntent, int duration) {
-        snackbar(context, 0, title, buttonText, buttonIntent, duration);
+    public static void snackbar(Context context, String title, String buttonText, View.OnClickListener buttonListener, int duration) {
+        snackbar(context, 0, title, buttonText, buttonListener, duration);
     }
 
-    public static void snackbar(Context context, long id, String title, String buttonText, PendingIntent buttonIntent, int duration) {
-        Bundle message = new Bundle();
-        message.putString(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
-        message.putString(PARAM_TITLE, title);
-        message.putInt(PARAM_DURATION, duration);
-        message.putString(PARAM_BUTTON_TEXT, buttonText);
-        message.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
-        message.putLong(PARAM_MESSAGE_ID, id);
+    public static void snackbar(Context context, long id, String title, String buttonText, View.OnClickListener buttonListener, int duration) {
+        Map<String, Object> message = new Hashtable<>();
+        message.put(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
+        message.put(PARAM_TITLE, title);
+        message.put(PARAM_DURATION, duration);
+        message.put(PARAM_BUTTON_TEXT, buttonText);
+        message.put(PARAM_BUTTON_INTENT, buttonListener);
+        message.put(PARAM_MESSAGE_ID, id);
 
         PigeonRoost.sendMessage(ADDRESS_SNACKBAR, message, Sticky.NONE);
     }
@@ -136,14 +136,17 @@ public abstract class ToastClient extends Pigeon {
 
         switch (address) {
             case ADDRESS_SNACKBAR:
-                String action = ((Bundle) message).getString(PARAM_ACTION);
-                switch (action) {
-                    case PARAM_ACTION_DISMISS_SNACKBAR:
-                        dismissSnackBar(((Bundle) message).getLong(PARAM_MESSAGE_ID));
-                        break;
-                    default:
-                        preShowSnackBar((Bundle) message);
-                        break;
+                if (message instanceof Map) {
+                    preShowSnackBar((Map<String, Object>) message);
+                } else if (message instanceof Bundle) {
+                    String action = ((Bundle) message).getString(PARAM_ACTION);
+                    switch (action) {
+                        case PARAM_ACTION_DISMISS_SNACKBAR:
+                            dismissSnackBar(((Bundle) message).getLong(PARAM_MESSAGE_ID));
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 break;
             case ADDRESS_TOAST:
@@ -152,12 +155,12 @@ public abstract class ToastClient extends Pigeon {
         }
     }
 
-    private void preShowSnackBar(Bundle bundle) {
-        showSnackBar(bundle.getLong(PARAM_MESSAGE_ID),
-                bundle.getString(PARAM_TITLE),
-                bundle.getString(PARAM_BUTTON_TEXT),
-                (PendingIntent) bundle.getParcelable(PARAM_BUTTON_INTENT),
-                bundle.getInt(PARAM_DURATION));
+    private void preShowSnackBar(Map<String, Object> message) {
+        showSnackBar((Long) message.get(PARAM_MESSAGE_ID),
+                (String) message.get(PARAM_TITLE),
+                (String) message.get(PARAM_BUTTON_TEXT),
+                (View.OnClickListener) message.get(PARAM_BUTTON_INTENT),
+                (Integer) message.get(PARAM_DURATION));
     }
 
     public abstract int getSnackbarTextId();
@@ -186,7 +189,7 @@ public abstract class ToastClient extends Pigeon {
         return selected;
     }
 
-    public void showSnackBar(long id, String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+    public void showSnackBar(long id, String title, String buttonText, final View.OnClickListener buttonListener, int duration) {
         Log.v(TAG, "showSnackBar(" + title + ")");
 
         if (id > 0 && id == _lastId)
@@ -214,12 +217,8 @@ public abstract class ToastClient extends Pigeon {
                     _lastId = 0;
                 }
 
-                if (buttonIntent != null) {
-                    try {
-                        buttonIntent.send(getActivity(), _random.nextInt(), new Intent());
-                    } catch (PendingIntent.CanceledException e) {
-                        Log.v(TAG, e);
-                    }
+                if (buttonListener != null) {
+                    buttonListener.onClick(v);
                 }
             }
         });

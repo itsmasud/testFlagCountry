@@ -147,7 +147,7 @@ public abstract class WebTransactionListener {
                 return Result.DELETE;
 
             } else if (throwable instanceof UnknownHostException) {
-                GlobalTopicClient.networkDisconnected(context);
+                GlobalTopicClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof SecurityException) {
@@ -157,29 +157,29 @@ public abstract class WebTransactionListener {
                     || throwable instanceof ConnectException
                     || throwable instanceof SocketTimeoutException
                     || throwable instanceof EOFException) {
-                GlobalTopicClient.networkDisconnected(context);
+                GlobalTopicClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof SSLException) {
                 if (throwable.getMessage().contains("Broken pipe")) {
                     Log.v(TAG, "6");
-                    GlobalTopicClient.networkDisconnected(context);
+                    GlobalTopicClient.networkDisconnected();
                     return Result.RETRY;
 
                 } else {
                     Log.v(TAG, "7");
-                    GlobalTopicClient.networkDisconnected(context);
+                    GlobalTopicClient.networkDisconnected();
                     return Result.RETRY;
                 }
             } else if (throwable instanceof IOException) {
-                GlobalTopicClient.networkDisconnected(context);
+                GlobalTopicClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof Exception) {
                 Log.v(TAG, "9");
                 Log.v(TAG, throwable);
                 if (throwable.getMessage() != null && throwable.getMessage().contains("ETIMEDOUT")) {
-                    GlobalTopicClient.networkDisconnected(context);
+                    GlobalTopicClient.networkDisconnected();
                     return Result.RETRY;
 
                 } else {

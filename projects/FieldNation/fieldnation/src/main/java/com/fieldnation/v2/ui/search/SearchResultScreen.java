@@ -48,7 +48,6 @@ public class SearchResultScreen extends RelativeLayout {
 
     // Service
     private SimpleGps _simpleGps;
-    private GlobalTopicClient _globalTopicClient;
 
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
@@ -113,13 +112,12 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderApi.sub();
         _adapter.refreshAll();
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
+        _globalTopicClient.subUserSwitched();
     }
 
     public void onPause() {
         _workOrderApi.unsub();
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        _globalTopicClient.unsubUserSwitched();
     }
 
     @Override
@@ -264,12 +262,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subUserSwitched();
-        }
-
+    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             _adapter.refreshAll();
