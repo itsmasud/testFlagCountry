@@ -57,6 +57,7 @@ public class SearchResultScreen extends RelativeLayout {
     private Location _location;
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
+    private ListEnvelope _envelope = null;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -160,12 +161,16 @@ public class SearchResultScreen extends RelativeLayout {
         if (_workOrdersOptions == null)
             return;
 
-        _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
+        if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
+            _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
 
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
-        if (_refreshView != null)
-            _refreshView.startRefreshing();
+            if (_refreshView != null)
+                _refreshView.startRefreshing();
+        } else {
+            _refreshView.refreshComplete();
+        }
     }
 
     public void startSearch(SavedList savedList) {
@@ -230,6 +235,7 @@ public class SearchResultScreen extends RelativeLayout {
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
                 ListEnvelope envelope = workOrders.getMetadata();
+                _envelope = envelope;
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();
