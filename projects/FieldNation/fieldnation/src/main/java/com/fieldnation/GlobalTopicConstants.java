@@ -12,7 +12,6 @@ public interface GlobalTopicConstants {
     String TOPIC_ID_NETWORK_STATE = "GlobalTopicConstants:TOPIC_ID_NETWORK_STATE";
     String TOPIC_ID_NETWORK_COMMAND_CONNECT = "GlobalTopicConstants:TOPIC_ID_NETWORK_COMMAND_CONNECT";
     String TOPIC_ID_GCM_MESSAGE = "GlobalTopicConstants:TOPIC_ID_GCM_MESSAGE";
-    String TOPIC_ID_SHOW_CONTACT_US = "GlobalTopicConstants:TOPIC_ID_SHOW_CONTACT_US";
     String TOPIC_ID_USER_SWITCHED = "GlobalTopicConstants:TOPIC_ID_USER_SWITCHED";
     String TOPIC_ID_SHOW_LOADING = "GlobalTopicConstants:TOPIC_ID_SHOW_LOADING";
 

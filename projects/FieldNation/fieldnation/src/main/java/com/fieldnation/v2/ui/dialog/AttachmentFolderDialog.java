@@ -8,10 +8,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +29,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -55,7 +57,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     // Ui
     private Toolbar _toolbar;
-    private RecyclerView _list;
+    private OverScrollRecyclerView _list;
 
     // Services
     private DocumentClient _docClient;
@@ -77,26 +79,30 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_attachment_folder, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setTitle("Attachments");
+        _toolbar.setTitle("Attached Files");
 
         _list = v.findViewById(R.id.list);
-        _list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        _list.setItemAnimator(new DefaultItemAnimator());
+        _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         return v;
     }
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
     }
 
     @Override
     public void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
 
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
@@ -111,6 +117,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
+        Log.v(TAG, "show");
         super.show(payload, animate);
         folders = payload.getParcelable("folders");
         _workOrderId = payload.getInt("workOrderId");
@@ -121,7 +128,24 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onRestoreDialogState");
+        if (savedState.containsKey("folders")) {
+            folders = savedState.getParcelable("folders");
+            adapter.setAttachments(folders);
+        }
+        if (savedState.containsKey("selectedFolder"))
+            _selectedFolder = savedState.getParcelable("selectedFolder");
+        if (savedState.containsKey("selectedAttachment"))
+            _selectedAttachment = savedState.getParcelable("selectedAttachment");
+
+
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
     public void onPause() {
+        Log.v(TAG, "onPause");
         if (_docClient != null) _docClient.disconnect(App.get());
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
@@ -129,6 +153,18 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
         super.onPause();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveDialogState");
+        outState.putParcelable("folders", folders);
+        if (_selectedFolder != null)
+            outState.putParcelable("selectedFolder", _selectedFolder);
+        if (_selectedAttachment != null)
+            outState.putParcelable("selectedAttachment", _selectedAttachment);
+        
+        super.onSaveDialogState(outState);
     }
 
     // Utils
@@ -158,6 +194,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     private final AttachmentFoldersAdapter.Listener _attachmentFolder_listener = new AttachmentFoldersAdapter.Listener() {
         @Override
         public void onShowAttachment(Attachment attachment) {
+            Log.v(TAG, "AttachmentFoldersAdapter.onShowAttachment");
             if (attachment.getFile().getType().equals(com.fieldnation.v2.data.model.File.TypeEnum.LINK)) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(attachment.getFile().getLink()));
                 getContext().startActivity(intent);
@@ -170,16 +207,18 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onDeleteAttachment(Attachment attachment) {
+            Log.v(TAG, "AttachmentFoldersAdapter.onDeleteAttachment");
             _selectedAttachment = attachment;
             TwoButtonDialog.show(App.get(), DIALOG_YES_NO,
                     getView().getResources().getString(R.string.delete_file),
                     getView().getResources().getString(R.string.dialog_delete_message),
                     getView().getResources().getString(R.string.btn_yes),
-                    getView().getResources().getString(R.string.btn_no), false, null);
+                    getView().getResources().getString(R.string.btn_no), true, null);
         }
 
         @Override
         public void onAdd(AttachmentFolder attachmentFolder) {
+            Log.v(TAG, "AttachmentFoldersAdapter.onAdd");
             if (checkMedia()) {
                 // start of the upload process
                 _selectedFolder = attachmentFolder;
@@ -204,6 +243,8 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
         public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "GetFileDialog.onFile");
+
             if (fileResult.size() == 0)
                 return;
 
@@ -232,7 +273,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
-        public void onPrimary() {
+        public void onPrimary(Parcelable extraData) {
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _selectedAttachment.getFolderId(),
                     _selectedAttachment.getId(), App.get().getSpUiContext());
         }
@@ -246,6 +287,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onDownload(long documentId, final File file, int state) {
+            Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
                     ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
@@ -297,9 +339,11 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onQueued(TransactionParams transactionParams, String methodName) {
+            Log.v(TAG, "WorkordersWebApi.onQueued");
+
             if (!methodName.equals("addAttachment"))
                 return;
-            Log.v(TAG, "onQueued");
+
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
@@ -312,9 +356,10 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onStart(TransactionParams transactionParams, String methodName) {
+            Log.v(TAG, "WorkordersWebApi.onStart");
             if (!methodName.equals("addAttachment"))
                 return;
-            Log.v(TAG, "onStart");
+
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
@@ -327,9 +372,10 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onPaused(TransactionParams transactionParams, String methodName) {
+            Log.v(TAG, "WorkordersWebApi.onPaused");
             if (!methodName.equals("addAttachment"))
                 return;
-            Log.v(TAG, "onPaused");
+
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
@@ -342,10 +388,10 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            Log.v(TAG, "WorkordersWebApi.onProgress");
             if (!methodName.equals("addAttachment"))
                 return;
 
-            Log.v(TAG, "onProgress");
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
@@ -361,8 +407,8 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "WorkordersWebApi.onComplete");
             if (methodName.equals("addAttachment")) {
-                Log.v(TAG, "onComplete");
                 try {
                     JsonObject obj = new JsonObject(transactionParams.methodParams);
                     String name = obj.getString("attachment.file.name");

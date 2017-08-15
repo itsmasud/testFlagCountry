@@ -95,7 +95,7 @@ public class TwoButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        _onCanceledDispatcher.dispatch(getUid());
+        _onCanceledDispatcher.dispatch(getUid(), getExtraData());
         super.cancel();
 
         if (onCancel())
@@ -105,7 +105,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _primary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onPrimaryDispatcher.dispatch(getUid());
+            _onPrimaryDispatcher.dispatch(getUid(), getExtraData());
             if (onPrimaryClick())
                 dismiss(true);
         }
@@ -114,7 +114,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _secondary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onSecondaryDispatcher.dispatch(getUid());
+            _onSecondaryDispatcher.dispatch(getUid(), getExtraData());
             if (onSecondaryClick())
                 dismiss(true);
         }
@@ -180,13 +180,13 @@ public class TwoButtonDialog extends SimpleDialog {
     /*-         Primary Listener           -*/
     /*-************************************-*/
     public interface OnPrimaryListener {
-        void onPrimary();
+        void onPrimary(Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnPrimaryListener> _onPrimaryDispatcher = new KeyedDispatcher<OnPrimaryListener>() {
         @Override
         public void onDispatch(OnPrimaryListener listener, Object... parameters) {
-            listener.onPrimary();
+            listener.onPrimary((Parcelable) parameters[0]);
         }
     };
 
@@ -202,17 +202,17 @@ public class TwoButtonDialog extends SimpleDialog {
         _onPrimaryDispatcher.removeAll(uid);
     }
 
-    /*-************************************-*/
+    /*-**************************************-*/
     /*-         Secondary Listener           -*/
-    /*-************************************-*/
+    /*-**************************************-*/
     public interface OnSecondaryListener {
-        void onSecondary();
+        void onSecondary(Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnSecondaryListener> _onSecondaryDispatcher = new KeyedDispatcher<OnSecondaryListener>() {
         @Override
         public void onDispatch(OnSecondaryListener listener, Object... parameters) {
-            listener.onSecondary();
+            listener.onSecondary((Parcelable) parameters[0]);
         }
     };
 
@@ -232,13 +232,13 @@ public class TwoButtonDialog extends SimpleDialog {
     /*-         Canceled Listener           -*/
     /*-*************************************-*/
     public interface OnCanceledListener {
-        void onCanceled();
+        void onCanceled(Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
         @Override
         public void onDispatch(OnCanceledListener listener, Object... parameters) {
-            listener.onCanceled();
+            listener.onCanceled((Parcelable) parameters[0]);
         }
     };
 

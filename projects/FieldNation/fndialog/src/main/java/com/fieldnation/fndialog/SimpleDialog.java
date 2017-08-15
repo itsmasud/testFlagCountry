@@ -36,6 +36,7 @@ public abstract class SimpleDialog implements Dialog {
 
     // Data
     private String _uid;
+    private Bundle _savedState;
 
     public SimpleDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -79,6 +80,16 @@ public abstract class SimpleDialog implements Dialog {
     }
 
     public abstract View onCreateView(LayoutInflater inflater, Context context, ViewGroup container);
+
+    @Override
+    public void setSavedState(Bundle savedState) {
+        _savedState = savedState;
+    }
+
+    @Override
+    public Bundle getSavedState() {
+        return _savedState;
+    }
 
     @Override
     public void onStart() {

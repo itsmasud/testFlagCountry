@@ -112,7 +112,6 @@ public class RateBuyerDialog extends FullScreenDialog {
         _otherThoughtsEditText.addTextChangedListener(_textEditText_watcherListener);
         _submitButton.setOnClickListener(_submit_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
-
     }
 
     @Override
@@ -123,9 +122,7 @@ public class RateBuyerDialog extends FullScreenDialog {
         if (_clear) {
             _otherThoughtsEditText.setText("");
         } else {
-
             _rateStarView.setStars(_goldStar);
-
             if (_hasSelectedScopeRating != null) {
                 if (_hasSelectedScopeRating) {
                     _expectationNoTextView.setBackgroundResource(R.drawable.circle_dark_gray);

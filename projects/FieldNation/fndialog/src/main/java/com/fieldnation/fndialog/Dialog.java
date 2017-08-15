@@ -25,6 +25,10 @@ public interface Dialog {
      * public OneButtonDialog(Context context, ViewGroup container) {
      */
 
+    void setSavedState(Bundle savedState);
+
+    Bundle getSavedState();
+
     /**
      * Called when the containing activity has been started
      */

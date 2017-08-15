@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
@@ -145,35 +146,40 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
         Tuple t;
         AttachmentFolder[] attachmentFolders = folders.getResults();
         for (AttachmentFolder attachmentFolder : attachmentFolders) {
-            t = new Tuple();
-            t.type = AttachedFilesViewHolder.TYPE_HEADER;
-            t.object = attachmentFolder;
-            objects.add(t);
-
-            //Add uploads
-            for (UploadTuple ut : uploads) {
-                if (ut.folderId == attachmentFolder.getId()) {
-                    t = new Tuple();
-                    t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
-                    t.object = ut;
-                    objects.add(t);
-                }
-            }
-
-            Attachment[] attachments = attachmentFolder.getResults();
-            for (Attachment attachment : attachments) {
-                // check if downloading...
+            if (attachmentFolder.getResults().length > 0
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
                 t = new Tuple();
-                t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
-                t.object = attachment;
-                objects.add(t);
-            }
-
-            if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
-                t = new Tuple();
-                t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
+                t.type = AttachedFilesViewHolder.TYPE_HEADER;
                 t.object = attachmentFolder;
                 objects.add(t);
+
+                //Add uploads
+                for (UploadTuple ut : uploads) {
+                    if (ut.folderId == attachmentFolder.getId()) {
+                        t = new Tuple();
+                        t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
+                        t.object = ut;
+                        objects.add(t);
+                    }
+                }
+
+                Attachment[] attachments = attachmentFolder.getResults();
+                for (Attachment attachment : attachments) {
+                    // check if downloading...
+                    t = new Tuple();
+                    t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
+                    t.object = attachment;
+                    objects.add(t);
+                }
+
+                if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
+                    t = new Tuple();
+                    t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
+                    t.object = attachmentFolder;
+                    objects.add(t);
+                }
             }
         }
     }
@@ -222,10 +228,7 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
             case AttachedFilesViewHolder.TYPE_HEADER: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 AttachmentFolder af = (AttachmentFolder) objects.get(position).object;
-                if (af.getType().equals(AttachmentFolder.TypeEnum.DOCUMENT))
-                    view.setTitle("Documents to Review");
-                else
-                    view.setTitle(af.getName());
+                view.setTitle(af.getName());
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ATTACHMENT: {
@@ -274,6 +277,7 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
     private final View.OnLongClickListener _attachment_onLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
+            Log.v(TAG, "AttachmentFoldersAdapters");
             ListItemTwoVertView v = (ListItemTwoVertView) view;
             Attachment a = (Attachment) v.getTag();
             if (a.getActionsSet().contains(Attachment.ActionsEnum.DELETE) && _listener != null) {

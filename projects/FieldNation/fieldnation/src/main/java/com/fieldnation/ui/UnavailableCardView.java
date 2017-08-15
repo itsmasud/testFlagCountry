@@ -10,12 +10,12 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 
 /**
  * Created by Michael Carver on 6/24/2015.
@@ -220,7 +220,7 @@ public class UnavailableCardView extends FrameLayout {
 
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.showContactUsDialog(getContext(), "UnavailableCardView");
+            ContactUsDialog.show(getContext(), null, "UnavailableCardView");
         }
     };
 

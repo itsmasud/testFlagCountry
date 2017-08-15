@@ -13,11 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 
 /**
  * Created by Michael Carver on 5/21/2015.
@@ -143,7 +143,7 @@ public class RateMeView extends RelativeLayout {
                                     .action("Feedback")
                                     .build());
                     if (_listener != null) {
-                        GlobalTopicClient.showContactUsDialog(getContext(), "RateMeCard");
+                        ContactUsDialog.show(getContext(), null, "RateMeCard");
                         _listener.onHide();
                     }
                     break;

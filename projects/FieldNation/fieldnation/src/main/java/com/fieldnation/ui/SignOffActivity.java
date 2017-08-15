@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 import android.view.Window;
 
 import com.fieldnation.App;
@@ -16,8 +16,6 @@ import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
@@ -50,10 +48,10 @@ public class SignOffActivity extends AuthSimpleActivity {
     public static final String INTENT_COMPLETE_WORKORDER = "SignOffActivity.INTENT_COMPLETE_WORKORDER";
 
     // Ui
-    private SignOffFragment _signOffFrag;
-    private SignatureFragment _sigFrag;
-    private ThankYouFragment _thankYouFrag;
-    private SorryFragment _sorryFrag;
+    private SignOffScreen _signOffScreen;
+    private SignatureScreen _sigScreen;
+    private ThankYouScreen _thankYouScreen;
+    private SorryScreen _sorryScreen;
 
     // Data
     private int _displayMode = DISPLAY_SUMMARY;
@@ -78,99 +76,28 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
-        Stopwatch stopwatch = new Stopwatch();
-        _signOffFrag = SignOffFragment.getInstance(getSupportFragmentManager(), TAG);
-        _signOffFrag.setListener(_signOff_listener);
-
-        _sigFrag = SignatureFragment.getInstance(getSupportFragmentManager(), TAG);
-        _sigFrag.setListener(_signature_listener);
-
-        _thankYouFrag = ThankYouFragment.getInstance(getSupportFragmentManager(), TAG);
-        _thankYouFrag.setListener(_thankyou_listener);
-
-        _sorryFrag = SorryFragment.getInstance(getSupportFragmentManager(), TAG);
-        _sorryFrag.setListener(_sorry_listener);
+        Log.v(TAG, "onFinishCreate");
+        _signOffScreen = (SignOffScreen) findViewById(R.id.signOff_screen);
+        _signOffScreen.setListener(_signOff_listener);
+        _sigScreen = (SignatureScreen) findViewById(R.id.signature_screen);
+        _sigScreen.setListener(_signature_listener);
+        _thankYouScreen = (ThankYouScreen) findViewById(R.id.thankYou_screen);
+        _thankYouScreen.setListener(_thankyou_listener);
+        _sorryScreen = (SorryScreen) findViewById(R.id.sorry_screen);
+        _sorryScreen.setListener(_sorry_listener);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            new AsyncTaskEx<Bundle, Object, Object[]>() {
-                @Override
-                protected Object[] doInBackground(Bundle... params) {
-                    Bundle extras = params[0];
-                    WorkOrder workorder = null;
-                    Integer taskId = _taskId;
-                    Boolean completeWorkorder = _completeWorkorder;
+            if (extras.containsKey(INTENT_PARAM_WORKORDER))
+                _workOrder = extras.getParcelable(INTENT_PARAM_WORKORDER);
 
-                    if (extras.containsKey(INTENT_PARAM_WORKORDER))
-                        workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+            if (extras.containsKey(INTENT_PARAM_TASK_ID))
+                _taskId = extras.getInt(INTENT_PARAM_TASK_ID);
 
-                    if (extras.containsKey(INTENT_PARAM_TASK_ID))
-                        taskId = extras.getInt(INTENT_PARAM_TASK_ID);
-
-                    if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
-                        completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
-
-                    return new Object[]{workorder, taskId, completeWorkorder};
-                }
-
-                @Override
-                protected void onPostExecute(Object[] objects) {
-                    _workOrder = (WorkOrder) objects[0];
-                    _taskId = (Integer) objects[1];
-                    _completeWorkorder = (Boolean) objects[2];
-                }
-            }.executeEx(extras);
-
-            if (savedInstanceState == null) {
-                _signOffFrag.setArguments(getIntent().getExtras());
-                getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-            }
-        } else if (savedInstanceState != null) {
-            new AsyncTaskEx<Bundle, Object, Object[]>() {
-                @Override
-                protected Object[] doInBackground(Bundle... params) {
-                    Bundle savedInstanceState = params[0];
-                    int displayMode = _displayMode;
-                    String name = _name;
-                    String signatureSvg = _signatureSvg;
-                    WorkOrder workOrder = _workOrder;
-                    Integer taskId = _taskId;
-                    Boolean completeWorkorder = _completeWorkorder;
-
-                    if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
-                        displayMode = savedInstanceState.getInt(STATE_DISPLAY_MODE);
-
-                    if (savedInstanceState.containsKey(STATE_NAME))
-                        name = savedInstanceState.getString(STATE_NAME);
-
-                    if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                        signatureSvg = savedInstanceState.getString(STATE_SIGNATURE);
-
-                    if (savedInstanceState.containsKey(STATE_WORKORDER))
-                        workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-                    if (savedInstanceState.containsKey(STATE_TASK_ID))
-                        taskId = savedInstanceState.getInt(STATE_TASK_ID);
-
-                    if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
-                        completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
-                    return new Object[]{displayMode, name, signatureSvg, workOrder, taskId, completeWorkorder};
-                }
-
-                @Override
-                protected void onPostExecute(Object[] objects) {
-                    super.onPostExecute(objects);
-                    _displayMode = (Integer) objects[0];
-                    _name = (String) objects[1];
-                    _signatureSvg = (String) objects[2];
-                    _workOrder = (WorkOrder) objects[3];
-                    _taskId = (int) objects[4];
-                    _completeWorkorder = (Boolean) objects[5];
-                }
-            }.executeEx(savedInstanceState);
+            if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
+                _completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
         }
-
-        Log.v(TAG, "onCreate time " + stopwatch.finish());
+        populateUi();
     }
 
     @Override
@@ -185,9 +112,9 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Stopwatch stopwatch = new Stopwatch();
+        Log.v(TAG, "onSaveInstanceState");
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
-        outState.putLong(STATE_TASK_ID, _taskId);
+        outState.putInt(STATE_TASK_ID, _taskId);
         outState.putBoolean(STATE_COMPLETE_WORKORDER, _completeWorkorder);
 
         if (_name != null)
@@ -200,7 +127,58 @@ public class SignOffActivity extends AuthSimpleActivity {
             outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         super.onSaveInstanceState(outState);
-        Log.v(TAG, "onSave time " + stopwatch.finish());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(TAG, "onRestoreInstanceState");
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
+            _displayMode = savedInstanceState.getInt(STATE_DISPLAY_MODE);
+
+        if (savedInstanceState.containsKey(STATE_NAME))
+            _name = savedInstanceState.getString(STATE_NAME);
+
+        if (savedInstanceState.containsKey(STATE_SIGNATURE))
+            _signatureSvg = savedInstanceState.getString(STATE_SIGNATURE);
+
+        if (savedInstanceState.containsKey(STATE_WORKORDER))
+            _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
+
+        if (savedInstanceState.containsKey(STATE_TASK_ID))
+            _taskId = savedInstanceState.getInt(STATE_TASK_ID);
+
+        if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
+            _completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
+
+        populateUi();
+    }
+
+    private void populateUi() {
+        Log.v(TAG, "populateUi");
+        _sorryScreen.setVisibility(View.GONE);
+        _signOffScreen.setVisibility(View.GONE);
+        _sigScreen.setVisibility(View.GONE);
+        _thankYouScreen.setVisibility(View.GONE);
+
+        switch (_displayMode) {
+            case DISPLAY_SIGNATURE:
+                _sigScreen.setVisibility(View.VISIBLE);
+                break;
+            case DISPLAY_SORRY:
+                _sorryScreen.setVisibility(View.VISIBLE);
+                _sorryScreen.startTimer();
+                break;
+            case DISPLAY_SUMMARY:
+                _signOffScreen.setVisibility(View.VISIBLE);
+                break;
+            case DISPLAY_THANK_YOU:
+                _thankYouScreen.setVisibility(View.VISIBLE);
+                _thankYouScreen.startTimer();
+                break;
+        }
+        _signOffScreen.setWorkOrder(_workOrder);
     }
 
     @Override
@@ -208,6 +186,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     private void sendSignature() {
+        Log.v(TAG, "sendSignature");
         try {
             Signature signature = new Signature();
             signature.name(_name);
@@ -230,60 +209,55 @@ public class SignOffActivity extends AuthSimpleActivity {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        _thankYouFrag.setUploadComplete();
     }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
+    private final SignOffScreen.Listener _signOff_listener = new SignOffScreen.Listener() {
         @Override
         public void signOffOnClick() {
+            Log.v(TAG, "SignOffScreen.signOffOnClick");
             _displayMode = DISPLAY_SIGNATURE;
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-            FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-            trans.replace(R.id.container_view, _sigFrag);
-            trans.addToBackStack(null);
-            trans.commit();
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            populateUi();
         }
 
         @Override
         public void rejectOnClick() {
+            Log.v(TAG, "SignOffScreen.rejectOnClick");
             _displayMode = DISPLAY_SORRY;
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-            trans.replace(R.id.container_view, _sorryFrag);
-            trans.addToBackStack(null);
-            trans.commit();
+            populateUi();
         }
     };
 
-    private final SignatureFragment.Listener _signature_listener = new SignatureFragment.Listener() {
+    private final SignatureScreen.Listener _signature_listener = new SignatureScreen.Listener() {
         @Override
         public void onBack() {
-            onBackPressed();
+            Log.v(TAG, "SignatureScreen.onBack");
+            _displayMode = DISPLAY_SUMMARY;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            populateUi();
         }
 
         @Override
         public void onSubmit(String name, String signatureSvg) {
+            Log.v(TAG, "SignatureScreen.onSubmit");
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureSvg = signatureSvg;
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
-            FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
-            trans.replace(R.id.container_view, _thankYouFrag);
-            trans.addToBackStack(null);
-            trans.commit();
 
             sendSignature();
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            populateUi();
         }
     };
 
-    private final ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
+    private final ThankYouScreen.Listener _thankyou_listener = new ThankYouScreen.Listener() {
         @Override
         public void onDoneClick() {
-            Log.v(TAG, "_thankyou_listener.onDone");
+            Log.v(TAG, "ThankYouScreen.onDoneClick");
             if (getParent() == null) {
                 Log.v(TAG, "no Parent");
                 setResult(RESULT_OK);
@@ -295,9 +269,10 @@ public class SignOffActivity extends AuthSimpleActivity {
         }
     };
 
-    private final SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
+    private final SorryScreen.Listener _sorry_listener = new SorryScreen.Listener() {
         @Override
         public void onDoneClick() {
+            Log.v(TAG, "SorryScreen.onDoneClick");
             if (getParent() == null) {
                 setResult(RESULT_CANCELED);
             } else {
@@ -309,9 +284,10 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     public void onBackPressed() {
+        Log.v(TAG, "onBackPressed");
         if (_displayMode == DISPLAY_SIGNATURE) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            _displayMode = DISPLAY_SUMMARY;
+            populateUi();
+            return;
         }
 
         // don't back out of thank you
