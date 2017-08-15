@@ -5,6 +5,8 @@ import android.test.ApplicationTestCase;
 
 import com.fieldnation.fnjson.annotations.Json;
 
+import java.text.ParseException;
+
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
@@ -18,6 +20,7 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         super.setUp();
 
         enum_test();
+        displayTest();
     }
 
     private enum TestEnum {
@@ -58,5 +61,11 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
         assertEquals(instance.te, TestEnum.ORD3);
 
         System.out.print(Serializer.serializeObject(instance).display());
+    }
+
+    public void displayTest() throws ParseException {
+        JsonObject obj = new JsonObject();
+        obj.put("this.is.a.test", "works!");
+        System.out.println(obj.display());
     }
 }

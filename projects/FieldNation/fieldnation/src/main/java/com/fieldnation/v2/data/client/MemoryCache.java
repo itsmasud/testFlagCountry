@@ -40,11 +40,14 @@ public class MemoryCache {
     }
 
     public static void purgeNodes() {
-        Set<Integer> keys = CACHE.keySet();
-        for (Integer key : keys) {
-            Node node = CACHE.get(key);
-            if (node.ttl < System.currentTimeMillis()) {
-                CACHE.remove(key);
+        synchronized (TAG) {
+            Set<Integer> keySet = CACHE.keySet();
+            Integer[] keys = CACHE.keySet().toArray(new Integer[keySet.size()]);
+            for (Integer key : keys) {
+                Node node = CACHE.get(key);
+                if (node.ttl < System.currentTimeMillis()) {
+                    CACHE.remove(key);
+                }
             }
         }
     }

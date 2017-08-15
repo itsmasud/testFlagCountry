@@ -18,7 +18,6 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.detail.TimeLogRowView;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskType;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -196,17 +195,23 @@ public class SignOffScreen extends RelativeLayout {
                     Task task = _tasks[i];
 
                     String display = "";
-                    if (task.getType() != null) {
-                        TaskType type = task.getType();
-                        display = type.getName();
+                    if (task.getType().getId() == 7) {
+                        display = task.getDescription();
+                    } else if (task.getType().getId() == 8) {
+                        display = "Call " + task.getPhone() + "\n" + task.getLabel();
+                    } else if (task.getType().getId() == 9) {
+                        display = "Email " + task.getEmail() + "\n" + task.getLabel();
+                    } else if (task.getType().getId() == 10) {
+                        display = "Complete Task\n" + task.getLabel();
+                    } else {
+                        if (misc.isEmptyOrNull(task.getLabel()) || task.getLabel().equals(task.getType().getName()))
+                            display = task.getType().getName();
+                        else
+                            display = task.getType().getName() + "\n" + task.getLabel();
                     }
 
                     TaskRowSimpleView v = new TaskRowSimpleView(getContext());
-                    if (misc.isEmptyOrNull(task.getDescription())) {
-                        v.setText(display);
-                    } else {
-                        v.setText(display + "\n" + task.getDescription());
-                    }
+                    v.setText(display);
                     _tasksLinearLayout.addView(v);
                 }
 
