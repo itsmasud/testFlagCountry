@@ -117,7 +117,8 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             setAuth(oauth);
-            _manager.wakeUp();
+            if (_manager != null)
+                _manager.wakeUp();
         }
 
         @Override

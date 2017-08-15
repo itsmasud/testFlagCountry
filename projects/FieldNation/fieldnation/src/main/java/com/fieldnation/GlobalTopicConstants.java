@@ -4,16 +4,16 @@ package com.fieldnation;
  * Created by Michael Carver on 5/20/2015.
  */
 public interface GlobalTopicConstants {
-    String TOPIC_ID_APP_UPDATE = "GlobalTopicConstants:TOPIC_ID_APP_UPDATE";
-    String TOPIC_ID_GOT_PROFILE = "GlobalTopicConstants:TOPIC_ID_GOT_PROFILE";
-    String TOPIC_ID_PROFILE_INVALID = "GlobalTopicConstants:TOPIC_ID_PROFILE_INVALID";
-    String TOPIC_ID_SHUTDOWN = "GlobalTopicConstants:TOPIC_ID_SHUTDOWN";
-    String TOPIC_ID_FINISH_ACTIVITY = "GlobalTopicConstants:TOPIC_ID_FINISH_ACTIVITY";
-    String TOPIC_ID_NETWORK_STATE = "GlobalTopicConstants:TOPIC_ID_NETWORK_STATE";
-    String TOPIC_ID_NETWORK_COMMAND_CONNECT = "GlobalTopicConstants:TOPIC_ID_NETWORK_COMMAND_CONNECT";
-    String TOPIC_ID_GCM_MESSAGE = "GlobalTopicConstants:TOPIC_ID_GCM_MESSAGE";
-    String TOPIC_ID_USER_SWITCHED = "GlobalTopicConstants:TOPIC_ID_USER_SWITCHED";
-    String TOPIC_ID_SHOW_LOADING = "GlobalTopicConstants:TOPIC_ID_SHOW_LOADING";
+    String ADDRESS_APP_UPDATE = "GlobalTopicConstants:ADDRESS_APP_UPDATE";
+    String ADDRESS_GOT_PROFILE = "GlobalTopicConstants:ADDRESS_GOT_PROFILE";
+    String ADDRESS_PROFILE_INVALID = "GlobalTopicConstants:ADDRESS_PROFILE_INVALID";
+    String ADDRESS_SHUTDOWN = "GlobalTopicConstants:ADDRESS_SHUTDOWN";
+    String ADDRESS_FINISH_ACTIVITY = "GlobalTopicConstants:ADDRESS_FINISH_ACTIVITY";
+    String ADDRESS_NETWORK_STATE = "GlobalTopicConstants:ADDRESS_NETWORK_STATE";
+    String ADDRESS_NETWORK_COMMAND_CONNECT = "GlobalTopicConstants:ADDRESS_NETWORK_COMMAND_CONNECT";
+    String ADDRESS_GCM_MESSAGE = "GlobalTopicConstants:ADDRESS_GCM_MESSAGE";
+    String ADDRESS_USER_SWITCHED = "GlobalTopicConstants:ADDRESS_USER_SWITCHED";
+    String ADDRESS_SHOW_LOADING = "GlobalTopicConstants:ADDRESS_SHOW_LOADING";
 
     String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
     String PARAM_PROFILE = "PARAM_PROFILE";
