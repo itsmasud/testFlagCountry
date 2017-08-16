@@ -59,7 +59,7 @@ android {
             applicationId "com.fieldnation.android.mobile"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Mobile"'
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.mobile"'
-            buildConfigField "boolean", "USE_HTTPS", "true"
+            buildConfigField "boolean", "USE_HTTP", "true"
         }
         demo {
             applicationId "com.fieldnation.android.demo"
