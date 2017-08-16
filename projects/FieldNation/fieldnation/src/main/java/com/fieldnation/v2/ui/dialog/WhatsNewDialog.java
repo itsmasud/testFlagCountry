@@ -9,10 +9,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by Michael on 9/23/2016.
@@ -35,11 +37,11 @@ public class WhatsNewDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_whats_new, container, false);
 
-        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
-        _toolbar.setTitle("4.0.6");
+        _toolbar = _root.findViewById(R.id.toolbar);
+        _toolbar.setTitle((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
-        _newWebView = (WebView) _root.findViewById(R.id.new_webview);
+        _newWebView = _root.findViewById(R.id.new_webview);
 
         return _root;
     }
@@ -64,6 +66,18 @@ public class WhatsNewDialog extends FullScreenDialog {
         webSettings.setDefaultFontSize(fontSize);
     }
 
+    public static void show(Context context, String uid) {
+        Controller.show(context, uid, WhatsNewDialog.class, null);
+    }
+
+    public static void show(Context context) {
+        Controller.show(context, null, WhatsNewDialog.class, null);
+    }
+
+    /*-*********************************-*/
+    /*-             Events              -*/
+    /*-*********************************-*/
+
     private View.OnAttachStateChangeListener root_onAttachState = new View.OnAttachStateChangeListener() {
         @Override
         public void onViewAttachedToWindow(View v) {
@@ -76,11 +90,6 @@ public class WhatsNewDialog extends FullScreenDialog {
         }
     };
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -89,11 +98,35 @@ public class WhatsNewDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context) {
-        Controller.show(context, null, WhatsNewDialog.class, null);
+    @Override
+    public void dismiss(boolean animate) {
+        _onClosedDispatcher.dispatch(getUid());
+        super.dismiss(animate);
     }
 
-    public static void dismiss(Context context) {
-        Controller.dismiss(context, null);
+    /*-*************************-*/
+    /*-         Closed          -*/
+    /*-*************************-*/
+    public interface OnClosedListener {
+        void onClosed();
+    }
+
+    private static KeyedDispatcher<OnClosedListener> _onClosedDispatcher = new KeyedDispatcher<OnClosedListener>() {
+        @Override
+        public void onDispatch(OnClosedListener listener, Object... parameters) {
+            listener.onClosed();
+        }
+    };
+
+    public static void addOnClosedListener(String uid, OnClosedListener onClosedListener) {
+        _onClosedDispatcher.add(uid, onClosedListener);
+    }
+
+    public static void removeOnClosedListener(String uid, OnClosedListener onClosedListener) {
+        _onClosedDispatcher.remove(uid, onClosedListener);
+    }
+
+    public static void removeAllOnClosedListener(String uid) {
+        _onClosedDispatcher.removeAll(uid);
     }
 }

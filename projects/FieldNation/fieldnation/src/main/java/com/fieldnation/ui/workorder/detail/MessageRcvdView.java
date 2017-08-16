@@ -1,5 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -8,12 +10,15 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -56,6 +61,7 @@ public class MessageRcvdView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_rcvd, this);
 
         _messageTextView = (TextView) findViewById(R.id.message_textview);
+        _messageTextView.setOnLongClickListener(_message_onLongClick);
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
@@ -140,6 +146,17 @@ public class MessageRcvdView extends RelativeLayout {
             Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
+        }
+    };
+
+    private final OnLongClickListener _message_onLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = android.content.ClipData.newPlainText("Copied Text", _message.getMessage());
+            clipboard.setPrimaryClip(clip);
+            ToastClient.toast(App.get(), getResources().getString(R.string.toast_copied_to_clipboard), Toast.LENGTH_LONG);
+            return true;
         }
     };
 }

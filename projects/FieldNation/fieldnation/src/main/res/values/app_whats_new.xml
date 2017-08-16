@@ -4,24 +4,25 @@
     <string name="added_new_feature">
 &lt;b&gt;What\'s New with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
-Improved overall performance, made updates to our counter offer dialog, and added Android O support to improve your experience.
+Improved file uploading performance, opening the app from a link, and added the ability to call a work order contact directly from the work order lists.
 &lt;br/&gt;
 &lt;br/&gt;
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Problem reported status indicator&lt;/li&gt;
-&lt;li&gt;Work order on hold status indicator&lt;/li&gt;
-&lt;li&gt;Ability to review profile photo before submitting&lt;/li&gt;
-&lt;li&gt;Choose which work order contact to dial&lt;/li&gt;
-&lt;li&gt;Payment information enhancements&lt;/li&gt;
-&lt;li&gt;Android O support&lt;/li&gt;
+&lt;li&gt;Ability to copy/paste on work order messages&lt;/li&gt;
+&lt;li&gt;Profile picture upload enhancements&lt;/li&gt;
+&lt;li&gt;Call a work order contact from the work order lists&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Allow users to submit a counter offer&lt;/li&gt;
-&lt;li&gt;Crash around sharing files with app&lt;/li&gt;
-&lt;li&gt;Numerous small bugs&lt;/li&gt;
+&lt;li&gt;Splash screen hanging after clearing data&lt;/li&gt;
+&lt;li&gt;Links to work order details not opening in the app&lt;/li&gt;
+&lt;li&gt;Unable to upload a file&lt;/li&gt;
+&lt;ul&gt;
+&lt;li&gt;On tasks&lt;/li&gt;
+&lt;li&gt;In landscape mode&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/ul&gt;
     </string>
 </resources>

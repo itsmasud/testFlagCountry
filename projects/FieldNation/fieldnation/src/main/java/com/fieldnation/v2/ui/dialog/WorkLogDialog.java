@@ -74,11 +74,14 @@ public class WorkLogDialog extends SimpleDialog {
     public void onStart() {
         super.onStart();
         final Calendar c = Calendar.getInstance();
+        c.set(Calendar.SECOND, 0);
         _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         _startCalendar = Calendar.getInstance();
+        _startCalendar.set(Calendar.SECOND, 0);
         _endCalendar = Calendar.getInstance();
+        _endCalendar.set(Calendar.SECOND, 0);
 
         _startButton.setOnClickListener(_start_onClick);
         _endButton.setOnClickListener(_end_onClick);
@@ -200,12 +203,12 @@ public class WorkLogDialog extends SimpleDialog {
             if (tag == null) return;
             if (tag.equals("start")) {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
-                        _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                        _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
                 _startIsSet = true;
                 _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
             } else if (tag.equals("end")) {
                 _endCalendar.set(_endCalendar.get(Calendar.YEAR), _endCalendar.get(Calendar.MONTH),
-                        _endCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                        _endCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
                 _endIsSet = true;
                 _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
             }

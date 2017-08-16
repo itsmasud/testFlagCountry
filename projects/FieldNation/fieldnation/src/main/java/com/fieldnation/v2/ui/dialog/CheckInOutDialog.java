@@ -25,11 +25,11 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -109,22 +109,23 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         _startCalendar = Calendar.getInstance();
+        _startCalendar.set(Calendar.SECOND, 0);
 
         View v = inflater.inflate(R.layout.dialog_v2_check_in_out, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
 
-        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
+        _refreshView = v.findViewById(R.id.refresh_view);
 
         _deviceNumberLayout = v.findViewById(R.id.deviceNumber_layout);
-        _startTimeTextView = (TextView) v.findViewById(R.id.startTime_textview);
-        _startDateButton = (Button) v.findViewById(R.id.startDate_button);
-        _startTimeButton = (Button) v.findViewById(R.id.startTime_button);
-        _spinner = (HintSpinner) v.findViewById(R.id.spinner);
+        _startTimeTextView = v.findViewById(R.id.startTime_textview);
+        _startDateButton = v.findViewById(R.id.startDate_button);
+        _startTimeButton = v.findViewById(R.id.startTime_button);
+        _spinner = v.findViewById(R.id.spinner);
 
         return v;
     }
@@ -247,7 +248,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             _toolbar.setTitle(getView().getResources().getString(R.string.title_check_out));
             _startTimeTextView.setText(getView().getResources().getString(R.string.end_time));
         }
-        _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+        _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
         _startDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
         _startTimeButton.setText(DateUtils.formatTimeLong(_startCalendar));
@@ -316,7 +317,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             Calendar test = (Calendar) _startCalendar.clone();
             test.set(test.get(Calendar.YEAR), test.get(Calendar.MONTH),
-                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
                 ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);

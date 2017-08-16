@@ -8,12 +8,11 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.v2.data.client.MemoryCache;
 
-import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Set;
 
 /**
@@ -1554,13 +1553,10 @@ public class WorkOrder implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    private static Hashtable<Integer, WeakReference<WorkOrder>> CACHE = new Hashtable<>();
-    private static int CACHE_NEXT = 0;
-
     public static final Parcelable.Creator<WorkOrder> CREATOR = new Parcelable.Creator<WorkOrder>() {
         @Override
         public WorkOrder createFromParcel(Parcel source) {
-            return CACHE.get(source.readInt()).get();
+            return (WorkOrder) MemoryCache.get(source.readInt());
         }
 
         @Override
@@ -1576,12 +1572,7 @@ public class WorkOrder implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        synchronized (TAG) {
-            Log.v(TAG, "CACHE_NEXT " + CACHE_NEXT);
-            dest.writeInt(CACHE_NEXT);
-            CACHE.put(CACHE_NEXT, new WeakReference<>(this));
-            CACHE_NEXT++;
-        }
+        dest.writeInt(MemoryCache.put(this));
     }
 
     /*-*****************************-*/

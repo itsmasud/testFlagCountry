@@ -141,6 +141,7 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         _etaStart = Calendar.getInstance();
+        _etaStart.set(Calendar.SECOND, 0);
 
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 
@@ -671,7 +672,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             Calendar test = (Calendar) _etaStart.clone();
             test.set(test.get(Calendar.YEAR), test.get(Calendar.MONTH),
-                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
             if (isValidEta(test)) {
                 _etaStart = test;

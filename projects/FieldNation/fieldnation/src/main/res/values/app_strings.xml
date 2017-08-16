@@ -161,6 +161,7 @@
     <string name="toast_pick_date_time_between_schedule">Please pick date and time in between schedule.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
+    <string name="toast_copied_to_clipboard">"Copied to clipboard"</string>
 
     <string name="view_title_location">LOCATION</string>
 

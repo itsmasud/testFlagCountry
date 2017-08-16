@@ -9,4 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/imageview_height_fnlogo"
         android:layout_centerInParent="true" />
+
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

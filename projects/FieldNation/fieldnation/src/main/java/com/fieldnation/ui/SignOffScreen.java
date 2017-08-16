@@ -1,15 +1,14 @@
 package com.fieldnation.ui;
 
-import android.os.Bundle;
+import android.content.Context;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
@@ -19,7 +18,6 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.detail.TimeLogRowView;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskType;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -28,11 +26,8 @@ import java.util.Random;
 /**
  * Created by michael.carver on 12/1/2014.
  */
-public class SignOffFragment extends FragmentBase {
-    private static final String TAG = "SignOffFragment";
-
-    // State
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
+public class SignOffScreen extends RelativeLayout {
+    private static final String TAG = "SignOffScreen";
 
     // Ui
     private LinearLayout _container;
@@ -63,66 +58,62 @@ public class SignOffFragment extends FragmentBase {
     private boolean _waitTasks = false;
     private boolean _waitLogs = false;
 
+
     /*-*************----------**************-*/
     /*-             Life Cycle              -*/
     /*-*************----------**************-*/
-    public static SignOffFragment getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, SignOffFragment.class);
+
+    public SignOffScreen(Context context) {
+        super(context);
+        init();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
-            }
-        }
+    public SignOffScreen(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Stopwatch stopwatch = new Stopwatch();
-        if (_workOrder != null) {
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
-        }
-
-        super.onSaveInstanceState(outState);
-        Log.v(TAG, "onSaveInstanceState time " + stopwatch.finish());
+    public SignOffScreen(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_signoff, container, false);
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.screen_signoff, this);
 
-        _container = (LinearLayout) v.findViewById(R.id.container);
-        _companyImageView = (ImageView) v.findViewById(R.id.company_imageview);
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _descriptionTextView = (TextView) v.findViewById(R.id.description_textview);
+        if (isInEditMode()) return;
 
-        _timeDivider = v.findViewById(R.id.time_divider);
-        _timeTextView = (TextView) v.findViewById(R.id.time_textview);
-        _timeLinearLayout = (LinearLayout) v.findViewById(R.id.time_list);
+        _container = findViewById(R.id.container);
+        _companyImageView = findViewById(R.id.company_imageview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _descriptionTextView = findViewById(R.id.description_textview);
 
-        _tasksDivider = v.findViewById(R.id.tasks_divider);
-        _tasksTextView = (TextView) v.findViewById(R.id.tasks_textview);
-        _tasksLinearLayout = (LinearLayout) v.findViewById(R.id.tasks_list);
+        _timeDivider = findViewById(R.id.time_divider);
+        _timeTextView = findViewById(R.id.time_textview);
+        _timeLinearLayout = findViewById(R.id.time_list);
 
-        _closingNotesDivider = v.findViewById(R.id.closingnotes_divider);
-        _closingNotesLabelTextView = (TextView) v.findViewById(R.id.closingnoteslabel_textview);
-        _closingNotesTextView = (TextView) v.findViewById(R.id.closingnotes_textview);
+        _tasksDivider = findViewById(R.id.tasks_divider);
+        _tasksTextView = findViewById(R.id.tasks_textview);
+        _tasksLinearLayout = findViewById(R.id.tasks_list);
 
-        _signOffButton = (Button) v.findViewById(R.id.signoff_button);
+        _closingNotesDivider = findViewById(R.id.closingnotes_divider);
+        _closingNotesLabelTextView = findViewById(R.id.closingnoteslabel_textview);
+        _closingNotesTextView = findViewById(R.id.closingnotes_textview);
+
+        _signOffButton = findViewById(R.id.signoff_button);
         _signOffButton.setOnClickListener(_signOff_onClick);
-        _rejectButton = (Button) v.findViewById(R.id.reject_button);
+        _rejectButton = findViewById(R.id.reject_button);
         _rejectButton.setOnClickListener(_reject_onClick);
 
-        _loadingView = (LoadingView) v.findViewById(R.id.loading_view);
+        _loadingView = findViewById(R.id.loading_view);
 
         setLoading(true);
+    }
 
-        return v;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
+
+        populateUi();
     }
 
     private void setLoading(boolean isLoading) {
@@ -131,20 +122,6 @@ public class SignOffFragment extends FragmentBase {
         } else {
             _loadingView.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onResume() {
-        Stopwatch stopwatch = new Stopwatch();
-        super.onResume();
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            _workOrder = bundle.getParcelable(SignOffActivity.INTENT_PARAM_WORKORDER);
-        }
-        Log.v(TAG, "onResume time " + stopwatch.finish());
-
-        populateUi();
     }
 
     public void setListener(Listener listener) {
@@ -178,11 +155,8 @@ public class SignOffFragment extends FragmentBase {
 
                 @Override
                 public void next(int i) {
-                    if (getActivity() == null) {
-                        return;
-                    }
                     TimeLog work = _logs[i];
-                    TimeLogRowView v = new TimeLogRowView(getActivity());
+                    TimeLogRowView v = new TimeLogRowView(getContext());
                     v.setData(_workOrder, work);
                     _timeLinearLayout.addView(v);
                 }
@@ -196,7 +170,7 @@ public class SignOffFragment extends FragmentBase {
                     _waitLogs = false;
                 }
             };
-            _container.postDelayed(r, 100);
+            _container.postDelayed(r, 10);
 
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
@@ -218,23 +192,26 @@ public class SignOffFragment extends FragmentBase {
 
                 @Override
                 public void next(int i) {
-                    if (getActivity() == null)
-                        return;
-
                     Task task = _tasks[i];
 
                     String display = "";
-                    if (task.getType() != null) {
-                        TaskType type = task.getType();
-                        display = type.getName();
+                    if (task.getType().getId() == 7) {
+                        display = task.getDescription();
+                    } else if (task.getType().getId() == 8) {
+                        display = "Call " + task.getPhone() + "\n" + task.getLabel();
+                    } else if (task.getType().getId() == 9) {
+                        display = "Email " + task.getEmail() + "\n" + task.getLabel();
+                    } else if (task.getType().getId() == 10) {
+                        display = "Complete Task\n" + task.getLabel();
+                    } else {
+                        if (misc.isEmptyOrNull(task.getLabel()) || task.getLabel().equals(task.getType().getName()))
+                            display = task.getType().getName();
+                        else
+                            display = task.getType().getName() + "\n" + task.getLabel();
                     }
 
-                    TaskRowSimpleView v = new TaskRowSimpleView(getActivity());
-                    if (misc.isEmptyOrNull(task.getDescription())) {
-                        v.setText(display);
-                    } else {
-                        v.setText(display + "\n" + task.getDescription());
-                    }
+                    TaskRowSimpleView v = new TaskRowSimpleView(getContext());
+                    v.setText(display);
                     _tasksLinearLayout.addView(v);
                 }
 
@@ -248,7 +225,7 @@ public class SignOffFragment extends FragmentBase {
 
                 }
             };
-            _container.postDelayed(r, new Random().nextInt(1000));
+            _container.postDelayed(r, new Random().nextInt(10));
         } else {
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);

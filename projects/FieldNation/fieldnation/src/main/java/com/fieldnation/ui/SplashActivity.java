@@ -83,7 +83,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public DialogManager getDialogManager() {
-        return null;
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
@@ -121,7 +121,6 @@ public class SplashActivity extends AuthSimpleActivity {
         Log.v(TAG, "onResume");
         super.onResume();
         _calledMyWork = false;
-        startService(new Intent(this, AuthTopicService.class));
 
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(App.get());

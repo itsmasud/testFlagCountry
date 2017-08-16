@@ -546,12 +546,14 @@ public class WorkOrderCard extends RelativeLayout {
             button.setOnClickListener(_withdraw_onClick);
             button.setText(R.string.btn_withdraw);
 
-        } else if (_workOrder.getStatus().getId() == 6) {
+        } else if (_workOrder.getStatus().getId() != null
+                && _workOrder.getStatus().getId() == 6) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewPayment_onClick);
             button.setText(R.string.btn_view_payment);
 
-        } else if (_workOrder.getStatus().getId() == 7) {
+        } else if (_workOrder.getStatus().getId() != null
+                && _workOrder.getStatus().getId() == 7) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewPayment_onClick);
             button.setText(R.string.btn_fees);

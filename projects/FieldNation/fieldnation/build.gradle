@@ -28,8 +28,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 104
-        versionName "4.0.6"
+        versionCode 105
+        versionName "4.0.7"
         multiDexEnabled true
     }
 
@@ -141,4 +141,6 @@ dependencies {
     compile 'com.snowplowanalytics:snowplow-android-tracker:0.6.0@aar'
     // Required Dependency for snowplow
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
+
+    compile 'com.github.yalantis:ucrop:2.2.1-native'
 }
