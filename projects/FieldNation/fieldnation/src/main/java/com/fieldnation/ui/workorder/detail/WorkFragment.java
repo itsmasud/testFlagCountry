@@ -41,6 +41,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -103,6 +104,7 @@ import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -169,6 +171,7 @@ public class WorkFragment extends WorkorderFragment {
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Data
+    private DocumentClient _docClient;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
@@ -381,6 +384,20 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        _docClient = new DocumentClient(_documentClient_listener);
+        _docClient.connect(App.get());
+    }
+
+    @Override
+    public void onPause() {
+        if (_docClient != null) _docClient.disconnect(App.get());
+        super.onPause();
     }
 
     @Override
@@ -1525,6 +1542,55 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
+    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _docClient.subDocument();
+        }
+
+        @Override
+        public void onDownload(long documentId, final File file, int state) {
+            Log.v(TAG, "DocumentClient.onDownload");
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
+                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                    ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
+                return;
+            }
+
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(App.getUriFromFile(file),
+                        FileUtils.guessContentTypeFromName(file.getName()));
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                    App.get().startActivity(intent);
+                } else {
+                    String name = file.getName();
+                    name = name.substring(name.indexOf("_") + 1);
+
+                    final Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                    if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityClient.startActivity(folderIntent);
+                            }
+                        }, Snackbar.LENGTH_LONG);
+                    } else {
+                        ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                    }
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
+
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {

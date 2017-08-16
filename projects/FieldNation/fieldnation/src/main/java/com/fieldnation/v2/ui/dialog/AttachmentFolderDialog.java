@@ -297,6 +297,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
             adapter.downloadComplete((int) documentId);
 
+/*
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(App.getUriFromFile(file),
@@ -328,6 +329,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+*/
         }
     };
 
