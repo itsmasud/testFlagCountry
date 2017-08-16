@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
@@ -163,7 +164,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
             outState.putParcelable("selectedFolder", _selectedFolder);
         if (_selectedAttachment != null)
             outState.putParcelable("selectedAttachment", _selectedAttachment);
-        
+
         super.onSaveDialogState(outState);
     }
 
@@ -303,7 +304,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    App.get().startActivity(intent);
+                    ActivityResultClient.startActivity(App.get(), intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);
