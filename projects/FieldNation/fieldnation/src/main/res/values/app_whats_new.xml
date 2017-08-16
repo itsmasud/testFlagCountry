@@ -4,14 +4,14 @@
     <string name="added_new_feature">
 &lt;b&gt;What\'s New with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
-Improved overall performance when uploading a file, allow the app to open from a work order link, and added the ability to call a work order contact directly from the work order lists.
+Improved file uploading performance, opening the app from a link, and added the ability to call a work order contact directly from the work order lists.
 &lt;br/&gt;
 &lt;br/&gt;
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Ability to copy/paste on work order message&lt;/li&gt;
-&lt;li&gt;Enhancements to our profile picture upload&lt;/li&gt;
-&lt;li&gt;Call a work order contact directly from the work order lists&lt;/li&gt;
+&lt;li&gt;Ability to copy/paste on work order messages&lt;/li&gt;
+&lt;li&gt;Profile picture upload enhancements&lt;/li&gt;
+&lt;li&gt;Call a work order contact from the work order lists&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
@@ -20,7 +20,7 @@ Improved overall performance when uploading a file, allow the app to open from a
 &lt;li&gt;Links to work order details not opening in the app&lt;/li&gt;
 &lt;li&gt;Unable to upload a file&lt;/li&gt;
 &lt;ul&gt;
-&lt;li&gt;On a tasks&lt;/li&gt;
+&lt;li&gt;On tasks&lt;/li&gt;
 &lt;li&gt;In landscape mode&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/ul&gt;
