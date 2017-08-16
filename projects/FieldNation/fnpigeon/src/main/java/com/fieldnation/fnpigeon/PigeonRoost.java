@@ -1,9 +1,14 @@
 package com.fieldnation.fnpigeon;
 
+import android.os.Handler;
+
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ContextProvider;
 
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,6 +18,7 @@ import java.util.Set;
 public class PigeonRoost {
     public static final String TAG = "PigeonRoost";
 
+    private static Handler mainHandler = null;
     private static Hashtable<String, StickyContainer> _stickies = new Hashtable<>();
     private static Hashtable<Pigeon, Set<String>> _addressByPigeon = new Hashtable<>();
     private static Hashtable<String, Set<Pigeon>> _pigeonByAddress = new Hashtable<>();
@@ -35,6 +41,13 @@ public class PigeonRoost {
         }
     }
 
+    private static Handler getMainHandler() {
+        if (mainHandler == null) {
+            mainHandler = new Handler(ContextProvider.get().getMainLooper());
+        }
+        return mainHandler;
+    }
+
     /**
      * Subscribes a pigeon to the address
      *
@@ -50,7 +63,7 @@ public class PigeonRoost {
 
             if (_stickies.containsKey(address)) {
                 StickyContainer stickyContainer = _stickies.get(address);
-                pigeon.onMessage(address, stickyContainer.message);
+                getMainHandler().post(new MessageRunnable(pigeon, stickyContainer.message, address));
             }
         }
     }
@@ -79,14 +92,16 @@ public class PigeonRoost {
      * @param pigeon
      */
     public static void unsub(Pigeon pigeon) {
-        if (_addressByPigeon.containsKey(pigeon)) {
-            Set<String> topics = _addressByPigeon.get(pigeon);
+        synchronized (TAG) {
+            if (_addressByPigeon.containsKey(pigeon)) {
+                Set<String> topics = _addressByPigeon.get(pigeon);
 
-            for (String topic : topics) {
-                _pigeonByAddress.get(topic).remove(pigeon);
+                for (String topic : topics) {
+                    _pigeonByAddress.get(topic).remove(pigeon);
+                }
+
+                _addressByPigeon.remove(pigeon);
             }
-
-            _addressByPigeon.remove(pigeon);
         }
     }
 
@@ -98,8 +113,11 @@ public class PigeonRoost {
      * @param sticky
      */
     public static void sendMessage(String address, Object message, Sticky sticky) {
-        String[] addressTree = address.split("/");
+        List<Pigeon> pigeonList = new LinkedList<>();
+        List<Object> objectList = new LinkedList<>();
+        List<String> addressList = new LinkedList<>();
         synchronized (TAG) {
+            String[] addressTree = address.split("/");
             // Fill stickies
             String currentAddress = addressTree[0];
             if (sticky == Sticky.FOREVER || sticky == Sticky.TEMP) {
@@ -114,30 +132,64 @@ public class PigeonRoost {
             }
 
             currentAddress = addressTree[0];
-            if (sticky == Sticky.FOREVER || sticky == Sticky.TEMP) {
-                _stickies.put(currentAddress, new StickyContainer(message, sticky));
-            }
-
             // Send message
             Set<Pigeon> pigeons = getPigeonByTopic(currentAddress);
             for (Pigeon pigeon : pigeons) {
-                pigeon.onMessage(currentAddress, message);
+                pigeonList.add(pigeon);
+                objectList.add(message);
+                addressList.add(currentAddress);
             }
 
             for (int i = 1; i < addressTree.length; i++) {
                 currentAddress += "/" + addressTree[i];
 
-                if (sticky == Sticky.FOREVER || sticky == Sticky.TEMP) {
-                    _stickies.put(currentAddress, new StickyContainer(message, sticky));
-                }
                 pigeons = getPigeonByTopic(currentAddress);
                 for (Pigeon pigeon : pigeons) {
-                    pigeon.onMessage(currentAddress, message);
+                    pigeonList.add(pigeon);
+                    objectList.add(message);
+                    addressList.add(currentAddress);
                 }
             }
         }
 
+        getMainHandler().post(new MessagesRunnable(pigeonList, objectList, addressList));
         pruneStickies();
+    }
+
+    private static class MessageRunnable implements Runnable {
+        Pigeon pigeon;
+        Object message;
+        String address;
+
+        public MessageRunnable(Pigeon pigeon, Object message, String address) {
+            this.pigeon = pigeon;
+            this.message = message;
+            this.address = address;
+        }
+
+        @Override
+        public void run() {
+            pigeon.onMessage(address, message);
+        }
+    }
+
+    private static class MessagesRunnable implements Runnable {
+        List<Pigeon> pigeonList;
+        List<Object> objectList;
+        List<String> addressList;
+
+        public MessagesRunnable(List<Pigeon> pigeonList, List<Object> objectList, List<String> addressList) {
+            this.pigeonList = pigeonList;
+            this.objectList = objectList;
+            this.addressList = addressList;
+        }
+
+        @Override
+        public void run() {
+            while (pigeonList.size() > 0) {
+                pigeonList.remove(0).onMessage(addressList.remove(0), objectList.remove(0));
+            }
+        }
     }
 
     public static void clearAddressCache(String address) {
@@ -177,7 +229,7 @@ public class PigeonRoost {
                     ns.put(key, sc);
                 }
             }
-            Log.v(TAG, "Pruning stickies done: " + ns.size() + "/" + _stickies.size());
+            Log.v(TAG, "Pruning stickies done: " + (_stickies.size() - ns.size()) + "/" + _stickies.size());
             _stickies = ns;
         }
     }

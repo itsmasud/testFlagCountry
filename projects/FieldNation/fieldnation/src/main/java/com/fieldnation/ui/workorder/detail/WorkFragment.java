@@ -342,6 +342,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         _workOrderApi.sub();
 
@@ -384,6 +385,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onStop() {
+        Log.v(TAG, "onStop");
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
@@ -1212,6 +1214,7 @@ public class WorkFragment extends WorkorderFragment {
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
         public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
             if (fileResult.size() == 0)
                 return;
 

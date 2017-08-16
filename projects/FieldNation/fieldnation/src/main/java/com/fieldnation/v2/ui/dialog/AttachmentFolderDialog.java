@@ -98,15 +98,14 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         Log.v(TAG, "onStart");
         super.onStart();
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
     }
 
     @Override
     public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
         _workOrdersApi.sub();
 
@@ -148,10 +147,15 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         if (_docClient != null) _docClient.disconnect(App.get());
         _workOrdersApi.unsub();
 
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
-        super.onPause();
+        super.onStop();
     }
 
     @Override
