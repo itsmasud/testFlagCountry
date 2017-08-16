@@ -92,11 +92,6 @@ public class ConfirmResultScreen extends RelativeLayout {
                 _refreshView.startRefreshing();
             }
         });
-
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
     }
 
     @Override
@@ -108,10 +103,17 @@ public class ConfirmResultScreen extends RelativeLayout {
     public void onResume() {
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
     }
 
     public void onPause() {
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        if (_simpleGps != null && _simpleGps.isRunning())
+            _simpleGps.stop();
     }
 
     @Override
@@ -133,6 +135,7 @@ public class ConfirmResultScreen extends RelativeLayout {
                 _filterParams.longitude = _location.getLongitude();
             }
             _simpleGps.stop();
+            _adapter.notifyDataSetChanged();
         }
 
         @Override
