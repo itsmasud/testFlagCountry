@@ -17,6 +17,7 @@ import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -27,25 +28,11 @@ import com.fieldnation.v2.data.model.WorkOrder;
 public class SignOffActivity extends AuthSimpleActivity {
     private static final String TAG = "SignOffActivity";
 
-    // State
-    private static final String STATE_DISPLAY_MODE = "STATE_DISPLAY_MODE";
-    private static final String STATE_NAME = "STATE_NAME";
-    private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
-    private static final String STATE_TASK_ID = "STATE_TASK_ID";
-    private static final String STATE_COMPLETE_WORKORDER = "COMPLETE_WORKORDER";
-
     // Display Modes
     private static final int DISPLAY_SUMMARY = 1;
     private static final int DISPLAY_SIGNATURE = 2;
     private static final int DISPLAY_THANK_YOU = 3;
     private static final int DISPLAY_SORRY = 4;
-
-
-    // Intent Params
-    public static final String INTENT_PARAM_WORKORDER = "SignOffActivity.INTENT_PARAM_WORKORDER";
-    public static final String INTENT_PARAM_TASK_ID = "SignOffActivity.INTENT_PARAM_TASK_ID";
-    public static final String INTENT_COMPLETE_WORKORDER = "SignOffActivity.INTENT_COMPLETE_WORKORDER";
 
     // Ui
     private SignOffScreen _signOffScreen;
@@ -57,6 +44,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
     private String _signatureSvg;
+    private int _workOrderId;
     private WorkOrder _workOrder;
     private int _taskId = -1;
     private boolean _completeWorkorder = false;
@@ -88,15 +76,17 @@ public class SignOffActivity extends AuthSimpleActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.containsKey(INTENT_PARAM_WORKORDER))
-                _workOrder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+            if (extras.containsKey("_workOrderId"))
+                _workOrderId = extras.getInt("_workOrderId");
 
-            if (extras.containsKey(INTENT_PARAM_TASK_ID))
-                _taskId = extras.getInt(INTENT_PARAM_TASK_ID);
+            if (extras.containsKey("_taskId"))
+                _taskId = extras.getInt("_taskId");
 
-            if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
-                _completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
+            if (extras.containsKey("_completeWorkorder"))
+                _completeWorkorder = extras.getBoolean("_completeWorkorder");
         }
+
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         populateUi();
     }
 
@@ -111,20 +101,30 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        _workOrderApi.sub();
+    }
+
+    @Override
+    protected void onPause() {
+        _workOrderApi.unsub();
+        super.onPause();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
-        outState.putInt(STATE_DISPLAY_MODE, _displayMode);
-        outState.putInt(STATE_TASK_ID, _taskId);
-        outState.putBoolean(STATE_COMPLETE_WORKORDER, _completeWorkorder);
+        outState.putInt("_displayMode", _displayMode);
+        outState.putInt("_taskId", _taskId);
+        outState.putBoolean("_completeWorkorder", _completeWorkorder);
+        outState.putInt("_workOrderId", _workOrderId);
 
         if (_name != null)
-            outState.putString(STATE_NAME, _name);
+            outState.putString("_name", _name);
 
         if (_signatureSvg != null)
-            outState.putString(STATE_SIGNATURE, _signatureSvg);
-
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
+            outState.putString("_signatureSvg", _signatureSvg);
 
         super.onSaveInstanceState(outState);
     }
@@ -134,23 +134,23 @@ public class SignOffActivity extends AuthSimpleActivity {
         Log.v(TAG, "onRestoreInstanceState");
         super.onRestoreInstanceState(savedInstanceState);
 
-        if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
-            _displayMode = savedInstanceState.getInt(STATE_DISPLAY_MODE);
+        if (savedInstanceState.containsKey("_displayMode"))
+            _displayMode = savedInstanceState.getInt("_displayMode");
 
-        if (savedInstanceState.containsKey(STATE_NAME))
-            _name = savedInstanceState.getString(STATE_NAME);
+        if (savedInstanceState.containsKey("_name"))
+            _name = savedInstanceState.getString("_name");
 
-        if (savedInstanceState.containsKey(STATE_SIGNATURE))
-            _signatureSvg = savedInstanceState.getString(STATE_SIGNATURE);
+        if (savedInstanceState.containsKey("_signatureSvg"))
+            _signatureSvg = savedInstanceState.getString("_signatureSvg");
 
-        if (savedInstanceState.containsKey(STATE_WORKORDER))
-            _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
+        if (savedInstanceState.containsKey("_workOrderId"))
+            _workOrderId = savedInstanceState.getInt("_workOrderId");
 
-        if (savedInstanceState.containsKey(STATE_TASK_ID))
-            _taskId = savedInstanceState.getInt(STATE_TASK_ID);
+        if (savedInstanceState.containsKey("_taskId"))
+            _taskId = savedInstanceState.getInt("_taskId");
 
-        if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
-            _completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
+        if (savedInstanceState.containsKey("_completeWorkorder"))
+            _completeWorkorder = savedInstanceState.getBoolean("_completeWorkorder");
 
         populateUi();
     }
@@ -178,7 +178,9 @@ public class SignOffActivity extends AuthSimpleActivity {
                 _thankYouScreen.startTimer();
                 break;
         }
-        _signOffScreen.setWorkOrder(_workOrder);
+
+        if (_workOrder != null)
+            _signOffScreen.setWorkOrder(_workOrder);
     }
 
     @Override
@@ -297,15 +299,33 @@ public class SignOffActivity extends AuthSimpleActivity {
         super.onBackPressed();
     }
 
-    public static void startSignOff(Context context, WorkOrder workOrder) {
-        startSignOff(context, workOrder, false);
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrder");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (success && successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (workOrder.getId() == _workOrderId) {
+                    _workOrder = workOrder;
+                    populateUi();
+                }
+            }
+        }
+    };
+
+    public static void startSignOff(Context context, int workOrderId) {
+        startSignOff(context, workOrderId, false);
     }
 
-    public static void startSignOff(Context context, WorkOrder workOrder, boolean markComplete) {
+    public static void startSignOff(Context context, int workOrderId, boolean markComplete) {
         Intent intent = new Intent(context, SignOffActivity.class);
-        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
+        intent.putExtra("_workOrderId", workOrderId);
         if (markComplete)
-            intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
+            intent.putExtra("_completeWorkorder", true);
 
         if (markComplete)
             ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
@@ -313,10 +333,11 @@ public class SignOffActivity extends AuthSimpleActivity {
             ActivityClient.startActivity(intent);
     }
 
-    public static void startSignOff(Context context, WorkOrder workOrder, int taskId) {
+    public static void startSignOff(Context context, int workOrderId, int taskId) {
         Intent intent = new Intent(context, SignOffActivity.class);
-        intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
-        intent.putExtra(INTENT_PARAM_TASK_ID, taskId);
+        intent.putExtra("_workOrderId", workOrderId);
+        intent.putExtra("_taskId", taskId);
         ActivityClient.startActivity(intent);
+
     }
 }

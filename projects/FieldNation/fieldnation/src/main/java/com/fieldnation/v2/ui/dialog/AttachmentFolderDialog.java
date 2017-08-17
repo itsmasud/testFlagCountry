@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +19,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
@@ -305,7 +303,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    App.get().startActivity(intent);
+                    ActivityResultClient.startActivity(App.get(), intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);

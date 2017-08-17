@@ -179,6 +179,7 @@ public class WorkFragment extends WorkorderFragment {
     private boolean _locationFailed = false;
     private Task _currentTask;
     private int _workOrderId;
+    private SimpleGps _simpleGps;
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -383,7 +384,10 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
-        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_simpleGps_listener)
+                .numUpdates(1)
+                .start(App.get());
     }
 
     @Override
@@ -434,6 +438,7 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         _workOrderApi.unsub();
+        if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
         super.onStop();
     }
 
@@ -512,11 +517,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
 
     private void doCheckin() {
-        if (_currentLocation != null) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-        } else {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-        }
+        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
@@ -546,18 +547,10 @@ public class WorkFragment extends WorkorderFragment {
             _deviceCount = pay.getBase().getUnits().intValue();
         }
 
-        if (_currentLocation != null) {
-            if (_deviceCount > -1) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-            } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-            }
+        if (_deviceCount > -1) {
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            if (_deviceCount > -1) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-            } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-            }
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
 
@@ -1019,7 +1012,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onSignature(Task task) {
             _currentTask = task;
-            SignOffActivity.startSignOff(getActivity(), _workOrder, task.getId());
+            SignOffActivity.startSignOff(getActivity(), _workOrder.getId(), task.getId());
             setLoading(true);
         }
 
@@ -1100,7 +1093,7 @@ public class WorkFragment extends WorkorderFragment {
     private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrder);
+            SignOffActivity.startSignOff(getActivity(), _workOrder.getId());
             setLoading(true);
         }
 
@@ -1370,7 +1363,7 @@ public class WorkFragment extends WorkorderFragment {
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
-                        SignOffActivity.startSignOff(App.get(), workOrder, true);
+                        SignOffActivity.startSignOff(App.get(), workOrder.getId(), true);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);

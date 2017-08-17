@@ -8,7 +8,6 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.v2.data.client.MemoryCache;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -407,7 +406,7 @@ public class Signature implements Parcelable {
     public static final Parcelable.Creator<Signature> CREATOR = new Parcelable.Creator<Signature>() {
         @Override
         public Signature createFromParcel(Parcel source) {
-            return (Signature) MemoryCache.get(source.readInt());
+            return Signature.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
         }
 
         @Override
@@ -423,7 +422,7 @@ public class Signature implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(MemoryCache.put(this));
+        dest.writeParcelable(getJson(), flags);
     }
 
     /*-*****************************-*/
