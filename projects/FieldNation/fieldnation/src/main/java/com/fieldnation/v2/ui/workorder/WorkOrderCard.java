@@ -687,11 +687,11 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN_AGAIN, null, _workOrder.getId());
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder,
                         _workOrder.getPay().getBase().getUnits().intValue(),
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             }
         }
@@ -703,10 +703,10 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getId());
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             }
         }
@@ -728,10 +728,10 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getId());
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         }

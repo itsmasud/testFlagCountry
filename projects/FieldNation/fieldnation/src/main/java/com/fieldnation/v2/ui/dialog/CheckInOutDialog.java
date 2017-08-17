@@ -27,6 +27,7 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
@@ -67,7 +68,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     public static final String PARAM_DIALOG_TYPE_CHECK_IN = "checkin";
     public static final String PARAM_DIALOG_TYPE_CHECK_OUT = "checkout";
     public static final String PARAM_WORK_ORDER = "workOrder";
-    public static final String PARAM_LOCATION = "location";
     public static final String PARAM_MAX_DEVICE_NUMBER = "maxnumber";
     public static final String PARAM_CALENDAR = "PARAM_CALENDAR";
 
@@ -103,6 +103,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     // Services
     private WorkordersWebApi _workOrderClient;
+    private SimpleGps _simpleGps;
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -157,6 +158,11 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
     }
 
     @Override
@@ -165,9 +171,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
         _workOrder = params.getParcelable(PARAM_WORK_ORDER);
-
-        if (params.containsKey(PARAM_LOCATION))
-            _location = params.getParcelable(PARAM_LOCATION);
 
         if (params.containsKey(PARAM_MAX_DEVICE_NUMBER) &&
                 _dialogType.equals(CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT)) {
@@ -182,6 +185,23 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         populateUi();
     }
+
+    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(SimpleGps simpleGps, Location location) {
+            _location = location;
+            _simpleGps.stop();
+        }
+
+        @Override
+        public void onFail(SimpleGps simpleGps) {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
+        }
+    };
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
@@ -203,6 +223,8 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        if (_simpleGps != null && _simpleGps.isRunning())
+            _simpleGps.stop();
 
         super.onPause();
     }
@@ -464,26 +486,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    // with location
-    public static void show(Context context, String uid, WorkOrder workOrder, Location location, String dialogType) {
-        Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORK_ORDER, workOrder);
-        params.putParcelable(PARAM_LOCATION, location);
-        params.putString(PARAM_DIALOG_TYPE, dialogType);
-        Controller.show(context, uid, CheckInOutDialog.class, params);
-    }
-
-    // with location + max device
-    public static void show(Context context, String uid, WorkOrder workOrder, Location location, int maxDevice, String dialogType) {
-        Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORK_ORDER, workOrder);
-        params.putParcelable(PARAM_LOCATION, location);
-        params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
-        params.putString(PARAM_DIALOG_TYPE, dialogType);
-        Controller.show(context, uid, CheckInOutDialog.class, params);
-    }
-
-    // with max device but no location
+    // with max device
     public static void show(Context context, String uid, WorkOrder workOrder, int maxDevice, String dialogType) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORK_ORDER, workOrder);

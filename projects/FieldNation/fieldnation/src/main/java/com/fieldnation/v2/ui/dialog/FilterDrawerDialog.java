@@ -22,10 +22,10 @@ import com.fieldnation.fndialog.RightDrawerDialog;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.ui.search.FilterParams;
 
 import java.util.List;
@@ -112,6 +112,12 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         _filterParams = FilterParams.load(payload.getString("listId"));
 
         populateUi();
+    }
+
+    @Override
+    public void onStop() {
+        if (_simpleGps != null) _simpleGps.stop();
+        super.onStop();
     }
 
     private void populateUi() {

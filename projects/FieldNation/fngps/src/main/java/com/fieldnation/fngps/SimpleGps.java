@@ -26,6 +26,7 @@ public class SimpleGps {
 
     public static final long ONE_SEC = 1000;
     public static final long ONE_MIN = ONE_SEC * 60;
+    public static final long MAX_AGE = ONE_MIN;
 
     // Gps Api
     private final FusedLocationProviderApi _providerApi = LocationServices.FusedLocationApi;
@@ -206,9 +207,11 @@ public class SimpleGps {
 
                 Location location = _providerApi.getLastLocation(_gglApiClient);
 
-                if (location != null && _listener != null) {
-                    Log.v(TAG, location.toString());
-                    _listener.onLocation(SimpleGps.this, location);
+                if (location != null) {
+                    Log.v(TAG, location.toString() + " " + (System.currentTimeMillis() - location.getTime()) + "ms old");
+                    if (_listener != null && location.getTime() + MAX_AGE > System.currentTimeMillis()) {
+                        _listener.onLocation(SimpleGps.this, location);
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -244,10 +247,10 @@ public class SimpleGps {
     private final LocationListener _locationUpdate_listener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            if (!_isRunning)
+            if (!_isRunning || location == null || location.getTime() + MAX_AGE < System.currentTimeMillis())
                 return;
             Log.v(TAG, "onLocationChanged");
-            Log.v(TAG, location.toString());
+            Log.v(TAG, location.toString() + " " + (System.currentTimeMillis() - location.getTime()) + "ms old");
             if (_listener != null)
                 _listener.onLocation(SimpleGps.this, location);
         }
