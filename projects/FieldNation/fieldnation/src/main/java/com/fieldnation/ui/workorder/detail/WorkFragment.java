@@ -1555,9 +1555,10 @@ public class WorkFragment extends WorkorderFragment {
                 intent.setDataAndType(App.getUriFromFile(file),
                         FileUtils.guessContentTypeFromName(file.getName()));
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);

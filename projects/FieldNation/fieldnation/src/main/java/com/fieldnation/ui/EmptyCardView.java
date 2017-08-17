@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
@@ -277,7 +278,7 @@ public class EmptyCardView extends RelativeLayout {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.fieldnation.com/customer/portal/emails/new"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                App.get().startActivity(intent);
+                ActivityClient.startActivity(intent);
             }
         }
     };

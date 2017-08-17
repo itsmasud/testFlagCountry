@@ -24,6 +24,7 @@ import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -444,7 +445,7 @@ public class LocationViewMapBox extends LinearLayout {
                     final Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                     break;
                 }
                 case ACTION_MESSAGES: {

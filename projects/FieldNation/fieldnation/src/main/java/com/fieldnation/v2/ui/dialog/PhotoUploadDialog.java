@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -334,7 +335,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
             try {
                 if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
