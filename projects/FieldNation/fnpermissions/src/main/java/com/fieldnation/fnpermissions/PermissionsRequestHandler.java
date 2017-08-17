@@ -27,13 +27,13 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
     private static boolean requesting = false;
 
     public void sub() {
-        PigeonRoost.sub(this, TOPIC_ID_REQUESTS);
-        PigeonRoost.sub(this, TOPIC_ID_REQUEST_RESULT);
+        PigeonRoost.sub(this, ADDRESS_REQUESTS);
+        PigeonRoost.sub(this, ADDRESS_REQUEST_RESULT);
     }
 
     public void unsub() {
-        PigeonRoost.unsub(this, TOPIC_ID_REQUESTS);
-        PigeonRoost.unsub(this, TOPIC_ID_REQUEST_RESULT);
+        PigeonRoost.unsub(this, ADDRESS_REQUESTS);
+        PigeonRoost.unsub(this, ADDRESS_REQUEST_RESULT);
     }
 
     /*-**********************************-*/
@@ -42,14 +42,14 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
     @Override
     public void onMessage(String address, Object message) {
         Log.v(TAG, "onMessage");
-        if (address.equals(TOPIC_ID_REQUESTS)) {
-            PigeonRoost.clearAddressCacheAll(TOPIC_ID_REQUESTS);
+        if (address.equals(ADDRESS_REQUESTS)) {
+            PigeonRoost.clearAddressCacheAll(ADDRESS_REQUESTS);
             Bundle bundle = (Bundle) message;
             onRequest(bundle.getStringArray("permissions"),
                     bundle.getBooleanArray("required"));
 
-        } else if (address.equals(TOPIC_ID_REQUEST_RESULT)) {
-            PigeonRoost.clearAddressCacheAll(TOPIC_ID_REQUEST_RESULT);
+        } else if (address.equals(ADDRESS_REQUEST_RESULT)) {
+            PigeonRoost.clearAddressCacheAll(ADDRESS_REQUEST_RESULT);
             Bundle bundle = (Bundle) message;
             onResponse(bundle.getInt("requestCode"),
                     bundle.getStringArray("permissions"),

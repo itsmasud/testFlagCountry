@@ -25,7 +25,7 @@ public class PermissionsClient implements Constants {
         payload.putStringArray("permissions", permissions);
         payload.putBooleanArray("required", required);
 
-        PigeonRoost.sendMessage(TOPIC_ID_REQUESTS, payload, Sticky.TEMP);
+        PigeonRoost.sendMessage(ADDRESS_REQUESTS, payload, Sticky.TEMP);
     }
 
     public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -35,7 +35,7 @@ public class PermissionsClient implements Constants {
         payload.putStringArray("permissions", permissions);
         payload.putIntArray("grantResults", grantResults);
 
-        PigeonRoost.sendMessage(TOPIC_ID_REQUEST_RESULT, payload, Sticky.TEMP);
+        PigeonRoost.sendMessage(ADDRESS_REQUEST_RESULT, payload, Sticky.TEMP);
     }
 
     protected static void onComplete(String permission, int grantResult) {
@@ -44,7 +44,7 @@ public class PermissionsClient implements Constants {
         payload.putString("permission", permission);
         payload.putInt("grantResult", grantResult);
 
-        PigeonRoost.sendMessage(TOPIC_ID_COMPLETE, payload, Sticky.FOREVER);
+        PigeonRoost.sendMessage(ADDRESS_COMPLETE, payload, Sticky.FOREVER);
     }
 
     public static int checkSelfPermission(Context context, String permission) {

@@ -5,7 +5,5 @@ package com.fieldnation.fnpigeon;
  */
 
 public abstract class Pigeon {
-    public static final String TAG = "Pigeon";
-
     public abstract void onMessage(String address, Object message);
 }

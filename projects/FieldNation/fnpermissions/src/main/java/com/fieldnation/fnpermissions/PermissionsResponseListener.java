@@ -9,28 +9,24 @@ import com.fieldnation.fnpigeon.PigeonRoost;
  * Created by mc on 8/10/17.
  */
 
-public abstract class PermissionsResponseListener extends Pigeon {
+public abstract class PermissionsResponseListener extends Pigeon implements Constants {
     private static final String TAG = "PermissionsClient";
 
-    private static final String TOPIC_ID_REQUESTS = TAG + ":TOPIC_ID_REQUESTS";
-    private static final String TOPIC_ID_REQUEST_RESULT = TAG + ":TOPIC_ID_REQUEST_RESULT";
-    private static final String TOPIC_ID_COMPLETE = TAG + ":TOPIC_ID_COMPLETE";
-    private static final String TOPIC_ID_PROCESS_QUEUE = TAG + ":TOPIC_ID_PROCESS_QUEUE";
 
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
     public void sub() {
-        PigeonRoost.sub(this, TOPIC_ID_COMPLETE);
+        PigeonRoost.sub(this, ADDRESS_COMPLETE);
     }
 
     public void unsub() {
-        PigeonRoost.unsub(this, TOPIC_ID_COMPLETE);
+        PigeonRoost.unsub(this, ADDRESS_COMPLETE);
     }
 
     @Override
     public void onMessage(String address, Object message) {
-        if (address.equals(TOPIC_ID_COMPLETE)) {
+        if (address.equals(ADDRESS_COMPLETE)) {
             Bundle bundle = (Bundle) message;
             onComplete(bundle.getString("permission"),
                     bundle.getInt("grantResult"));

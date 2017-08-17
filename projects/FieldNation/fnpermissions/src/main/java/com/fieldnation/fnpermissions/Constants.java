@@ -5,7 +5,7 @@ package com.fieldnation.fnpermissions;
  */
 
 public interface Constants {
-    String TOPIC_ID_REQUESTS = "com.fieldnation.fnpermissions.Constants#TOPIC_ID_REQUESTS";
-    String TOPIC_ID_REQUEST_RESULT = "com.fieldnation.fnpermissions.Constants#TOPIC_ID_REQUEST_RESULT";
-    String TOPIC_ID_COMPLETE = "com.fieldnation.fnpermissions.Constants#TOPIC_ID_COMPLETE";
+    String ADDRESS_REQUESTS = "com.fieldnation.fnpermissions.Constants#ADDRESS_REQUESTS";
+    String ADDRESS_REQUEST_RESULT = "com.fieldnation.fnpermissions.Constants#ADDRESS_REQUEST_RESULT";
+    String ADDRESS_COMPLETE = "com.fieldnation.fnpermissions.Constants#ADDRESS_COMPLETE";
 }
