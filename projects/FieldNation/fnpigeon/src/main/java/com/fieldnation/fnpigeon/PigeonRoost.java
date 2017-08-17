@@ -63,7 +63,7 @@ public class PigeonRoost {
 
             if (_stickies.containsKey(address)) {
                 StickyContainer stickyContainer = _stickies.get(address);
-                getMainHandler().post(new MessageRunnable(pigeon, stickyContainer.message, address));
+                getMainHandler().post(MessageRunnable.getInstance(pigeon, address, stickyContainer.message));
             }
         }
     }
@@ -151,45 +151,8 @@ public class PigeonRoost {
                 }
             }
         }
-
-        getMainHandler().post(new MessagesRunnable(pigeonList, objectList, addressList));
+        getMainHandler().post(MessagesRunnable.getInstance(pigeonList, addressList, objectList));
         pruneStickies();
-    }
-
-    private static class MessageRunnable implements Runnable {
-        Pigeon pigeon;
-        Object message;
-        String address;
-
-        public MessageRunnable(Pigeon pigeon, Object message, String address) {
-            this.pigeon = pigeon;
-            this.message = message;
-            this.address = address;
-        }
-
-        @Override
-        public void run() {
-            pigeon.onMessage(address, message);
-        }
-    }
-
-    private static class MessagesRunnable implements Runnable {
-        List<Pigeon> pigeonList;
-        List<Object> objectList;
-        List<String> addressList;
-
-        public MessagesRunnable(List<Pigeon> pigeonList, List<Object> objectList, List<String> addressList) {
-            this.pigeonList = pigeonList;
-            this.objectList = objectList;
-            this.addressList = addressList;
-        }
-
-        @Override
-        public void run() {
-            while (pigeonList.size() > 0) {
-                pigeonList.remove(0).onMessage(addressList.remove(0), objectList.remove(0));
-            }
-        }
     }
 
     public static void clearAddressCache(String address) {
@@ -243,6 +206,87 @@ public class PigeonRoost {
             createdDate = System.currentTimeMillis();
             this.stickyType = stickyType;
             this.message = message;
+        }
+    }
+
+    private static class MessageRunnable implements Runnable {
+        Pigeon pigeon;
+        Object message;
+        String address;
+
+        private MessageRunnable(Pigeon pigeon, String address, Object message) {
+            this.pigeon = pigeon;
+            this.message = message;
+            this.address = address;
+        }
+
+        @Override
+        public void run() {
+            pigeon.onMessage(address, message);
+            synchronized (POOL) {
+                POOL.add(this);
+                pigeon = null;
+                message = null;
+                address = null;
+            }
+        }
+
+        private static final List<MessageRunnable> POOL = new LinkedList<>();
+
+        public static MessageRunnable getInstance(Pigeon pigeon, String address, Object message) {
+            synchronized (POOL) {
+                if (POOL.size() > 0) {
+                    MessageRunnable mr = POOL.remove(0);
+                    mr.pigeon = pigeon;
+                    mr.address = address;
+                    mr.message = message;
+                    return mr;
+                } else {
+                    return new MessageRunnable(pigeon, address, message);
+                }
+            }
+        }
+    }
+
+    private static class MessagesRunnable implements Runnable {
+        List<Pigeon> pigeonList;
+        List<Object> objectList;
+        List<String> addressList;
+
+        private MessagesRunnable(List<Pigeon> pigeonList, List<String> addressList, List<Object> objectList) {
+            this.pigeonList = pigeonList;
+            this.objectList = objectList;
+            this.addressList = addressList;
+        }
+
+        @Override
+        public void run() {
+            while (pigeonList.size() > 0) {
+                pigeonList.remove(0).onMessage(addressList.remove(0), objectList.remove(0));
+            }
+
+            synchronized (POOL) {
+                POOL.add(this);
+                pigeonList = null;
+                objectList = null;
+                addressList = null;
+            }
+        }
+
+        private static final List<MessagesRunnable> POOL = new LinkedList<>();
+
+        public static MessagesRunnable getInstance(List<Pigeon> pigeonList, List<String> addressList, List<Object> objectList) {
+            synchronized (POOL) {
+                if (POOL.size() > 0) {
+                    MessagesRunnable mr = POOL.remove(0);
+                    mr.pigeonList = pigeonList;
+                    mr.objectList = objectList;
+                    mr.addressList = addressList;
+                    return mr;
+                } else {
+                    return new MessagesRunnable(pigeonList, addressList, objectList);
+                }
+            }
         }
     }
 }
