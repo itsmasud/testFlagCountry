@@ -46,7 +46,6 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.v2.data.client.MemoryCache;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -280,7 +279,6 @@ public class App extends Application {
 
     @Override
     public void onTerminate() {
-        MemoryCache.purgeNodes();
         _profileClient.disconnect(this);
         _globalTopicClient.disconnect(this);
         _authTopicClient.disconnect(this);

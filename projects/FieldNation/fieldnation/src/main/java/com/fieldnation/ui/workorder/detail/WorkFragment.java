@@ -1015,7 +1015,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onSignature(Task task) {
             _currentTask = task;
-            SignOffActivity.startSignOff(getActivity(), _workOrder, task.getId());
+            SignOffActivity.startSignOff(getActivity(), _workOrder.getId(), task.getId());
             setLoading(true);
         }
 
@@ -1096,7 +1096,7 @@ public class WorkFragment extends WorkorderFragment {
     private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrder);
+            SignOffActivity.startSignOff(getActivity(), _workOrder.getId());
             setLoading(true);
         }
 
@@ -1365,7 +1365,7 @@ public class WorkFragment extends WorkorderFragment {
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
-                        SignOffActivity.startSignOff(App.get(), workOrder, true);
+                        SignOffActivity.startSignOff(App.get(), workOrder.getId(), true);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
