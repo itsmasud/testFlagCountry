@@ -107,11 +107,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         _listview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         _listview.setAdapter(_adapter);
 
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
-
         BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
     }
 
@@ -144,6 +139,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         _workOrderClient = new WorkorderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
     }
 
     @Override
@@ -159,6 +159,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         RequestBundleDialog.removeOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
+
+        if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
 
         super.onPause();
     }

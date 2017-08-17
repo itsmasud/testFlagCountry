@@ -96,11 +96,6 @@ public class SearchResultScreen extends RelativeLayout {
                 _refreshView.startRefreshing();
             }
         });
-
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
     }
 
     @Override
@@ -116,11 +111,18 @@ public class SearchResultScreen extends RelativeLayout {
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(App.get());
+
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
     }
 
     public void onPause() {
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
         if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        if (_simpleGps != null && _simpleGps.isRunning())
+            _simpleGps.stop();
     }
 
     @Override
@@ -142,6 +144,7 @@ public class SearchResultScreen extends RelativeLayout {
                 _filterParams.longitude = _location.getLongitude();
             }
             _simpleGps.stop();
+            _adapter.notifyDataSetChanged();
         }
 
         @Override
