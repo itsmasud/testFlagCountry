@@ -11,8 +11,8 @@ import com.fieldnation.fnpigeon.Sticky;
 /**
  * Created by Michael Carver on 3/17/2015.
  */
-public class GlobalTopicClient extends Pigeon implements GlobalTopicConstants {
-    private static final String TAG = "GlobalTopicClient";
+public class AppMessagingClient extends Pigeon implements AppMessagingConstants {
+    private static final String TAG = "AppMessagingClient";
 
     public static void gcm(String message) {
         Bundle bundle = new Bundle();

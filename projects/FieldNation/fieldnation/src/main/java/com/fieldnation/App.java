@@ -399,7 +399,7 @@ public class App extends Application {
         return _isConnected;
     }
 
-    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
         @Override
         public void onProfileInvalid() {
             ProfileClient.get(App.this);
@@ -430,7 +430,7 @@ public class App extends Application {
             ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    GlobalTopicClient.networkConnect();
+                    AppMessagingClient.networkConnect();
                 }
             }, Snackbar.LENGTH_INDEFINITE);
         }
@@ -468,10 +468,10 @@ public class App extends Application {
                     deviceToken = null;
                 }
 
-                GlobalTopicClient.gotProfile(profile);
+                AppMessagingClient.gotProfile(profile);
 
                 if (_switchingUser) {
-                    GlobalTopicClient.userSwitched(profile);
+                    AppMessagingClient.userSwitched(profile);
                     _switchingUser = false;
                 }
 

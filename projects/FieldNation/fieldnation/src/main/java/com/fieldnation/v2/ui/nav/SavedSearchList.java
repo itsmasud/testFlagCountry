@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
@@ -211,7 +211,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     };
 
-    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             WorkordersWebApi.getWorkOrderLists(App.get(), false, false);

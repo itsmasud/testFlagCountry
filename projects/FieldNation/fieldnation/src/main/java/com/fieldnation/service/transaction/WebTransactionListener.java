@@ -3,7 +3,7 @@ package com.fieldnation.service.transaction;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
@@ -147,7 +147,7 @@ public abstract class WebTransactionListener {
                 return Result.DELETE;
 
             } else if (throwable instanceof UnknownHostException) {
-                GlobalTopicClient.networkDisconnected();
+                AppMessagingClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof SecurityException) {
@@ -157,29 +157,29 @@ public abstract class WebTransactionListener {
                     || throwable instanceof ConnectException
                     || throwable instanceof SocketTimeoutException
                     || throwable instanceof EOFException) {
-                GlobalTopicClient.networkDisconnected();
+                AppMessagingClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof SSLException) {
                 if (throwable.getMessage().contains("Broken pipe")) {
                     Log.v(TAG, "6");
-                    GlobalTopicClient.networkDisconnected();
+                    AppMessagingClient.networkDisconnected();
                     return Result.RETRY;
 
                 } else {
                     Log.v(TAG, "7");
-                    GlobalTopicClient.networkDisconnected();
+                    AppMessagingClient.networkDisconnected();
                     return Result.RETRY;
                 }
             } else if (throwable instanceof IOException) {
-                GlobalTopicClient.networkDisconnected();
+                AppMessagingClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof Exception) {
                 Log.v(TAG, "9");
                 Log.v(TAG, throwable);
                 if (throwable.getMessage() != null && throwable.getMessage().contains("ETIMEDOUT")) {
-                    GlobalTopicClient.networkDisconnected();
+                    AppMessagingClient.networkDisconnected();
                     return Result.RETRY;
 
                 } else {

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.ViewStub;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -83,7 +83,7 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         }
     };
 
-    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             //startNew(App.get());

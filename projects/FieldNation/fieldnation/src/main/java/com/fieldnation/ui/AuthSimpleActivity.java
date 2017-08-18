@@ -14,7 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityRequestHandler;
@@ -355,7 +355,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final GlobalTopicClient _globalClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalClient = new AppMessagingClient() {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;

@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -790,7 +790,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
             if (params.has("isRead") && params.getBoolean("isRead")) {
-                GlobalTopicClient.profileInvalid();
+                AppMessagingClient.profileInvalid();
                 WorkorderClient.get(context, workorderId, false);
             }
 
@@ -816,7 +816,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
             if (params.has("isRead") && params.getBoolean("isRead")) {
-                GlobalTopicClient.profileInvalid();
+                AppMessagingClient.profileInvalid();
                 WorkorderClient.get(context, workorderId, false);
             }
 

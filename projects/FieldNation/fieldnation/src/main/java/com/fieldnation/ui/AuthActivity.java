@@ -27,7 +27,7 @@ import android.widget.Toast;
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityRequestHandler;
@@ -192,7 +192,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             return;
         }
 
-        GlobalTopicClient.appShutdown();
+        AppMessagingClient.appShutdown();
 
         super.onBackPressed();
     }
@@ -211,7 +211,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final GlobalTopicClient _globalClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalClient = new AppMessagingClient() {
         @Override
         public void onNeedAppUpdate() {
             UpdateDialog.show(App.get());
@@ -277,7 +277,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
 
-                        GlobalTopicClient.networkConnected();
+                        AppMessagingClient.networkConnected();
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
@@ -290,7 +290,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 protected void onPostExecute(OAuth auth) {
                     if (auth == null) {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        GlobalTopicClient.networkDisconnected();
+                        AppMessagingClient.networkDisconnected();
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                         _stiltView.setVisibility(View.VISIBLE);
@@ -300,7 +300,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     String error = auth.getErrorType();
 
                     if ("invalid_client".equals(error)) {
-                        GlobalTopicClient.updateApp();
+                        AppMessagingClient.updateApp();
                     } else if (authToken != null) {
                         Log.v(TAG, "have authtoken");
                         Account account = new Account(_username, getString(R.string.auth_account_type));

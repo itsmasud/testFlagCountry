@@ -7,7 +7,7 @@ import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
@@ -105,7 +105,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         return 1;
     }
 
-    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
         @Override
         public void onNetworkConnect() {
             _manager.wakeUp();

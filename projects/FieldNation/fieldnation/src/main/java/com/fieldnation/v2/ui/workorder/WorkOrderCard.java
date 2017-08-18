@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -790,7 +790,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.setLoading(true);
+            AppMessagingClient.setLoading(true);
             if (_onActionListener != null) _onActionListener.onAction();
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getId());
@@ -846,7 +846,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.setLoading(true);
+            AppMessagingClient.setLoading(true);
 
             if (_onActionListener != null) _onActionListener.onAction();
 

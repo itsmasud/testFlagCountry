@@ -11,7 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
@@ -104,7 +104,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     }
 
-    private final GlobalTopicClient _globalTopicClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
         @Override
         public void onShutdown() {
             Log.v(TAG, "GlobalTopicClient.onShutdown");
@@ -215,7 +215,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-*********************************-*/
     private void onAppIsOld() {
         Log.v(TAG, "onAppIsOld");
-        GlobalTopicClient.updateApp();
+        AppMessagingClient.updateApp();
     }
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {

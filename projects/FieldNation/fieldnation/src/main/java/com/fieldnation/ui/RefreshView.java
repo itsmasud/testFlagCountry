@@ -11,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fntools.DefaultAnimatorListener;
 import com.fieldnation.fntools.UniqueTag;
@@ -270,7 +270,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         refreshComplete();
     }
 
-    private final GlobalTopicClient _globalClient = new GlobalTopicClient() {
+    private final AppMessagingClient _globalClient = new AppMessagingClient() {
         @Override
         public void onSetLoading(boolean isLoading) {
             //Log.v(TAG, "setLoading()");

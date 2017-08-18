@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.view.ViewGroup;
 
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnactivityresult.ActivityClient;
 
@@ -28,7 +28,7 @@ public class UpdateDialog extends OneButtonDialog {
 
     @Override
     public boolean onCancel() {
-        GlobalTopicClient.appShutdown();
+        AppMessagingClient.appShutdown();
         return false;
     }
 

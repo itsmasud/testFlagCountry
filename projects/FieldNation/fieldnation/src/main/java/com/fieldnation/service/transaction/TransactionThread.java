@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
@@ -114,11 +114,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
             Log.v(TAG, "Testing connection");
             try {
                 HttpJson.run(_service, TEST_QUERY);
-                GlobalTopicClient.networkConnected();
+                AppMessagingClient.networkConnected();
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
                 Log.v(TAG, "Testing connection... failed!");
-                GlobalTopicClient.networkDisconnected();
+                AppMessagingClient.networkDisconnected();
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ex) {
