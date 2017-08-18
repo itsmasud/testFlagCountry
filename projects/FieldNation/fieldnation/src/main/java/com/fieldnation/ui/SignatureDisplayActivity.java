@@ -18,22 +18,11 @@ import com.fieldnation.v2.data.model.WorkOrder;
 public class SignatureDisplayActivity extends AuthSimpleActivity {
     private static final String TAG = "SignatureDisplayActivity";
 
-    // State
-    private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
-    private static final String STATE_SIGNATURE_ID = "STATE_SIGNATURE_ID";
-
-    // Intent Params
-    public static final String INTENT_PARAM_SIGNATURE = "ui.SignatureDisplayActivity:INTENT_PARAM_SIGNATURE";
-    public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
-
     // Ui
     private SignatureView _signatureView;
 
     // Data
     private Signature _signature;
-    private WorkOrder _workOrder;
-    private long _signatureId = -1;
 
     @Override
     public int getLayoutResource() {
@@ -46,22 +35,13 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (extras.containsKey(INTENT_PARAM_SIGNATURE))
-                _signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
-
-            if (extras.containsKey(INTENT_PARAM_WORKORDER))
-                _workOrder = extras.getParcelable(INTENT_PARAM_WORKORDER);
+            if (extras.containsKey("signature"))
+                _signature = extras.getParcelable("signature");
 
             populateUi();
         } else if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                _signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
-
-            if (savedInstanceState.containsKey(STATE_WORKORDER))
-                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-            if (savedInstanceState.containsKey(STATE_SIGNATURE_ID))
-                _signatureId = savedInstanceState.getLong(STATE_SIGNATURE_ID);
+            if (savedInstanceState.containsKey("signature"))
+                _signature = savedInstanceState.getParcelable("signature");
 
             populateUi();
         } else {
@@ -82,12 +62,7 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (_signature != null)
-            outState.putParcelable(STATE_SIGNATURE, _signature);
-
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
-
-        outState.putLong(STATE_SIGNATURE_ID, _signatureId);
+            outState.putParcelable("signature", _signature);
 
         super.onSaveInstanceState(outState);
     }
@@ -106,19 +81,8 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         if (_signatureView == null)
             return;
 
-        if (_workOrder == null)
+        if (_signature == null)
             return;
-
-        if (_workOrder.getSignatures().getResults() == null
-                || _workOrder.getSignatures().getResults().length == 0)
-            return;
-
-        for (Signature signature : _workOrder.getSignatures().getResults()) {
-            if (signature.getId() == _signatureId) {
-                _signature = signature;
-                break;
-            }
-        }
 
         if (_signature.getFormat().equals("svg")) {
             _signatureView.setSignatureSvg(_signature.getData(), true);
@@ -130,11 +94,10 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     /*-*************************************-*/
     /*-                 Events              -*/
     /*-*************************************-*/
-    public static void startIntent(Context context, long signatureId, WorkOrder workOrder) {
+    public static void startIntent(Context context, Signature signature) {
         Intent intent = new Intent(context, SignatureDisplayActivity.class);
         intent.setAction("DUMMY");
-        intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-        intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
+        intent.putExtra("signature", signature);
         intent.setExtrasClassLoader(WorkOrder.class.getClassLoader());
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

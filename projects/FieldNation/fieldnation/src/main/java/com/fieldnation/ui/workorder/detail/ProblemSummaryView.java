@@ -89,7 +89,7 @@ public class ProblemSummaryView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            UnresolvedProblemsDialog.show(App.get(), null, _workOrder);
+            UnresolvedProblemsDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getProblems());
         }
     };
 }

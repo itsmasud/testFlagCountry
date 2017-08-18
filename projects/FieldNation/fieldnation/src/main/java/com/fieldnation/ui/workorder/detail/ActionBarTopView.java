@@ -141,12 +141,12 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         if (false) {
 
             // ack hold
-        } else if (_workOrder.isOnHold()) {
+        } else if (_workOrder.getHolds().isOnHold()) {
             inflate();
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
-            if (_workOrder.areHoldsAcknowledged()) {
+            if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightWhiteButton.setText(R.string.btn_on_hold);
                 _rightWhiteButton.setEnabled(false);
             } else {
@@ -371,7 +371,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                     null, _workOrder.getId());
 
-            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
+            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder.getId(), _workOrder.getEta(),
+                    _workOrder.getSchedule(), _workOrder.getContacts(), _workOrder.getTitle());
         }
     };
 

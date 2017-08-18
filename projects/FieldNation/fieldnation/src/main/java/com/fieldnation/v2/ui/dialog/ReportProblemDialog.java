@@ -21,15 +21,14 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael on 10/5/2016.
@@ -41,9 +40,11 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
 
     // State keys
-    private static final String PARAM_WORKORDER = "workOrder";
+    private static final String PARAM_WORKORDER_ID = "workOrderId";
+    private static final String PARAM_PROBLEMS = "problems";
 
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_WORKORDER_ID = "workOrderId";
+    private static final String STATE_PROBLEMS = "problems";
     private static final String STATE_PRIMARY_POS = "STATE_PRIMARY_POS";
     private static final String STATE_SECONDARY_POS = "STATE_SECONDARY_POS";
     private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
@@ -68,7 +69,8 @@ public class ReportProblemDialog extends SimpleDialog {
     // Data
     private ProblemType[] _parentTypes = null;
     private ProblemType[] _childTypes = null;
-    private WorkOrder _workOrder;
+    private Problems _problems;
+    private int _workOrderId;
 
     // Saved Data
     private int _primaryPosition = -1;
@@ -116,9 +118,8 @@ public class ReportProblemDialog extends SimpleDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         setLoading(true);
-        if (payload.containsKey(PARAM_WORKORDER)) {
-            _workOrder = payload.getParcelable(PARAM_WORKORDER);
-        }
+        _workOrderId = payload.getInt(PARAM_WORKORDER_ID);
+        _problems = payload.getParcelable("problems");
 
         populateUi();
         super.show(payload, animate);
@@ -163,8 +164,8 @@ public class ReportProblemDialog extends SimpleDialog {
         if (savedState.containsKey(STATE_SECONDARY_POS))
             _secondaryPosition = savedState.getInt(STATE_SECONDARY_POS);
 
-        if (savedState.containsKey(STATE_WORKORDER))
-            _workOrder = savedState.getParcelable(STATE_WORKORDER);
+        if (savedState.containsKey(STATE_WORKORDER_ID))
+            _workOrderId = savedState.getInt(STATE_WORKORDER_ID);
 
         if (savedState.containsKey(STATE_SELECTED_PROBLEM))
             _selectedProblem = savedState.getParcelable(STATE_SELECTED_PROBLEM);
@@ -172,28 +173,25 @@ public class ReportProblemDialog extends SimpleDialog {
         if (savedState.containsKey(STATE_OK_ENABLED))
             _okButton.setEnabled(savedState.getBoolean(STATE_OK_ENABLED));
 
-        if (_workOrder != null) {
-            Problems problems = _workOrder.getProblems();
+        if (savedState.containsKey(STATE_PROBLEMS))
+            _problems = savedState.getParcelable(STATE_PROBLEMS);
 
-            if (problems.getTypes() != null && problems.getTypes().length > 0) {
-                getPrimaryAdapter().clear();
-                getPrimaryAdapter().addAll((Object[]) problems.getTypes());
+        if (_problems.getTypes() != null && _problems.getTypes().length > 0) {
+            getPrimaryAdapter().clear();
+            getPrimaryAdapter().addAll((Object[]) _problems.getTypes());
 
-                if (_primaryPosition != -1) {
-                    getPrimarySpinner().setSelection(_primaryPosition);
+            if (_primaryPosition != -1) {
+                getPrimarySpinner().setSelection(_primaryPosition);
 
-                    _childTypes = problems.getTypes()[_primaryPosition].getChildren();
-                    if (_childTypes != null && _childTypes.length > 0) {
-                        getSecondaryAdapter().clear();
-                        getSecondaryAdapter().addAll((Object[]) _childTypes);
-                    }
-                    if (_secondaryPosition != -1 && _childTypes != null && _childTypes.length > 0) {
-                        getSecondarySpinner().setSelection(_secondaryPosition);
-                    } else {
-                        getSecondarySpinner().clearSelection();
-                    }
+                _childTypes = _problems.getTypes()[_primaryPosition].getChildren();
+                if (_childTypes != null && _childTypes.length > 0) {
+                    getSecondaryAdapter().clear();
+                    getSecondaryAdapter().addAll((Object[]) _childTypes);
+                }
+                if (_secondaryPosition != -1 && _childTypes != null && _childTypes.length > 0) {
+                    getSecondarySpinner().setSelection(_secondaryPosition);
                 } else {
-                    getPrimarySpinner().clearSelection();
+                    getSecondarySpinner().clearSelection();
                 }
             } else {
                 getPrimarySpinner().clearSelection();
@@ -208,8 +206,9 @@ public class ReportProblemDialog extends SimpleDialog {
     public void onSaveDialogState(Bundle outState) {
         outState.putInt(STATE_PRIMARY_POS, _primaryPosition);
         outState.putInt(STATE_SECONDARY_POS, _secondaryPosition);
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
+        outState.putInt(STATE_WORKORDER_ID, _workOrderId);
+        outState.putParcelable(STATE_PROBLEMS, _problems);
+
         if (_selectedProblem != null)
             outState.putParcelable(STATE_SELECTED_PROBLEM, _selectedProblem);
         if (_okButton != null)
@@ -261,13 +260,13 @@ public class ReportProblemDialog extends SimpleDialog {
         if (_noteTextView == null)
             return;
 
-        if (_workOrder == null)
+        if (_problems == null)
             return;
 
         setLoading(false);
 
         { // put in a block to limit the scope of pList
-            ProblemType[] types = _workOrder.getProblems().getTypes();
+            ProblemType[] types = _problems.getTypes();
 
             if (types.length == 0) {
                 _parentTypes = null;
@@ -291,7 +290,7 @@ public class ReportProblemDialog extends SimpleDialog {
         }
 
         if (_primaryPosition >= 0) {
-            ProblemType[] childTypes = _workOrder.getProblems().getTypes()[_primaryPosition].getChildren();
+            ProblemType[] childTypes = _problems.getTypes()[_primaryPosition].getChildren();
 
             if (childTypes == null || childTypes.length == 0) {
                 _childTypes = null;
@@ -399,16 +398,16 @@ public class ReportProblemDialog extends SimpleDialog {
                     problem.getType().setOther(explanation);
 
                 if (problem.getType().getShowPqapWarning() != null && problem.getType().getShowPqapWarning()) {
-                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getId(), problem);
+                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrderId, problem);
                 } else {
-                    WorkordersWebApi.addProblem(App.get(), _workOrder.getId(), problem, App.get().getSpUiContext());
+                    WorkordersWebApi.addProblem(App.get(), _workOrderId, problem, App.get().getSpUiContext());
                     ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
 
-            _onSendDispatcher.dispatch(getUid(), _workOrder.getId(), explanation, problem.getType());
+            _onSendDispatcher.dispatch(getUid(), _workOrderId, explanation, problem.getType());
 
             dismiss(true);
         }
@@ -478,9 +477,10 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workorder) {
+    public static void show(Context context, String uid, int workOrderId, Problems problems) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORKORDER, workorder);
+        params.putInt(PARAM_WORKORDER_ID, workOrderId);
+        params.putParcelable(PARAM_PROBLEMS, problems);
         Controller.show(context, uid, ReportProblemDialog.class, params);
     }
 

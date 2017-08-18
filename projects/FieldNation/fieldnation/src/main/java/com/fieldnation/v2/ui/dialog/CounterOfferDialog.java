@@ -49,9 +49,9 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
+import com.fieldnation.v2.ui.ListItemTwoVertView;
 import com.fieldnation.v2.ui.PayView;
 import com.fieldnation.v2.ui.ScheduleView;
-import com.fieldnation.v2.ui.ListItemTwoVertView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -127,12 +127,14 @@ public class CounterOfferDialog extends FullScreenDialog {
     private Animation _fabSlideIn;
 
     // Data
-    private WorkOrder _workOrder;
     private WorkordersWebApi _workOrderApi;
 
     // User Data
+    private int _workOrderId;
     private Pay _pay = null;
     private Schedule _schedule = null;
+    private Pay _woPay = null;
+    private Schedule _woSchedule = null;
     private final List<Expense> _expenses = new LinkedList<>();
     private long _expiresMilliSeconds = -1;
     private String _expiresTitle = null;
@@ -321,7 +323,9 @@ public class CounterOfferDialog extends FullScreenDialog {
         super.show(payload, animate);
 
         Log.v(TAG, "show");
-        _workOrder = payload.getParcelable("workOrder");
+        _workOrderId = payload.getInt("workOrderId");
+        _woPay = payload.getParcelable("pay");
+        _woSchedule = payload.getParcelable("schedule");
         populateUi();
     }
 
@@ -556,10 +560,10 @@ public class CounterOfferDialog extends FullScreenDialog {
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Counter Offer Dialog";
-                WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
+                WorkordersWebApi.request(App.get(), _workOrderId, request, uiContext);
 
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
-                        WorkOrderTracker.Action.COUNTER_OFFER, _workOrder.getId());
+                        WorkOrderTracker.Action.COUNTER_OFFER, _workOrderId);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -592,14 +596,14 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _pay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _workOrder.getPay(), false);
+            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _woPay, false);
         }
     };
 
     private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _workOrder.getPay(), false);
+            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _woPay, false);
             getView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -628,7 +632,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             if (item.getItemId() == R.id.edit_menu) {
-                PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _workOrder.getPay(), false);
+                PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _woPay, false);
             } else if (item.getItemId() == R.id.delete_menu) {
                 _pay = null;
                 populateUi();
@@ -656,7 +660,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _workOrder.getSchedule());
+            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _woSchedule);
             getView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -690,7 +694,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _schedule_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _workOrder.getSchedule());
+            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _woSchedule);
         }
     };
 
@@ -705,7 +709,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             if (item.getItemId() == R.id.edit_menu) {
-                ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _workOrder.getSchedule());
+                ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _woSchedule);
             } else if (item.getItemId() == R.id.delete_menu) {
                 _schedule = null;
                 populateUi();
@@ -947,9 +951,11 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, WorkOrder workOrder) {
+    public static void show(Context context, int workOrderId, Pay pay, Schedule schedule) {
         Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("pay", pay);
+        params.putParcelable("schedule", schedule);
 
         Controller.show(context, null, CounterOfferDialog.class, params);
     }

@@ -51,7 +51,6 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.User;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -68,23 +67,12 @@ public class EtaDialog extends FullScreenDialog {
     // Dialog Uids
     private static final String UID_DURATION_DIALOG = TAG + ".DurationPickerDialog";
 
-    // State
-    private static final String STATE_DURATION = "STATE_DURATION";
-    private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
-    private static final String STATE_NOTE = "STATE_NOTE";
-    private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
-    private static final String STATE_ETA_CALENDAR = "STATE_ETA_CALENDAR";
-
     // Params
-    //public static final String PARAM_DIALOG_TYPE = "type";
     public static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
     public static final String PARAM_DIALOG_TYPE_MASS_ACCEPT = "massAccept";
     public static final String PARAM_DIALOG_TYPE_REQUEST = "request";
-    //public static final String PARAM_DIALOG_TYPE_CONFIRM = "confirm";
     public static final String PARAM_DIALOG_TYPE_ADD = "add";
     public static final String PARAM_DIALOG_TYPE_EDIT = "edit";
-    private static final String PARAM_WORKORDER = "workOrder";
-    private static final String PARAM_DIALOG_TYPE = "dialogType";
 
     private final static int MIN_JOB_DURATION = 900000;
     //    private final static int MIN_EXPIRING_DURATION = 900000;
@@ -119,7 +107,9 @@ public class EtaDialog extends FullScreenDialog {
 
     // Passed data
     private String _dialogType;
-    private WorkOrder _workOrder;
+    private int _workOrderId;
+    private Schedule _woSchedule;
+    private ETA _woEta;
 
     // User data
     private Calendar _etaStart;
@@ -231,39 +221,42 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
-        _workOrder = params.getParcelable(PARAM_WORKORDER);
-        _dialogType = params.getString(PARAM_DIALOG_TYPE);
+        _workOrderId = params.getInt("workOrderId");
+        _dialogType = params.getString("dialogType");
+        _woSchedule = params.getParcelable("schedule");
+        _woEta = params.getParcelable("eta");
+
+        super.show(params, animate);
 
         try {
-            if (_workOrder.getEta().getStatus().getName() != null
-                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
-                    && _workOrder.getEta().getStart().getUtc() != null) {
-                _etaStart = _workOrder.getEta().getStart().getCalendar();
+            if (_woEta.getStatus().getName() != null
+                    && _woEta.getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _woEta.getStart().getUtc() != null) {
+                _etaStart = _woEta.getStart().getCalendar();
 
-            } else if (_workOrder.getSchedule().getServiceWindow().getStart().getUtc() != null) {
-                _etaStart = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+            } else if (_woSchedule.getServiceWindow().getStart().getUtc() != null) {
+                _etaStart = _woSchedule.getServiceWindow().getStart().getCalendar();
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        super.show(params, animate);
 
         populateUi();
     }
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        outState.putInt(STATE_SPINNER_POSITION, _currentPosition);
+        outState.putInt("currentPosition", _currentPosition);
 
         // ETA stuff
         if (_durationMilliseconds != INVALID_NUMBER)
-            outState.putLong(STATE_DURATION, _durationMilliseconds);
+            outState.putLong("durationMilliseconds", _durationMilliseconds);
 
         if (!misc.isEmptyOrNull(_noteEditText.getText().toString().trim()))
-            outState.putString(STATE_NOTE, _noteEditText.getText().toString().trim());
+            outState.putString("noteEditText", _noteEditText.getText().toString().trim());
 
-        outState.putBoolean(STATE_ETA_SWITCH, _etaSwitch.isChecked());
-        outState.putSerializable(STATE_ETA_CALENDAR, _etaStart);
+        outState.putBoolean("etaSwitch", _etaSwitch.isChecked());
+        outState.putSerializable("etaStart", _etaStart);
 
         super.onSaveDialogState(outState);
     }
@@ -271,21 +264,21 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         Log.v(TAG, "onRestoreDialogState");
-        if (savedState.containsKey(STATE_SPINNER_POSITION))
-            _currentPosition = savedState.getInt(STATE_SPINNER_POSITION);
+        if (savedState.containsKey("currentPosition"))
+            _currentPosition = savedState.getInt("currentPosition");
 
         // ETA stuff
-        if (savedState.containsKey(STATE_DURATION))
-            _durationMilliseconds = savedState.getLong(STATE_DURATION);
+        if (savedState.containsKey("durationMilliseconds"))
+            _durationMilliseconds = savedState.getLong("durationMilliseconds");
 
-        if (savedState.containsKey(STATE_NOTE))
-            _noteEditText.setText(savedState.getString(STATE_NOTE));
+        if (savedState.containsKey("noteEditText"))
+            _noteEditText.setText(savedState.getString("noteEditText"));
 
-        if (savedState.containsKey(STATE_ETA_SWITCH))
-            _isSwitchOn = savedState.getBoolean(STATE_ETA_SWITCH);
+        if (savedState.containsKey("etaSwitch"))
+            _isSwitchOn = savedState.getBoolean("etaSwitch");
 
-        if (savedState.containsKey(STATE_ETA_CALENDAR))
-            _etaStart = (Calendar) savedState.getSerializable(STATE_ETA_CALENDAR);
+        if (savedState.containsKey("etaStart"))
+            _etaStart = (Calendar) savedState.getSerializable("etaStart");
 
         super.onRestoreDialogState(savedState);
 
@@ -297,13 +290,19 @@ public class EtaDialog extends FullScreenDialog {
     /*-             Internal Mutators              -*/
     /*-********************************************-*/
     private void populateUi() {
+        getView().setEnabled(false);
         if (misc.isEmptyOrNull(_dialogType))
             return;
 
+        if (_woSchedule == null || _woEta == null) {
+            return;
+        }
+        getView().setEnabled(true);
+
         // Wod request work, Woc Request work
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-            _toolbar.setTitle("Request " + _workOrder.getId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+            _toolbar.setTitle("Request " + _workOrderId);
+            _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
@@ -320,8 +319,8 @@ public class EtaDialog extends FullScreenDialog {
             // Woc accept route, Wod Accept route (onSetEta)
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)
                 || _dialogType.equals(PARAM_DIALOG_TYPE_MASS_ACCEPT)) {
-            _toolbar.setTitle("Accept " + _workOrder.getId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
+            _toolbar.setTitle("Accept " + _workOrderId);
+            _finishMenu.setText(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -338,7 +337,7 @@ public class EtaDialog extends FullScreenDialog {
 /*
             // old confirm, work order start, confirm task
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-            _toolbar.setTitle("Confirm " + _workOrder.getId());
+            _toolbar.setTitle("Confirm " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -351,8 +350,8 @@ public class EtaDialog extends FullScreenDialog {
 
             // Add eta from WoC
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ADD)) {
-            _toolbar.setTitle("Set ETA " + _workOrder.getId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+            _toolbar.setTitle("Set ETA " + _workOrderId);
+            _finishMenu.setText(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -364,7 +363,7 @@ public class EtaDialog extends FullScreenDialog {
             // from WoD. change the eta
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
             _toolbar.setTitle(R.string.dialog_eta_title);
-            _finishMenu.setTitle(App.get().getString(R.string.btn_save));
+            _finishMenu.setText(App.get().getString(R.string.btn_save));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -383,7 +382,7 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
         _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
 
-        if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
+        if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             _etaStartDateButton.setEnabled(false);
             _etaStartTimeButton.setEnabled(false);
         } else {
@@ -393,12 +392,12 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-                if (_workOrder.getEta().getStatus().getName() != null
-                        && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
-                        && _workOrder.getEta().getHourEstimate() != null
-                        && _workOrder.getEta().getHourEstimate() > 0
+                if (_woEta.getStatus().getName() != null
+                        && _woEta.getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                        && _woEta.getHourEstimate() != null
+                        && _woEta.getHourEstimate() > 0
                         && _dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
-                    _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
+                    _durationMilliseconds = (long) (_woEta.getHourEstimate() * 60 * 60 * 1000);
                 }
             }
         } catch (Exception e) {
@@ -411,12 +410,12 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private boolean isValidEta(final Calendar arrival) {
-        if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
+        if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             return true;
-        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-            return isWithinBusinessHours(arrival, _workOrder.getSchedule());
-        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-            return isWithinRange(arrival, _workOrder.getSchedule());
+        } else if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
+            return isWithinBusinessHours(arrival, _woSchedule);
+        } else if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+            return isWithinRange(arrival, _woSchedule);
         }
         return true;
     }
@@ -488,14 +487,14 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private boolean isLastDaySelected(final Calendar eta) {
-        if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT)
+        if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT)
             return false;
 
         try {
             // is business or range
-            if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+            if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
                 //Calendar scal = _schedule.getServiceWindow().getStart().getCalendar();
-                Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+                Calendar ecal = _woSchedule.getServiceWindow().getEnd().getCalendar();
 
                 // if the last day selected
                 return eta.get(Calendar.DAY_OF_MONTH) == ecal.get(Calendar.DAY_OF_MONTH);
@@ -529,9 +528,9 @@ public class EtaDialog extends FullScreenDialog {
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(App.get().getResources().getStringArray(R.array.schedule_capital_case_am_pm_array));
 
-            if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-                Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                Calendar eCal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+            if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
+                Calendar sCal = _woSchedule.getServiceWindow().getStart().getCalendar();
+                Calendar eCal = _woSchedule.getServiceWindow().getEnd().getCalendar();
 
                 SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
@@ -552,9 +551,9 @@ public class EtaDialog extends FullScreenDialog {
 
                 return dateTimeString;
 
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-                Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                Calendar eCal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+            } else if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+                Calendar sCal = _woSchedule.getServiceWindow().getStart().getCalendar();
+                Calendar eCal = _woSchedule.getServiceWindow().getEnd().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
@@ -565,8 +564,8 @@ public class EtaDialog extends FullScreenDialog {
 
                 return dateTimeString;
 
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
-                Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+            } else if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
+                Calendar sCal = _woSchedule.getServiceWindow().getStart().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
@@ -634,7 +633,7 @@ public class EtaDialog extends FullScreenDialog {
             } else {
                 // the time field might need to be cleared.
                 try {
-                    test = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                    test = _woSchedule.getServiceWindow().getStart().getCalendar();
                     test.set(year, monthOfYear, dayOfMonth);
                     if (isValidEta(test)) {
                         ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
@@ -642,7 +641,7 @@ public class EtaDialog extends FullScreenDialog {
                         populateUi();
                         _etaStartTimeButton.setText("");
                     } else {
-                        test = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+                        test = _woSchedule.getServiceWindow().getEnd().getCalendar();
                         test.set(year, monthOfYear, dayOfMonth);
                         if (isValidEta(test)) {
                             ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
@@ -702,7 +701,7 @@ public class EtaDialog extends FullScreenDialog {
                 return;
             }
 
-            if (_workOrder.getSchedule().getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
+            if (_woSchedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
                 _durationMilliseconds = milliseconds;
                 populateUi();
             } else {
@@ -767,14 +766,14 @@ public class EtaDialog extends FullScreenDialog {
             if (_dialogType.equals(PARAM_DIALOG_TYPE_MASS_ACCEPT)) {
                 try {
                     ETA eta = new ETA();
-                    eta.workOrderId(_workOrder.getId());
+                    eta.workOrderId(_workOrderId);
                     eta.setStart(new Date(_etaStart));
                     eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                     eta.setUser(new User().id((int) App.getProfileId()));
                     eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                     eta.setNotes(_noteEditText.getText().toString().trim());
 
-                    _onBundleEtaDispatcher.dispatch(getUid(), eta, _workOrder);
+                    _onBundleEtaDispatcher.dispatch(getUid(), _workOrderId, eta);
                     dismiss(true);
                     return true;
                 } catch (Exception ex) {
@@ -785,7 +784,7 @@ public class EtaDialog extends FullScreenDialog {
             try {
                 switch (_dialogType) {
                     case PARAM_DIALOG_TYPE_REQUEST: {
-                        _onRequestedDispatcher.dispatch(getUid(), _workOrder.getId());
+                        _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
                         _refreshView.startRefreshing();
 
                         Request request = new Request();
@@ -805,12 +804,12 @@ public class EtaDialog extends FullScreenDialog {
 
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
+                        WorkordersWebApi.request(App.get(), _workOrderId, request, uiContext);
                         break;
                     }
 
                     case PARAM_DIALOG_TYPE_ACCEPT: {
-                        _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getId());
+                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
                         _refreshView.startRefreshing();
 
                         Assignee assignee = new Assignee();
@@ -819,12 +818,12 @@ public class EtaDialog extends FullScreenDialog {
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
 
-                        WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee, uiContext);
+                        WorkordersWebApi.assignUser(App.get(), _workOrderId, assignee, uiContext);
                         break;
                     }
                     case PARAM_DIALOG_TYPE_ADD:  // add eta
                     case PARAM_DIALOG_TYPE_EDIT: {
-                        _onEtaDispatcher.dispatch(getUid(), _workOrder.getId());
+                        _onEtaDispatcher.dispatch(getUid(), _workOrderId);
                         _refreshView.startRefreshing();
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
@@ -836,7 +835,7 @@ public class EtaDialog extends FullScreenDialog {
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
 
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
+                        WorkordersWebApi.updateETA(App.get(), _workOrderId, eta, uiContext);
                         break;
                     }
                 }
@@ -876,7 +875,7 @@ public class EtaDialog extends FullScreenDialog {
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
 
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
+                        WorkordersWebApi.updateETA(App.get(), _workOrderId, eta, uiContext);
                         // TODO dismiss(true);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -915,10 +914,12 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String dialogType) {
+    public static void show(Context context, String uid, int workOrderId, Schedule schedule, ETA eta, String dialogType) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORKORDER, workOrder);
-        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("schedule", schedule);
+        params.putParcelable("eta", eta);
+        params.putString("dialogType", dialogType);
         Controller.show(context, uid, EtaDialog.class, params);
     }
 
@@ -926,7 +927,7 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Requested           -*/
     /*-*****************************-*/
     public interface OnRequestedListener {
-        void onRequested(int workOrderid);
+        void onRequested(int workOrderId);
     }
 
     private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
@@ -952,7 +953,7 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Accepted           -*/
     /*-****************************-*/
     public interface OnAcceptedListener {
-        void onAccepted(int workOrderid);
+        void onAccepted(int workOrderId);
     }
 
     private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
@@ -978,7 +979,7 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Confirmed           -*/
     /*-*****************************-*/
     public interface OnConfirmedListener {
-        void onConfirmed(int workOrderid);
+        void onConfirmed(int workOrderId);
     }
 
     private static KeyedDispatcher<OnConfirmedListener> _onConfirmedDispatcher = new KeyedDispatcher<OnConfirmedListener>() {
@@ -1004,7 +1005,7 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Eta           -*/
     /*-***********************-*/
     public interface OnEtaListener {
-        void onEta(int workOrderid);
+        void onEta(int workOrderId);
     }
 
     private static KeyedDispatcher<OnEtaListener> _onEtaDispatcher = new KeyedDispatcher<OnEtaListener>() {
@@ -1030,13 +1031,13 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Bundle Eta         -*/
     /*-****************************-*/
     public interface OnBundleEtaListener {
-        void onBundleEta(ETA eta, WorkOrder workOrder);
+        void onBundleEta(int workOrderId, ETA eta);
     }
 
     private static KeyedDispatcher<OnBundleEtaListener> _onBundleEtaDispatcher = new KeyedDispatcher<OnBundleEtaListener>() {
         @Override
         public void onDispatch(OnBundleEtaListener listener, Object... parameters) {
-            listener.onBundleEta((ETA) parameters[0], (WorkOrder) parameters[1]);
+            listener.onBundleEta((Integer) parameters[0], (ETA) parameters[1]);
         }
     };
 
