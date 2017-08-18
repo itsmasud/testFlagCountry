@@ -595,7 +595,7 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
-        if (!isAdded()) {
+        if (!isAdded() || _workOrder == null) {
             Log.v(TAG, "onActivityResult -> try later");
             _untilAdded.add(new Runnable() {
                 @Override
