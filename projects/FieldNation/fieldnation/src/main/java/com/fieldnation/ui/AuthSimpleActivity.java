@@ -1,8 +1,6 @@
 package com.fieldnation.ui;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -398,13 +396,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
-        }
-    };
-
-    private final BroadcastReceiver testReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
         }
     };
 }
