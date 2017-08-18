@@ -847,6 +847,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            GlobalTopicClient.setLoading(App.get(), true);
+
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (!App.get().isLocationEnabled()) {
