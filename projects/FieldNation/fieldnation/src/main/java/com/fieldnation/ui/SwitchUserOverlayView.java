@@ -60,12 +60,12 @@ public class SwitchUserOverlayView extends RelativeLayout {
         _growAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.grow_horrizontal);
         _growAnimation.setAnimationListener(_growListener);
 
-        _globalTopicClient.subUserSwitched();
+        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _globalTopicClient.unsubUserSwitched();
+        _appMessagingClient.unsubUserSwitched();
         super.onDetachedFromWindow();
     }
 
@@ -74,7 +74,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
         setVisibility(VISIBLE);
     }
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             // NavActivity.startNew(getContext());

@@ -122,10 +122,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _authClient.subNeedUsernameAndPassword();
 
-        _globalClient.subGotProfile();
-        _globalClient.subUpdateApp();
-        _globalClient.subAppShutdown();
-        _globalClient.subProfileInvalid();
+        _appMessagingClient.subGotProfile();
+        _appMessagingClient.subUpdateApp();
+        _appMessagingClient.subAppShutdown();
+        _appMessagingClient.subProfileInvalid();
         ProfileClient.get(App.get());
 
         _activityRequestHandler.sub();
@@ -142,10 +142,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        _globalClient.unsubGotProfile();
-        _globalClient.unsubUpdateApp();
-        _globalClient.unsubAppShutdown();
-        _globalClient.unsubProfileInvalid();
+        _appMessagingClient.unsubGotProfile();
+        _appMessagingClient.unsubUpdateApp();
+        _appMessagingClient.unsubAppShutdown();
+        _appMessagingClient.unsubProfileInvalid();
 
         _authClient.unsubNeedUsernameAndPassword();
         _toastClient.unSubToast();
@@ -353,7 +353,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final AppMessagingClient _globalClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;

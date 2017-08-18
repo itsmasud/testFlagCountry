@@ -63,13 +63,13 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _globalTopicClient.subUserSwitched();
+        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        _globalTopicClient.unsubUserSwitched();
+        _appMessagingClient.unsubUserSwitched();
     }
 
     private final AdditionalOptionsScreen.Listener _screen_listener = new AdditionalOptionsScreen.Listener() {
@@ -83,7 +83,7 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         }
     };
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             //startNew(App.get());

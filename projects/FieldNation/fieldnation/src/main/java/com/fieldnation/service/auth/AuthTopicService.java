@@ -57,7 +57,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         _authClient.subRequestCommand();
         _authClient.subAccountAddedCommand();
 
-        _globalTopicClient.subAppShutdown();
+        _appMessagingClient.subAppShutdown();
 
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
@@ -83,7 +83,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         _authClient.unsubRequestCommand();
         _authClient.unsubAccountAddedCommand();
 
-        _globalTopicClient.unsubAppShutdown();
+        _appMessagingClient.unsubAppShutdown();
         //setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
@@ -104,7 +104,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     }
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onShutdown() {
             Log.v(TAG, "GlobalTopicClient.onShutdown");

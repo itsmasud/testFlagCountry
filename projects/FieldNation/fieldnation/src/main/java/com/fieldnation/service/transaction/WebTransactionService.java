@@ -47,7 +47,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         _authClient.subAuthStateChange();
         AuthClient.requestCommand();
 
-        _globalTopicClient.subNetworkConnect();
+        _appMessagingClient.subNetworkConnect();
 
         _manager = new ThreadManager();
         TransactionThread t = new TransactionThread(_manager, this, false);
@@ -77,7 +77,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         Log.v(TAG, "onDestroy");
         _authClient.unsubAuthStateChange();
 
-        _globalTopicClient.unsubNetworkConnect();
+        _appMessagingClient.unsubNetworkConnect();
 
         _manager.shutdown();
         super.onDestroy();
@@ -105,7 +105,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         return 1;
     }
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onNetworkConnect() {
             _manager.wakeUp();

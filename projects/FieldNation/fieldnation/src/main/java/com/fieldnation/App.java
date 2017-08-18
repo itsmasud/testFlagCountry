@@ -212,9 +212,9 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        _globalTopicClient.subProfileInvalid();
-        _globalTopicClient.subNetworkConnect();
-        _globalTopicClient.subNetworkState();
+        _appMessagingClient.subProfileInvalid();
+        _appMessagingClient.subNetworkConnect();
+        _appMessagingClient.subNetworkState();
 
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(this);
@@ -280,9 +280,9 @@ public class App extends Application {
     @Override
     public void onTerminate() {
         if (_profileClient != null) _profileClient.disconnect(this);
-        _globalTopicClient.unsubProfileInvalid();
-        _globalTopicClient.unsubNetworkConnect();
-        _globalTopicClient.unsubNetworkState();
+        _appMessagingClient.unsubProfileInvalid();
+        _appMessagingClient.unsubNetworkConnect();
+        _appMessagingClient.unsubNetworkState();
         _authClient.unsubAuthStateChange();
         super.onTerminate();
         _context = null;
@@ -399,7 +399,7 @@ public class App extends Application {
         return _isConnected;
     }
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onProfileInvalid() {
             ProfileClient.get(App.this);

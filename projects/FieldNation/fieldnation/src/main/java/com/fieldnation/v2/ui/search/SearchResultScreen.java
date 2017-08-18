@@ -107,7 +107,7 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderApi.sub();
         _adapter.refreshAll();
 
-        _globalTopicClient.subUserSwitched();
+        _appMessagingClient.subUserSwitched();
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_gps_listener)
                 .priority(SimpleGps.Priority.HIGHEST)
@@ -116,7 +116,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void onPause() {
         _workOrderApi.unsub();
-        _globalTopicClient.unsubUserSwitched();
+        _appMessagingClient.unsubUserSwitched();
         if (_simpleGps != null && _simpleGps.isRunning())
             _simpleGps.stop();
     }
@@ -264,7 +264,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             _adapter.refreshAll();

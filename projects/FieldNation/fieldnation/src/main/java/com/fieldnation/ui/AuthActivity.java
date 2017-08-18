@@ -26,8 +26,8 @@ import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.App;
-import com.fieldnation.BuildConfig;
 import com.fieldnation.AppMessagingClient;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityRequestHandler;
@@ -152,7 +152,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _globalClient.subUpdateApp();
+        _appMessagingClient.subUpdateApp();
         _activityRequestHandler.sub();
 
         _dialogManager.onResume();
@@ -162,7 +162,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
 
-        _globalClient.unsubUpdateApp();
+        _appMessagingClient.unsubUpdateApp();
         _activityRequestHandler.unsub();
         _dialogManager.onPause();
 
@@ -211,7 +211,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final AppMessagingClient _globalClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onNeedAppUpdate() {
             UpdateDialog.show(App.get());

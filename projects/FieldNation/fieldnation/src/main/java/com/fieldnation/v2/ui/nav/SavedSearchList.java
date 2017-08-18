@@ -72,13 +72,13 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         _workOrdersApi.sub();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
-        _globalTopicClient.subUserSwitched();
+        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _workOrdersApi.unsub();
-        _globalTopicClient.unsubUserSwitched();
+        _appMessagingClient.unsubUserSwitched();
 
         super.onDetachedFromWindow();
     }
@@ -211,7 +211,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     };
 
-    private final AppMessagingClient _globalTopicClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             WorkordersWebApi.getWorkOrderLists(App.get(), false, false);

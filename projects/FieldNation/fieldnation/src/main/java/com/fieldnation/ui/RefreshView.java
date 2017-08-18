@@ -67,13 +67,13 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         _rotateAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_cw);
         _rotateRevAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_ccw);
 
-        _globalClient.subLoading();
+        _appMessagingClient.subLoading();
         _state = STATE_IDLE;
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _globalClient.unsubLoading();
+        _appMessagingClient.unsubLoading();
 
         super.onDetachedFromWindow();
     }
@@ -270,7 +270,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         refreshComplete();
     }
 
-    private final AppMessagingClient _globalClient = new AppMessagingClient() {
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onSetLoading(boolean isLoading) {
             //Log.v(TAG, "setLoading()");
