@@ -22,6 +22,8 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -170,6 +173,15 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
+
+    // Bottom Sheet
+    private Button _floatingActionButton;
+    private WodBottomSheetView _bottomsheetView;
+
+    // Animations
+    private Animation _fabSlideOut;
+    private Animation _fabSlideIn;
+
     // Data
     private WorkordersWebApi _workOrderApi;
     private DocumentClient _docClient;
@@ -202,6 +214,9 @@ public class WorkFragment extends WorkorderFragment {
 
         _testButton = view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
+
+        _floatingActionButton = view.findViewById(R.id.action_button);
+        _floatingActionButton.setOnClickListener(_fab_onClick);
 
         _topBar = view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -277,6 +292,29 @@ public class WorkFragment extends WorkorderFragment {
 
         _attachmentSummaryView = view.findViewById(R.id.attachment_summary_view);
         _renderers.add(_attachmentSummaryView);
+
+        // Bottom Sheet
+        _bottomsheetView = view.findViewById(R.id.bottomsheet_view);
+        _bottomsheetView.setListener(_bottomsheetView_listener);
+        _renderers.add(_bottomsheetView);
+
+        _fabSlideIn = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_in_right);
+        _fabSlideOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_out_right);
+
+        _fabSlideIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _floatingActionButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _fabSlideOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _floatingActionButton.setVisibility(View.GONE);
+            }
+        });
+
 
         if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(View.GONE);
@@ -384,6 +422,8 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
+
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
 
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_simpleGps_listener)
@@ -630,6 +670,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.e(TAG, "_test_onClick");
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
@@ -1526,6 +1567,75 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
         }
     };
+
+    private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.e(TAG, "_fab_onClick");
+            misc.hideKeyboard(v);
+//            _bottomSheetBackground.clearAnimation();
+//            _bottomSheetBackground.startAnimation(_fadeIn);
+//            _bottomsheetView.clearAnimation();
+//            _bottomsheetView.startAnimation(_bsSlideIn);
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideOut);
+            _bottomsheetView.setVisibility(View.VISIBLE);
+            _bottomsheetView.setVisibility(true);
+
+        }
+    };
+
+    private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
+        @Override
+        public void addCounterOffer() {
+            Log.e(TAG, "addCounterOffer");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+        }
+
+        @Override
+        public void addRequestNewPay() {
+            Log.v(TAG, "addRequestNewPay");
+        }
+
+        @Override
+        public void addTimeLog() {
+            Log.v(TAG, "addTimeLog");
+        }
+
+        @Override
+        public void addExpense() {
+            Log.v(TAG, "addExpense");
+        }
+
+        @Override
+        public void addDiscount() {
+            Log.v(TAG, "addDiscount");
+        }
+
+        @Override
+        public void addSignature() {
+            Log.v(TAG, "addSignature");
+        }
+
+        @Override
+        public void addShipment() {
+            Log.v(TAG, "addShipment");
+        }
+
+        @Override
+        public void addAttachment() {
+            Log.v(TAG, "addAttachment");
+        }
+
+        @Override
+        public void onBackgroundClick() {
+            Log.v(TAG, "onBackgroundClick");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+        }
+    };
+
 
     /*-*****************************-*/
     /*-				Web				-*/
