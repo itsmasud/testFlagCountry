@@ -34,11 +34,12 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.WorkOrder;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -68,7 +69,8 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     // Data
     private String _title = null;
-    private WorkOrder _workOrder;
+    private int _workOrderId;
+    private AttachmentFolders _attachmentFolders;
     private int _carrierPosition = -1;
     private int _directionPosition = -1;
     private String _shipmentDescription;
@@ -151,7 +153,10 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (payload.containsKey("description"))
             _shipmentDescription = payload.getString("description");
 
-        _workOrder = payload.getParcelable("workOrder");
+        _workOrderId = payload.getInt("workOrderId");
+        _attachmentFolders = payload.getParcelable("attachmentFolders");
+
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
 
         populateUi();
         super.show(payload, animate);
@@ -415,13 +420,13 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (_scannedImageUri == null)
             return;
 
-        if (_workOrder.getAttachments() == null)
+        if (_attachmentFolders == null)
             return;
 
-        if (_workOrder.getAttachments().getResults() == null || _workOrder.getAttachments().getResults().length == 0)
+        if (_attachmentFolders.getResults() == null || _attachmentFolders.getResults().length == 0)
             return;
 
-        AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+        AttachmentFolder[] folders = _attachmentFolders.getResults();
         AttachmentFolder miscFolder = null;
         for (AttachmentFolder folder : folders) {
             if (folder.getType() == AttachmentFolder.TypeEnum.SLOT && folder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
@@ -432,7 +437,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
         if (miscFolder != null) {
             String fileName = FileUtils.getFileNameFromUri(App.get(), _scannedImageUri);
-            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getId(), miscFolder.getId(), fileName, _scannedImageUri);
+            WorkorderClient.uploadDeliverable(App.get(), _workOrderId, miscFolder.getId(), fileName, _scannedImageUri);
         }
 
     }
@@ -463,15 +468,6 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String title, String description, Task task) {
-        Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
-        params.putString("title", title);
-        params.putString("description", description);
-        params.putParcelable("task", task);
-
-        Controller.show(context, uid, ShipmentAddDialog.class, params);
-    }
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
@@ -517,6 +513,17 @@ public class ShipmentAddDialog extends SimpleDialog {
             return true;
         }
     };
+
+    public static void show(Context context, String uid, int workOrderId, AttachmentFolders attachmentFolders, String title, String description, Task task) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("attachmentFolders", attachmentFolders);
+        params.putString("title", title);
+        params.putString("description", description);
+        params.putParcelable("task", task);
+
+        Controller.show(context, uid, ShipmentAddDialog.class, params);
+    }
 
     /*-**********************-*/
     /*-         Ok           -*/

@@ -24,7 +24,8 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.StarView;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.Company;
+import com.fieldnation.v2.data.model.Location;
 
 import java.lang.ref.WeakReference;
 
@@ -35,7 +36,6 @@ public class RateBuyerDialog extends FullScreenDialog {
     private static final String TAG = "RateBuyerDialog";
 
     // State
-    private static final String PARAM_WORKORDER = "workOrder";
     private static final String STATE_GOLD_STAR = "RateBuyerDialog:STATE_GOLD_STAR";
     private static final String STATE_SCOPE_RATING = "RateBuyerDialog:STATE_SCOPE_RATING";
     private static final String STATE_RESPECT_RATING = "RateBuyerDialog:STATE_RESPECT_RATING";
@@ -60,9 +60,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     // Data
     private boolean _clear = false;
-    private WorkOrder _workOrder;
     private Listener _listener;
-    //    private final int MAX_THOUGHTS_LENGTH = 120;
     private boolean _hasToastShown = false;
     private int _goldStar = 0;
     private Boolean _hasSelectedScopeRating = null;
@@ -70,6 +68,9 @@ public class RateBuyerDialog extends FullScreenDialog {
     private String _commentText;
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
+    private int _workOrderId;
+    private Company _company;
+    private Location _location;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -130,7 +131,6 @@ public class RateBuyerDialog extends FullScreenDialog {
                 } else {
                     _expectationNoTextView.setBackgroundResource(R.drawable.circle_red);
                     _expectationYesTextView.setBackgroundResource(R.drawable.circle_dark_gray);
-
                 }
             }
 
@@ -141,7 +141,6 @@ public class RateBuyerDialog extends FullScreenDialog {
                 } else {
                     _chkProfessionalNoTextView.setBackgroundResource(R.drawable.circle_red);
                     _chkProfessionalYesTextView.setBackgroundResource(R.drawable.circle_dark_gray);
-
                 }
             }
 
@@ -165,7 +164,9 @@ public class RateBuyerDialog extends FullScreenDialog {
     public void show(Bundle payload, boolean animate) {
         Log.v(TAG, "show");
         super.show(payload, animate);
-        _workOrder = payload.getParcelable(PARAM_WORKORDER);
+        _workOrderId = payload.getInt("workOrderId");
+        _company = payload.getParcelable("company");
+        _location = payload.getParcelable("location");
 
         populateUi();
     }
@@ -218,25 +219,25 @@ public class RateBuyerDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
-        if (_workOrder == null) return;
+        if (_company == null) return;
 
         _rateStarView.setListener(_startView_onClick);
         _rateStarView.setChangeEnabled(true);
         _rateStarView.setStarFontSize(getView().getResources().getInteger(R.integer.textSizeBuyerRatingStar));
 
-        _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrder.getId()));
+        _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrderId));
 
-        if (!misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
-            _companyNameTextView.setText(_workOrder.getCompany().getName());
+        if (!misc.isEmptyOrNull(_company.getName())) {
+            _companyNameTextView.setText(_company.getName());
         }
 
         // sometimes city/ state info is not put into server
-        if (_workOrder.getLocation() != null) {
+        if (_location != null) {
             String locationName = null;
-            if (!misc.isEmptyOrNull(_workOrder.getLocation().getCity()))
-                locationName = _workOrder.getLocation().getCity();
-            if (!misc.isEmptyOrNull(_workOrder.getLocation().getState()))
-                locationName = misc.isEmptyOrNull(locationName) ? "" : locationName + ", " + _workOrder.getLocation().getState();
+            if (!misc.isEmptyOrNull(_location.getCity()))
+                locationName = _location.getCity();
+            if (!misc.isEmptyOrNull(_location.getState()))
+                locationName = misc.isEmptyOrNull(locationName) ? "" : locationName + ", " + _location.getState();
             if (!misc.isEmptyOrNull(locationName))
                 _locationTextView.setText(locationName);
             else _locationTextView.setVisibility(View.GONE);
@@ -244,7 +245,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _workOrder.getCompany().getPhoto();
+            String url = _company.getPhoto();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
             }
@@ -338,10 +339,9 @@ public class RateBuyerDialog extends FullScreenDialog {
         @Override
         public boolean doGetImage(String sourceUri, boolean isCircle) {
             return isCircle
-                    && _workOrder != null
-                    && _workOrder.getCompany() != null
-                    && !misc.isEmptyOrNull(_workOrder.getCompany().getPhoto())
-                    && sourceUri.equals(_workOrder.getCompany().getPhoto());
+                    && _company != null
+                    && !misc.isEmptyOrNull(_company.getPhoto())
+                    && sourceUri.equals(_company.getPhoto());
         }
 
         @Override
@@ -360,7 +360,7 @@ public class RateBuyerDialog extends FullScreenDialog {
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderClient.sendRating(App.get(), _workOrder.getId(), _goldStar,
+            WorkorderClient.sendRating(App.get(), _workOrderId, _goldStar,
                     _hasSelectedScopeRating == true ? 1 : 0, _hasSelectedRespectRating == true ? 1 : 0, _commentText);
             dismiss(true);
         }
@@ -385,9 +385,11 @@ public class RateBuyerDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, int workOrderId, Company company, Location location) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORKORDER, workOrder);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("company", company);
+        params.putParcelable("location", location);
 
         Controller.show(context, uid, RateBuyerDialog.class, params);
     }

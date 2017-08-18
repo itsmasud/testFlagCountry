@@ -139,6 +139,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
     private static final String DIALOG_DELETE_EXPENSE = TAG + ".deleteExpenseDialog";
     private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
+    private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
 
     // saved state keys
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
@@ -486,7 +487,8 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -517,7 +519,8 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
 
     private void doCheckin() {
-        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+                _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
@@ -548,9 +551,11 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (_deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
 
@@ -609,7 +614,7 @@ public class WorkFragment extends WorkorderFragment {
                 requestWorkorder();
 
                 if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder.getId(), _workOrder.getCompany(), _workOrder.getLocation());
                 }
             }
         } catch (Exception ex) {
@@ -634,7 +639,7 @@ public class WorkFragment extends WorkorderFragment {
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
 
-            CounterOfferDialog.show(App.get(), _workOrder);
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
 
         }
     };
@@ -667,7 +672,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAcknowledgeHold() {
             setLoading(true);
-            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder);
+            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder.getId(), _workOrder.getHolds());
         }
 
         @Override
@@ -688,7 +693,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onReportProblem() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder);
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId(), _workOrder.getProblems());
         }
 
         @Override
@@ -728,7 +733,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onEta() {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override
@@ -752,7 +758,8 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -766,7 +773,8 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
@@ -822,7 +830,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                     null, _workOrderId);
 
-            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder.getSignatures().getResults().length > 0);
         }
     };
 
@@ -899,7 +907,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onSetEta(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override
@@ -1003,9 +1012,11 @@ public class WorkFragment extends WorkorderFragment {
             }
 
             if (shipments.size() == 0) {
-                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
+                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+                        _workOrder.getAttachments(), getString(R.string.dialog_task_shipment_title), null, task);
             } else {
-                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
+                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder.getId(),
+                        _workOrder.getShipments(), getString(R.string.dialog_task_shipment_title), task);
             }
         }
 
@@ -1054,7 +1065,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_shipment_title), null, null);
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+                    _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
@@ -1099,7 +1111,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(getActivity(), signature.getId(), _workOrder);
+            SignatureDisplayActivity.startIntent(getActivity(), signature);
             setLoading(true);
         }
 
@@ -1124,7 +1136,7 @@ public class WorkFragment extends WorkorderFragment {
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onCounterOffer(WorkOrder workOrder) {
-            CounterOfferDialog.show(App.get(), workOrder);
+            CounterOfferDialog.show(App.get(), workOrder.getId(), workOrder.getPay(), workOrder.getSchedule());
         }
 
         @Override
@@ -1147,7 +1159,7 @@ public class WorkFragment extends WorkorderFragment {
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrder);
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
         }
     };
 
@@ -1384,6 +1396,10 @@ public class WorkFragment extends WorkorderFragment {
             uiContext.page += " - Mark Complete Dialog";
             WorkordersWebApi.completeWorkOrder(App.get(), _workOrderId, uiContext);
             setLoading(true);
+
+            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+                RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder.getId(), _workOrder.getCompany(), _workOrder.getLocation());
+            }
         }
     };
 
@@ -1481,8 +1497,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
         @Override
-        public void onAddShipment(WorkOrder workorder, Shipment shipment, Task task) {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workorder,
+        public void onAddShipment(int workOrderId, Shipment shipment, Task task) {
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workOrderId,
+                    _workOrder.getAttachments(),
                     getString(R.string.dialog_shipment_title),
                     shipment == null ? "" : shipment.getName(), task);
         }
@@ -1490,12 +1507,12 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
         @Override
-        public void onDelete(WorkOrder workorder, Shipment shipment) {
+        public void onDelete(int workOrderId, Shipment shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Task Shipment Add Dialog";
-            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, shipment.getId(), uiContext);
+            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
             setLoading(true);
         }
     };

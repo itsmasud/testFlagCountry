@@ -17,6 +17,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.LinkedList;
@@ -34,8 +35,9 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     private OverScrollRecyclerView _recyclerView;
 
     // Data
-    private WorkOrder _workOrder;
-    private List<Problem> _problems = new LinkedList<>();
+    private List<Problem> _problemList = new LinkedList<>();
+    private int _workOrderId;
+    private Problems _problems;
 
     public UnresolvedProblemsDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -45,11 +47,11 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_unresolved_problems, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setTitle("Unresolved Problems");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
-        _recyclerView = (OverScrollRecyclerView) v.findViewById(R.id.recyclerView);
+        _recyclerView = v.findViewById(R.id.recyclerView);
 
         return v;
     }
@@ -75,7 +77,8 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
     @Override
     public void show(Bundle params, boolean animate) {
-        _workOrder = params.getParcelable("workOrder");
+        _workOrderId = params.getInt("workOrderId");
+        _problems = params.getParcelable("problems");
 
         super.show(params, animate);
 
@@ -83,28 +86,28 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     }
 
     private void generateProblemsList() {
-        _problems.clear();
+        _problemList.clear();
 
-        if (_workOrder == null || _workOrder.getProblems().getResults().length == 0)
+        if (_problems.getResults().length == 0)
             return;
 
-        Problem[] problems = _workOrder.getProblems().getResults();
+        Problem[] problems = _problems.getResults();
         for (Problem problem : problems) {
             if (problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
-                _problems.add(problem);
+                _problemList.add(problem);
             }
         }
 
         _adapter.notifyDataSetChanged();
 
-        if (_problems.size() == 0)
+        if (_problemList.size() == 0)
             dismiss(true);
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         _workOrdersApi.unsub();
+        super.onPause();
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -131,12 +134,12 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            ((ProblemRowView) holder.itemView).setProblem(_problems.get(position));
+            ((ProblemRowView) holder.itemView).setProblem(_problemList.get(position));
         }
 
         @Override
         public int getItemCount() {
-            return _problems.size();
+            return _problemList.size();
         }
     };
 
@@ -145,7 +148,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         public void onClick(View v) {
             if (v instanceof ProblemRowView) {
                 ProblemRowView prv = (ProblemRowView) v;
-                ResolveProblemDialog.show(App.get(), null, _workOrder.getId(), prv.getProblem());
+                ResolveProblemDialog.show(App.get(), null, _workOrderId, prv.getProblem());
             }
         }
     };
@@ -160,17 +163,18 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
-                if (_workOrder.getId().equals(workOrder.getId())) {
-                    _workOrder = workOrder;
+                if (_workOrderId == workOrder.getId()) {
+                    _problems = workOrder.getProblems();
                     generateProblemsList();
                 }
             }
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, int workOrderId, Problems problems) {
         Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("problems", problems);
 
         Controller.show(context, uid, UnresolvedProblemsDialog.class, params);
     }

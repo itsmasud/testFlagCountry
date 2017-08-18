@@ -82,7 +82,7 @@ public class EmptyCardView extends RelativeLayout {
 
     private void setNoAvailableWorkOrder() {
         Profile profile = App.get().getProfile();
-        if (!profile.getMarketplaceStatusOn() && profile.getMarketplaceStatusExplanation() != null) {
+        if (profile != null && !profile.getMarketplaceStatusOn() && profile.getMarketplaceStatusExplanation() != null) {
             try {
                 if (profile.getMarketplaceStatusReason() != null
                         && profile.getMarketplaceStatusReason().equals("SUSPENDED")) {

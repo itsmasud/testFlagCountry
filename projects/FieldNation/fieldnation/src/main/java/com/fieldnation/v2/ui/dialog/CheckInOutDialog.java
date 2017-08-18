@@ -45,7 +45,7 @@ import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.TimeLogs;
 
 import java.util.Calendar;
 
@@ -59,17 +59,9 @@ public class CheckInOutDialog extends FullScreenDialog {
     // Dialog Uids
     private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
 
-    // State
-    private static final String STATE_DURATION = "STATE_DURATION";
-    private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
-
     // Params
-    public static final String PARAM_DIALOG_TYPE = "type";
     public static final String PARAM_DIALOG_TYPE_CHECK_IN = "checkin";
     public static final String PARAM_DIALOG_TYPE_CHECK_OUT = "checkout";
-    public static final String PARAM_WORK_ORDER = "workOrder";
-    public static final String PARAM_MAX_DEVICE_NUMBER = "maxnumber";
-    public static final String PARAM_CALENDAR = "PARAM_CALENDAR";
 
     private final static int INVALID_NUMBER = -1;
 
@@ -92,8 +84,9 @@ public class CheckInOutDialog extends FullScreenDialog {
     // Passed data
     private String _dialogType;
     private Location _location;
-    private WorkOrder _workOrder;
+    private int _workOrderId;
     private int _maxDevice;
+    private TimeLogs _timeLogs;
 
     // User data
     private Calendar _startCalendar;
@@ -166,13 +159,13 @@ public class CheckInOutDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
 
-        _dialogType = params.getString(PARAM_DIALOG_TYPE);
-        _workOrder = params.getParcelable(PARAM_WORK_ORDER);
-
-        if (params.containsKey(PARAM_MAX_DEVICE_NUMBER) &&
+        _dialogType = params.getString("dialogType");
+        _workOrderId = params.getInt("workOrderId");
+        _timeLogs = params.getParcelable("timeLogs");
+        if (params.containsKey("deviceCount") &&
                 _dialogType.equals(CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT)) {
             _deviceNumberLayout.setVisibility(View.VISIBLE);
-            _maxDevice = params.getInt(PARAM_MAX_DEVICE_NUMBER);
+            _maxDevice = params.getInt("deviceCount");
             getSpinner();
         } else {
             _deviceNumberLayout.setVisibility(View.GONE);
@@ -202,14 +195,14 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        if (savedState.containsKey(STATE_EXPIRATION_DURATION))
-            _expiringDurationMilliseconds = savedState.getLong(STATE_EXPIRATION_DURATION);
+        if (savedState.containsKey("expiringDurationMilliseconds"))
+            _expiringDurationMilliseconds = savedState.getLong("expiringDurationMilliseconds");
 
-        if (savedState.containsKey(STATE_DURATION))
-            _durationMilliseconds = savedState.getLong(STATE_DURATION);
+        if (savedState.containsKey("durationMilliseconds"))
+            _durationMilliseconds = savedState.getLong("durationMilliseconds");
 
-        if (savedState.containsKey(PARAM_CALENDAR))
-            _startCalendar = (Calendar) savedState.getSerializable(PARAM_CALENDAR);
+        if (savedState.containsKey("startCalendar"))
+            _startCalendar = (Calendar) savedState.getSerializable("startCalendar");
 
         super.onRestoreDialogState(savedState);
 
@@ -228,13 +221,13 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public void onSaveDialogState(Bundle outState) {
         if (_expiringDurationMilliseconds != INVALID_NUMBER)
-            outState.putLong(STATE_EXPIRATION_DURATION, _expiringDurationMilliseconds);
+            outState.putLong("expiringDurationMilliseconds", _expiringDurationMilliseconds);
 
         if (_durationMilliseconds != INVALID_NUMBER)
-            outState.putLong(STATE_DURATION, _durationMilliseconds);
+            outState.putLong("durationMilliseconds", _durationMilliseconds);
 
         if (_startCalendar != null)
-            outState.putSerializable(PARAM_CALENDAR, _startCalendar);
+            outState.putSerializable("startCalendar", _startCalendar);
 
         super.onSaveDialogState(outState);
     }
@@ -259,11 +252,16 @@ public class CheckInOutDialog extends FullScreenDialog {
     /*-             Internal Mutators              -*/
     /*-********************************************-*/
     private void populateUi() {
+        getView().setEnabled(false);
+        if (_timeLogs == null)
+            return;
+
         if (misc.isEmptyOrNull(_dialogType))
             return;
 
         if (_spinner == null)
             return;
+        getView().setEnabled(true);
 
         if (!App.get().isLocationEnabled()) {
             ToastClient.snackbar(App.get(), getView().getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new View.OnClickListener() {
@@ -388,11 +386,11 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                     SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                     uiContext.page += "- Check In Dialog";
-                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), new TimeLog().in(cio), uiContext);
+                    WorkordersWebApi.addTimeLog(App.get(), _workOrderId, new TimeLog().in(cio), uiContext);
 
                     GpsTrackingService.stop(App.get());
 
-                    _onCheckInDispatcher.dispatch(getUid(), _workOrder.getId());
+                    _onCheckInDispatcher.dispatch(getUid(), _workOrderId);
 
                 } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                     boolean callMade = false;
@@ -402,7 +400,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                         cio.coords(new Coords(_location));
                     }
 
-                    for (TimeLog timeLog : _workOrder.getTimeLogs().getResults()) {
+                    for (TimeLog timeLog : _timeLogs.getResults()) {
                         if (timeLog.getStatus() == TimeLog.StatusEnum.CHECKED_IN) {
                             if (_itemSelectedPosition > INVALID_NUMBER) {
                                 timeLog.devices((double) _itemSelectedPosition);
@@ -417,7 +415,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                             uiContext.page += " - Check Out Dialog";
                             Log.e(TAG, "check out: " + timeLog.getJson());
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
+                            WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
                         }
@@ -427,7 +425,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                         Log.v(TAG, "break!");
                     }
 
-                    _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getId());
+                    _onCheckOutDispatcher.dispatch(getUid(), _workOrderId);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -482,18 +480,20 @@ public class CheckInOutDialog extends FullScreenDialog {
     };
 
     // with max device
-    public static void show(Context context, String uid, WorkOrder workOrder, int maxDevice, String dialogType) {
+    public static void show(Context context, String uid, int workOrderId, TimeLogs timeLogs, int maxDevice, String dialogType) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORK_ORDER, workOrder);
-        params.putString(PARAM_DIALOG_TYPE, dialogType);
-        params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
+        params.putInt("workOrderId", workOrderId);
+        params.putString("dialogType", dialogType);
+        params.putParcelable("timeLogs", timeLogs);
+        params.putInt("deviceCount", maxDevice);
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String dialogType) {
+    public static void show(Context context, String uid, int workOrderId, TimeLogs timeLogs, String dialogType) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORK_ORDER, workOrder);
-        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("timeLogs", timeLogs);
+        params.putString("dialogType", dialogType);
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
 

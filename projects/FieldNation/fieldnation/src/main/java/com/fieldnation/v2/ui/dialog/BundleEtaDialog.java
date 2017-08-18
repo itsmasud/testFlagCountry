@@ -27,6 +27,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.BundleEtaCardView;
 
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Random;
 
@@ -54,7 +55,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     private LinearLayout _completeList;
 
     // Data
-    private Hashtable<Integer, WorkOrder> _completeWorkOrders = new Hashtable();
+    private HashSet<Integer> _completeWorkOrders = new HashSet<>();
     Hashtable<Integer, ETA> _etaList = new Hashtable();
     private int _bundleId = 0;
     private WorkOrders _workOrders;
@@ -104,7 +105,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         Log.v(TAG, "onResume");
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-
     }
 
     @Override
@@ -145,7 +145,7 @@ public class BundleEtaDialog extends FullScreenDialog {
         Log.v(TAG, "onRestoreDialogState");
         super.onRestoreDialogState(savedState);
         if (savedState.containsKey(STATE_COMPLETE_WO_LIST))
-            _completeWorkOrders = (Hashtable<Integer, WorkOrder>) savedState.getSerializable(STATE_COMPLETE_WO_LIST);
+            _completeWorkOrders = (HashSet<Integer>) savedState.getSerializable(STATE_COMPLETE_WO_LIST);
 
         if (savedState.containsKey(STATE_ETA_LIST))
             _etaList = (Hashtable<Integer, ETA>) savedState.getSerializable(STATE_ETA_LIST);
@@ -203,7 +203,7 @@ public class BundleEtaDialog extends FullScreenDialog {
             @Override
             public void next(int i) throws Exception {
                 BundleEtaCardView v = null;
-                if (!_completeWorkOrders.isEmpty() && _completeWorkOrders.containsKey(workOrders[i].getId())) {
+                if (!_completeWorkOrders.isEmpty() && _completeWorkOrders.contains(workOrders[i].getId())) {
                     if (i < _completeList.getChildCount()) {
                         v = (BundleEtaCardView) _completeList.getChildAt(i);
                     } else {
@@ -253,17 +253,17 @@ public class BundleEtaDialog extends FullScreenDialog {
 
     private final EtaDialog.OnBundleEtaListener _etaDialog_onBundleEta = new EtaDialog.OnBundleEtaListener() {
         @Override
-        public void onBundleEta(ETA eta, WorkOrder workOrder) {
+        public void onBundleEta(int workOrderId, ETA eta) {
 
-            if (!_completeWorkOrders.containsKey(workOrder.getId())) {
-                _completeWorkOrders.put(workOrder.getId(), workOrder);
+            if (!_completeWorkOrders.contains(workOrderId)) {
+                _completeWorkOrders.add(workOrderId);
             }
 
-            if (!_etaList.contains(workOrder.getId())) {
-                _etaList.put(workOrder.getId(), eta);
+            if (!_etaList.contains(workOrderId)) {
+                _etaList.put(workOrderId, eta);
             } else {
-                _etaList.remove(workOrder.getId());
-                _etaList.put(workOrder.getId(), eta);
+                _etaList.remove(workOrderId);
+                _etaList.put(workOrderId, eta);
             }
             populateUi();
         }
@@ -272,7 +272,8 @@ public class BundleEtaDialog extends FullScreenDialog {
     private final BundleEtaCardView.OnClickListener _summaryListener = new BundleEtaCardView.OnClickListener() {
         @Override
         public void onClick(BundleEtaCardView view, WorkOrder workOrder) {
-            EtaDialog.show(App.get(), UID_DIALOG_ETA, workOrder, EtaDialog.PARAM_DIALOG_TYPE_MASS_ACCEPT);
+            EtaDialog.show(App.get(), UID_DIALOG_ETA, workOrder.getId(), workOrder.getSchedule(),
+                    workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_MASS_ACCEPT);
         }
     };
 

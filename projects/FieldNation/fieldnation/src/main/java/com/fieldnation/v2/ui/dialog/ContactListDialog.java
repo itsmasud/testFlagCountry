@@ -16,7 +16,7 @@ import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.detail.ContactTileView;
 import com.fieldnation.v2.data.model.Contact;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.Contacts;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,8 +33,8 @@ public class ContactListDialog extends FullScreenDialog {
     private Toolbar _toolbar;
 
     // Data
-    private WorkOrder _workOrder;
     private ForLoopRunnable _contactsRunnable = null;
+    private Contacts _contacts;
 
     public ContactListDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -69,21 +69,12 @@ public class ContactListDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
 
-        _workOrder = params.getParcelable("workOrder");
+        _contacts = params.getParcelable("contacts");
 
         final List<Contact> contactList = new LinkedList<>();
 
-/*
-        {
-            Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
-            if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
-                contactList.add(contact);
-            }
-        }
-*/
-
-        if (_workOrder.getContacts().getResults().length > 0) {
-            for (Contact contact : _workOrder.getContacts().getResults()) {
+        if (_contacts.getResults().length > 0) {
+            for (Contact contact : _contacts.getResults()) {
                 if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
                     contactList.add(contact);
                 }
@@ -118,9 +109,9 @@ public class ContactListDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, Contacts contacts) {
         Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
+        params.putParcelable("contacts", contacts);
 
         Controller.show(context, uid, ContactListDialog.class, params);
     }

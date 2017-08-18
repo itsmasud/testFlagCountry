@@ -16,8 +16,8 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,8 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     private LinearLayout _shipmentsLayout;
 
     // Data
-    private WorkOrder _workOrder;
+    private int _workOrderId;
+    private Shipments _shipments;
     private String _title;
     private Task _task;
 
@@ -74,24 +75,25 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
 
-        _workOrder = payload.getParcelable("workOrder");
+        _shipments = payload.getParcelable("shipments");
         _title = payload.getString("title");
         _task = payload.getParcelable("task");
+        _workOrderId = payload.getInt("workOrderId");
         populateUi();
     }
 
     private void populateUi() {
-        if (_workOrder == null)
+        if (_shipments == null)
             return;
 
         try {
             _shipmentsLayout.removeAllViews();
 
-            if (_workOrder.getShipments().getResults().length == 0)
+            if (_shipments.getResults().length == 0)
                 return;
 
             List<Shipment> shipments = new LinkedList();
-            for (Shipment shipment : _workOrder.getShipments().getResults()) {
+            for (Shipment shipment : _shipments.getResults()) {
                 if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
                     shipments.add(shipment);
                 else if (shipment.getUser().getId().longValue() == App.getProfileId()) // && To Site
@@ -101,7 +103,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
             for (int i = 0; i < shipments.size(); i++) {
                 ShipmentRowView view = new ShipmentRowView(getView().getContext());
                 _shipmentsLayout.addView(view);
-                view.setData(_workOrder, shipments.get(i));
+                view.setData(_shipments, shipments.get(i));
                 view.hideForTaskShipmentDialog();
                 view.setListener(_summaryListener);
             }
@@ -116,14 +118,14 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
         public void onDelete(Shipment shipment) {
-            _onDeleteDispatcher.dispatch(getUid(), _workOrder, shipment);
+            _onDeleteDispatcher.dispatch(getUid(), _workOrderId, shipment);
         }
 
         @Override
         public void onEdit(Shipment shipment) {
             // TODO need to present an edit dialog
             dismiss(true);
-            _onAddShipmentDispatcher.dispatch(getUid(), _workOrder, shipment, _task);
+            _onAddShipmentDispatcher.dispatch(getUid(), _workOrderId, shipment, _task);
         }
     };
 
@@ -131,7 +133,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
-            _onAddShipmentDispatcher.dispatch(getUid(), _workOrder, null, _task);
+            _onAddShipmentDispatcher.dispatch(getUid(), _workOrderId, null, _task);
         }
     };
 
@@ -143,9 +145,10 @@ public class TaskShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String title, Task task) {
+    public static void show(Context context, String uid, int workOrderId, Shipments shipments, String title, Task task) {
         Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("shipments", shipments);
         params.putString("title", title);
         if (task != null)
             params.putParcelable("task", task);
@@ -157,14 +160,14 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     /*-         AddShipment           -*/
     /*-*******************************-*/
     public interface OnAddShipmentListener {
-        void onAddShipment(WorkOrder workorder, Shipment shipment, Task task);
+        void onAddShipment(int workOrderId, Shipment shipment, Task task);
     }
 
     private static KeyedDispatcher<OnAddShipmentListener> _onAddShipmentDispatcher = new KeyedDispatcher<OnAddShipmentListener>() {
         @Override
         public void onDispatch(OnAddShipmentListener listener, Object... parameters) {
             listener.onAddShipment(
-                    (WorkOrder) parameters[0],
+                    (Integer) parameters[0],
                     (Shipment) parameters[1],
                     (Task) parameters[2]);
         }
@@ -187,13 +190,13 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     /*-         Delete           -*/
     /*-**************************-*/
     public interface OnDeleteListener {
-        void onDelete(WorkOrder workorder, Shipment shipment);
+        void onDelete(int workOrderId, Shipment shipment);
     }
 
     private static KeyedDispatcher<OnDeleteListener> _onDeleteDispatcher = new KeyedDispatcher<OnDeleteListener>() {
         @Override
         public void onDispatch(OnDeleteListener listener, Object... parameters) {
-            listener.onDelete((WorkOrder) parameters[0], (Shipment) parameters[1]);
+            listener.onDelete((Integer) parameters[0], (Shipment) parameters[1]);
         }
     };
 
