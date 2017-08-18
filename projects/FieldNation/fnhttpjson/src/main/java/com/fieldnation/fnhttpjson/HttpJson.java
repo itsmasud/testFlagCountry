@@ -134,6 +134,8 @@ public class HttpJson {
                         String contentType = fo.getString("contentType");
                         StoredObject so = StoredObject.get(context, soId);
 
+                        Log.v(TAG, "fo " + fo.display());
+
                         if (so.isUri()) {
                             Uri sourceFile = so.getUri();
                             Log.v(TAG, sourceFile + ":" + so.size());
