@@ -80,7 +80,8 @@ public abstract class ToastClient extends Pigeon {
         message.put(PARAM_TITLE, title);
         message.put(PARAM_DURATION, duration);
         message.put(PARAM_BUTTON_TEXT, buttonText);
-        message.put(PARAM_BUTTON_INTENT, buttonListener);
+        if (buttonListener != null)
+            message.put(PARAM_BUTTON_INTENT, buttonListener);
         message.put(PARAM_MESSAGE_ID, id);
 
         PigeonRoost.sendMessage(ADDRESS_SNACKBAR, message, Sticky.NONE);
