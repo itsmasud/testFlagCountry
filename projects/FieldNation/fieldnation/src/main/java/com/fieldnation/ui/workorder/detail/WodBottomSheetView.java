@@ -88,7 +88,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         _addAttachmentButton = findViewById(R.id.addAttachment_button);
         _addAttachmentButton.setOnClickListener(_addAttachment_onClick);
 
-
         _fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
         _fadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
         _bsSlideIn = AnimationUtils.loadAnimation(getContext(), R.anim.fg_slide_in_bottom);
@@ -122,14 +121,10 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             }
         });
 
-
         _bottomSheetBackground.clearAnimation();
         _bottomSheetBackground.startAnimation(_fadeIn);
         _bottomSheet.clearAnimation();
         _bottomSheet.startAnimation(_bsSlideIn);
-
-
-        setVisibility(GONE);
     }
 
     public void setListener(Listener listener) {
@@ -137,17 +132,13 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         _listener = listener;
     }
 
-
-    public void clearAnimation() {
-        Log.e(TAG, "clearAnimation");
+    public void animateIn() {
+        _bottomSheetBackground.setVisibility(VISIBLE);
         _bottomSheetBackground.clearAnimation();
         _bottomSheetBackground.startAnimation(_fadeIn);
+        _bottomSheet.setVisibility(VISIBLE);
         _bottomSheet.clearAnimation();
         _bottomSheet.startAnimation(_bsSlideIn);
-    }
-
-    public void setVisibility(boolean isVisible) {
-        setVisibility(isVisible ? VISIBLE : GONE);
     }
 
     @Override
@@ -161,7 +152,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         Log.e(TAG, "populateUi");
         if (_workOrder == null)
             return;
-
     }
 
     /*-*************************-*/
@@ -290,7 +280,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         }
     };
 
-
     public interface Listener {
         void addCounterOffer();
 
@@ -309,6 +298,5 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         void addAttachment();
 
         void onBackgroundClick();
-
     }
 }

@@ -215,7 +215,7 @@ public class WorkFragment extends WorkorderFragment {
         _testButton = view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
 
-        _floatingActionButton = view.findViewById(R.id.action_button);
+        _floatingActionButton = view.findViewById(R.id.wf_fab_button);
         _floatingActionButton.setOnClickListener(_fab_onClick);
 
         _topBar = view.findViewById(R.id.actiontop_view);
@@ -555,7 +555,6 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
     /*-				Check In Process				-*/
     /*-*********************************************-*/
-
     private void doCheckin() {
         CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
@@ -671,12 +670,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
             Log.e(TAG, "_test_onClick");
-//            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-//            ConfirmActivity.startNew(App.get());
-//            _actionbartop_listener.onMyWay();
-
             CounterOfferDialog.show(App.get(), _workOrder);
-
         }
     };
 
@@ -1033,7 +1027,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onShipment(Task task) {
-            List<Shipment> shipments = new LinkedList();
+            List<Shipment> shipments = new LinkedList<>();
             for (Shipment shipment : _workOrder.getShipments().getResults()) {
                 if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
                     shipments.add(shipment);
@@ -1573,15 +1567,9 @@ public class WorkFragment extends WorkorderFragment {
         public void onClick(View v) {
             Log.e(TAG, "_fab_onClick");
             misc.hideKeyboard(v);
-//            _bottomSheetBackground.clearAnimation();
-//            _bottomSheetBackground.startAnimation(_fadeIn);
-//            _bottomsheetView.clearAnimation();
-//            _bottomsheetView.startAnimation(_bsSlideIn);
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideOut);
-            _bottomsheetView.setVisibility(View.VISIBLE);
-            _bottomsheetView.setVisibility(true);
-
+            _bottomsheetView.animateIn();
         }
     };
 
