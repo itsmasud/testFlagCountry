@@ -31,6 +31,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -1569,7 +1570,7 @@ public class WorkFragment extends WorkorderFragment {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    App.get().startActivity(intent);
+                    ActivityResultClient.startActivity(App.get(), intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);

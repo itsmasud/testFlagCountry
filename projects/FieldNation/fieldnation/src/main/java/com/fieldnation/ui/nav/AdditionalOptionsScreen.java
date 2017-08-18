@@ -20,6 +20,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -363,7 +364,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
                     Intent.FLAG_ACTIVITY_NEW_TASK);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                App.get().startActivity(intent);
+                ActivityResultClient.startActivity(App.get(), intent);
             }
 
         }
