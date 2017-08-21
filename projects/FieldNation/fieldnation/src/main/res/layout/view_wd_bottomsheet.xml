@@ -20,75 +20,136 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <TextView
-            android:id="@+id/addCounterOffer_button"
+        <LinearLayout
+            android:id="@+id/counterOffer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Counter Offer" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
+            <TextView
+                android:id="@+id/addCounterOffer_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Counter Offer" />
 
-        <TextView
-            android:id="@+id/addRequestNewPay_button"
+            <View style="@style/DividerFull" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/requestNewPay_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Request New Pay" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
 
-        <TextView
-            android:id="@+id/addTimeLog_button"
+            <TextView
+                android:id="@+id/addRequestNewPay_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Request New Pay" />
+
+            <View style="@style/DividerFull" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/timeLog_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Time Log" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
+            <TextView
+                android:id="@+id/addTimeLog_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Time Log" />
 
-        <TextView
-            android:id="@+id/addExpense_button"
+            <View style="@style/DividerFull" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/expense_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Expense" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
+            <TextView
+                android:id="@+id/addExpense_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Expense" />
 
-        <TextView
-            android:id="@+id/addDiscount_button"
+            <View style="@style/DividerFull" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/discount_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Discount" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
+            <TextView
+                android:id="@+id/addDiscount_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Discount" />
 
-        <TextView
-            android:id="@+id/addSignature_button"
+            <View style="@style/DividerFull" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/signature_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Signature" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
+            <TextView
+                android:id="@+id/addSignature_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Signature" />
 
-        <TextView
-            android:id="@+id/addShipment_button"
+            <View style="@style/DividerFull" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/shipment_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Shipment" />
+            android:orientation="vertical">
 
-        <View style="@style/DividerFull" />
+            <TextView
+                android:id="@+id/addShipment_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Shipment" />
 
-        <TextView
-            android:id="@+id/addAttachment_button"
+            <View style="@style/DividerFull" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/attachment_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:text="Attach File" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/addAttachment_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="Attach File" />
+        </LinearLayout>
 
     </LinearLayout>
 

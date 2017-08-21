@@ -59,6 +59,7 @@ import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -69,18 +70,26 @@ import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
+import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
 import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.ProblemType;
+import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
+import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Signatures;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
+import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
@@ -530,6 +539,10 @@ public class WorkFragment extends WorkorderFragment {
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
+
+        if (shouldFabVisible())
+            _floatingActionButton.setVisibility(View.VISIBLE);
+        else _floatingActionButton.setVisibility(View.GONE);
     }
 
     private void requestWorkorder() {
@@ -550,6 +563,40 @@ public class WorkFragment extends WorkorderFragment {
                 _refreshView.refreshComplete();
             }
         }
+    }
+
+
+    private boolean shouldFabVisible() {
+
+        if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+            return true;
+        else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
+            return true;
+        else {
+            final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+            for (AttachmentFolder attachmentFolder : folders) {
+                if (attachmentFolder.getResults().length > 0
+                        && (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT))) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        return false;
     }
 
     /*-*********************************************-*/
@@ -1565,7 +1612,6 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.e(TAG, "_fab_onClick");
             misc.hideKeyboard(v);
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideOut);
@@ -1576,49 +1622,56 @@ public class WorkFragment extends WorkorderFragment {
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
-            Log.e(TAG, "addCounterOffer");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            CounterOfferDialog.show(App.get(), _workOrder);
+        }
+
+        @Override
+        public void addRequestNewPay() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
         }
 
         @Override
-        public void addRequestNewPay() {
-            Log.v(TAG, "addRequestNewPay");
-        }
-
-        @Override
         public void addTimeLog() {
-            Log.v(TAG, "addTimeLog");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
         }
 
         @Override
         public void addExpense() {
-            Log.v(TAG, "addExpense");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
         }
 
         @Override
         public void addDiscount() {
-            Log.v(TAG, "addDiscount");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
         }
 
         @Override
         public void addSignature() {
-            Log.v(TAG, "addSignature");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
         }
 
         @Override
         public void addShipment() {
-            Log.v(TAG, "addShipment");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
         }
 
         @Override
         public void addAttachment() {
-            Log.v(TAG, "addAttachment");
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            AttachmentFolderDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
         }
 
         @Override
         public void onBackgroundClick() {
-            Log.v(TAG, "onBackgroundClick");
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
         }

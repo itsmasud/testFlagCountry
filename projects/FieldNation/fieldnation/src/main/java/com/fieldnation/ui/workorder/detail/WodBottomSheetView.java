@@ -6,14 +6,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.Expenses;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.PayModifiers;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.Signatures;
+import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -22,23 +28,21 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
 
     // Ui
     private View _bottomSheetBackground;
-    private LinearLayout _bottomSheet;
-    private TextView _addCounterOfferButton;
-    private TextView _addRequestNewPayButton;
-    private TextView _addTimeLogButton;
-    private TextView _addExpenseButton;
-    private TextView _addDiscountButton;
-    private TextView _addSignatureButton;
-    private TextView _addShipmentButton;
-    private TextView _addAttachmentButton;
+    private View _bottomSheet;
+    private View _counterOfferLayout;
+    private View _requestNewPayLayout;
+    private View _timeLogLayout;
+    private View _expenseLayout;
+    private View _discountLayout;
+    private View _signatureLayout;
+    private View _shipmentLayout;
+    private View _attachmentLayout;
 
     // Animations
     private Animation _fadeIn;
     private Animation _fadeOut;
     private Animation _bsSlideIn;
     private Animation _bsSlideOut;
-//    private Animation _fabSlideOut;
-//    private Animation _fabSlideIn;
 
     // Data
     private Listener _listener;
@@ -61,7 +65,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     }
 
     private void init() {
-        Log.e(TAG, "init");
         LayoutInflater.from(getContext()).inflate(R.layout.view_wd_bottomsheet, this);
 
         if (isInEditMode())
@@ -71,22 +74,22 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
         _bottomSheet = findViewById(R.id.bottomsheet);
 
-        _addCounterOfferButton = findViewById(R.id.addCounterOffer_button);
-        _addCounterOfferButton.setOnClickListener(_addCounterOffer_onClick);
-        _addRequestNewPayButton = findViewById(R.id.addRequestNewPay_button);
-        _addRequestNewPayButton.setOnClickListener(_addRequestNewPay_onClick);
-        _addTimeLogButton = findViewById(R.id.addTimeLog_button);
-        _addTimeLogButton.setOnClickListener(_addTimeLog_onClick);
-        _addExpenseButton = findViewById(R.id.addExpense_button);
-        _addExpenseButton.setOnClickListener(_addExpense_onClick);
-        _addDiscountButton = findViewById(R.id.addDiscount_button);
-        _addDiscountButton.setOnClickListener(_addDiscount_onClick);
-        _addSignatureButton = findViewById(R.id.addSignature_button);
-        _addSignatureButton.setOnClickListener(_addSignature_onClick);
-        _addShipmentButton = findViewById(R.id.addShipment_button);
-        _addShipmentButton.setOnClickListener(_addShipment_onClick);
-        _addAttachmentButton = findViewById(R.id.addAttachment_button);
-        _addAttachmentButton.setOnClickListener(_addAttachment_onClick);
+        _counterOfferLayout = findViewById(R.id.counterOffer_layout);
+        _counterOfferLayout.setOnClickListener(_addCounterOffer_onClick);
+        _requestNewPayLayout = findViewById(R.id.requestNewPay_layout);
+        _requestNewPayLayout.setOnClickListener(_addRequestNewPay_onClick);
+        _timeLogLayout = findViewById(R.id.timeLog_layout);
+        _timeLogLayout.setOnClickListener(_addTimeLog_onClick);
+        _expenseLayout = findViewById(R.id.expense_layout);
+        _expenseLayout.setOnClickListener(_addExpense_onClick);
+        _discountLayout = findViewById(R.id.discount_layout);
+        _discountLayout.setOnClickListener(_addDiscount_onClick);
+        _signatureLayout = findViewById(R.id.signature_layout);
+        _signatureLayout.setOnClickListener(_addSignature_onClick);
+        _shipmentLayout = findViewById(R.id.shipment_layout);
+        _shipmentLayout.setOnClickListener(_addShipment_onClick);
+        _attachmentLayout = findViewById(R.id.attachment_layout);
+        _attachmentLayout.setOnClickListener(_addAttachment_onClick);
 
         _fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
         _fadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
@@ -128,7 +131,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     }
 
     public void setListener(Listener listener) {
-        Log.e(TAG, "setListener");
         _listener = listener;
     }
 
@@ -143,16 +145,62 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
-        Log.e(TAG, "setWorkOrder");
         _workOrder = workOrder;
         populateUi();
     }
 
     public void populateUi() {
-        Log.e(TAG, "populateUi");
         if (_workOrder == null)
             return;
+
+
+        if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+            _counterOfferLayout.setVisibility(VISIBLE);
+        else _counterOfferLayout.setVisibility(GONE);
+
+        if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD))
+            _requestNewPayLayout.setVisibility(VISIBLE);
+        else _requestNewPayLayout.setVisibility(GONE);
+
+        // no action for countered wo
+
+        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD))
+            _timeLogLayout.setVisibility(VISIBLE);
+        else _timeLogLayout.setVisibility(GONE);
+
+        if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD))
+            _expenseLayout.setVisibility(VISIBLE);
+        else _expenseLayout.setVisibility(GONE);
+
+        if (_workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD))
+            _discountLayout.setVisibility(VISIBLE);
+        else _discountLayout.setVisibility(GONE);
+
+        if (_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD))
+            _signatureLayout.setVisibility(VISIBLE);
+        else _signatureLayout.setVisibility(GONE);
+
+        if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
+            _shipmentLayout.setVisibility(VISIBLE);
+        else _shipmentLayout.setVisibility(GONE);
+
+        if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
+            _shipmentLayout.setVisibility(VISIBLE);
+        else _shipmentLayout.setVisibility(GONE);
+
+
+        final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+        for (AttachmentFolder attachmentFolder : folders) {
+            if (attachmentFolder.getResults().length > 0
+                    && (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT))) {
+                _attachmentLayout.setVisibility(VISIBLE);
+                break;
+            }
+            _attachmentLayout.setVisibility(GONE);
+        }
     }
+
 
     /*-*************************-*/
     /*-			Events			-*/
@@ -164,7 +212,7 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             _bottomSheetBackground.startAnimation(_fadeOut);
             _bottomSheet.clearAnimation();
             _bottomSheet.startAnimation(_bsSlideOut);
-            if (_listener != null) _listener.onBackgroundClick();
+            if (_listener != null && view.equals(_bottomSheetBackground)) _listener.onBackgroundClick();
         }
     };
 
@@ -172,7 +220,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         @Override
         public void onClick(final View view) {
             if (_listener != null) _listener.addCounterOffer();
-
             getRootView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
