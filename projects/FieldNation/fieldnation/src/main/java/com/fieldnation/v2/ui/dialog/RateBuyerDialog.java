@@ -66,7 +66,6 @@ public class RateBuyerDialog extends FullScreenDialog {
     private Boolean _hasSelectedScopeRating = null;
     private Boolean _hasSelectedRespectRating = null;
     private String _commentText;
-    private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
     private int _workOrderId;
     private Company _company;
@@ -154,8 +153,7 @@ public class RateBuyerDialog extends FullScreenDialog {
                 _submitButton.setEnabled(false);
         }
 
-        _photos = new PhotoClient(_photo_listener);
-        _photos.connect(App.get());
+        _photoClient.sub();
 
         populateUi();
     }
@@ -210,7 +208,7 @@ public class RateBuyerDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         Log.v(TAG, "onPause");
-        if (_photos != null) _photos.disconnect(App.get());
+        _photoClient.unsub();
         super.onPause();
     }
 
@@ -243,7 +241,7 @@ public class RateBuyerDialog extends FullScreenDialog {
             else _locationTextView.setVisibility(View.GONE);
         }
 
-        if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+        if (_profilePic == null || _profilePic.get() == null) {
             _picView.setProfilePic(R.drawable.missing_circle);
             String url = _company.getPhoto();
             if (!misc.isEmptyOrNull(url)) {
@@ -326,12 +324,7 @@ public class RateBuyerDialog extends FullScreenDialog {
         }
     };
 
-    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
-        @Override
-        public PhotoClient getClient() {
-            return _photos;
-        }
-
+    private final PhotoClient _photoClient = new PhotoClient() {
         @Override
         public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
         }

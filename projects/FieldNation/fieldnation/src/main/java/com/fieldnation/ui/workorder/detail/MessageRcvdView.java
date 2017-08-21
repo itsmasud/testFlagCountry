@@ -38,7 +38,6 @@ public class MessageRcvdView extends RelativeLayout {
     private TextView _usernameTextView;
 
     // Data
-    private PhotoClient _photos;
     private Message _message = null;
     private WeakReference<Drawable> _profilePic = null;
 
@@ -66,13 +65,12 @@ public class MessageRcvdView extends RelativeLayout {
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
-        _photos = new PhotoClient(_photo_listener);
-        _photos.connect(App.get());
+        _photoClient.sub();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_photos != null) _photos.disconnect(App.get());
+        _photoClient.unsub();
         super.onDetachedFromWindow();
     }
 
@@ -82,9 +80,6 @@ public class MessageRcvdView extends RelativeLayout {
     }
 
     private void populateUi() {
-        if (_photos == null)
-            return;
-
         if (_message == null)
             return;
 
@@ -105,7 +100,7 @@ public class MessageRcvdView extends RelativeLayout {
 
         _usernameTextView.setText(_message.getFrom().getName());
 
-        if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+        if (_profilePic == null || _profilePic.get() == null) {
             _picView.setProfilePic(R.drawable.missing_circle);
             String url = _message.getFrom().getThumbnail();
             if (!misc.isEmptyOrNull(url)) {
@@ -116,13 +111,7 @@ public class MessageRcvdView extends RelativeLayout {
         }
     }
 
-    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
-
-        @Override
-        public PhotoClient getClient() {
-            return _photos;
-        }
-
+    private final PhotoClient _photoClient = new PhotoClient() {
         @Override
         public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
         }

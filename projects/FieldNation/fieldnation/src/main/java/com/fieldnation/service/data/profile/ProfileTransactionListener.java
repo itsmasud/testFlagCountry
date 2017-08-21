@@ -10,11 +10,9 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.text.ParseException;
 
@@ -156,13 +154,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             byte[] data = httpResult.getByteArray();
 
             // todo parse json and put Profile/id ?
-            ProfileDispatch.get(context, profileId, new JsonObject(data), false, transaction.isSync());
+            ProfileDispatch.get(profileId, new JsonObject(data), false, transaction.isSync());
             StoredObject.put(context, (int) profileId, PSO_PROFILE, profileId, data);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.get(context, profileId, null, true, transaction.isSync());
+            ProfileDispatch.get(profileId, null, true, transaction.isSync());
             return Result.DELETE;
 
         } else {
@@ -178,13 +176,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             // store object
             byte[] pagedata = httpResult.getByteArray();
 
-            ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
+            ProfileDispatch.listNotifications(new JsonArray(pagedata), page, false, transaction.isSync(), false);
             StoredObject.put(context, App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.listNotifications(context, null, page, true, transaction.isSync(), true);
+            ProfileDispatch.listNotifications(null, page, true, transaction.isSync(), true);
             return Result.DELETE;
 
         } else {
@@ -200,13 +198,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             // store object
             byte[] pagedata = httpResult.getByteArray();
 
-            ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
+            ProfileDispatch.listMessages(new JsonArray(pagedata), page, false, transaction.isSync(), false);
             StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.listMessages(context, null, page, true, transaction.isSync(), true);
+            ProfileDispatch.listMessages(null, page, true, transaction.isSync(), true);
             return Result.DELETE;
 
         } else {
@@ -223,7 +221,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             ProfileClient.listMessages(context, 0, false, false);
             ProfileClient.listNotifications(context, 0, false, false);
 
-            ProfileDispatch.switchUser(context, userId, false);
+            ProfileDispatch.switchUser(userId, false);
 
             return Result.CONTINUE;
 
@@ -241,11 +239,11 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         String action = params.getString("param");
 
         if (result == Result.CONTINUE) {
-            ProfileDispatch.action(context, profileId, action, false);
+            ProfileDispatch.action(profileId, action, false);
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.action(context, profileId, action, true);
+            ProfileDispatch.action(profileId, action, true);
             return Result.DELETE;
 
         } else {
@@ -259,7 +257,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         String filename = params.getString("filename");
 
         if (result == Result.CONTINUE) {
-            ProfileDispatch.uploadProfilePhoto(context, filename, true, false);
+            ProfileDispatch.uploadProfilePhoto(filename, true, false);
             ProfileClient.get(context, false);
             UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
             return Result.CONTINUE;
@@ -274,7 +272,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             } else {
                 ToastClient.toast(context, "Failed to upload file. " + filename + " Please try again", Toast.LENGTH_LONG);
             }
-            ProfileDispatch.uploadProfilePhoto(context, filename, false, true);
+            ProfileDispatch.uploadProfilePhoto(filename, false, true);
             return Result.DELETE;
 
         } else {

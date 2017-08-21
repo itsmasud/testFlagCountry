@@ -1,6 +1,6 @@
 package com.fieldnation.ui.inbox;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -41,8 +41,6 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     private EmptyCardView _emptyView;
 
     // Data
-    private ProfileClient _profileClient;
-    private PhotoClient _photoClient;
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
     /*-*************************************-*/
@@ -103,29 +101,26 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         super.onResume();
         Log.v(TAG, "onResume");
 
-        if (_profileClient != null && _profileClient.isConnected())
-            _adapter.refreshPages();
+        _adapter.refreshPages();
 
         setLoading(true);
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
         Log.v(TAG, "onAttach");
-        super.onAttach(activity);
+        super.onAttach(context);
 
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
-        _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(App.get());
+        _profileClient.subListMessages();
+        _photoClient.sub();
     }
 
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach()");
 
-        if (_profileClient != null) _profileClient.disconnect(App.get());
-        if (_photoClient != null) _photoClient.disconnect(App.get());
+        _profileClient.unsubListMessages();
+        _photoClient.unsub();
         _picCache.clear();
 
         super.onDetach();
@@ -232,12 +227,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-    private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
-        @Override
-        public PhotoClient getClient() {
-            return _photoClient;
-        }
-
+    private final PhotoClient _photoClient = new PhotoClient() {
         @Override
         public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
         }
@@ -257,13 +247,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         }
     };
 
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subListMessages();
-            _adapter.refreshPages();
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             addPage(page, list);

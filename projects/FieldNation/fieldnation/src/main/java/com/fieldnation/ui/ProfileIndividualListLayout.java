@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
@@ -32,7 +31,6 @@ public class ProfileIndividualListLayout extends RelativeLayout {
 
     // Data
     private Profile _profile;
-    private PhotoClient _photoClient;
     private WeakReference<Drawable> _profilePic = null;
 
     public ProfileIndividualListLayout(Context context) {
@@ -64,8 +62,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
         _profileNameTextView = findViewById(R.id.profile_name_textview);
         _providerIdTextView = findViewById(R.id.providerid_textview);
 
-        _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(App.get());
+        _photoClient.sub();
 
         populateUi();
     }
@@ -73,7 +70,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         // Log.v(TAG, "onDetachedFromWindow");
-        if (_photoClient != null) _photoClient.disconnect(App.get());
+        _photoClient.unsub();
 
         super.onDetachedFromWindow();
     }
@@ -107,7 +104,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
 
     private void addProfilePhoto() {
         // Log.v(TAG, "addProfilePhoto");
-        if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
+        if (_profile == null || _photoClient == null) {
             _picView.setProfilePic(R.drawable.missing_circle);
             return;
         }
@@ -125,20 +122,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-
-    private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
-
-        @Override
-        public void onConnected() {
-            super.onConnected();
-            populateUi();
-        }
-
-        @Override
-        public PhotoClient getClient() {
-            return _photoClient;
-        }
-
+    private final PhotoClient _photoClient = new PhotoClient() {
         @Override
         public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
         }

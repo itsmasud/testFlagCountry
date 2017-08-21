@@ -286,14 +286,6 @@
             android:exported="false"
             android:process=":frontside" />
         <service
-            android:name=".service.data.photo.PhotoService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.data.profile.ProfileService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.data.workorder.WorkorderService"
             android:exported="false"
             android:process=":frontside" />
@@ -341,11 +333,6 @@
 
         <service
             android:name=".ui.ncns.RemindMeService"
-            android:exported="false"
-            android:process=":frontside" />
-
-        <service
-            android:name=".service.profileimage.ProfilePhotoService"
             android:exported="false"
             android:process=":frontside" />
 

@@ -1,13 +1,12 @@
 package com.fieldnation.service.profileimage;
 
-import android.content.Intent;
+import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -16,79 +15,49 @@ import com.fieldnation.service.data.profile.ProfileClient;
  * Created by mc on 6/28/17.
  */
 
-public class ProfilePhotoService extends MultiThreadedService implements ProfilePhotoConstants {
+public class ProfilePhotoService implements ProfilePhotoConstants {
     private static final String TAG = "ProfilePhotoService";
 
     // Data
     private Profile _profile = null;
     private Uri _currentProfileImage;
 
-    // Clients
-    private PhotoClient _photoClient;
-    private ProfileClient _profileClient;
+    private static ProfilePhotoService _instance = null;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(App.get());
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
+    public static ProfilePhotoService getInstance() {
+        if (_instance == null) _instance = new ProfilePhotoService();
+
+        return _instance;
     }
 
-    @Override
-    public void onDestroy() {
-        if (_photoClient != null) _photoClient.disconnect(App.get());
-        if (_profileClient != null) _profileClient.disconnect(App.get());
-
-        super.onDestroy();
+    private ProfilePhotoService() {
+        _photoClient.sub();
+        _profileClient.subGet();
     }
 
-    @Override
-    public int getMaxWorkerCount() {
-        return 1;
+    public void shutdown() {
+        _photoClient.unsub();
+        _profileClient.unsubGet();
     }
 
-    @Override
-    public void processIntent(Intent intent) {
-        if (intent == null || !intent.hasExtra(PARAM_ACTION))
-            return;
-
-        String action = intent.getStringExtra(PARAM_ACTION);
-        switch (action) {
-            case PARAM_ACTION_GET:
-                doGetImage();
-                break;
-            case PARAM_ACTION_UPLOAD:
-                doUploadImage((Uri) intent.getParcelableExtra(PARAM_UPLOAD_URI));
-                break;
-        }
-    }
-
-    private void doGetImage() {
+    public void get(Context context, String url) {
         if (_currentProfileImage == null) {
-            ProfilePhotoClient.get(this);
+            PhotoClient.get(context, url, true, false);
         } else {
-            ProfilePhotoClient.dispatchGet(this, _currentProfileImage);
+            ProfilePhotoClient.dispatchGet(context, _currentProfileImage);
         }
     }
 
-    private void doUploadImage(Uri uri) {
+    public void upload(Context context, Uri uri) {
         _currentProfileImage = uri;
-        ProfileClient.uploadProfilePhoto(this, App.get().getProfile().getUserId(), FileUtils.getFileNameFromUri(this, uri), uri);
-
-        ProfilePhotoClient.dispatchGet(this, _currentProfileImage);
+        ProfileClient.uploadProfilePhoto(context, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
+        ProfilePhotoClient.dispatchGet(context, _currentProfileImage);
     }
 
     /*-**************************************-*/
     /*-             Data receivers           -*/
     /*-**************************************-*/
-    private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
-        @Override
-        public PhotoClient getClient() {
-            return _photoClient;
-        }
-
+    private final PhotoClient _photoClient = new PhotoClient() {
         @Override
         public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
             if (isCircle
@@ -112,12 +81,7 @@ public class ProfilePhotoService extends MultiThreadedService implements Profile
         }
     };
 
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet();
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             if (failed)

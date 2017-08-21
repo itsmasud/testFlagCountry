@@ -86,7 +86,6 @@ public class App extends Application {
     private static App _context;
 
     private Profile _profile;
-    private ProfileClient _profileClient;
     private int _memoryClass;
     private Typeface _iconFont;
     private final Handler _handler = new Handler();
@@ -216,8 +215,9 @@ public class App extends Application {
         _appMessagingClient.subNetworkConnect();
         _appMessagingClient.subNetworkState();
 
-        _profileClient = new ProfileClient(_profile_listener);
-        _profileClient.connect(this);
+        _profileClient.subGet();
+        _profileClient.subSwitchUser();
+        ProfileClient.get(App.this);
 
         _authClient.subAuthStateChange();
         AuthClient.requestCommand();
@@ -279,7 +279,8 @@ public class App extends Application {
 
     @Override
     public void onTerminate() {
-        if (_profileClient != null) _profileClient.disconnect(this);
+        _profileClient.unsubGet();
+        _profileClient.unsubSwitchUser();
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubNetworkConnect();
         _appMessagingClient.unsubNetworkState();
@@ -436,15 +437,7 @@ public class App extends Application {
         }
     };
 
-    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_profile_listener.onConnected");
-            _profileClient.subGet();
-            _profileClient.subSwitchUser();
-            ProfileClient.get(App.this);
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");

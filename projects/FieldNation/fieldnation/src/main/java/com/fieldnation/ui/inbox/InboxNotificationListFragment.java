@@ -1,6 +1,6 @@
 package com.fieldnation.ui.inbox;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,7 +18,6 @@ import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
-import com.fieldnation.ui.UnavailableCardView;
 
 import java.util.List;
 
@@ -33,9 +32,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     private OverScrollListView _listView;
     private RefreshView _loadingView;
     private EmptyCardView _emptyView;
-
-    // Data
-    private ProfileClient _profileClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -100,19 +96,18 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
         Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
+        super.onAttach(context);
+        _profileClient.subListNotifications();
+        _adapter.refreshPages();
     }
 
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach()");
 
-        if (_profileClient != null) _profileClient.disconnect(App.get());
+        _profileClient.unsubListNotifications();
 
         super.onDetach();
     }
@@ -204,13 +199,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subListNotifications();
-            _adapter.refreshPages();
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             addPage(page, list);
