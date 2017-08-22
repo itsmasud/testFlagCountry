@@ -21,6 +21,8 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -56,6 +59,7 @@ import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -66,18 +70,26 @@ import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
+import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
 import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.ProblemType;
+import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
+import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Signatures;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
+import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
@@ -171,6 +183,19 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
+
+    // Bottom Sheet
+    private Button _floatingActionButton;
+    private WodBottomSheetView _bottomsheetView;
+    private View _bottomSheetBackground;
+
+
+    // Animations
+    private Animation _fadeIn;
+    private Animation _fadeOut;
+    private Animation _fabSlideOut;
+    private Animation _fabSlideIn;
+
     // Data
     private DocumentClient _docClient;
     private WorkOrder _workOrder;
@@ -202,6 +227,9 @@ public class WorkFragment extends WorkorderFragment {
 
         _testButton = view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
+
+        _floatingActionButton = view.findViewById(R.id.wf_fab_button);
+        _floatingActionButton.setOnClickListener(_fab_onClick);
 
         _topBar = view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -277,6 +305,50 @@ public class WorkFragment extends WorkorderFragment {
 
         _attachmentSummaryView = view.findViewById(R.id.attachment_summary_view);
         _renderers.add(_attachmentSummaryView);
+
+        // Bottom Sheet
+        _bottomSheetBackground = view.findViewById(R.id.bottomSheet_background);
+        _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
+
+        _bottomsheetView = view.findViewById(R.id.bottomsheet_view);
+        _bottomsheetView.setListener(_bottomsheetView_listener);
+        _renderers.add(_bottomsheetView);
+
+        _fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        _fadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+
+        _fabSlideIn = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_in_right);
+        _fabSlideOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_out_right);
+
+
+        _fadeIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _bottomSheetBackground.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _fadeOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _bottomSheetBackground.setVisibility(View.GONE);
+            }
+        });
+
+        _fabSlideIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _floatingActionButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _fabSlideOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _floatingActionButton.setVisibility(View.GONE);
+            }
+        });
+
 
         if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(View.GONE);
@@ -385,6 +457,8 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_simpleGps_listener)
                 .numUpdates(1)
@@ -492,6 +566,10 @@ public class WorkFragment extends WorkorderFragment {
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
+
+        if (shouldFabVisible())
+            _floatingActionButton.setVisibility(View.VISIBLE);
+        else _floatingActionButton.setVisibility(View.GONE);
     }
 
     private void requestWorkorder() {
@@ -514,10 +592,43 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
+
+    private boolean shouldFabVisible() {
+
+        if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+            return true;
+        else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
+            return true;
+        else if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
+            return true;
+        else {
+            final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+            for (AttachmentFolder attachmentFolder : folders) {
+                if (attachmentFolder.getResults().length > 0
+                        && (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT))) {
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        return false;
+    }
+
     /*-*********************************************-*/
     /*-				Check In Process				-*/
     /*-*********************************************-*/
-
     private void doCheckin() {
         CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -1548,6 +1659,95 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
         }
     };
+
+    private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            misc.hideKeyboard(v);
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideOut);
+
+            _bottomSheetBackground.setVisibility(View.VISIBLE);
+            _bottomSheetBackground.clearAnimation();
+            _bottomSheetBackground.startAnimation(_fadeIn);
+
+            _bottomsheetView.animateIn();
+        }
+    };
+
+
+    private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _bottomSheetBackground.clearAnimation();
+            _bottomSheetBackground.startAnimation(_fadeOut);
+            _bottomsheetView.animateOut();
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+        }
+    };
+
+
+    private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
+        @Override
+        public void addCounterOffer() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
+        }
+
+        @Override
+        public void addRequestNewPay() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+        }
+
+        @Override
+        public void addTimeLog() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+        }
+
+        @Override
+        public void addExpense() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+        }
+
+        @Override
+        public void addDiscount() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+        }
+
+        @Override
+        public void addSignature() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+        }
+
+        @Override
+        public void addShipment() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+        }
+
+        @Override
+        public void addAttachment() {
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            AttachmentFolderDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
+        }
+    };
+
 
     /*-*****************************-*/
     /*-				Web				-*/

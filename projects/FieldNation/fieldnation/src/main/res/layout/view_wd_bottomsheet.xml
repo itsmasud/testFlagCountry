@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.fieldnation.ui.OverScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<View-->
+            <!--android:id="@+id/bottomSheet_background"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_above="@+id/bottomsheet"-->
+            <!--android:background="@color/fn_shadow"-->
+            <!--android:visibility="gone" />-->
+
+        <RelativeLayout
+            android:id="@+id/bottomsheet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/fn_clickable_bg"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/counterOffer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addCounterOffer_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Counter Offer" />
+
+                <View style="@style/DividerFull" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/requestNewPay_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/counterOffer_layout"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/addRequestNewPay_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Request New Pay" />
+
+                <View style="@style/DividerFull" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/timeLog_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/requestNewPay_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addTimeLog_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Time Log" />
+
+                <View style="@style/DividerFull" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/expense_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/timeLog_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addExpense_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Expense" />
+
+                <View style="@style/DividerFull" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/discount_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expense_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addDiscount_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Discount" />
+
+                <View style="@style/DividerFull" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signature_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/discount_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addSignature_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Signature" />
+
+                <View style="@style/DividerFull" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/shipment_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/signature_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addShipment_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Shipment" />
+
+                <View style="@style/DividerFull" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/attachment_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/shipment_layout"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/addAttachment_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="Attach File" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</com.fieldnation.ui.OverScrollView>
