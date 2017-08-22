@@ -277,10 +277,6 @@
             android:exported="false"
             android:process=":frontside" />
         <service
-            android:name=".service.transaction.WebTransactionService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.data.photo.PhotoService"
             android:exported="false"
             android:process=":frontside" />

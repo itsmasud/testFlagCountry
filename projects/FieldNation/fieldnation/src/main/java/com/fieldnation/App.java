@@ -420,7 +420,6 @@ public class App extends Application {
         @Override
         public void onNetworkConnect() {
             AuthClient.requestCommand();
-            startService(new Intent(App.this, WebTransactionService.class));
         }
 
         @Override
