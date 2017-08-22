@@ -111,13 +111,13 @@ public class NavActivity extends AuthSimpleActivity {
         }
         _recyclerView.onResume();
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
     }
 
     @Override
     protected void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
         _recyclerView.onPause();
         super.onPause();
     }
@@ -234,13 +234,7 @@ public class NavActivity extends AuthSimpleActivity {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists");

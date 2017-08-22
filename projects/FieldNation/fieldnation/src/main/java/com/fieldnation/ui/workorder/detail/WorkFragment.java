@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,7 +30,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -173,7 +172,6 @@ public class WorkFragment extends WorkorderFragment {
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Data
-    private WorkordersWebApi _workOrderApi;
     private DocumentClient _docClient;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
@@ -349,9 +347,9 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -409,6 +407,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onStop() {
+        Log.v(TAG, "onStop");
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
@@ -439,7 +438,7 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
         super.onStop();
     }
@@ -700,9 +699,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onMyWay() {
             if (!App.get().isLocationEnabled()) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
             }
 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);
@@ -1233,6 +1236,7 @@ public class WorkFragment extends WorkorderFragment {
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
         public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
             if (fileResult.size() == 0)
                 return;
 
@@ -1568,21 +1572,26 @@ public class WorkFragment extends WorkorderFragment {
                 intent.setDataAndType(App.getUriFromFile(file),
                         FileUtils.guessContentTypeFromName(file.getName()));
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    ActivityResultClient.startActivity(App.get(), intent);
+                    ActivityClient.startActivity(intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);
 
-                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    final Intent folderIntent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
-                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityClient.startActivity(folderIntent);
+                            }
+                        }, Snackbar.LENGTH_LONG);
                     } else {
                         ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
                     }
@@ -1593,12 +1602,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.contains("TimeLog");

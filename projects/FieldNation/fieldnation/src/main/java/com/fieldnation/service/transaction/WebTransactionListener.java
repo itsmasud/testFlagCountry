@@ -3,13 +3,13 @@ package com.fieldnation.service.transaction;
 import android.content.Context;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -90,8 +90,8 @@ public abstract class WebTransactionListener {
         if (httpResult != null) {
             if (!httpResult.isFile() && (httpResult.getString() != null && httpResult.getString().contains("You must provide a valid OAuth token to make a request"))) {
                 Log.v(TAG, "Reauth");
-                AuthTopicClient.invalidateCommand(context);
-                AuthTopicClient.requestCommand(context);
+                AuthClient.invalidateCommand();
+                AuthClient.requestCommand();
                 return Result.RETRY;
 
             } else if (httpResult.getResponseCode() == 400) {
@@ -103,8 +103,8 @@ public abstract class WebTransactionListener {
 
                 } else {
                     Log.v(TAG, "1");
-                    AuthTopicClient.invalidateCommand(context);
-                    AuthTopicClient.requestCommand(context);
+                    AuthClient.invalidateCommand();
+                    AuthClient.requestCommand();
                     return Result.RETRY;
                 }
 
@@ -112,8 +112,8 @@ public abstract class WebTransactionListener {
                 // 401 usually means bad auth token
                 if (HttpJsonBuilder.isFieldNation(request)) {
                     Log.v(TAG, "Reauth 2");
-                    AuthTopicClient.invalidateCommand(context);
-                    AuthTopicClient.requestCommand(context);
+                    AuthClient.invalidateCommand();
+                    AuthClient.requestCommand();
                     return Result.RETRY;
 
                 } else {
@@ -147,7 +147,7 @@ public abstract class WebTransactionListener {
                 return Result.DELETE;
 
             } else if (throwable instanceof UnknownHostException) {
-                GlobalTopicClient.networkDisconnected(context);
+                AppMessagingClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof SecurityException) {
@@ -157,29 +157,29 @@ public abstract class WebTransactionListener {
                     || throwable instanceof ConnectException
                     || throwable instanceof SocketTimeoutException
                     || throwable instanceof EOFException) {
-                GlobalTopicClient.networkDisconnected(context);
+                AppMessagingClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof SSLException) {
                 if (throwable.getMessage().contains("Broken pipe")) {
                     Log.v(TAG, "6");
-                    GlobalTopicClient.networkDisconnected(context);
+                    AppMessagingClient.networkDisconnected();
                     return Result.RETRY;
 
                 } else {
                     Log.v(TAG, "7");
-                    GlobalTopicClient.networkDisconnected(context);
+                    AppMessagingClient.networkDisconnected();
                     return Result.RETRY;
                 }
             } else if (throwable instanceof IOException) {
-                GlobalTopicClient.networkDisconnected(context);
+                AppMessagingClient.networkDisconnected();
                 return Result.RETRY;
 
             } else if (throwable instanceof Exception) {
                 Log.v(TAG, "9");
                 Log.v(TAG, throwable);
                 if (throwable.getMessage() != null && throwable.getMessage().contains("ETIMEDOUT")) {
-                    GlobalTopicClient.networkDisconnected(context);
+                    AppMessagingClient.networkDisconnected();
                     return Result.RETRY;
 
                 } else {

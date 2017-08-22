@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -238,12 +238,12 @@ public class PhotoUploadDialog extends SimpleDialog {
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_insert_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
             if (!FileUtils.isValidFileName(_newFileName)) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_invalid_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_invalid_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
@@ -335,7 +335,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
             try {
                 if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    ActivityResultClient.startActivity(App.get(), intent);
+                    ActivityClient.startActivity(intent);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);

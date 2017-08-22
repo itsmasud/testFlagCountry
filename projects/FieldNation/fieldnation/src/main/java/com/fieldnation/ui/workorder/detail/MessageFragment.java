@@ -41,7 +41,6 @@ public class MessageFragment extends WorkorderFragment {
 
     // Data
     private WorkOrder _workorder;
-    private WorkordersWebApi _workOrderApi;
     private boolean _isMarkedRead = false;
 
     /*-*************************************-*/
@@ -72,18 +71,14 @@ public class MessageFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         populateUi();
     }
 
     @Override
     public void onPause() {
-        if (_workOrderApi != null) {
-            _workOrderApi.disconnect(App.get());
-            _workOrderApi = null;
-        }
+        _workOrderApi.unsub();
 
         misc.hideKeyboard(_inputView);
         super.onPause();
@@ -187,13 +182,7 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("addMessage")

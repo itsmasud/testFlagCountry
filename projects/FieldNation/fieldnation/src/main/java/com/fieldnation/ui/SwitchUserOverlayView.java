@@ -8,8 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DefaultAnimationListener;
@@ -26,9 +25,6 @@ public class SwitchUserOverlayView extends RelativeLayout {
     // Data
     private final int[] _icons = new int[]{R.string.icon_my_wos, R.string.icon_hiring, R.string.icon_circle_dollar, R.string.icon_summary};
     private int _iconIndex = 0;
-
-    // Serivces
-    private GlobalTopicClient _globalTopicClient;
 
     // Animations
     private Animation _shrinkAnimation;
@@ -64,13 +60,12 @@ public class SwitchUserOverlayView extends RelativeLayout {
         _growAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.grow_horrizontal);
         _growAnimation.setAnimationListener(_growListener);
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
+        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        _appMessagingClient.unsubUserSwitched();
         super.onDetachedFromWindow();
     }
 
@@ -79,12 +74,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
         setVisibility(VISIBLE);
     }
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subUserSwitched();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             // NavActivity.startNew(getContext());

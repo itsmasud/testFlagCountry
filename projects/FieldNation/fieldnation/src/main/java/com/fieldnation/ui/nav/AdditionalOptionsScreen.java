@@ -20,9 +20,9 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.IconFontButton;
@@ -318,7 +318,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
-            AuthTopicClient.removeCommand(getContext());
+            AuthClient.removeCommand();
         }
     };
 
@@ -361,10 +361,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             Uri uri = Uri.parse("market://details?id=" + App.get().getPackageName());
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                ActivityResultClient.startActivity(App.get(), intent);
+                ActivityClient.startActivity(intent);
             }
 
         }

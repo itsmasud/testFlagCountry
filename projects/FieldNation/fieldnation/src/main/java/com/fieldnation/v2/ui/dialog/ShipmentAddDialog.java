@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,11 +21,12 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -75,8 +75,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     private int _directionPosition = -1;
     private String _shipmentDescription;
     private Task _task;
-    private ActivityResultClient _activityResultClient;
-    private PermissionsClient _permissionsClient;
 
     // Barcode stuff
     private Uri _scannedImageUri;
@@ -133,16 +131,14 @@ public class ShipmentAddDialog extends SimpleDialog {
         getDirectionSpinner().setHint(App.get().getString(R.string.dialog_shipment_direction_spinner_default_text));
         getDirectionSpinner().clearSelection();
 
-        _permissionsClient = new PermissionsClient(_permissions_response);
-        _permissionsClient.connect(App.get());
+        _permissionsListener.sub();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
-        _activityResultClient.connect(App.get());
+        _activityResultListener.sub();
 
         if (_title != null) {
             _titleTextView.setText(_title);
@@ -207,13 +203,13 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
+        _activityResultListener.unsub();
         super.onPause();
     }
 
     @Override
     public void onStop() {
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        _permissionsListener.unsub();
         super.onStop();
     }
 
@@ -334,22 +330,22 @@ public class ShipmentAddDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_tracking_number), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_tracking_number, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (_carrierPosition == -1) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_carrier_not_selected, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_description, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (_directionPosition == -1) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_direction_not_selected, Toast.LENGTH_SHORT);
                 return;
             }
 
@@ -460,7 +456,7 @@ public class ShipmentAddDialog extends SimpleDialog {
             int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
 
             if (grant == PackageManager.PERMISSION_DENIED) {
-                PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
+                PermissionsClient.requestPermissions(new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
             } else {
                 IntentIntegrator integrator = new IntentIntegrator((Activity) getContext());
                 integrator.setPrompt(App.get().getString(R.string.dialog_scan_barcode_title));
@@ -472,12 +468,8 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    private final PermissionsClient.ResponseListener _permissions_response = new PermissionsClient.ResponseListener() {
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
-        }
 
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
             if (permission.equals(Manifest.permission.CAMERA)) {
@@ -490,26 +482,9 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
-        @Override
-        public void onConnected() {
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Log.v(TAG, topicId);
-            super.onEvent(topicId, payload);
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
-
+    private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-            _activityResultClient.clearOnActivityResult();
             Log.v(TAG, "onActivityResult");
 
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

@@ -9,7 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.InboxTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 
@@ -110,6 +110,6 @@ public class InboxActivity extends TabActionBarFragmentActivity {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, InboxActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        ActivityClient.startActivity(intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }

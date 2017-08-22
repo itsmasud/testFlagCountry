@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -118,7 +118,6 @@ public class EtaDialog extends FullScreenDialog {
     private boolean _isSwitchOn = true;
     private int _currentPosition = 1;
     private int[] _durations;
-    private WorkordersWebApi _workOrderClient;
 
 
     /*-*************************************-*/
@@ -172,8 +171,7 @@ public class EtaDialog extends FullScreenDialog {
         super.onResume();
         Log.v(TAG, "onResume");
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
 
         // Dialog setup, start them off with today
         _etaStartTimePicker = new TimePickerDialog(_expirationLayout.getContext(), _etaStartTime_onSet,
@@ -212,7 +210,7 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
 
         super.onPause();
         DurationPickerDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationPickerDialog_onOk);
@@ -588,7 +586,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -597,7 +595,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -846,12 +844,7 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("assignUser")

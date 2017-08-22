@@ -8,7 +8,7 @@ import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 
@@ -55,7 +55,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
         try {
             if (auth == null) {
                 auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
-                GlobalTopicClient.networkConnected(_context);
+                AppMessagingClient.networkConnected();
             }
 
         } catch (Exception ex) {

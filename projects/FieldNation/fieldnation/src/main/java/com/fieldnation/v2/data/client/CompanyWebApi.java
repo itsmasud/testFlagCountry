@@ -1,71 +1,52 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.Pigeon;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.AaaaPlaceholder;
+import com.fieldnation.v2.data.model.Clients;
+import com.fieldnation.v2.data.model.CompanyFeatures;
+import com.fieldnation.v2.data.model.CompanyIntegrations;
+import com.fieldnation.v2.data.model.CompanyRating;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.FundTransaction;
+import com.fieldnation.v2.data.model.SavedCreditCards;
+import com.fieldnation.v2.data.model.Tag;
+import com.fieldnation.v2.data.model.Tags;
 
 /**
  * Created by dmgen from swagger.
  */
 
-public class CompanyWebApi extends TopicClient {
-    private static final String STAG = "CompanyWebApi";
-    private final String TAG = UniqueTag.makeTag(STAG);
+public abstract class CompanyWebApi extends Pigeon {
+    private static final String TAG = "CompanyWebApi";
 
-    private static int connectCount = 0;
-
-    public CompanyWebApi(Listener listener) {
-        super(listener);
+    public void sub() {
+        PigeonRoost.sub(this, "ADDRESS_WEB_API_V2/CompanyWebApi");
     }
 
-    @Override
-    public void connect(Context context) {
-        super.connect(context);
-        connectCount++;
-        Log.v(STAG + ".state", "connect " + connectCount);
-    }
-
-    @Override
-    public void disconnect(Context context) {
-        super.disconnect(context);
-        connectCount--;
-        Log.v(STAG + ".state", "disconnect " + connectCount);
-    }
-
-    @Override
-    public String getUserTag() {
-        return TAG;
-    }
-
-    public boolean subCompanyWebApi() {
-        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi");
+    public void unsub() {
+        PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/CompanyWebApi");
     }
 
     /**
@@ -93,7 +74,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "addTag", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -101,7 +82,7 @@ public class CompanyWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -109,7 +90,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: addTag
      * Adds a tag to a company for selection on a work order basis
      *
-     * @param tag Tag
+     * @param tag   Tag
      * @param async Async (Optional)
      */
     public static void addTag(Context context, Tag tag, Boolean async) {
@@ -133,7 +114,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "addTag", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -141,7 +122,7 @@ public class CompanyWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -168,7 +149,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getClients", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -179,7 +160,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -187,7 +168,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getCompanyDetails
      * Get Company Details
      *
-     * @param companyId ID of company
+     * @param companyId    ID of company
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -208,7 +189,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyDetails", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -219,7 +200,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -246,7 +227,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyManagers", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -257,7 +238,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -284,7 +265,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyUserCreditCards", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -295,7 +276,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -303,7 +284,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getCreditCardFeesByCompany
      * Get credit card processing fees
      *
-     * @param companyId ID of company
+     * @param companyId    ID of company
      * @param isBackground indicates that this call is low priority
      */
     public static void getCreditCardFees(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -324,7 +305,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCreditCardFees", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -335,7 +316,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -365,7 +346,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getFeatures", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -376,7 +357,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -408,7 +389,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getIntegrations", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -419,7 +400,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -446,7 +427,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getManagedProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -457,7 +438,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -472,7 +453,7 @@ public class CompanyWebApi extends TopicClient {
         try {
             String key = misc.md5("GET//api/rest/v2/company/managed-providers" + (getManagedProvidersOptions.getCompanyId() != null ? "?company_id=" + getManagedProvidersOptions.getCompanyId() : "")
                     + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
-                                    + (isBackground ? ":isBackground" : ""));
+                    + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -490,7 +471,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getManagedProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -501,7 +482,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -530,7 +511,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getPredefinedExpenses", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -541,7 +522,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -570,7 +551,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getRatings", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -581,7 +562,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -608,7 +589,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getSelectionRules", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -619,7 +600,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -646,7 +627,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getTags", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -657,7 +638,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -665,7 +646,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getTagsByWorkOrder
      * Gets available tags for a work order and the company it belongs to (provider friendly route)
      *
-     * @param workOrderId work order ID
+     * @param workOrderId  work order ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
@@ -686,7 +667,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getTags", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -697,7 +678,7 @@ public class CompanyWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -730,7 +711,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "requestFeature", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -738,7 +719,7 @@ public class CompanyWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -775,7 +756,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "updateFund", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -783,7 +764,7 @@ public class CompanyWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -826,7 +807,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "updateFund", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -834,72 +815,69 @@ public class CompanyWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
-
 
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
-    public static abstract class Listener extends TopicClient.Listener {
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Log.v(STAG, "Listener " + topicId);
+    @Override
+    public void onMessage(String address, Object message) {
+        Log.v(TAG, "Listener " + address);
 
-            Bundle bundle = (Bundle) payload;
-            String type = bundle.getString("type");
-            TransactionParams transactionParams = bundle.getParcelable("params");
+        Bundle bundle = (Bundle) message;
+        String type = bundle.getString("type");
+        TransactionParams transactionParams = bundle.getParcelable("params");
 
-            if (!processTransaction(transactionParams, transactionParams.apiFunction))
-                return;
+        if (!processTransaction(transactionParams, transactionParams.apiFunction))
+            return;
 
-            switch (type) {
-                case "queued": {
-                    onQueued(transactionParams, transactionParams.apiFunction);
-                    break;
-                }
-                case "start": {
-                    onStart(transactionParams, transactionParams.apiFunction);
-                    break;
-                }
-                case "progress": {
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
-                    break;
-                }
-                case "paused": {
-                    onPaused(transactionParams, transactionParams.apiFunction);
-                    break;
-                }
-                case "complete": {
-                    new AsyncParser(this, bundle);
-                    break;
-                }
+        switch (type) {
+            case "queued": {
+                onQueued(transactionParams, transactionParams.apiFunction);
+                break;
+            }
+            case "start": {
+                onStart(transactionParams, transactionParams.apiFunction);
+                break;
+            }
+            case "progress": {
+                onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                break;
+            }
+            case "paused": {
+                onPaused(transactionParams, transactionParams.apiFunction);
+                break;
+            }
+            case "complete": {
+                new AsyncParser(this, bundle);
+                break;
             }
         }
+    }
 
-        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
+    public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
-        public void onQueued(TransactionParams transactionParams, String methodName) {
-        }
+    public void onQueued(TransactionParams transactionParams, String methodName) {
+    }
 
-        public void onStart(TransactionParams transactionParams, String methodName) {
-        }
+    public void onStart(TransactionParams transactionParams, String methodName) {
+    }
 
-        public void onPaused(TransactionParams transactionParams, String methodName) {
-        }
+    public void onPaused(TransactionParams transactionParams, String methodName) {
+    }
 
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
-        }
+    public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+    }
 
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-        }
+    public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
         private static final String TAG = "CompanyWebApi.AsyncParser";
 
-        private Listener listener;
+        private CompanyWebApi companyWebApi;
         private TransactionParams transactionParams;
         private boolean success;
         private byte[] data;
@@ -907,8 +885,8 @@ public class CompanyWebApi extends TopicClient {
         private Object successObject;
         private Object failObject;
 
-        public AsyncParser(Listener listener, Bundle bundle) {
-            this.listener = listener;
+        public AsyncParser(CompanyWebApi companyWebApi, Bundle bundle) {
+            this.companyWebApi = companyWebApi;
             transactionParams = bundle.getParcelable("params");
             success = bundle.getBoolean("success");
             data = bundle.getByteArray("data");
@@ -1002,7 +980,7 @@ public class CompanyWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
+                companyWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

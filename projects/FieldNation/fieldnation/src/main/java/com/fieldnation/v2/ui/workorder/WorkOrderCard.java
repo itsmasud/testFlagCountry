@@ -1,6 +1,5 @@
 package com.fieldnation.v2.ui.workorder;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -17,10 +16,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -791,7 +790,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.setLoading(App.get(), true);
+            AppMessagingClient.setLoading(true);
             if (_onActionListener != null) _onActionListener.onAction();
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getId());
@@ -847,14 +846,18 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.setLoading(App.get(), true);
+            AppMessagingClient.setLoading(true);
 
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (!App.get().isLocationEnabled()) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
             }
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
@@ -1005,9 +1008,13 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (!App.get().isLocationEnabled()) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
             }
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.DIRECTIONS, null, _workOrder.getId());
@@ -1019,7 +1026,7 @@ public class WorkOrderCard extends RelativeLayout {
                     Uri _uri = Uri.parse(_uriString);
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(_uri);
-                    ActivityResultClient.startActivity(App.get(), intent);
+                    ActivityClient.startActivity(intent);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                     ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
@@ -1039,8 +1046,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ActivityResultClient.startActivity(App.get(),
-                    WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getId()),
+            ActivityClient.startActivity(WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getId()),
                     R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
         }
     };

@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
@@ -28,7 +28,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
 import java.text.ParseException;
@@ -114,11 +114,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
             Log.v(TAG, "Testing connection");
             try {
                 HttpJson.run(_service, TEST_QUERY);
-                GlobalTopicClient.networkConnected(_service);
+                AppMessagingClient.networkConnected();
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
                 Log.v(TAG, "Testing connection... failed!");
-                GlobalTopicClient.networkDisconnected(_service);
+                AppMessagingClient.networkDisconnected();
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ex) {
@@ -174,7 +174,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             OAuth auth = _service.getAuth();
 
             if (auth == null) {
-                AuthTopicClient.requestCommand(ContextProvider.get());
+                AuthClient.requestCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
@@ -183,7 +183,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthTopicClient.invalidateCommand(ContextProvider.get());
+                AuthClient.invalidateCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);

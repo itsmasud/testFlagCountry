@@ -7,13 +7,12 @@ import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
 import java.util.List;
@@ -29,8 +28,6 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     private static final Object AUTH_LOCK = new Object();
 
     private OAuth _auth;
-    private AuthTopicClient _authTopicClient;
-    private GlobalTopicClient _globalTopicClient;
     private ThreadManager _manager;
 
     @Override
@@ -47,11 +44,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
             threadCount = 8;
         }
 
-        _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(ContextProvider.get());
+        _authClient.subAuthStateChange();
+        AuthClient.requestCommand();
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalTopicClient.connect(ContextProvider.get());
+        _appMessagingClient.subNetworkConnect();
 
         _manager = new ThreadManager();
         TransactionThread t = new TransactionThread(_manager, this, false);
@@ -79,9 +75,9 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        if (_authTopicClient != null) _authTopicClient.disconnect(ContextProvider.get());
+        _authClient.unsubAuthStateChange();
 
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(ContextProvider.get());
+        _appMessagingClient.unsubNetworkConnect();
 
         _manager.shutdown();
         super.onDestroy();
@@ -92,7 +88,8 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         synchronized (AUTH_LOCK) {
             _auth = auth;
         }
-        _manager.wakeUp();
+        if (_manager != null)
+            _manager.wakeUp();
         Log.v(TAG, "setAuth end");
     }
 
@@ -108,31 +105,20 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         return 1;
     }
 
-    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subNetworkConnect();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onNetworkConnect() {
             _manager.wakeUp();
         }
     };
 
-    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "AuthTopicClient.onConnected");
-            _authTopicClient.subAuthStateChange();
-            AuthTopicClient.requestCommand(WebTransactionService.this);
-        }
-
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             setAuth(oauth);
-            _manager.wakeUp();
+            if (_manager != null)
+                _manager.wakeUp();
         }
 
         @Override

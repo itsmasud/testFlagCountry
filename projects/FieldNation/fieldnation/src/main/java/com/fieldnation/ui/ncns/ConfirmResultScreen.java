@@ -46,7 +46,6 @@ public class ConfirmResultScreen extends RelativeLayout {
 
     // Service
     private SimpleGps _simpleGps;
-    private WorkordersWebApi _workOrderClient;
 
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
@@ -102,9 +101,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     }
 
     public void onResume() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
+        _workOrdersApi.sub();
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_gps_listener)
                 .priority(SimpleGps.Priority.HIGHEST)
@@ -112,7 +109,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     }
 
     public void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning())
             _simpleGps.stop();
     }
@@ -209,12 +206,7 @@ public class ConfirmResultScreen extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders") || !methodName.startsWith("get");

@@ -12,17 +12,18 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityRequestHandler;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -44,13 +45,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_WHATS_NEW_DIALOG = TAG_BASE + ".whatsNewDialog";
     private static final String DIALOG_NOT_PROVIDER = TAG_BASE + ".notProviderDialog";
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
-
-    // Services
-    private GlobalTopicClient _globalClient;
-    private ToastClient _toastClient;
-    private AuthTopicClient _authTopicClient;
-    private ActivityResultClient _activityResultClient;
-    private PermissionsClient _permissionsClient;
 
     // Data
     private Profile _profile;
@@ -119,25 +113,28 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        _toastClient.subSnackbar();
+        _toastClient.subToast();
+
         startService(new Intent(this, AuthTopicService.class));
         startService(new Intent(this, TopicService.class));
         startService(new Intent(this, WebCrawlerService.class));
 
-        _toastClient = new ToastClient(_toastClient_listener);
-        _toastClient.connect(App.get());
-        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
-        _authTopicClient.connect(App.get());
-        _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(App.get());
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
+        _authClient.subNeedUsernameAndPassword();
+
+        _appMessagingClient.subGotProfile();
+        _appMessagingClient.subUpdateApp();
+        _appMessagingClient.subAppShutdown();
+        _appMessagingClient.subProfileInvalid();
+        ProfileClient.get(App.get());
+
+        _activityRequestHandler.sub();
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
 
         if (doPermissionsChecks()) {
-            _permissionsClient = new PermissionsClient(_permissionsListener);
-            _permissionsClient.connect(App.get());
+            _permissionsListener.sub();
             PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
         }
     }
@@ -145,16 +142,21 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        if (_globalClient != null) _globalClient.disconnect(App.get());
-        if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
-        if (_toastClient != null) _toastClient.disconnect(App.get());
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
+        _appMessagingClient.unsubGotProfile();
+        _appMessagingClient.unsubUpdateApp();
+        _appMessagingClient.unsubAppShutdown();
+        _appMessagingClient.unsubProfileInvalid();
+
+        _authClient.unsubNeedUsernameAndPassword();
+        _toastClient.unSubToast();
+        _toastClient.unSubSnackbar();
+        _activityRequestHandler.unsub();
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
 
         if (doPermissionsChecks()) {
-            if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+            _permissionsListener.unsub();
         }
 
         super.onPause();
@@ -248,13 +250,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult " + requestCode + ", " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+        ActivityRequestHandler.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (doPermissionsChecks()) {
-            PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+            PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -298,14 +300,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final OneButtonDialog.OnPrimaryListener _notProvider_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
-            AuthTopicClient.removeCommand(AuthSimpleActivity.this);
+            AuthClient.removeCommand();
         }
     };
 
     private final OneButtonDialog.OnCanceledListener _notProvider_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
         public void onCanceled() {
-            AuthTopicClient.removeCommand(AuthSimpleActivity.this);
+            AuthClient.removeCommand();
         }
     };
 
@@ -337,44 +339,25 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
+    private final ActivityRequestHandler _activityRequestHandler = new ActivityRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
         }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
     };
 
-    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _authTopicClient.subNeedUsernameAndPassword();
-        }
-
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
             AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);
         }
     };
 
-    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalClient.subGotProfile();
-            _globalClient.subUpdateApp();
-            _globalClient.subAppShutdown();
-            _globalClient.subProfileInvalid(App.get());
-            ProfileClient.get(App.get());
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile();
+            AuthSimpleActivity.this.gotProfile();
         }
 
         @Override
@@ -397,15 +380,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final ToastClient.Listener _toastClient_listener = new ToastClient.Listener() {
+    private final ToastClient _toastClient = new ToastClient() {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
-        }
-
-        @Override
-        public ToastClient getToastClient() {
-            return _toastClient;
         }
 
         @Override
@@ -414,15 +392,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+    private final PermissionsRequestHandler _permissionsListener = new PermissionsRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
-        }
-
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
         }
     };
 }

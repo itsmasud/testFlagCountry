@@ -30,7 +30,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -303,8 +303,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         _bottomSheet.clearAnimation();
         _bottomSheet.startAnimation(_bsSlideOut);
 
-        _workOrderApi = new WorkordersWebApi(_workOrdersWebApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrdersApi.sub();
 
         ExpenseDialog.addOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
         ScheduleDialog.addOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
@@ -364,7 +363,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         ScheduleDialog.removeOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
         PayDialog.removeOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
         ExpireDialog.removeOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrdersApi.unsub();
         super.onStop();
     }
 
@@ -553,7 +552,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                     request.counterNotes(_reason);
 
                 if (_pay == null && _schedule == null && !(exp != null && exp.length > 0)) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_empty_counter_offer), Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), R.string.toast_empty_counter_offer, Toast.LENGTH_SHORT);
                     _refreshView.refreshComplete();
                     return false;
                 }
@@ -577,7 +576,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -586,7 +585,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -921,12 +920,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrdersWebApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("request")

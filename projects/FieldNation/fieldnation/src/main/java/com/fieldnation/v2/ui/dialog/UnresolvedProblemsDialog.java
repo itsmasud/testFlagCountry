@@ -39,9 +39,6 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     private int _workOrderId;
     private Problems _problems;
 
-    // Services
-    private WorkordersWebApi _workOrderApi;
-
     public UnresolvedProblemsDialog(Context context, ViewGroup container) {
         super(context, container);
     }
@@ -75,8 +72,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
         _adapter.notifyDataSetChanged();
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrdersApi.sub();
     }
 
     @Override
@@ -110,7 +106,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrdersApi.unsub();
         super.onPause();
     }
 
@@ -157,12 +153,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         }
     };
 
-    private WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return true;

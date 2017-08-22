@@ -47,8 +47,6 @@ public class WebCrawlerService extends Service {
     private final Object LOCK = new Object();
 
     private ProfileClient _profileClient;
-    private WorkordersWebApi _workorderClient;
-    private BundlesWebApi _bundleClient;
 
     private Handler _activityHandler;
 
@@ -232,12 +230,9 @@ public class WebCrawlerService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        if (_workorderClient != null)
-            _workorderClient.disconnect(this);
-        if (_profileClient != null)
-            _profileClient.disconnect(this);
-        if (_bundleClient != null)
-            _bundleClient.disconnect(this);
+        _workOrdersApi.unsub();
+        if (_profileClient != null) _profileClient.disconnect(this);
+        _bundlesApi.unsub();
 
         _isRunning = false;
         super.onDestroy();
@@ -285,24 +280,15 @@ public class WebCrawlerService extends Service {
         _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(this);
 
-        _bundleClient = new BundlesWebApi(_bundlesClient_listener);
-        _bundleClient.connect(this);
+        _bundlesApi.sub();
 
-        _workorderClient = new WorkordersWebApi(_workorderClient_listener);
-        _workorderClient.connect(this);
+        _workOrdersApi.sub();
+        incrementPendingRequestCounter(1);
+        incRequestCounter(1);
+        WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
     }
 
-    private final WorkordersWebApi.Listener _workorderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_workorderClient_listener.onConnected");
-            _workorderClient.subWorkordersWebApi();
-
-            incrementPendingRequestCounter(1);
-            incRequestCounter(1);
-            WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists")
@@ -464,12 +450,7 @@ public class WebCrawlerService extends Service {
         }
     };
 
-    private final BundlesWebApi.Listener _bundlesClient_listener = new BundlesWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _bundleClient.subBundlesWebApi();
-        }
-
+    private final BundlesWebApi _bundlesApi = new BundlesWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getBundleWorkOrders");

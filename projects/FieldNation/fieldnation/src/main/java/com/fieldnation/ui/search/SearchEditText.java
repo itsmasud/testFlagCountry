@@ -19,8 +19,9 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
@@ -43,8 +44,6 @@ public class SearchEditText extends RelativeLayout {
     private ProgressBar _progressBar;
 
     // Data
-    private ActivityResultClient _activityResultClient;
-    private WorkordersWebApi _workOrderApi;
     private Listener _listener;
     private Integer _lastLookup = null;
 
@@ -81,11 +80,9 @@ public class SearchEditText extends RelativeLayout {
 
         _progressBar = (ProgressBar) findViewById(R.id.progress_view);
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
+        _activityResultListener.sub();
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
     }
@@ -108,10 +105,9 @@ public class SearchEditText extends RelativeLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        if (_activityResultClient != null)
-            _activityResultClient.disconnect(App.get());
+        _activityResultListener.unsub();
 
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.unsub();
     }
 
     private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {
@@ -175,21 +171,11 @@ public class SearchEditText extends RelativeLayout {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Please speak slowly and enunciate clearly.");
-            ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_VOICE_REQUEST);
+            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_VOICE_REQUEST);
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
-        @Override
-        public void onConnected() {
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
-
+    private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             if (resultCode == Activity.RESULT_OK && requestCode == ActivityResultConstants.RESULT_CODE_VOICE_REQUEST) {
@@ -202,12 +188,7 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrder");

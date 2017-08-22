@@ -4,13 +4,15 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -642,16 +644,21 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return onDetails(context, result, transaction, params, httpResult, throwable);
 
         } else if (result == Result.DELETE) {
-            Intent intent = new Intent(context, WorkOrderActivity.class);
+            final Intent intent = new Intent(context, WorkOrderActivity.class);
             intent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
             intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             if (intent != null) {
-                PendingIntent pi = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), intent, 0);
+                View.OnClickListener buttonListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ActivityClient.startActivity(intent);
+                    }
+                };
                 if (haveErrorMessage(httpResult)) {
-                    ToastClient.snackbar(App.get(), httpResult.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+                    ToastClient.snackbar(App.get(), httpResult.getString(), "VIEW", buttonListener, Snackbar.LENGTH_INDEFINITE);
                 } else {
-                    ToastClient.snackbar(App.get(), "Could not change time log", "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+                    ToastClient.snackbar(App.get(), "Could not change time log", "VIEW", buttonListener, Snackbar.LENGTH_INDEFINITE);
                 }
             }
 
@@ -675,10 +682,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 Log.v(TAG, ex);
                 WorkorderClient.get(context, workorderId, false);
                 try {
-                    Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
-
-                    ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                    final Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
+                    ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityClient.startActivity(intent);
+                        }
+                    }, Snackbar.LENGTH_LONG);
                     WorkorderDispatch.action(context, workorderId, "checkin", true);
                     return Result.DELETE;
                 } catch (Exception ex1) {
@@ -711,10 +721,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 Log.v(TAG, ex);
                 WorkorderClient.get(context, workorderId, false);
                 try {
-                    Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
-
-                    ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                    final Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
+                    ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ActivityClient.startActivity(intent);
+                        }
+                    }, Snackbar.LENGTH_LONG);
                     Log.v(TAG, "Sent snackbar");
                     WorkorderDispatch.action(context, workorderId, "checkout", true);
                     return Result.DELETE;
@@ -752,11 +765,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.action(context, workorderId, "request", true);
 
-            Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
+            final Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to request bundle"),
-                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+                    "TRY AGAIN", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            App.get().startService(intent);
+                        }
+                    }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
 
         } else {
@@ -774,7 +790,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
             if (params.has("isRead") && params.getBoolean("isRead")) {
-                GlobalTopicClient.profileInvalid(context);
+                AppMessagingClient.profileInvalid();
                 WorkorderClient.get(context, workorderId, false);
             }
 
@@ -800,7 +816,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
             if (params.has("isRead") && params.getBoolean("isRead")) {
-                GlobalTopicClient.profileInvalid(context);
+                AppMessagingClient.profileInvalid();
                 WorkorderClient.get(context, workorderId, false);
             }
 
@@ -890,7 +906,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onAccept(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onAccept(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onAccept");
         long workorderId = params.getLong("workorderId");
         boolean isEditEta = params.getBoolean("isEditEta");
@@ -912,10 +928,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.action(context, workorderId, "assignment", true);
 
-            Intent intent = WorkorderTransactionBuilder.actionAcceptIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
-            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to accept work order"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            final Intent intent = WorkorderTransactionBuilder.actionAcceptIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to accept work order"), "TRY AGAIN", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startService(intent);
+                }
+            }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
 
         } else {
@@ -923,7 +942,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onConfirm(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onConfirm(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onConfirm");
         long workorderId = params.getLong("workorderId");
 
@@ -941,10 +960,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.action(context, workorderId, "assignment", true);
 
-            Intent intent = WorkorderTransactionBuilder.actionConfirmIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
-            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to confirm work order"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            final Intent intent = WorkorderTransactionBuilder.actionConfirmIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to confirm work order"), "TRY AGAIN", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startService(intent);
+                }
+            }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
 
         } else {
@@ -952,7 +974,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onCreateShipment(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onCreateShipment(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onCreateShipment");
         long workorderId = params.getLong("workorderId");
 
@@ -972,14 +994,16 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.action(context, workorderId, "request", true);
 
-            Intent intent = null;
-            if (taskId == -1)
-                intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber);
-            else
-                intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
+            final Intent intent = taskId == -1 ?
+                    WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber) :
+                    WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
 
-            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not add your shipment"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not add your shipment"), "TRY AGAIN", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startService(intent);
+                }
+            }, Snackbar.LENGTH_LONG);
 
             return Result.DELETE;
 
@@ -988,7 +1012,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onShipmentTask(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onShipmentTask(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onShipmentTask");
         long workorderId = params.getLong("workorderId");
         long shipmentId = params.getLong("shipmentId");
@@ -1007,11 +1031,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         } else if (result == Result.DELETE) {
             WorkorderDispatch.action(context, workorderId, "request", true);
 
-            Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
+            final Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not complete your shipment."),
-                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+                    "TRY AGAIN", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            context.startService(intent);
+                        }
+                    }, Snackbar.LENGTH_LONG);
 
             return Result.DELETE;
 
@@ -1020,7 +1047,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onCounterOffer(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onCounterOffer(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onSuccessCounterOffer");
         long workorderId = params.getLong("workorderId");
 
@@ -1056,10 +1083,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 }
             }
 
-            Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
-            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send counter offer"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            final Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send counter offer"), "TRY AGAIN", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startService(intent);
+                }
+            }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
 
         } else {
@@ -1067,14 +1097,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onRating(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
+    private Result onRating(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
         if (result == Result.CONTINUE) {
             ToastClient.snackbar(context, "Success! Your rating has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
             try {
-                Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(
+                final Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(
                         context,
                         params.getLong("workorderId"),
                         params.getInt("satisfactionRating"),
@@ -1084,9 +1114,12 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                         params.getBoolean("recommendBuyer"),
                         params.getString("otherComments"));
 
-                PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
-                ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send your rating"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+                ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send your rating"), "TRY AGAIN", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        context.startService(intent);
+                    }
+                }, Snackbar.LENGTH_LONG);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);
