@@ -68,12 +68,20 @@ public class WorkOrderPickerScreen extends FrameLayout {
         _workOrderScreen.startSearch(_searchParams);
     }
 
+    public void onStart() {
+        _workOrderScreen.onStart();
+    }
+
     public void onResume() {
         _workOrderScreen.onResume();
     }
 
     public void onPause() {
         _workOrderScreen.onPause();
+    }
+
+    public void onStop() {
+        _workOrderScreen.onStop();
     }
 
     public void setListener(Listener listener) {

@@ -22,7 +22,6 @@ public class PermissionsClient implements Constants {
 
     public static void requestPermissions(String[] permissions, boolean[] required) {
         Log.v(TAG, "requestPermissions");
-        Log.v(TAG, DebugUtils.getStackTrace(new Exception("requestPermissions")));
         Bundle payload = new Bundle();
         payload.putStringArray("permissions", permissions);
         payload.putBooleanArray("required", required);
@@ -51,7 +50,6 @@ public class PermissionsClient implements Constants {
 
     public static int checkSelfPermission(Context context, String permission) {
         Log.v(TAG, "checkSelfPermission");
-        Log.v(TAG, DebugUtils.getStackTrace(new Exception("checkSelfPermission")));
         int grant = ContextCompat.checkSelfPermission(context, permission);
 
         if (grant == PackageManager.PERMISSION_GRANTED)
