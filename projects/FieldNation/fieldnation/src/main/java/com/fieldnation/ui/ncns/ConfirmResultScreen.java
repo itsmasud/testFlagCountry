@@ -54,6 +54,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     private Location _location;
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
+    private ListEnvelope _envelope = null;
 
     public ConfirmResultScreen(Context context) {
         super(context);
@@ -153,14 +154,18 @@ public class ConfirmResultScreen extends RelativeLayout {
         if (_workOrdersOptions == null)
             return;
 
-        _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
-        _workOrdersOptions.setPerPage(25);
+        if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
+            _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
+            _workOrdersOptions.setPerPage(25);
 
-        // this is locked down so that we don't have multiple pages
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+            // this is locked down so that we don't have multiple pages
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
-        if (_refreshView != null)
-            _refreshView.startRefreshing();
+            if (_refreshView != null)
+                _refreshView.startRefreshing();
+        } else {
+            _refreshView.refreshComplete();
+        }
     }
 
     public void startSearch(SavedList savedList) {
@@ -224,6 +229,7 @@ public class ConfirmResultScreen extends RelativeLayout {
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
                 ListEnvelope envelope = workOrders.getMetadata();
+                _envelope = envelope;
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();

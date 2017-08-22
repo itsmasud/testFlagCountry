@@ -134,6 +134,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoAssignedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_assigned_wol_title);
         _captionTexView.setText(R.string.empty_state_assigned_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -141,6 +142,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoCompletedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_completed_wol_title);
         _captionTexView.setText(R.string.empty_state_completed_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -154,6 +156,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoCounteredWorkOrder() {
         _titleTextView.setText(R.string.empty_state_countered_wol_title);
         _captionTexView.setText(R.string.empty_state_countered_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -161,6 +164,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoRequestedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_requested_wol_title);
         _captionTexView.setText(R.string.empty_state_requested_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -186,6 +190,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setPaymentEmptyState() {
         _titleTextView.setText(R.string.empty_state_payment_title);
         _captionTexView.setText(R.string.empty_state_payment_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }

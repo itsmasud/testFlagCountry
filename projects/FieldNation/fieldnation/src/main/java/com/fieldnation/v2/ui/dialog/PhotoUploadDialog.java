@@ -31,7 +31,7 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
@@ -258,7 +258,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
                     // TODO: API cant take notes with the attachment
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -269,7 +269,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }

@@ -233,11 +233,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service
-            android:name=".v2.data.client.AttachmentService"
-            android:exported="false"
-            android:process=":frontside" />
-
-        <service
             android:name=".service.GpsTrackingService"
             android:exported="false"
             android:process=":frontside" />
@@ -279,10 +274,6 @@
             android:process=":frontside" />
         <service
             android:name=".service.auth.AuthTopicService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.transaction.WebTransactionService"
             android:exported="false"
             android:process=":frontside" />
         <service

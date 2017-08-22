@@ -1,11 +1,11 @@
 package com.fieldnation.service.data.help;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
@@ -13,6 +13,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Michael Carver on 7/20/2015.
@@ -54,7 +55,7 @@ public class HelpTransactionListener extends WebTransactionListener {
         return result;
     }
 
-    private Result onContactUs(final Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
+    private Result onContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
 
         if (result == Result.CONTINUE) {
             ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
@@ -62,7 +63,7 @@ public class HelpTransactionListener extends WebTransactionListener {
 
         } else if (result == Result.DELETE) {
             try {
-                final Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
+                final WebTransaction webTransaction = HelpTransactionBuilder.actionPostContactUsIntent(
                         params.getString("message"),
                         params.getString("internalTeam"),
                         params.getString("uri"),
@@ -73,7 +74,7 @@ public class HelpTransactionListener extends WebTransactionListener {
                         "TRY AGAIN", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                context.startService(intent);
+                                WebTransactionService.queueTransaction(App.get(), webTransaction);
                             }
                         }, Snackbar.LENGTH_LONG);
 
