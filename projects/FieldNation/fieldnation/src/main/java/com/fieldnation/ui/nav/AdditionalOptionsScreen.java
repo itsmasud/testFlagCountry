@@ -41,7 +41,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael on 9/1/2016.
  */
 public class AdditionalOptionsScreen extends RelativeLayout {
-    private static final String TAG = "AdditionalOptionsView";
+    private static final String TAG = "AdditionalOptionsScreen";
 
     // Ui
     private ProfilePicView _profilePicView;

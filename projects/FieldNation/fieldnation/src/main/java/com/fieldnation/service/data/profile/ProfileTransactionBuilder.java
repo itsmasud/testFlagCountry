@@ -288,6 +288,4 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             Log.v(TAG, ex);
         }
     }
-
-
 }

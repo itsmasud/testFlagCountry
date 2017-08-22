@@ -21,7 +21,7 @@ public class ProfileDispatch implements ProfileConstants {
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
-        String address = TOPIC_ID_GET;
+        String address = ADDRESS_GET;
 
         if (isSync) {
             address += "_SYNC";
@@ -41,7 +41,7 @@ public class ProfileDispatch implements ProfileConstants {
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
-        String address = TOPIC_ID_NOTIFICATION_LIST;
+        String address = ADDRESS_NOTIFICATION_LIST;
 
         if (isSync) {
             address += "_SYNC";
@@ -61,7 +61,7 @@ public class ProfileDispatch implements ProfileConstants {
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 
-        String address = TOPIC_ID_MESSAGE_LIST;
+        String address = ADDRESS_MESSAGE_LIST;
 
         if (isSync) {
             address += "_SYNC";
@@ -76,7 +76,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putLong(PARAM_USER_ID, userId);
         bundle.putBoolean(PARAM_ERROR, failed);
 
-        String address = TOPIC_ID_SWITCH_USER;
+        String address = ADDRESS_SWITCH_USER;
 
         PigeonRoost.sendMessage(address, bundle, Sticky.NONE);
     }
@@ -88,7 +88,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putBoolean(PARAM_IS_COMPLETE, isComplete);
         bundle.putBoolean(PARAM_ERROR, failed);
 
-        String address = TOPIC_ID_UPLOAD_PHOTO;
+        String address = ADDRESS_UPLOAD_PHOTO;
 
         PigeonRoost.sendMessage(address, bundle, Sticky.NONE);
     }
@@ -100,7 +100,7 @@ public class ProfileDispatch implements ProfileConstants {
         bundle.putLong(PARAM_PROFILE_ID, profileId);
         bundle.putBoolean(PARAM_ERROR, failed);
 
-        String address = TOPIC_ID_ACTION_COMPLETE;
+        String address = ADDRESS_ACTION_COMPLETE;
 
         if (profileId > 0) {
             address += "/" + profileId;

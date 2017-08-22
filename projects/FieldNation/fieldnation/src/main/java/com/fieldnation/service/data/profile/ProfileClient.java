@@ -43,7 +43,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void subGet(boolean isSync) {
-        String topicId = TOPIC_ID_GET;
+        String topicId = ADDRESS_GET;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -57,7 +57,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void unsubGet(boolean isSync) {
-        String topicId = TOPIC_ID_GET;
+        String topicId = ADDRESS_GET;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -79,7 +79,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void subListNotifications(boolean isSync) {
-        String topicId = TOPIC_ID_NOTIFICATION_LIST;
+        String topicId = ADDRESS_NOTIFICATION_LIST;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -92,7 +92,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void unsubListNotifications(boolean isSync) {
-        String topicId = TOPIC_ID_NOTIFICATION_LIST;
+        String topicId = ADDRESS_NOTIFICATION_LIST;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -113,7 +113,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void subListMessages(boolean isSync) {
-        String topicId = TOPIC_ID_MESSAGE_LIST;
+        String topicId = ADDRESS_MESSAGE_LIST;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -127,7 +127,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void unsubListMessages(boolean isSync) {
-        String topicId = TOPIC_ID_MESSAGE_LIST;
+        String topicId = ADDRESS_MESSAGE_LIST;
 
         if (isSync) {
             topicId += "_SYNC";
@@ -141,11 +141,11 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void subSwitchUser() {
-        PigeonRoost.sub(this, TOPIC_ID_SWITCH_USER);
+        PigeonRoost.sub(this, ADDRESS_SWITCH_USER);
     }
 
     public void unsubSwitchUser() {
-        PigeonRoost.unsub(this, TOPIC_ID_SWITCH_USER);
+        PigeonRoost.unsub(this, ADDRESS_SWITCH_USER);
     }
 
     public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename) {
@@ -182,7 +182,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void subActions(long profileId) {
-        String topicId = TOPIC_ID_ACTION_COMPLETE;
+        String topicId = ADDRESS_ACTION_COMPLETE;
 
         if (profileId > 0) {
             topicId += "/" + profileId;
@@ -196,7 +196,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void unsubActions(long profileId) {
-        String topicId = TOPIC_ID_ACTION_COMPLETE;
+        String topicId = ADDRESS_ACTION_COMPLETE;
 
         if (profileId > 0) {
             topicId += "/" + profileId;
@@ -211,23 +211,23 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     /*-******************************-*/
 
     @Override
-    public void onMessage(String topicId, Object payload) {
-        if (!(payload instanceof Bundle)) {
+    public void onMessage(String address, Object message) {
+        if (!(message instanceof Bundle)) {
             return;
         }
-        Bundle bundle = (Bundle) payload;
-        if (topicId.startsWith(TOPIC_ID_GET)) {
+        Bundle bundle = (Bundle) message;
+        if (address.startsWith(ADDRESS_GET)) {
             preGet(bundle);
-        } else if (topicId.startsWith(TOPIC_ID_NOTIFICATION_LIST)) {
+        } else if (address.startsWith(ADDRESS_NOTIFICATION_LIST)) {
             preNotificationList(bundle);
-        } else if (topicId.startsWith(TOPIC_ID_MESSAGE_LIST)) {
+        } else if (address.startsWith(ADDRESS_MESSAGE_LIST)) {
             preMessageList(bundle);
-        } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
+        } else if (address.startsWith(ADDRESS_ACTION_COMPLETE)) {
             preOnAction(bundle);
-        } else if (topicId.startsWith(TOPIC_ID_SWITCH_USER)) {
+        } else if (address.startsWith(ADDRESS_SWITCH_USER)) {
             onSwitchUser(bundle.getLong(PARAM_USER_ID), bundle.getBoolean(PARAM_ERROR));
-        } else if (topicId.startsWith(TOPIC_ID_UPLOAD_PHOTO)) {
-            preUploadPhoto((Bundle) payload);
+        } else if (address.startsWith(ADDRESS_UPLOAD_PHOTO)) {
+            preUploadPhoto((Bundle) message);
         }
     }
 

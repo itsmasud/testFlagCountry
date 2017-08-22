@@ -118,7 +118,6 @@ public class ProfileService implements ProfileConstants {
         }.executeEx(context, page, isSync, allowCache);
     }
 
-
     public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename) {
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
@@ -158,6 +157,5 @@ public class ProfileService implements ProfileConstants {
                 return null;
             }
         }.executeEx(context, profileId, filename, uri);
-
     }
 }
