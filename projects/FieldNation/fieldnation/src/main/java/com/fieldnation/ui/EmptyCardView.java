@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
@@ -133,6 +134,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoAssignedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_assigned_wol_title);
         _captionTexView.setText(R.string.empty_state_assigned_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -140,6 +142,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoCompletedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_completed_wol_title);
         _captionTexView.setText(R.string.empty_state_completed_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -153,6 +156,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoCounteredWorkOrder() {
         _titleTextView.setText(R.string.empty_state_countered_wol_title);
         _captionTexView.setText(R.string.empty_state_countered_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -160,6 +164,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setNoRequestedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_requested_wol_title);
         _captionTexView.setText(R.string.empty_state_requested_wol_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -185,6 +190,7 @@ public class EmptyCardView extends RelativeLayout {
     private void setPaymentEmptyState() {
         _titleTextView.setText(R.string.empty_state_payment_title);
         _captionTexView.setText(R.string.empty_state_payment_body);
+        _actionButton.setText("AVAILABLE WORK ORDERS");
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
@@ -277,7 +283,7 @@ public class EmptyCardView extends RelativeLayout {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.fieldnation.com/customer/portal/emails/new"));
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
-                App.get().startActivity(intent);
+                ActivityClient.startActivity(intent);
             }
         }
     };

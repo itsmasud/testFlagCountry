@@ -19,12 +19,16 @@ import com.fieldnation.v2.data.model.WorkOrders;
 public class RemindMeService extends Service {
     private static final String TAG = "RemindMeService";
 
-    private WorkordersWebApi _workOrdersApi;
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        _workOrdersApi = new WorkordersWebApi(_workOrdersApi_listener);
-        _workOrdersApi.connect(App.get());
+        _workOrdersApi.sub();
+        GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
+        opts.setPerPage(25);
+        opts.setList("workorders_assignments");
+        opts.setFFlightboardTomorrow(true);
+        opts.setPage(1);
+
+        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
         return START_STICKY;
     }
 
@@ -34,21 +38,7 @@ public class RemindMeService extends Service {
         return null;
     }
 
-    private final WorkordersWebApi.Listener _workOrdersApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "onConnected");
-            _workOrdersApi.subWorkordersWebApi();
-
-            GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
-            opts.setPerPage(25);
-            opts.setList("workorders_assignments");
-            opts.setFFlightboardTomorrow(true);
-            opts.setPage(1);
-
-            WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders");
@@ -76,7 +66,7 @@ public class RemindMeService extends Service {
                     App.get().setNeedsConfirmation(true);
                 }
 
-                if (_workOrdersApi != null) _workOrdersApi.disconnect(App.get());
+                _workOrdersApi.unsub();
                 stopSelf();
             }
         }

@@ -1,21 +1,17 @@
 package com.fieldnation.service.transaction;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.os.Parcelable;
+import android.os.Handler;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ContextProvider;
-import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -23,20 +19,25 @@ import java.util.List;
  * <p/>
  * This class accepts web requests and stores them into the queue for processing
  */
-public class WebTransactionService extends MultiThreadedService implements WebTransactionConstants {
+public class WebTransactionService implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
-
     private static final Object AUTH_LOCK = new Object();
+    private static final long IDLE_TIMEOUT = 30000;
 
     private OAuth _auth;
-    private AuthTopicClient _authTopicClient;
-    private GlobalTopicClient _globalTopicClient;
     private ThreadManager _manager;
+    private Handler _shutdownChecker;
+    private long _lastRequestTime = 0;
+    private static WebTransactionService _instance = null;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.v(TAG, "onCreate");
+    public static WebTransactionService getInstance() {
+        if (_instance == null)
+            _instance = new WebTransactionService();
+        return _instance;
+    }
+
+    private WebTransactionService() {
+        Log.v(TAG, "Constructor");
 
         WebTransaction.saveOrphans();
 
@@ -47,11 +48,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
             threadCount = 8;
         }
 
-        _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(ContextProvider.get());
+        _authClient.subAuthStateChange();
+        AuthClient.requestCommand();
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalTopicClient.connect(ContextProvider.get());
+        _appMessagingClient.subNetworkConnect();
 
         _manager = new ThreadManager();
         TransactionThread t = new TransactionThread(_manager, this, false);
@@ -64,27 +64,41 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
             // every other can do sync
             _manager.addThread(new TransactionThread(_manager, this, i % 2 == 1));
         }
+
+        startActivityMonitor();
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
     public boolean isStillWorking() {
         return WebTransaction.count() > 0;
     }
 
-    @Override
-    public void onDestroy() {
+    private void startActivityMonitor() {
+        if (_shutdownChecker == null) {
+            _shutdownChecker = new Handler();
+        }
+        _shutdownChecker.postDelayed(_activityChecker_runnable, IDLE_TIMEOUT);
+    }
+
+    private final Runnable _activityChecker_runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (isStillWorking()) {
+                startActivityMonitor();
+            } else if (System.currentTimeMillis() - _lastRequestTime > IDLE_TIMEOUT) {
+                // shutdown
+                shutDown();
+            } else {
+                startActivityMonitor();
+            }
+        }
+    };
+
+    public void shutDown() {
         Log.v(TAG, "onDestroy");
-        if (_authTopicClient != null) _authTopicClient.disconnect(ContextProvider.get());
-
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(ContextProvider.get());
-
+        _authClient.unsubAuthStateChange();
+        _appMessagingClient.unsubNetworkConnect();
         _manager.shutdown();
-        super.onDestroy();
+        _instance = null;
     }
 
     private void setAuth(OAuth auth) {
@@ -92,7 +106,8 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         synchronized (AUTH_LOCK) {
             _auth = auth;
         }
-        _manager.wakeUp();
+        if (_manager != null)
+            _manager.wakeUp();
         Log.v(TAG, "setAuth end");
     }
 
@@ -103,36 +118,20 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
     }
 
-    @Override
-    public int getMaxWorkerCount() {
-        return 1;
-    }
-
-    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subNetworkConnect();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onNetworkConnect() {
             _manager.wakeUp();
         }
     };
 
-    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "AuthTopicClient.onConnected");
-            _authTopicClient.subAuthStateChange();
-            AuthTopicClient.requestCommand(WebTransactionService.this);
-        }
-
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             setAuth(oauth);
-            _manager.wakeUp();
+            if (_manager != null)
+                _manager.wakeUp();
         }
 
         @Override
@@ -141,72 +140,69 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
     };
 
-    @Override
-    public void addIntent(List<Intent> intents, Intent intent) {
-        if (intent.getBooleanExtra(PARAM_IS_SYNC, false)) {
-            intents.add(intent);
-        } else {
-            intents.add(0, intent);
-        }
-    }
-
-    @Override
-    public void processIntent(Intent intent) {
-        //Log.v(TAG, "processIntent start");
-        if (intent != null && intent.getExtras() != null) {
-            try {
-                Bundle extras = intent.getExtras();
-
-                if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(extras.getString(PARAM_KEY))) {
-                    Log.v(TAG, "processIntent end duplicate " + extras.getString(PARAM_KEY));
-                    _manager.wakeUp();
-                    return;
-                }
-
-                //Log.v(TAG, "processIntent building transaction");
-                WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
-
-                //Log.v(TAG, "processIntent building transforms");
-                if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
-                    Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
-                    for (Parcelable parcel : transforms) {
-                        Bundle transform = (Bundle) parcel;
-                        Transform.put(transaction.getId(), transform);
-                    }
-                }
-
-                //Log.v(TAG, "processIntent saving transaction");
-                transaction.setState(WebTransaction.State.IDLE);
-                transaction.save();
-
-                String listenerName = transaction.getListenerName();
-                if (!misc.isEmptyOrNull(listenerName)) {
-                    WebTransactionDispatcher.queued(WebTransactionService.this, listenerName, transaction);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-        _manager.wakeUp();
-
-        //Log.v(TAG, "processIntent end");
-    }
-
     public boolean isAuthenticated() {
         return _auth != null;
     }
 
+    /*-*************************-*/
+    /*-         Queue           -*/
+    /*-*************************-*/
+    private static Handler _mainHandler = null;
+    private static List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
+
+    private static Handler getHandler() {
+        if (_mainHandler == null) {
+            _mainHandler = new Handler(App.get().getMainLooper());
+        }
+        return _mainHandler;
+    }
+
     public static void queueTransaction(Context context, WebTransaction transaction) {
-        Intent intent = new Intent(context, WebTransactionService.class);
-        intent.putExtras(transaction.toBundle());
-        context.startService(intent);
+        synchronized (TRANSACTION_QUEUE) {
+            TRANSACTION_QUEUE.add(transaction);
+        }
+
+        // Put on main thread
+        getHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                processQueue();
+            }
+        });
     }
 
-    public static Intent makeQueueTransactionIntent(Context context, WebTransaction transaction) {
-        Intent intent = new Intent(context, WebTransactionService.class);
-        intent.putExtras(transaction.toBundle());
-        return intent;
+    private static void processQueue() {
+        while (true) {
+            WebTransaction webTransaction = null;
+            synchronized (TRANSACTION_QUEUE) {
+                if (TRANSACTION_QUEUE.size() > 0) {
+                    webTransaction = TRANSACTION_QUEUE.remove(0);
+                }
+            }
+            if (webTransaction == null)
+                return;
+
+            try {
+
+                if (webTransaction.getKey() != null && WebTransaction.keyExists(webTransaction.getKey())) {
+                    Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
+                    getInstance()._manager.wakeUp();
+                    return;
+                }
+                //Log.v(TAG, "processIntent saving transaction");
+                webTransaction.setState(WebTransaction.State.IDLE);
+                webTransaction.save();
+
+                String listenerName = webTransaction.getListenerName();
+                if (!misc.isEmptyOrNull(listenerName)) {
+                    WebTransactionDispatcher.queued(App.get(), listenerName, webTransaction);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            getInstance()._manager.wakeUp();
+        }
     }
-
-
 }
+
+

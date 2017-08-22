@@ -12,7 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
@@ -48,9 +48,6 @@ public class SignOffActivity extends AuthSimpleActivity {
     private WorkOrder _workOrder;
     private int _taskId = -1;
     private boolean _completeWorkorder = false;
-
-    // Service
-    private WorkordersWebApi _workOrderApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,13 +103,12 @@ public class SignOffActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
     }
 
     @Override
     protected void onPause() {
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.unsub();
         super.onPause();
     }
 
@@ -303,12 +299,7 @@ public class SignOffActivity extends AuthSimpleActivity {
         super.onBackPressed();
     }
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrder");
@@ -337,15 +328,16 @@ public class SignOffActivity extends AuthSimpleActivity {
             intent.putExtra("_completeWorkorder", true);
 
         if (markComplete)
-            ActivityResultClient.startActivityForResult(context, intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
         else
-            ActivityResultClient.startActivity(context, intent);
+            ActivityClient.startActivity(intent);
     }
 
     public static void startSignOff(Context context, int workOrderId, int taskId) {
         Intent intent = new Intent(context, SignOffActivity.class);
         intent.putExtra("_workOrderId", workOrderId);
         intent.putExtra("_taskId", taskId);
-        ActivityResultClient.startActivity(context, intent);
+        ActivityClient.startActivity(intent);
+
     }
 }

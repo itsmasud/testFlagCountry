@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
@@ -38,7 +38,6 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private SavedList[] _list;
 
     private WorkordersWebApi _workOrderClient;
-    private GlobalTopicClient _globalTopicClient;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -70,17 +69,16 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
+        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        _workOrdersApi.unsub();
+        _appMessagingClient.unsubUserSwitched();
 
         super.onDetachedFromWindow();
     }
@@ -197,13 +195,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     };
 
-    private WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
-        }
-
+    private WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists");
@@ -219,12 +211,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subUserSwitched();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             WorkordersWebApi.getWorkOrderLists(App.get(), false, false);

@@ -15,6 +15,7 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.menu.ResolveMenuButton;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -39,9 +40,6 @@ public class ResolveProblemDialog extends FullScreenDialog {
     // Data
     private Problem _problem;
     private int _workOrderId;
-
-    // Services
-    private WorkordersWebApi _workOrderApi;
 
     public ResolveProblemDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -79,8 +77,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
     public void onResume() {
         super.onResume();
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workordersApi.sub();
     }
 
     @Override
@@ -102,7 +99,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workordersApi.unsub();
 
         super.onPause();
     }
@@ -136,12 +133,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workordersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("updateProblem");
@@ -150,7 +142,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("updateProblem") && success) {
-                _workOrderApi.clearTopicAll("TOPIC_ID_WEB_API_V2/WorkordersWebApi");
+                PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
                 dismiss(true);
             } else {

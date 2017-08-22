@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,6 +32,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -55,7 +55,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
@@ -151,6 +151,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
     private static final String DIALOG_DELETE_EXPENSE = TAG + ".deleteExpenseDialog";
     private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
+    private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
 
     // saved state keys
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
@@ -196,7 +197,6 @@ public class WorkFragment extends WorkorderFragment {
     private Animation _fabSlideIn;
 
     // Data
-    private WorkordersWebApi _workOrderApi;
     private DocumentClient _docClient;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
@@ -419,9 +419,9 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -481,6 +481,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onStop() {
+        Log.v(TAG, "onStop");
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
@@ -511,7 +512,7 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
         super.onStop();
     }
@@ -560,7 +561,8 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -628,7 +630,8 @@ public class WorkFragment extends WorkorderFragment {
     /*-				Check In Process				-*/
     /*-*********************************************-*/
     private void doCheckin() {
-        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+                _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
@@ -659,9 +662,11 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (_deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
 
@@ -700,7 +705,7 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
-        if (!isAdded()) {
+        if (!isAdded() || _workOrder == null) {
             Log.v(TAG, "onActivityResult -> try later");
             _untilAdded.add(new Runnable() {
                 @Override
@@ -720,7 +725,7 @@ public class WorkFragment extends WorkorderFragment {
                 requestWorkorder();
 
                 if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder.getId(), _workOrder.getCompany(), _workOrder.getLocation());
                 }
             }
         } catch (Exception ex) {
@@ -741,8 +746,12 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.e(TAG, "_test_onClick");
-            CounterOfferDialog.show(App.get(), _workOrder);
+//            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
+//            ConfirmActivity.startNew(App.get());
+//            _actionbartop_listener.onMyWay();
+
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
+
         }
     };
 
@@ -774,7 +783,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAcknowledgeHold() {
             setLoading(true);
-            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder);
+            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder.getId(), _workOrder.getHolds());
         }
 
         @Override
@@ -795,15 +804,19 @@ public class WorkFragment extends WorkorderFragment {
         public void onReportProblem() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder);
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId(), _workOrder.getProblems());
         }
 
         @Override
         public void onMyWay() {
             if (!App.get().isLocationEnabled()) {
-                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
             }
 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);
@@ -831,7 +844,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onEta() {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override
@@ -855,7 +869,8 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -869,7 +884,8 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
@@ -925,7 +941,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                     null, _workOrderId);
 
-            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder.getSignatures().getResults().length > 0);
         }
     };
 
@@ -1002,7 +1018,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onSetEta(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override
@@ -1099,16 +1116,18 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onShipment(Task task) {
-            List<Shipment> shipments = new LinkedList<>();
+            List<Shipment> shipments = new LinkedList();
             for (Shipment shipment : _workOrder.getShipments().getResults()) {
                 if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
                     shipments.add(shipment);
             }
 
             if (shipments.size() == 0) {
-                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
+                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+                        _workOrder.getAttachments(), getString(R.string.dialog_task_shipment_title), null, task);
             } else {
-                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
+                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder.getId(),
+                        _workOrder.getShipments(), getString(R.string.dialog_task_shipment_title), task);
             }
         }
 
@@ -1157,7 +1176,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_shipment_title), null, null);
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+                    _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
@@ -1202,7 +1222,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(getActivity(), signature.getId(), _workOrder);
+            SignatureDisplayActivity.startIntent(getActivity(), signature);
             setLoading(true);
         }
 
@@ -1227,7 +1247,7 @@ public class WorkFragment extends WorkorderFragment {
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onCounterOffer(WorkOrder workOrder) {
-            CounterOfferDialog.show(App.get(), workOrder);
+            CounterOfferDialog.show(App.get(), workOrder.getId(), workOrder.getPay(), workOrder.getSchedule());
         }
 
         @Override
@@ -1250,7 +1270,7 @@ public class WorkFragment extends WorkorderFragment {
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrder);
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
         }
     };
 
@@ -1327,6 +1347,7 @@ public class WorkFragment extends WorkorderFragment {
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
         public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
             if (fileResult.size() == 0)
                 return;
 
@@ -1345,7 +1366,7 @@ public class WorkFragment extends WorkorderFragment {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -1486,6 +1507,10 @@ public class WorkFragment extends WorkorderFragment {
             uiContext.page += " - Mark Complete Dialog";
             WorkordersWebApi.completeWorkOrder(App.get(), _workOrderId, uiContext);
             setLoading(true);
+
+            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+                RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder.getId(), _workOrder.getCompany(), _workOrder.getLocation());
+            }
         }
     };
 
@@ -1583,8 +1608,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
         @Override
-        public void onAddShipment(WorkOrder workorder, Shipment shipment, Task task) {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workorder,
+        public void onAddShipment(int workOrderId, Shipment shipment, Task task) {
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workOrderId,
+                    _workOrder.getAttachments(),
                     getString(R.string.dialog_shipment_title),
                     shipment == null ? "" : shipment.getName(), task);
         }
@@ -1592,12 +1618,12 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
         @Override
-        public void onDelete(WorkOrder workorder, Shipment shipment) {
+        public void onDelete(int workOrderId, Shipment shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Task Shipment Add Dialog";
-            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, shipment.getId(), uiContext);
+            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
             setLoading(true);
         }
     };
@@ -1746,21 +1772,26 @@ public class WorkFragment extends WorkorderFragment {
                 intent.setDataAndType(App.getUriFromFile(file),
                         FileUtils.guessContentTypeFromName(file.getName()));
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);
 
-                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    final Intent folderIntent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
-                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityClient.startActivity(folderIntent);
+                            }
+                        }, Snackbar.LENGTH_LONG);
                     } else {
                         ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
                     }
@@ -1771,12 +1802,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.contains("TimeLog");

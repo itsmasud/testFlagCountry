@@ -17,8 +17,8 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 
 public class DiscountDialog extends SimpleDialog {
     private static String TAG = "DiscountDialog";
@@ -105,12 +105,12 @@ public class DiscountDialog extends SimpleDialog {
         public void onClick(View v) {
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_description, Toast.LENGTH_SHORT);
                 return;
             }
             // convert to penies
             if ((int) (getAmount() * 100) < 10) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_minimum_payable_amount, Toast.LENGTH_SHORT);
                 return;
             }
 

@@ -110,7 +110,7 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
                 public void next(int i) throws Exception {
                     ShipmentRowView v = new ShipmentRowView(getContext());
                     views.add(v);
-                    v.setData(_workOrder, _shipments[i]);
+                    v.setData(_workOrder.getShipments(), _shipments[i]);
                     v.setListener(_summaryListener);
                 }
 

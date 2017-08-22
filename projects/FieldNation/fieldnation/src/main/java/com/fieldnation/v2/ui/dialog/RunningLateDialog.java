@@ -28,9 +28,10 @@ import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Condition;
+import com.fieldnation.v2.data.model.Contacts;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.Schedule;
 
 import java.util.Calendar;
 
@@ -40,8 +41,6 @@ import java.util.Calendar;
 
 public class RunningLateDialog extends SimpleDialog {
     private static final String TAG = "RunningLateDialog";
-
-    private static final String PARAM_WORKORDER = "workOrder";
 
     private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "30", "60", "Other"};
 
@@ -55,8 +54,12 @@ public class RunningLateDialog extends SimpleDialog {
     private Button _sendButton;
 
     // Data
-    private WorkOrder _workOrder;
+    private String _title;
+    private int _workOrderId;
     private int _timeframePosition = -1;
+    private ETA _eta;
+    private Schedule _schedule;
+    private Contacts _contacts;
 
     public RunningLateDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -91,7 +94,11 @@ public class RunningLateDialog extends SimpleDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
-        _workOrder = payload.getParcelable(PARAM_WORKORDER);
+        _workOrderId = payload.getInt("workOrderId");
+        _eta = payload.getParcelable("eta");
+        _schedule = payload.getParcelable("schedule");
+        _title = payload.getString("title");
+        _contacts = payload.getParcelable("contacts");
 
         populateUi();
 
@@ -99,29 +106,27 @@ public class RunningLateDialog extends SimpleDialog {
     }
 
     private void populateUi() {
-        if (_workOrder == null)
+        if (_eta == null)
             return;
         if (_sendButton == null)
             return;
 
         Calendar cal = null;
         try {
-            if (_workOrder.getEta().getStatus().getName() != null
-                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
-                    && _workOrder.getEta().getStart().getUtc() != null) {
-                cal = _workOrder.getEta().getStart().getCalendar();
+            if (_eta.getStatus().getName() != null
+                    && _eta.getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _eta.getStart().getUtc() != null) {
+                cal = _eta.getStart().getCalendar();
 
-            } else if (_workOrder.getSchedule().getServiceWindow().getStart().getUtc() != null) {
-                cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+            } else if (_schedule.getServiceWindow().getStart().getUtc() != null) {
+                cal = _schedule.getServiceWindow().getStart().getCalendar();
             }
-            _bodyTextView.setText(_workOrder.getTitle()
-                    + " is scheduled to begin at "
-                    + DateUtils.formatTime2(cal) + ".");
+            _bodyTextView.setText(_title + " is scheduled to begin at " + DateUtils.formatTime2(cal) + ".");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if (_workOrder.getContacts().getResults().length == 0) {
+        if (_contacts.getResults().length == 0) {
             _callButton.setVisibility(View.GONE);
         } else {
             _callButton.setVisibility(View.VISIBLE);
@@ -153,13 +158,12 @@ public class RunningLateDialog extends SimpleDialog {
         } else {
             _timeframeLayout.setVisibility(View.GONE);
         }
-
     }
 
     private final View.OnClickListener _call_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ContactListDialog.show(App.get(), "", _workOrder);
+            ContactListDialog.show(App.get(), "", _contacts);
         }
     };
 
@@ -193,10 +197,10 @@ public class RunningLateDialog extends SimpleDialog {
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Running Late Dialog";
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
+                WorkordersWebApi.updateETA(App.get(), _workOrderId, eta, uiContext);
 
                 ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                _onSendDispatcher.dispatch(getUid(), _workOrder.getId());
+                _onSendDispatcher.dispatch(getUid(), _workOrderId);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
@@ -232,9 +236,13 @@ public class RunningLateDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, int workOrderId, ETA eta, Schedule schedule, Contacts contacts, String title) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORKORDER, workOrder);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("eta", eta);
+        params.putParcelable("schedule", schedule);
+        params.putString("title", title);
+        params.putParcelable("contacts", contacts);
 
         Controller.show(context, uid, RunningLateDialog.class, params);
     }

@@ -1,6 +1,5 @@
 package com.fieldnation.v2.ui.dialog;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,7 +9,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -21,7 +19,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
@@ -31,7 +28,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.OverScrollRecyclerView;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
@@ -99,6 +96,8 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         Log.v(TAG, "onStart");
         super.onStart();
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
     }
 
     @Override
@@ -106,11 +105,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         Log.v(TAG, "onResume");
         super.onResume();
 
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
-
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
@@ -148,12 +143,17 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     public void onPause() {
         Log.v(TAG, "onPause");
         if (_docClient != null) _docClient.disconnect(App.get());
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
 
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
-        super.onPause();
+        super.onStop();
     }
 
     @Override
@@ -225,9 +225,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                 _selectedFolder = attachmentFolder;
                 startAppPickerDialog();
             } else {
-                ToastClient.toast(App.get(),
-                        getView().getResources().getString(R.string.toast_external_storage_needed),
-                        Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
             }
         }
     };
@@ -264,7 +262,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_selectedFolder.getId());
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -310,14 +308,18 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);
 
-                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    final Intent folderIntent = new Intent(Intent.ACTION_VIEW);
                     intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
-                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                ActivityClient.startActivity(folderIntent);
+                            }
+                        }, Snackbar.LENGTH_LONG);
                     } else {
                         ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
                     }
@@ -329,12 +331,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.toLowerCase().contains("attachment");

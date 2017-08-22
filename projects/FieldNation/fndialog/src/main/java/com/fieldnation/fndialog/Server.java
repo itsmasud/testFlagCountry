@@ -1,56 +1,48 @@
 package com.fieldnation.fndialog;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 
-import com.fieldnation.fnpigeon.TopicClient;
-import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.Pigeon;
+import com.fieldnation.fnpigeon.PigeonRoost;
 
 /**
  * Created by Michael on 9/19/2016.
  */
-class Server extends TopicClient implements Constants {
-    private static final String STAG = "Server";
-    private final String TAG = UniqueTag.makeTag(STAG);
+abstract class Server extends Pigeon implements Constants {
+    private static final String TAG = "Server";
 
-    public Server(Listener listener) {
-        super(listener);
+    public void sub() {
+        Log.v(TAG, "sub");
+        PigeonRoost.sub(this, ADDRESS_SHOW_DIALOG);
+        PigeonRoost.sub(this, ADDRESS_DISMISS_DIALOG);
+    }
+
+    public void unSub() {
+        Log.v(TAG, "unSub");
+        PigeonRoost.unsub(this, ADDRESS_SHOW_DIALOG);
+        PigeonRoost.unsub(this, ADDRESS_DISMISS_DIALOG);
     }
 
     @Override
-    public String getUserTag() {
-        return TAG;
+    public void onMessage(String address, Object message) {
+
+        Bundle bundle = (Bundle) message;
+        if (address.startsWith(ADDRESS_SHOW_DIALOG)) {
+            PigeonRoost.clearAddressCache(ADDRESS_SHOW_DIALOG);
+            onShowDialog(
+                    bundle.getString(PARAM_DIALOG_UID),
+                    bundle.getString(PARAM_DIALOG_CLASS_NAME),
+                    bundle.getClassLoader(),
+                    bundle.getBundle(PARAM_DIALOG_PARAMS));
+
+        } else if (address.startsWith(ADDRESS_DISMISS_DIALOG)) {
+            onDismissDialog(bundle.getString(PARAM_DIALOG_UID));
+        }
     }
 
-    public static abstract class Listener extends TopicClient.Listener {
-        private static final String TAG = "Server.Listener";
+    abstract void onShowDialog(String uid, String className, ClassLoader classLoader, Bundle params);
 
-        public abstract Server getClient();
-
-        @Override
-        public void onConnected() {
-            getClient().register(TOPIC_ID_SHOW_DIALOG);
-            getClient().register(TOPIC_ID_DISMISS_DIALOG);
-        }
-
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Bundle bundle = (Bundle) payload;
-            if (topicId.startsWith(TOPIC_ID_SHOW_DIALOG)) {
-                getClient().clearTopic(TOPIC_ID_SHOW_DIALOG);
-                onShowDialog(
-                        bundle.getString(PARAM_DIALOG_UID),
-                        bundle.getString(PARAM_DIALOG_CLASS_NAME),
-                        bundle.getClassLoader(),
-                        bundle.getBundle(PARAM_DIALOG_PARAMS));
-
-            } else if (topicId.startsWith(TOPIC_ID_DISMISS_DIALOG)) {
-                onDismissDialog(bundle.getString(PARAM_DIALOG_UID));
-            }
-        }
-
-        public abstract void onShowDialog(String uid, String className, ClassLoader classLoader, Bundle params);
-
-        public abstract void onDismissDialog(String uid);
-    }
+    abstract void onDismissDialog(String uid);
 }
+

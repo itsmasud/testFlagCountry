@@ -3,69 +3,50 @@ package com.fieldnation.v2.data.client;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.Pigeon;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.AaaaPlaceholder;
+import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.PPNs;
+import com.fieldnation.v2.data.model.ProfileAndWorkHistory;
+import com.fieldnation.v2.data.model.TypesOfWork;
+import com.fieldnation.v2.data.model.User;
+import com.fieldnation.v2.data.model.UserTaxInfo;
+import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
  * Created by dmgen from swagger.
  */
 
-public class UsersWebApi extends TopicClient {
-    private static final String STAG = "UsersWebApi";
-    private final String TAG = UniqueTag.makeTag(STAG);
+public abstract class UsersWebApi extends Pigeon {
+    private static final String TAG = "UsersWebApi";
 
-    private static int connectCount = 0;
-
-    public UsersWebApi(Listener listener) {
-        super(listener);
+    public void sub() {
+        PigeonRoost.sub(this, "ADDRESS_WEB_API_V2/UsersWebApi");
     }
 
-    @Override
-    public void connect(Context context) {
-        super.connect(context);
-        connectCount++;
-        Log.v(STAG + ".state", "connect " + connectCount);
-    }
-
-    @Override
-    public void disconnect(Context context) {
-        super.disconnect(context);
-        connectCount--;
-        Log.v(STAG + ".state", "disconnect " + connectCount);
-    }
-
-    @Override
-    public String getUserTag() {
-        return TAG;
-    }
-
-    public boolean subUsersWebApi() {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi");
+    public void unsub() {
+        PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/UsersWebApi");
     }
 
     /**
@@ -95,7 +76,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "addCoords", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -103,7 +84,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -136,7 +117,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "addPay", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -144,7 +125,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -183,7 +164,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "addTypesOfWork", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -191,7 +172,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -220,7 +201,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getPay", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -231,7 +212,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -262,7 +243,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getProfileAndWorkHistory", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -273,7 +254,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -302,7 +283,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getSettings", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -313,7 +294,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -342,7 +323,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getTax", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -353,7 +334,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -382,7 +363,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getTour", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -393,7 +374,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -422,7 +403,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUser", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -433,7 +414,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -464,7 +445,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserPreferenceValue", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -475,7 +456,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -504,7 +485,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserPreferredProviderNetworks", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -515,7 +496,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -544,7 +525,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserTypesOfWork", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -555,7 +536,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -584,7 +565,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getWorkHistory", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -595,7 +576,7 @@ public class UsersWebApi extends TopicClient {
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -634,7 +615,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "sendAccountActivationLink", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -642,7 +623,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -681,7 +662,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "sendVerificationCodeViaSms", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -689,7 +670,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -728,7 +709,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "sendVerificationCodeViaVoiceCall", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -736,7 +717,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -777,7 +758,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "setUserPreference", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -785,7 +766,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -822,7 +803,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "swipNotification", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -830,7 +811,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -859,7 +840,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "switchUser", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -867,7 +848,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -900,7 +881,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -908,7 +889,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -941,7 +922,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updateSettings", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -949,7 +930,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -988,7 +969,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updateTax", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -996,7 +977,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -1029,7 +1010,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updateTour", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -1037,7 +1018,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -1073,7 +1054,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "uploadProfilePhoto", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -1081,7 +1062,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
 
@@ -1120,7 +1101,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                            TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "verifyAccount", methodParams))
                     .useAuth(true)
                     .request(builder)
@@ -1128,72 +1109,69 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(STAG, ex);
+            Log.v(TAG, ex);
         }
     }
-
 
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
-    public static abstract class Listener extends TopicClient.Listener {
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Log.v(STAG, "Listener " + topicId);
+    @Override
+    public void onMessage(String address, Object message) {
+        Log.v(TAG, "Listener " + address);
 
-            Bundle bundle = (Bundle) payload;
-            String type = bundle.getString("type");
-            TransactionParams transactionParams = bundle.getParcelable("params");
+        Bundle bundle = (Bundle) message;
+        String type = bundle.getString("type");
+        TransactionParams transactionParams = bundle.getParcelable("params");
 
-            if (!processTransaction(transactionParams, transactionParams.apiFunction))
-                return;
+        if (!processTransaction(transactionParams, transactionParams.apiFunction))
+            return;
 
-            switch (type) {
-                case "queued": {
-                    onQueued(transactionParams, transactionParams.apiFunction);
-                    break;
-                }
-                case "start": {
-                    onStart(transactionParams, transactionParams.apiFunction);
-                    break;
-                }
-                case "progress": {
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
-                    break;
-                }
-                case "paused": {
-                    onPaused(transactionParams, transactionParams.apiFunction);
-                    break;
-                }
-                case "complete": {
-                    new AsyncParser(this, bundle);
-                    break;
-                }
+        switch (type) {
+            case "queued": {
+                onQueued(transactionParams, transactionParams.apiFunction);
+                break;
+            }
+            case "start": {
+                onStart(transactionParams, transactionParams.apiFunction);
+                break;
+            }
+            case "progress": {
+                onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                break;
+            }
+            case "paused": {
+                onPaused(transactionParams, transactionParams.apiFunction);
+                break;
+            }
+            case "complete": {
+                new AsyncParser(this, bundle);
+                break;
             }
         }
+    }
 
-        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
+    public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
-        public void onQueued(TransactionParams transactionParams, String methodName) {
-        }
+    public void onQueued(TransactionParams transactionParams, String methodName) {
+    }
 
-        public void onStart(TransactionParams transactionParams, String methodName) {
-        }
+    public void onStart(TransactionParams transactionParams, String methodName) {
+    }
 
-        public void onPaused(TransactionParams transactionParams, String methodName) {
-        }
+    public void onPaused(TransactionParams transactionParams, String methodName) {
+    }
 
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
-        }
+    public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+    }
 
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-        }
+    public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
         private static final String TAG = "UsersWebApi.AsyncParser";
 
-        private Listener listener;
+        private UsersWebApi usersWebApi;
         private TransactionParams transactionParams;
         private boolean success;
         private byte[] data;
@@ -1201,8 +1179,8 @@ public class UsersWebApi extends TopicClient {
         private Object successObject;
         private Object failObject;
 
-        public AsyncParser(Listener listener, Bundle bundle) {
-            this.listener = listener;
+        public AsyncParser(UsersWebApi usersWebApi, Bundle bundle) {
+            this.usersWebApi = usersWebApi;
             transactionParams = bundle.getParcelable("params");
             success = bundle.getBoolean("success");
             data = bundle.getByteArray("data");
@@ -1310,7 +1288,7 @@ public class UsersWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
+                usersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

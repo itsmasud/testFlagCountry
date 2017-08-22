@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -30,7 +31,7 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
@@ -237,12 +238,12 @@ public class PhotoUploadDialog extends SimpleDialog {
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_insert_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
             if (!FileUtils.isValidFileName(_newFileName)) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_invalid_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_invalid_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
@@ -257,7 +258,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
                     // TODO: API cant take notes with the attachment
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -268,7 +269,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -334,7 +335,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
             try {
                 if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);

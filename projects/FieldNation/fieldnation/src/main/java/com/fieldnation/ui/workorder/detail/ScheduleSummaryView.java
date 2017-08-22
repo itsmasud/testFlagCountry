@@ -186,14 +186,16 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
     private final View.OnClickListener _editEta_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
         }
     };
 
     private final View.OnClickListener _setEta_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
     };
 }

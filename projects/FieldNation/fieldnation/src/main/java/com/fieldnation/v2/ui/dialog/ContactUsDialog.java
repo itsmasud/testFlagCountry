@@ -1,6 +1,7 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -213,10 +214,16 @@ public class ContactUsDialog extends FullScreenDialog {
             _onOkDispatcher.dispatch(getUid(), _explanationEditText.getText().toString());
 
             try {
-                HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +
-                        (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim(), null);
+                HelpClient.sendContactUsFeedback(
+                        App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source,
+                        "Version " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim()
+                                + ", " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.VERSION.RELEASE,
+                        null);
             } catch (Exception ex) {
-                HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, null, "Version Unknown", null);
+                HelpClient.sendContactUsFeedback(
+                        App.get(), _explanationEditText.getText().toString(), _internalTeamParam, null,
+                        "Version Unknown, " + Build.MANUFACTURER + " " + Build.MODEL + " " + Build.VERSION.RELEASE,
+                        null);
             }
 
         }

@@ -16,7 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
@@ -256,7 +256,7 @@ public class DeclineDialog extends FullScreenDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
+                    AppMessagingClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
@@ -269,7 +269,7 @@ public class DeclineDialog extends FullScreenDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
+                    AppMessagingClient.finishActivity();
                 }
             } else {
                 if (_declinePosition == -1) {
@@ -278,15 +278,14 @@ public class DeclineDialog extends FullScreenDialog {
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
+                    AppMessagingClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
-                    GlobalTopicClient.finishActivity(App.get());
-
+                    AppMessagingClient.finishActivity();
                 }
             }
             dismiss(true);

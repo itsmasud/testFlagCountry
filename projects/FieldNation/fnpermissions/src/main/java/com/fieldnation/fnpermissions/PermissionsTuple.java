@@ -31,15 +31,6 @@ public class PermissionsTuple implements Parcelable {
     public PermissionsTuple() {
     }
 
-/*
-    private PermissionsTuple(String permission, boolean required, boolean shouldShowRationale, boolean secondTry) {
-        this.permission = permission;
-        this.required = required;
-        this.shouldShowRationale = shouldShowRationale;
-        this.secondTry = secondTry;
-    }
-*/
-
     private PermissionsTuple(String permission) {
         this.permission = permission;
     }

@@ -18,13 +18,13 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.detail.HoldReasonCard;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Hold;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.Holds;
 
 import java.util.Random;
 
@@ -34,10 +34,6 @@ import java.util.Random;
 
 public class HoldReviewDialog extends FullScreenDialog {
     private static final String TAG = "HoldReviewDialog";
-
-    // State
-    private static final String PARAM_WORKORDER = "workOrder";
-
 
     // Dialogs
     private static final String UID_DIALOG_ETA = TAG + ".etaDialog";
@@ -50,8 +46,8 @@ public class HoldReviewDialog extends FullScreenDialog {
     private TextView _explanationTextView;
 
     // Passed Data
-    private WorkOrder _workOrder;
-
+    private Holds _holds;
+    private int _workOrderId;
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -65,18 +61,17 @@ public class HoldReviewDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_hold_review, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
 
-        _holdLayout = (LinearLayout) v.findViewById(R.id.holdReasons_list);
-        _explanationTextView = (TextView) v.findViewById(R.id.explanation_textview);
+        _holdLayout = v.findViewById(R.id.holdReasons_list);
+        _explanationTextView = v.findViewById(R.id.explanation_textview);
 
         return v;
     }
-
 
     @Override
     public void onStart() {
@@ -91,25 +86,17 @@ public class HoldReviewDialog extends FullScreenDialog {
         Log.v(TAG, "onResume");
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     @Override
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
         super.show(params, animate);
-        _workOrder = params.getParcelable(PARAM_WORKORDER);
-        populateUi();
+        _workOrderId = params.getInt("workOrderId");
+        _holds = params.getParcelable("holds");
 
+        populateUi();
     }
 
     @Override
@@ -129,20 +116,17 @@ public class HoldReviewDialog extends FullScreenDialog {
     /*-             Internal Mutators              -*/
     /*-********************************************-*/
     private void populateUi() {
-        if (_workOrder == null)
-            return;
-
-        if (_workOrder.getHolds() == null)
+        if (_holds == null)
             return;
 
         Log.v(TAG, "populateUi");
         _toolbar.setTitle(_toolbar.getContext().getString(R.string.dialog_review_hold_title));
-        _finishMenu.setTitle(App.get().getString(R.string.btn_acknowledge));
+        _finishMenu.setText(App.get().getString(R.string.btn_acknowledge));
 
         _holdLayout.removeAllViews();
 
-        ForLoopRunnable r = new ForLoopRunnable(_workOrder.getHolds().getResults().length, new Handler()) {
-            private final Hold[] holds = _workOrder.getHolds().getResults();
+        ForLoopRunnable r = new ForLoopRunnable(_holds.getResults().length, new Handler()) {
+            private final Hold[] holds = _holds.getResults();
 
             @Override
             public void next(int i) throws Exception {
@@ -158,16 +142,14 @@ public class HoldReviewDialog extends FullScreenDialog {
         };
         _holdLayout.postDelayed(r, new Random().nextInt(1000));
 
-        final String explanation = _workOrder.getHolds().getResults()[0].getReason();
+        final String explanation = _holds.getResults()[0].getReason();
         if (!misc.isEmptyOrNull(explanation))
-            _explanationTextView.setText(_workOrder.getHolds().getResults()[0].getReason());
+            _explanationTextView.setText(_holds.getResults()[0].getReason());
     }
-
 
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
-
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -180,25 +162,26 @@ public class HoldReviewDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             try {
-                Hold unAck = _workOrder.getUnAcknowledgedHold();
+                Hold unAck = _holds.getUnAcknowledgedHold();
                 Hold param = new Hold();
                 param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 param.id(unAck.getId());
 
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param, App.get().getSpUiContext());
+                WorkordersWebApi.updateHold(App.get(), _workOrderId, unAck.getId(), param, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            _onAcknowledgeDispatcher.dispatch(getUid(), _workOrder.getId());
+            _onAcknowledgeDispatcher.dispatch(getUid(), _workOrderId);
 
             dismiss(true);
             return true;
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, int workOrderId, Holds holds) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORKORDER, workOrder);
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("holds", holds);
         Controller.show(context, uid, HoldReviewDialog.class, params);
     }
 
@@ -253,6 +236,4 @@ public class HoldReviewDialog extends FullScreenDialog {
     public static void removeAllOnCancelListener(String uid) {
         _onCancelDispatcher.removeAll(uid);
     }
-
-
 }

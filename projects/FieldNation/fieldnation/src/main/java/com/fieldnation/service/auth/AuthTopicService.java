@@ -11,8 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
@@ -33,8 +32,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private Account _account = null;
     private OAuth _authToken = null;
     private AuthState _state = null;
-    private AuthTopicClient _authTopicClient;
-    private GlobalTopicClient _globalTopicClient;
 
     // Services
     private AccountManager _accountManager;
@@ -55,10 +52,12 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     public void onCreate() {
         Log.v(TAG, "onCreate");
         super.onCreate();
-        _authTopicClient = new AuthTopicClient(_authClientListener);
-        _authTopicClient.connect(App.get());
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClientListener);
-        _globalTopicClient.connect(App.get());
+        _authClient.subInvalidateCommand();
+        _authClient.subRemoveCommand();
+        _authClient.subRequestCommand();
+        _authClient.subAccountAddedCommand();
+
+        _appMessagingClient.subAppShutdown();
 
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
@@ -79,8 +78,12 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _authTopicClient.disconnect(App.get());
-        _globalTopicClient.disconnect(App.get());
+        _authClient.unsubInvalidateCommand();
+        _authClient.unsubRemoveCommand();
+        _authClient.unsubRequestCommand();
+        _authClient.unsubAccountAddedCommand();
+
+        _appMessagingClient.unsubAppShutdown();
         //setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
@@ -94,20 +97,14 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _state = state;
             Log.v(TAG, state.name());
             if (_state == AuthState.AUTHENTICATED) {
-                AuthTopicClient.authenticated(this, _authToken);
+                AuthClient.authenticated(_authToken);
             } else {
-                AuthTopicClient.authStateChange(this, _state);
+                AuthClient.authStateChange(_state);
             }
         }
     }
 
-    private final GlobalTopicClient.Listener _globalTopicClientListener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "GlobalTopicClient.onConnected");
-            _globalTopicClient.subAppShutdown();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onShutdown() {
             Log.v(TAG, "GlobalTopicClient.onShutdown");
@@ -115,16 +112,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     };
 
-    private final AuthTopicClient.Listener _authClientListener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "onConnected");
-            _authTopicClient.subInvalidateCommand();
-            _authTopicClient.subRemoveCommand();
-            _authTopicClient.subRequestCommand();
-            _authTopicClient.subAccountAddedCommand();
-        }
-
+    private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onCommandInvalidate() {
             Log.v(TAG, "onCommandInvalidate");
@@ -227,12 +215,12 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-*********************************-*/
     private void onAppIsOld() {
         Log.v(TAG, "onAppIsOld");
-        GlobalTopicClient.updateApp(this);
+        AppMessagingClient.updateApp();
     }
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
         Log.v(TAG, "onNeedUserNameAndPassword");
-        AuthTopicClient.needUsernameAndPassword(this, authenticatorResponse);
+        AuthClient.needUsernameAndPassword(authenticatorResponse);
     }
 
     /**

@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
@@ -28,7 +28,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
 import java.text.ParseException;
@@ -113,12 +113,12 @@ class TransactionThread extends ThreadManager.ManagedThread {
         if (!App.get().isConnected()) {
             Log.v(TAG, "Testing connection");
             try {
-                HttpJson.run(_service, TEST_QUERY);
-                GlobalTopicClient.networkConnected(_service);
+                HttpJson.run(App.get(), TEST_QUERY);
+                AppMessagingClient.networkConnected();
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
                 Log.v(TAG, "Testing connection... failed!");
-                GlobalTopicClient.networkDisconnected(_service);
+                AppMessagingClient.networkDisconnected();
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ex) {
@@ -174,19 +174,19 @@ class TransactionThread extends ThreadManager.ManagedThread {
             OAuth auth = _service.getAuth();
 
             if (auth == null) {
-                AuthTopicClient.requestCommand(ContextProvider.get());
+                AuthClient.requestCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
-                    WebTransactionDispatcher.paused(_service, listenerName, trans);
+                    WebTransactionDispatcher.paused(App.get(), listenerName, trans);
                 return false;
             }
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthTopicClient.invalidateCommand(ContextProvider.get());
+                AuthClient.invalidateCommand();
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
-                    WebTransactionDispatcher.paused(_service, listenerName, trans);
+                    WebTransactionDispatcher.paused(App.get(), listenerName, trans);
                 return false;
             }
 
@@ -194,7 +194,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "skip no auth");
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
-                    WebTransactionDispatcher.paused(_service, listenerName, trans);
+                    WebTransactionDispatcher.paused(App.get(), listenerName, trans);
                 return false;
             }
 
@@ -221,7 +221,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
         Log.v(TAG, request.display());
 
         if (!misc.isEmptyOrNull(listenerName)) {
-            WebTransactionDispatcher.start(_service, listenerName, trans);
+            WebTransactionDispatcher.start(App.get(), listenerName, trans);
         }
 
         // **** perform request ****
@@ -229,7 +229,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
         try {
             _http_progress.trans = trans;
             stopwatch = new Stopwatch(true);
-            result = HttpJson.run(_service, request, _http_progress);
+            result = HttpJson.run(App.get(), request, _http_progress);
             stopwatch.pause();
             try {
                 Log.v(TAG, "ResponseCode: " + result.getResponseCode());
@@ -251,7 +251,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
         // At this point we will have trans, exception and/or result
 
-        WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(_service,
+        WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(App.get(),
                 trans.getListenerName(), trans, result, exception);
 
         // do what the result says
@@ -269,7 +269,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 generateNotification(notifId, notifRetry);
                 trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
-                    WebTransactionDispatcher.paused(_service, listenerName, trans);
+                    WebTransactionDispatcher.paused(App.get(), listenerName, trans);
 
                 break;
         }
