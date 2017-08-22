@@ -1,13 +1,9 @@
 package com.fieldnation.service.data.help;
 
-import android.content.Context;
-import android.content.Intent;
-
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Shoaib on 7/4/2015.
@@ -15,8 +11,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 public class HelpTransactionBuilder {
     private static final String TAG = "HelpTransactionBuilder";
 
-    public static Intent actionPostContactUsIntent(Context context, String message, String internalTeam, String uri,
-                                                   String extraData, String extraType) {
+    public static WebTransaction actionPostContactUsIntent(String message, String internalTeam, String uri,
+                                                           String extraData, String extraType) {
         try {
             String body = "";
 
@@ -46,7 +42,7 @@ public class HelpTransactionBuilder {
                     .request(http)
                     .build();
 
-            return WebTransactionService.makeQueueTransactionIntent(context, transaction);
+            return transaction;
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

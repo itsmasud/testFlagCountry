@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import com.fieldnation.fnlog.Log;
 
@@ -22,7 +23,9 @@ public class RemindMeBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "onReceive");
         // query the list, if received, then set the flag
-        context.startService(new Intent(context, RemindMeService.class));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            context.startService(new Intent(context, RemindMeService.class));
+        }
     }
 
     public static void registerAlarm(Context context) {

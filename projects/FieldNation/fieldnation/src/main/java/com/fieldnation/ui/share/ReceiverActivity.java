@@ -21,7 +21,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -241,7 +241,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(_sharedFiles[0].getFileName()));
 
-                    AttachmentService.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
+                    AttachmentHelper.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -278,7 +278,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(file.getFileName()));
 
-                    AttachmentService.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
+                    AttachmentHelper.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
