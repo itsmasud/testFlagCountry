@@ -2,6 +2,7 @@ package com.fieldnation.fnpermissions;
 
 import android.os.Bundle;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 
@@ -10,7 +11,7 @@ import com.fieldnation.fnpigeon.PigeonRoost;
  */
 
 public abstract class PermissionsResponseListener extends Pigeon implements Constants {
-    private static final String TAG = "PermissionsClient";
+    private static final String TAG = "PermissionsResponseListener";
 
 
     /*-**********************************-*/
@@ -26,6 +27,7 @@ public abstract class PermissionsResponseListener extends Pigeon implements Cons
 
     @Override
     public void onMessage(String address, Object message) {
+        Log.v(TAG, "onMessage");
         if (address.equals(ADDRESS_COMPLETE)) {
             Bundle bundle = (Bundle) message;
             onComplete(bundle.getString("permission"),

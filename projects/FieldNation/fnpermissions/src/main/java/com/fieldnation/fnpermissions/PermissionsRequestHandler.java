@@ -20,11 +20,11 @@ import java.util.Set;
  */
 
 public abstract class PermissionsRequestHandler extends Pigeon implements Constants {
-    private static final String TAG = "PermissionsClient";
+    private static final String TAG = "PermissionsRequestHandler";
 
     private static Hashtable<String, PermissionsTuple> QUEUED_PERMS = new Hashtable<>();
     private static final Set<String> requiredPermissions = new HashSet<>();
-    private static boolean requesting = false;
+    protected static boolean requesting = false;
 
     public void sub() {
         PigeonRoost.sub(this, ADDRESS_REQUESTS);
@@ -64,7 +64,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
 
         List<String> requestable = new LinkedList<>();
         for (int i = 0; i < permissions.length; i++) {
-            if (State.isPermissionDenied(permissions[i])) {
+            if (State.isPermissionDenied(getActivity(), permissions[i])) {
                 PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_DENIED);
             } else {
                 requestable.add(permissions[i]);
@@ -101,7 +101,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
 
                 if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                     Log.v(TAG, "onResponse Granted");
-                    State.clearPermissionDenied(permissions[i]);
+                    State.clearPermissionDenied(getActivity(), permissions[i]);
                     tuple.delete(getActivity());
                     PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_GRANTED);
 
@@ -121,7 +121,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                             Log.v(TAG, "onResponse not shouldShowRequestPermissionRationale not required");
                             tuple.shouldShowRationale(false).save(getActivity());
                             PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_DENIED);
-                            State.setPermissionDenied(permissions[i]);
+                            State.setPermissionDenied(getActivity(), permissions[i]);
                         }
                     }
                 }
@@ -136,11 +136,11 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                     Log.v(TAG, "onResponse second try, not required");
                     if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         Log.v(TAG, "onResponse second try, not required denied");
-                        State.setPermissionDenied(permissions[i]);
+                        State.setPermissionDenied(getActivity(), permissions[i]);
                     } else {
                         Log.v(TAG, "onResponse second try, not required granted");
                         tuple.delete(getActivity());
-                        State.clearPermissionDenied(permissions[i]);
+                        State.clearPermissionDenied(getActivity(), permissions[i]);
                     }
                     PermissionsClient.onComplete(permissions[i], grantResults[i]);
                 }
@@ -161,15 +161,16 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                 if (tuple.shouldShowRationale || tuple.required) {
                     Log.v(TAG, "processQueue shouldShowRationale || required");
                     PermissionsDialog.show(getActivity(), tuple.permission, tuple);
+                    requesting = true;
                     break;
                 } else {
                     Log.v(TAG, "processQueue !shouldShowRationale && !required");
-                    State.setPermissionDenied(tuple.permission);
+                    State.setPermissionDenied(getActivity(), tuple.permission);
                     PermissionsClient.onComplete(tuple.permission, PackageManager.PERMISSION_DENIED);
                 }
             } else {
                 Log.v(TAG, "processQueue granted");
-                State.clearPermissionDenied(tuple.permission);
+                State.clearPermissionDenied(getActivity(), tuple.permission);
                 PermissionsClient.onComplete(tuple.permission, PackageManager.PERMISSION_GRANTED);
             }
         }

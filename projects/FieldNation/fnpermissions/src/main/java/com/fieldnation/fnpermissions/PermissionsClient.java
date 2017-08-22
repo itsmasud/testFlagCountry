@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fntools.DebugUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class PermissionsClient implements Constants {
 
     public static void requestPermissions(String[] permissions, boolean[] required) {
         Log.v(TAG, "requestPermissions");
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception("requestPermissions")));
         Bundle payload = new Bundle();
         payload.putStringArray("permissions", permissions);
         payload.putBooleanArray("required", required);
@@ -48,11 +50,12 @@ public class PermissionsClient implements Constants {
     }
 
     public static int checkSelfPermission(Context context, String permission) {
-        //Log.v(STAG, "checkSelfPermission");
+        Log.v(TAG, "checkSelfPermission");
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception("checkSelfPermission")));
         int grant = ContextCompat.checkSelfPermission(context, permission);
 
         if (grant == PackageManager.PERMISSION_GRANTED)
-            State.clearPermissionDenied(permission);
+            State.clearPermissionDenied(context, permission);
 
         return grant;
     }

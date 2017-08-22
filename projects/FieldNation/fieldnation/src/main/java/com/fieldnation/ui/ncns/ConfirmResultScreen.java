@@ -99,16 +99,22 @@ public class ConfirmResultScreen extends RelativeLayout {
         FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
-    public void onResume() {
-        _workOrdersApi.sub();
+    public void onStart() {
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_gps_listener)
                 .priority(SimpleGps.Priority.HIGHEST)
                 .start(App.get());
     }
 
+    public void onResume() {
+        _workOrdersApi.sub();
+    }
+
     public void onPause() {
         _workOrdersApi.unsub();
+    }
+
+    public void onStop() {
         if (_simpleGps != null && _simpleGps.isRunning())
             _simpleGps.stop();
     }

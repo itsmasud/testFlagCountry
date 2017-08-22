@@ -157,11 +157,12 @@ public class SimpleGps {
 
     public SimpleGps stop() {
         Log.v(TAG, "stop");
+
+        _permissionsListener.unsub();
+
         if (!_isRunning) {
             return this;
         }
-
-        _permissionsListener.unsub();
 
         if (_gglApiClient.isConnected()) {
             _providerApi.removeLocationUpdates(_gglApiClient, _locationUpdate_listener);

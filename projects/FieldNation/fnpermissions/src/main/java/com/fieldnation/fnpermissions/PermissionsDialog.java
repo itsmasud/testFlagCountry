@@ -98,8 +98,9 @@ public class PermissionsDialog extends FullScreenDialog {
     @Override
     public void cancel() {
         super.cancel();
-        State.setPermissionDenied(_permissionTuple.permission);
+        State.setPermissionDenied(getContext(), _permissionTuple.permission);
         PermissionsClient.onComplete(_permissionTuple.permission, PackageManager.PERMISSION_DENIED);
+        PermissionsRequestHandler.requesting = false;
     }
 
     @Override
@@ -110,6 +111,7 @@ public class PermissionsDialog extends FullScreenDialog {
     private final View.OnClickListener _access_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            PermissionsRequestHandler.requesting = false;
             if (_permissionTuple.secondTry && _permissionTuple.required) {
                 ActivityClient.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         Uri.fromParts("package", getContext().getPackageName(), null)));
@@ -122,6 +124,7 @@ public class PermissionsDialog extends FullScreenDialog {
     };
 
     public static void show(Context context, String uid, PermissionsTuple permissionsTuple) {
+        Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelable("permissionsTuple", permissionsTuple);
         Controller.show(context, uid, PermissionsDialog.class, params);
