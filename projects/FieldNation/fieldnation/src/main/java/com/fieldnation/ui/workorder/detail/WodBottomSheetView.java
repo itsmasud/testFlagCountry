@@ -9,7 +9,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.AttachmentFolder;
@@ -27,7 +26,7 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     private static final String TAG = "WodBottomSheetView";
 
     // Ui
-    private View _bottomSheetBackground;
+//    private View _bottomSheetBackground;
     private View _bottomSheet;
     private View _counterOfferLayout;
     private View _requestNewPayLayout;
@@ -39,8 +38,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     private View _attachmentLayout;
 
     // Animations
-    private Animation _fadeIn;
-    private Animation _fadeOut;
     private Animation _bsSlideIn;
     private Animation _bsSlideOut;
 
@@ -70,8 +67,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         if (isInEditMode())
             return;
 
-        _bottomSheetBackground = findViewById(R.id.bottomSheet_background);
-        _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
         _bottomSheet = findViewById(R.id.bottomsheet);
 
         _counterOfferLayout = findViewById(R.id.counterOffer_layout);
@@ -91,24 +86,9 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         _attachmentLayout = findViewById(R.id.attachment_layout);
         _attachmentLayout.setOnClickListener(_addAttachment_onClick);
 
-        _fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
-        _fadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
         _bsSlideIn = AnimationUtils.loadAnimation(getContext(), R.anim.fg_slide_in_bottom);
         _bsSlideOut = AnimationUtils.loadAnimation(getContext(), R.anim.fg_slide_out_bottom);
 
-        _fadeIn.setAnimationListener(new DefaultAnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                _bottomSheetBackground.setVisibility(View.VISIBLE);
-            }
-        });
-
-        _fadeOut.setAnimationListener(new DefaultAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                _bottomSheetBackground.setVisibility(View.GONE);
-            }
-        });
 
         _bsSlideIn.setAnimationListener(new DefaultAnimationListener() {
             @Override
@@ -124,8 +104,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             }
         });
 
-        _bottomSheetBackground.clearAnimation();
-        _bottomSheetBackground.startAnimation(_fadeIn);
         _bottomSheet.clearAnimation();
         _bottomSheet.startAnimation(_bsSlideIn);
     }
@@ -135,12 +113,15 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     }
 
     public void animateIn() {
-        _bottomSheetBackground.setVisibility(VISIBLE);
-        _bottomSheetBackground.clearAnimation();
-        _bottomSheetBackground.startAnimation(_fadeIn);
         _bottomSheet.setVisibility(VISIBLE);
         _bottomSheet.clearAnimation();
         _bottomSheet.startAnimation(_bsSlideIn);
+    }
+
+    public void animateOut() {
+        _bottomSheet.setVisibility(VISIBLE);
+        _bottomSheet.clearAnimation();
+        _bottomSheet.startAnimation(_bsSlideOut);
     }
 
     @Override
@@ -205,125 +186,76 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            _bottomSheetBackground.clearAnimation();
-            _bottomSheetBackground.startAnimation(_fadeOut);
-            _bottomSheet.clearAnimation();
-            _bottomSheet.startAnimation(_bsSlideOut);
-            if (_listener != null && view.equals(_bottomSheetBackground)) _listener.onBackgroundClick();
-        }
-    };
 
     private final View.OnClickListener _addCounterOffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addCounterOffer();
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addRequestNewPay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addRequestNewPay();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addTimeLog_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addTimeLog();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addExpense();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addDiscount();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addSignature_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addSignature();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addShipment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addShipment();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
     private final View.OnClickListener _addAttachment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
             if (_listener != null) _listener.addAttachment();
-
-            getRootView().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _bottomSheet_onCancel.onClick(view);
-                }
-            }, 500);
         }
     };
 
@@ -343,7 +275,5 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         void addShipment();
 
         void addAttachment();
-
-        void onBackgroundClick();
     }
 }

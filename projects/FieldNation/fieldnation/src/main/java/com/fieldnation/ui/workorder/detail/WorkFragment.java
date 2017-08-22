@@ -186,8 +186,12 @@ public class WorkFragment extends WorkorderFragment {
     // Bottom Sheet
     private Button _floatingActionButton;
     private WodBottomSheetView _bottomsheetView;
+    private View _bottomSheetBackground;
+
 
     // Animations
+    private Animation _fadeIn;
+    private Animation _fadeOut;
     private Animation _fabSlideOut;
     private Animation _fabSlideIn;
 
@@ -303,12 +307,33 @@ public class WorkFragment extends WorkorderFragment {
         _renderers.add(_attachmentSummaryView);
 
         // Bottom Sheet
+        _bottomSheetBackground = view.findViewById(R.id.bottomSheet_background);
+        _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
+
         _bottomsheetView = view.findViewById(R.id.bottomsheet_view);
         _bottomsheetView.setListener(_bottomsheetView_listener);
         _renderers.add(_bottomsheetView);
 
+        _fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+        _fadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
+
         _fabSlideIn = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_in_right);
         _fabSlideOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_out_right);
+
+
+        _fadeIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _bottomSheetBackground.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _fadeOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _bottomSheetBackground.setVisibility(View.GONE);
+            }
+        });
 
         _fabSlideIn.setAnimationListener(new DefaultAnimationListener() {
             @Override
@@ -1615,15 +1640,34 @@ public class WorkFragment extends WorkorderFragment {
             misc.hideKeyboard(v);
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideOut);
+
+            _bottomSheetBackground.setVisibility(View.VISIBLE);
+            _bottomSheetBackground.clearAnimation();
+            _bottomSheetBackground.startAnimation(_fadeIn);
+
             _bottomsheetView.animateIn();
         }
     };
+
+
+    private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _bottomSheetBackground.clearAnimation();
+            _bottomSheetBackground.startAnimation(_fadeOut);
+            _bottomsheetView.animateOut();
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+        }
+    };
+
 
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             CounterOfferDialog.show(App.get(), _workOrder);
         }
 
@@ -1631,49 +1675,50 @@ public class WorkFragment extends WorkorderFragment {
         public void addRequestNewPay() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
         }
 
         @Override
         public void addTimeLog() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
         }
 
         @Override
         public void addExpense() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
         }
 
         @Override
         public void addDiscount() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
         }
 
         @Override
         public void addSignature() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
         }
 
         @Override
         public void addShipment() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
         }
 
         @Override
         public void addAttachment() {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             AttachmentFolderDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
-        }
-
-        @Override
-        public void onBackgroundClick() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
         }
     };
 

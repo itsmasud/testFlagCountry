@@ -141,10 +141,18 @@
 
     </com.fieldnation.ui.OverScrollView>
 
+    <View
+        android:id="@+id/bottomSheet_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/fn_shadow"
+        android:visibility="gone" />
+
     <com.fieldnation.ui.workorder.detail.WodBottomSheetView
         android:id="@+id/bottomsheet_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
 
     <Button
         android:id="@+id/wf_fab_button"
