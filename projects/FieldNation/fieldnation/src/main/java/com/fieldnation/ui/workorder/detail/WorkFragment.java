@@ -1694,7 +1694,7 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
-            CounterOfferDialog.show(App.get(), _workOrder);
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
         }
 
         @Override
