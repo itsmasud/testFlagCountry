@@ -592,9 +592,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-
     private boolean shouldFabVisible() {
-
         if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
             return true;
         else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD))
@@ -622,7 +620,6 @@ public class WorkFragment extends WorkorderFragment {
                 return false;
             }
         }
-
         return false;
     }
 
@@ -1702,6 +1699,12 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
+            if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
+                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
+            } else {
+                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);
+            }
         }
 
         @Override
@@ -1709,6 +1712,11 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType() != null)
+                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
+            else
+                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, false);
         }
 
         @Override
@@ -1716,6 +1724,8 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+            ExpenseDialog.show(App.get(), DIALOG_EXPENSE, true);
         }
 
         @Override
@@ -1723,6 +1733,8 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getString(R.string.dialog_add_discount_title));
         }
 
         @Override
@@ -1730,6 +1742,8 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            SignOffActivity.startSignOff(getActivity(), _workOrder.getId());
+            setLoading(true);
         }
 
         @Override
@@ -1737,6 +1751,8 @@ public class WorkFragment extends WorkorderFragment {
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
             _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+                    _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
