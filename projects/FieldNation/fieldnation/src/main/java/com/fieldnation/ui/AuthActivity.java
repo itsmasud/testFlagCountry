@@ -40,7 +40,7 @@ import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.data.profile.ProfileService;
+import com.fieldnation.service.data.profile.ProfileSystem;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
@@ -251,7 +251,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         @Override
         public void onClick(View v) {
             misc.hideKeyboard(getCurrentFocus());
-            startService(new Intent(AuthActivity.this, ProfileService.class));
+            startService(new Intent(AuthActivity.this, ProfileSystem.class));
 
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();

@@ -41,7 +41,7 @@ public abstract class PhotoClient extends Pigeon implements PhotoConstants {
      */
     public static void get(Context context, String sourceUrl, boolean makeCircle, boolean isSync) {
         if (misc.isEmptyOrNull(sourceUrl)) return;
-        PhotoService.get(context, sourceUrl, makeCircle, isSync);
+        PhotoSystem.get(context, sourceUrl, makeCircle, isSync);
     }
 
     public static void clearPhotoClientCache() {

@@ -23,7 +23,7 @@ import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
@@ -771,7 +771,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     "TRY AGAIN", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            WebTransactionService.queueTransaction(App.get(), webTransaction);
+                            WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                         }
                     }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
@@ -933,7 +933,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to accept work order"), "TRY AGAIN", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    WebTransactionService.queueTransaction(App.get(), webTransaction);
+                    WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                 }
             }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
@@ -965,7 +965,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to confirm work order"), "TRY AGAIN", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    WebTransactionService.queueTransaction(App.get(), webTransaction);
+                    WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                 }
             }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
@@ -1002,7 +1002,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not add your shipment"), "TRY AGAIN", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    WebTransactionService.queueTransaction(App.get(), webTransaction);
+                    WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                 }
             }, Snackbar.LENGTH_LONG);
 
@@ -1037,7 +1037,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     "TRY AGAIN", new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            WebTransactionService.queueTransaction(App.get(), webTransaction);
+                            WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                         }
                     }, Snackbar.LENGTH_LONG);
 
@@ -1088,7 +1088,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send counter offer"), "TRY AGAIN", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    WebTransactionService.queueTransaction(App.get(), webTransaction);
+                    WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                 }
             }, Snackbar.LENGTH_LONG);
             return Result.DELETE;
@@ -1117,7 +1117,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send your rating"), "TRY AGAIN", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        WebTransactionService.queueTransaction(App.get(), webTransaction);
+                        WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                     }
                 }, Snackbar.LENGTH_LONG);
 

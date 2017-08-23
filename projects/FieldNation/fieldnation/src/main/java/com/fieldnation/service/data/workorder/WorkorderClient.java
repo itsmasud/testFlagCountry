@@ -20,7 +20,7 @@ import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.util.LinkedList;
@@ -367,7 +367,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,
                                   int respectRating, String otherComments) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 WorkorderTransactionBuilder.actionPostRatingIntent(workorderId, satisfactionRating, scopeRating,
                         respectRating, -1, false, otherComments));
     }

@@ -19,7 +19,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -80,7 +80,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -120,7 +120,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -156,7 +156,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -196,7 +196,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -234,7 +234,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -272,7 +272,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -312,7 +312,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -353,7 +353,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -396,7 +396,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -434,7 +434,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -478,7 +478,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -518,7 +518,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -558,7 +558,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -596,7 +596,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -634,7 +634,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -674,7 +674,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
@@ -717,7 +717,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -762,7 +762,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -813,7 +813,7 @@ public abstract class CompanyWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

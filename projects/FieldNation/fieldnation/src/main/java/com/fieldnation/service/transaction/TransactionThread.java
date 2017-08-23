@@ -49,7 +49,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
     private long _lastRetry = 0;
     private long _retryTimeout = 2000;
 
-    private final WebTransactionService _service;
+    private final WebTransactionSystem _service;
 
     private boolean _syncThread = false;
     private boolean _allowSync = true;
@@ -67,7 +67,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
     }
 
-    public TransactionThread(ThreadManager manager, WebTransactionService service, boolean syncThread) {
+    public TransactionThread(ThreadManager manager, WebTransactionSystem service, boolean syncThread) {
         super(manager);
         setName(TAG);
         _service = service;

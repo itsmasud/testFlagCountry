@@ -9,7 +9,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael Carver on 5/28/2015.
@@ -57,7 +57,7 @@ public class DocumentTransactionBuilder {
                         res.getString(R.string.notification_retry_body_downloading, filename)
                 ));
             }
-            WebTransactionService.queueTransaction(context, webBuilder.build());
+            WebTransactionSystem.queueTransaction(context, webBuilder.build());
 
         } catch (Exception ex) {
             Log.v(TAG, ex);

@@ -36,7 +36,7 @@ public abstract class ProfilePhotoClient extends Pigeon implements ProfilePhotoC
      * @param context
      */
     public static void get(Context context) {
-        ProfilePhotoService.getInstance().get(context, App.get().getProfile().getPhoto().getLarge());
+        ProfilePhotoSystem.getInstance().get(context, App.get().getProfile().getPhoto().getLarge());
     }
 
     /**
@@ -46,7 +46,7 @@ public abstract class ProfilePhotoClient extends Pigeon implements ProfilePhotoC
      * @param uri
      */
     public static void upload(Context context, Uri uri) {
-        ProfilePhotoService.getInstance().upload(context, uri);
+        ProfilePhotoSystem.getInstance().upload(context, uri);
     }
 
     static void dispatchGet(Context context, Uri uri) {

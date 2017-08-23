@@ -18,7 +18,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
@@ -71,7 +71,7 @@ public abstract class BonusesWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -112,7 +112,7 @@ public abstract class BonusesWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -159,7 +159,7 @@ public abstract class BonusesWebApi extends Pigeon {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

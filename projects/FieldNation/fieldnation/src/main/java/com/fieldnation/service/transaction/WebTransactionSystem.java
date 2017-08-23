@@ -19,8 +19,8 @@ import java.util.List;
  * <p/>
  * This class accepts web requests and stores them into the queue for processing
  */
-public class WebTransactionService implements WebTransactionConstants {
-    private static final String TAG = "WebTransactionService";
+public class WebTransactionSystem implements WebTransactionConstants {
+    private static final String TAG = "WebTransactionSystem";
     private static final Object AUTH_LOCK = new Object();
     private static final long IDLE_TIMEOUT = 30000;
 
@@ -28,15 +28,15 @@ public class WebTransactionService implements WebTransactionConstants {
     private ThreadManager _manager;
     private Handler _shutdownChecker;
     private long _lastRequestTime = 0;
-    private static WebTransactionService _instance = null;
+    private static WebTransactionSystem _instance = null;
 
-    public static WebTransactionService getInstance() {
+    public static WebTransactionSystem getInstance() {
         if (_instance == null)
-            _instance = new WebTransactionService();
+            _instance = new WebTransactionSystem();
         return _instance;
     }
 
-    private WebTransactionService() {
+    private WebTransactionSystem() {
         Log.v(TAG, "Constructor");
 
         WebTransaction.saveOrphans();

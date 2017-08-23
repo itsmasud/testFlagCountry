@@ -13,7 +13,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael Carver on 7/20/2015.
@@ -74,7 +74,7 @@ public class HelpTransactionListener extends WebTransactionListener {
                         "TRY AGAIN", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                WebTransactionService.queueTransaction(App.get(), webTransaction);
+                                WebTransactionSystem.queueTransaction(App.get(), webTransaction);
                             }
                         }, Snackbar.LENGTH_LONG);
 

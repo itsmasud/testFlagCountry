@@ -24,7 +24,6 @@ import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
@@ -121,7 +120,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _toastClient.subSnackbar();
         _toastClient.subToast();
 
-        startService(new Intent(this, AuthTopicService.class));
         startService(new Intent(this, TopicService.class));
         startService(new Intent(this, WebCrawlerService.class));
 

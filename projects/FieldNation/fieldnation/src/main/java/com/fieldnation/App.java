@@ -43,10 +43,10 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.RegistrationIntentService;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.transaction.WebTransactionService;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -185,6 +185,7 @@ public class App extends Application {
         Debug.setInt("memory_class", _memoryClass);
 
         // trigger authentication and web crawler
+        AuthSystem.start();
 /*
         new AsyncTaskEx<Context, Object, Object>() {
             @Override
@@ -285,6 +286,7 @@ public class App extends Application {
         _appMessagingClient.unsubNetworkConnect();
         _appMessagingClient.unsubNetworkState();
         _authClient.unsubAuthStateChange();
+        AuthSystem.stop();
         super.onTerminate();
         _context = null;
     }

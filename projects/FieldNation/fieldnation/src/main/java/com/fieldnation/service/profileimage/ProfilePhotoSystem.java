@@ -15,22 +15,22 @@ import com.fieldnation.service.data.profile.ProfileClient;
  * Created by mc on 6/28/17.
  */
 
-public class ProfilePhotoService implements ProfilePhotoConstants {
-    private static final String TAG = "ProfilePhotoService";
+public class ProfilePhotoSystem implements ProfilePhotoConstants {
+    private static final String TAG = "ProfilePhotoSystem";
 
     // Data
     private Profile _profile = null;
     private Uri _currentProfileImage;
 
-    private static ProfilePhotoService _instance = null;
+    private static ProfilePhotoSystem _instance = null;
 
-    public static ProfilePhotoService getInstance() {
-        if (_instance == null) _instance = new ProfilePhotoService();
+    public static ProfilePhotoSystem getInstance() {
+        if (_instance == null) _instance = new ProfilePhotoSystem();
 
         return _instance;
     }
 
-    private ProfilePhotoService() {
+    private ProfilePhotoSystem() {
         _photoClient.sub();
         _profileClient.subGet();
     }

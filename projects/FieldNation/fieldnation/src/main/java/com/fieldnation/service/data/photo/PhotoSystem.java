@@ -12,8 +12,8 @@ import com.fieldnation.fntools.AsyncTaskEx;
 /**
  * Created by Michael Carver on 3/12/2015.
  */
-public class PhotoService implements PhotoConstants {
-    public static final String TAG = "PhotoService";
+public class PhotoSystem implements PhotoConstants {
+    public static final String TAG = "PhotoSystem";
 
     private static final long DAY = 86400000;
 

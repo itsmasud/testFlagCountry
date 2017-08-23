@@ -20,7 +20,7 @@ import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 
@@ -48,7 +48,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -71,7 +71,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .urlParams("?page=" + page))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,7 +99,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -120,7 +120,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + workorderId + "/tasks"))
                     .build();
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -142,7 +142,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/bundle/" + bundleId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -158,7 +158,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     private static void action(Context context, long workorderId, String action, String params,
                                String contentType, String body, boolean useKey) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", action, params, contentType, body,
                         "POST/api/rest/v1/workorder/[workorderId]/" + action,
                         WorkorderTransactionListener.class,
@@ -234,7 +234,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/" + action))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -279,7 +279,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the custom field value
     public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "custom-fields/" + customFieldId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)),
@@ -290,7 +290,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the modified task, not the work order details or task list
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "tasks/complete/" + taskId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "",
                         "POST/api/rest/v1/workorder/[workorderId]/tasks/complete/[taskId]",
@@ -300,7 +300,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionComplete(Context context, long workorderId) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "complete", null, null, null,
                         WorkorderTransactionListener.class,
                         WorkorderTransactionListener.pComplete(workorderId)));
@@ -329,7 +329,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId, String dateTime) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "checkin", null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "checkin_time=" + dateTime,
@@ -339,7 +339,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
 
     public static void actionCheckin(Context context, long workorderId, Location location, String dateTime) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "checkin", null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "checkin_time=" + dateTime
@@ -351,7 +351,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
 
     public static void actionCheckout(Context context, long workorderId, String dateTime) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "checkout", null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "checkout_time=" + dateTime,
@@ -361,7 +361,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, String dateTime, Location location) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "checkout", null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "checkout_time=" + dateTime
@@ -373,7 +373,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "checkout", null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "device_count=" + deviceCount
@@ -384,7 +384,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount, Location location) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "checkout", null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "device_count=" + deviceCount
@@ -405,7 +405,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns work order details
     public static void actionAcknowledgeHold(Context context, long workorderId) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "GET", "acknowledge-hold", null, null, null,
                         "GET/api/rest/v1/workorder/[workorderId]/acknowledge-hold",
                         WorkorderTransactionListener.class,
@@ -417,7 +417,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             Context context, long workorderId, boolean expires, String reason,
             int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
 
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionCounterOfferIntent(workorderId, expires, reason, expiresAfterInSecond,
                         pay, schedule, expenses)
         );
@@ -495,12 +495,12 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns entire work order
     public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionRequestIntent(workorderId, expireInSeconds, startTime, endTime, note));
     }
 
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionRequestIntent(workorderId, expireInSeconds, null, null, null));
     }
 
@@ -541,7 +541,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns work order details
     public static void actionAccept(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionAcceptIntent(workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta));
 
     }
@@ -573,7 +573,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionConfirm(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionConfirmIntent(workorderId, startTimeIso8601, endTimeIso8601, note));
     }
 
@@ -610,7 +610,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionReady(Context context, long workorderId) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionReadyIntent(workorderId));
     }
 
@@ -646,7 +646,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             _action.toByteArray()))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -713,7 +713,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -734,7 +734,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -769,7 +769,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns task list
     // TODO make sure this works
     public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "tasks/complete/" + taskId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "print_name=" + misc.escapeForURL(name) + "&signature_svg=" + svg,
@@ -797,7 +797,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -863,7 +863,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .setTrackType(TrackerEnum.DELIVERABLES)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -886,7 +886,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -917,7 +917,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -943,7 +943,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .body("description=" + misc.escapeForURL(description) + "&amount=" + misc.escapeForURL(price + "")))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -965,7 +965,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/discounts/" + discountId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -994,7 +994,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     + "&category_id=" + category.getId()).trim()))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -1016,7 +1016,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -1027,7 +1027,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-***********************************-*/
     // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate),
@@ -1038,7 +1038,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate)
@@ -1050,7 +1050,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "log/" + loggedHoursId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
@@ -1062,7 +1062,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate)
@@ -1087,7 +1087,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -1099,7 +1099,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the shipment data
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 postShipmentIntent(workorderId, description, isToSite,
                         carrier, carrierName, trackingNumber));
     }
@@ -1121,7 +1121,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the shipment data
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber, long taskId) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 postShipmentIntent(workorderId, description, isToSite,
                         carrier, carrierName, trackingNumber, taskId));
     }
@@ -1143,7 +1143,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the task list
     public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
-        WebTransactionService.queueTransaction(context,
+        WebTransactionSystem.queueTransaction(context,
                 actionCompleteShipmentTaskIntent(workorderId, shipmentId, taskId));
     }
 
@@ -1195,7 +1195,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId))
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

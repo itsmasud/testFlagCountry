@@ -6,7 +6,7 @@ import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -28,7 +28,7 @@ public class PhotoTransactionBuilder implements PhotoConstants {
                                     .method("GET")
                                     .path(sourceUrl)
                     ).build();
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

@@ -13,8 +13,8 @@ import com.fieldnation.fntools.AsyncTaskEx;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileService implements ProfileConstants {
-    private static final String TAG = "ProfileService";
+public class ProfileSystem implements ProfileConstants {
+    private static final String TAG = "ProfileSystem";
 
     public static void get(Context context, long profileId, boolean isSync, boolean allowCache) {
         new AsyncTaskEx<Object, Object, Object>() {

@@ -13,7 +13,7 @@ import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael on 9/13/2016.
@@ -56,7 +56,7 @@ public class AnalyticsPassThroughService extends Service {
                 }
             } else if (intent.hasExtra(PARAM_WEB_TRANSACTION)) {
                 try {
-                    WebTransactionService.queueTransaction(this, (WebTransaction) intent.getParcelableExtra(PARAM_WEB_TRANSACTION));
+                    WebTransactionSystem.queueTransaction(this, (WebTransaction) intent.getParcelableExtra(PARAM_WEB_TRANSACTION));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

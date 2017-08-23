@@ -4,13 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerFuture;
 import android.accounts.OnAccountsUpdateListener;
-import android.app.Service;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
@@ -25,8 +23,8 @@ import java.util.List;
 /**
  * Created by Michael on 12/15/2014.
  */
-public class AuthTopicService extends Service implements AuthTopicConstants {
-    private static final String TAG = UniqueTag.makeTag("AuthTopicService");
+public class AuthSystem implements AuthTopicConstants {
+    private static final String TAG = UniqueTag.makeTag("AuthSystem");
 
     // Data
     private Account _account = null;
@@ -36,22 +34,25 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     // Services
     private AccountManager _accountManager;
 
-    static {
-        Log.v(TAG, "STATIC!");
-    }
-
     /*-*************************************-*/
     /*-             Life Cycle              -*/
     /*-*************************************-*/
-    public AuthTopicService() {
-        super();
-        Log.v(TAG, "Construct");
+    private static AuthSystem _instance = null;
+
+    public static AuthSystem start() {
+        if (_instance == null)
+            _instance = new AuthSystem();
+
+        return _instance;
     }
 
-    @Override
-    public void onCreate() {
-        Log.v(TAG, "onCreate");
-        super.onCreate();
+    public static void stop() {
+        if (_instance != null) {
+            _instance.shutdown();
+        }
+    }
+
+    private AuthSystem() {
         _authClient.subInvalidateCommand();
         _authClient.subRemoveCommand();
         _authClient.subRequestCommand();
@@ -63,20 +64,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         setState(AuthState.NOT_AUTHENTICATED);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
-
-        return START_NOT_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
+    public void shutdown() {
         Log.v(TAG, "onDestroy");
         _authClient.unsubInvalidateCommand();
         _authClient.unsubRemoveCommand();
@@ -88,8 +76,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
         }
-        stopSelf();
-        super.onDestroy();
+
+        _instance = null;
     }
 
     private void setState(AuthState state) {
@@ -108,7 +96,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onShutdown() {
             Log.v(TAG, "GlobalTopicClient.onShutdown");
-            stopSelf();
+            shutdown();
         }
     };
 
@@ -144,7 +132,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-*****************************-*/
     private String getAccountType() {
         Log.v(TAG, "getAccountType");
-        return getString(R.string.auth_account_type);
+        return App.get().getString(R.string.auth_account_type);
     }
 
     private void invalidateToken(String token) {
@@ -184,7 +172,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             return;
         Log.v(TAG, "removeAccount 2");
         OAuth.flushAll();
-        StoredObject.flushAllOfType(this, ProfileConstants.PSO_PROFILE);
+        StoredObject.flushAllOfType(App.get(), ProfileConstants.PSO_PROFILE);
 
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);
@@ -246,7 +234,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
         setState(AuthState.AUTHENTICATING);
         if (_accountManager == null) {
-            _accountManager = AccountManager.get(this);
+            _accountManager = AccountManager.get(App.get());
             _accountManager.addOnAccountsUpdatedListener(_accounts_updateListener, new Handler(), false);
         }
 
@@ -376,7 +364,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                     // todo.. not sure
                     setState(AuthState.NOT_AUTHENTICATED);
                     if (bundle.containsKey(AccountManager.KEY_AUTH_FAILED_MESSAGE)
-                            && getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
+                            && App.get().getString(R.string.login_error_update_app).equals(bundle.getString(AccountManager.KEY_AUTH_FAILED_MESSAGE))) {
                         // account fail, check if app is too old
                         onAppIsOld();
                     } else {
@@ -396,7 +384,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 }
 
                 Log.v(TAG, _authToken.toJson().display());
-                ProfileClient.get(AuthTopicService.this);
+                ProfileClient.get(App.get());
                 setState(AuthState.AUTHENTICATED);
             }
         }

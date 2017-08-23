@@ -35,7 +35,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public static void get(Context context, long profileId, boolean isSync, boolean allowCache) {
-        ProfileService.get(context, profileId, isSync, allowCache);
+        ProfileSystem.get(context, profileId, isSync, allowCache);
     }
 
     public void subGet() {
@@ -71,7 +71,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public static void listNotifications(Context context, int page, boolean isSync, boolean allowCache) {
-        ProfileService.listNotifications(context, page, isSync, allowCache);
+        ProfileSystem.listNotifications(context, page, isSync, allowCache);
     }
 
     public void subListNotifications() {
@@ -105,7 +105,7 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public static void listMessages(Context context, int page, boolean isSync, boolean allowCache) {
-        ProfileService.listMessages(context, page, isSync, allowCache);
+        ProfileSystem.listMessages(context, page, isSync, allowCache);
     }
 
     public void subListMessages() {
@@ -152,14 +152,14 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
         Log.v(TAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(filePath, false, false);
-        ProfileService.uploadProfilePhoto(context, profileId, filePath, filename);
+        ProfileSystem.uploadProfilePhoto(context, profileId, filePath, filename);
     }
 
     public static void uploadProfilePhoto(Context context, long profileId, String filename, Uri uri) {
         Log.v(TAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(filename, false, false);
-        ProfileService.uploadProfilePhoto(context, profileId, filename, uri);
+        ProfileSystem.uploadProfilePhoto(context, profileId, filename, uri);
     }
 
     /*-*********************************-*/
