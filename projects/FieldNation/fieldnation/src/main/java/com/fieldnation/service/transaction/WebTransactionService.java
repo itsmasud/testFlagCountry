@@ -180,14 +180,13 @@ public class WebTransactionService implements WebTransactionConstants {
                 }
             }
             if (webTransaction == null)
-                return;
+                break;
 
             try {
 
                 if (webTransaction.getKey() != null && WebTransaction.keyExists(webTransaction.getKey())) {
                     Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
-                    getInstance()._manager.wakeUp();
-                    return;
+                    break;
                 }
                 //Log.v(TAG, "processIntent saving transaction");
                 webTransaction.setState(WebTransaction.State.IDLE);
@@ -200,8 +199,8 @@ public class WebTransactionService implements WebTransactionConstants {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            getInstance()._manager.wakeUp();
         }
+        getInstance()._manager.wakeUp();
     }
 }
 

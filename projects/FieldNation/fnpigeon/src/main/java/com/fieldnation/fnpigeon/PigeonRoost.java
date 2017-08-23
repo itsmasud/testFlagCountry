@@ -113,6 +113,7 @@ public class PigeonRoost {
      * @param sticky
      */
     public static void sendMessage(String address, Object message, Sticky sticky) {
+        Log.v(TAG, "sendMessage " + address);
         List<Pigeon> pigeonList = new LinkedList<>();
         List<Object> objectList = new LinkedList<>();
         List<String> addressList = new LinkedList<>();
@@ -152,7 +153,6 @@ public class PigeonRoost {
             }
         }
         getMainHandler().post(MessagesRunnable.getInstance(pigeonList, addressList, objectList));
-        pruneStickies();
     }
 
     public static void clearAddressCache(String address) {

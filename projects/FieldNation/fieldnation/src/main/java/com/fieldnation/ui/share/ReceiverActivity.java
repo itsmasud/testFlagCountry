@@ -112,6 +112,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
+        _workOrderPicker.onStart();
     }
 
     @Override
@@ -138,7 +139,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
-
+        _workOrderPicker.onStop();
         super.onStop();
     }
 

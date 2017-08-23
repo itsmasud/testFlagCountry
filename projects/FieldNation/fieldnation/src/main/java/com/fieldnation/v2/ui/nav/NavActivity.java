@@ -104,6 +104,12 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        _recyclerView.onStart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         if (App.get().needsConfirmation()) {
@@ -120,6 +126,12 @@ public class NavActivity extends AuthSimpleActivity {
         _workOrdersApi.unsub();
         _recyclerView.onPause();
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        _recyclerView.onStart();
+        super.onStop();
     }
 
     private void launchConfirmActivity() {

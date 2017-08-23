@@ -119,6 +119,15 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setLoading(true);
@@ -135,11 +144,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         _workOrderClient = new WorkorderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
-
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
     }
 
     @Override
@@ -156,9 +160,13 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
-        if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
-
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
+        super.onStop();
     }
 
     private void populateUi() {

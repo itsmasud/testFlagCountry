@@ -129,6 +129,15 @@ public class CheckInOutDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         // Dialog setup, start them off with today
@@ -149,10 +158,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         _spinner.setOnItemSelectedListener(_spinner_selected);
 
         _workOrderApi.sub();
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
     }
 
     @Override
@@ -213,9 +218,14 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         _workOrderApi.unsub();
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
         if (_simpleGps != null && _simpleGps.isRunning())
             _simpleGps.stop();
-        super.onPause();
+        super.onStop();
     }
 
     @Override

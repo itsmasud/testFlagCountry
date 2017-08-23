@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fntools.DebugUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -48,11 +49,11 @@ public class PermissionsClient implements Constants {
     }
 
     public static int checkSelfPermission(Context context, String permission) {
-        //Log.v(STAG, "checkSelfPermission");
+        Log.v(TAG, "checkSelfPermission");
         int grant = ContextCompat.checkSelfPermission(context, permission);
 
         if (grant == PackageManager.PERMISSION_GRANTED)
-            State.clearPermissionDenied(permission);
+            State.clearPermissionDenied(context, permission);
 
         return grant;
     }

@@ -177,7 +177,7 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
                 onFinish();
                 break;
             case ADDRESS_SHOW_LOADING:
-                setLoading(((Bundle) message).getBoolean(PARAM_IS_LOADING));
+                onSetLoading(((Bundle) message).getBoolean(PARAM_IS_LOADING));
                 break;
             case ADDRESS_NETWORK_STATE: {
                 switch (((Bundle) message).getInt(PARAM_NETWORK_STATE)) {

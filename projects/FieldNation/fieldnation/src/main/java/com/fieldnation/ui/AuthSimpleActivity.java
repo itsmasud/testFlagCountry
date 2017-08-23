@@ -107,6 +107,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         OneButtonDialog.addOnCanceledListener(DIALOG_NOT_PROVIDER, _notProvider_onCancel);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_COI, _coiDialog_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_COI, _coiDialog_onSecondary);
+
+        if (doPermissionsChecks()) {
+            _permissionsListener.sub();
+            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        }
     }
 
     @Override
@@ -132,11 +137,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
-
-        if (doPermissionsChecks()) {
-            _permissionsListener.sub();
-            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
-        }
     }
 
     @Override
@@ -155,10 +155,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
 
-        if (doPermissionsChecks()) {
-            _permissionsListener.unsub();
-        }
-
         super.onPause();
     }
 
@@ -171,6 +167,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         OneButtonDialog.removeOnCanceledListener(DIALOG_NOT_PROVIDER, _notProvider_onCancel);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_COI, _coiDialog_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_COI, _coiDialog_onSecondary);
+
+        if (doPermissionsChecks()) {
+            _permissionsListener.unsub();
+        }
 
         super.onStop();
         DialogManager dialogManager = getDialogManager();

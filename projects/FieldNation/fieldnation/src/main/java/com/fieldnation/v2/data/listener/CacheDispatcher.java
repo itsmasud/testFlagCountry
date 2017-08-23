@@ -6,8 +6,8 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
-import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
@@ -65,7 +65,7 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
     protected void onPostExecute(Bundle bundle) {
         if (bundle != null) {
             Log.v(TAG, "Data cache hit!");
-            TopicService.dispatchEvent(_context, _transactionParams.topicId, bundle, Sticky.TEMP);
+            PigeonRoost.sendMessage(_transactionParams.topicId, bundle, Sticky.TEMP);
         } else {
             Log.v(TAG, "Data Cache Miss");
         }
