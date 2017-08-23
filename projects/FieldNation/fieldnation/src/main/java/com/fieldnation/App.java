@@ -47,6 +47,7 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -186,6 +187,7 @@ public class App extends Application {
 
         // trigger authentication and web crawler
         AuthSystem.start();
+        WebTransactionSystem.getInstance();
 /*
         new AsyncTaskEx<Context, Object, Object>() {
             @Override
@@ -287,6 +289,7 @@ public class App extends Application {
         _appMessagingClient.unsubNetworkState();
         _authClient.unsubAuthStateChange();
         AuthSystem.stop();
+        WebTransactionSystem.stop();
         super.onTerminate();
         _context = null;
     }

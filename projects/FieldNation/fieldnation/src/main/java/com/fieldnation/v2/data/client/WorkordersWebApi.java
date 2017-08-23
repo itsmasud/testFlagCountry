@@ -3,6 +3,7 @@ package com.fieldnation.v2.data.client;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -18,9 +19,9 @@ import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
@@ -81,6 +82,9 @@ import com.fieldnation.v2.data.model.WorkOrderOverview;
 import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
 import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrders;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by dmgen from swagger.
@@ -9546,7 +9550,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 break;
             }
             case "complete": {
-                new AsyncParser(this, bundle);
+                BgParser.parse(this, bundle);
                 break;
             }
         }
@@ -9569,418 +9573,506 @@ public abstract class WorkordersWebApi extends Pigeon {
     public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
     }
 
-    private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
-        private static final String TAG = "WorkordersWebApi.AsyncParser";
+    private static class BgParser {
+        private static final Object SYNC_LOCK = new Object();
+        private static List<Bundle> BUNDLES = new LinkedList<>();
+        private static List<WorkordersWebApi> APIS = new LinkedList<>();
+        private static ThreadManager _manager;
+        private static Handler _handler = null;
+        private static final long IDLE_TIMEOUT = 30000;
 
+        private static ThreadManager getManager() {
+            synchronized (SYNC_LOCK) {
+                if (_manager == null) {
+                    _manager = new ThreadManager();
+                    _manager.addThread(new Parser(_manager));
+                    startActivityMonitor();
+                }
+            }
+            return _manager;
+        }
+
+        private static Handler getHandler() {
+            synchronized (SYNC_LOCK) {
+                if (_handler == null)
+                    _handler = new Handler(App.get().getMainLooper());
+            }
+            return _handler;
+        }
+
+        private static void startActivityMonitor() {
+            getHandler().postDelayed(_activityChecker_runnable, IDLE_TIMEOUT);
+        }
+
+        private static final Runnable _activityChecker_runnable = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (SYNC_LOCK) {
+                    if (APIS.size() > 0) {
+                        startActivityMonitor();
+                        return;
+                    }
+                }
+                stop();
+            }
+        };
+
+        private static void stop() {
+            if (_manager != null)
+                _manager.shutdown();
+            _manager = null;
+            synchronized (SYNC_LOCK) {
+                _handler = null;
+            }
+        }
+
+        public static void parse(WorkordersWebApi workordersWebApi, Bundle bundle) {
+            synchronized (SYNC_LOCK) {
+                APIS.add(workordersWebApi);
+                BUNDLES.add(bundle);
+            }
+
+            getManager().wakeUp();
+        }
+
+
+        private static class Parser extends ThreadManager.ManagedThread {
+            public Parser(ThreadManager manager) {
+                super(manager);
+                start();
+            }
+
+            @Override
+            public boolean doWork() {
+                WorkordersWebApi webApi = null;
+                Bundle bundle = null;
+                synchronized (SYNC_LOCK) {
+                    if (APIS.size() > 0) {
+                        webApi = APIS.remove(0);
+                        bundle = BUNDLES.remove(0);
+                    }
+                }
+
+                if (webApi == null || bundle == null)
+                    return false;
+
+                Object successObject = null;
+                Object failObject = null;
+
+                TransactionParams transactionParams = bundle.getParcelable("params");
+                boolean success = bundle.getBoolean("success");
+                byte[] data = bundle.getByteArray("data");
+
+                Stopwatch watch = new Stopwatch(true);
+                try {
+                    if (success) {
+                        switch (transactionParams.apiFunction) {
+                            case "getRequests":
+                                successObject = Requests.fromJson(new JsonObject(data));
+                                break;
+                            case "getWorkOrders":
+                                successObject = WorkOrders.fromJson(new JsonObject(data));
+                                break;
+                            case "getIncreases":
+                                successObject = PayIncreases.fromJson(new JsonObject(data));
+                                break;
+                            case "getStatus":
+                                successObject = com.fieldnation.v2.data.model.Status.fromJson(new JsonObject(data));
+                                break;
+                            case "getCustomField":
+                                successObject = CustomField.fromJson(new JsonObject(data));
+                                break;
+                            case "getIncrease":
+                                successObject = PayIncrease.fromJson(new JsonObject(data));
+                                break;
+                            case "acceptSwapRequest":
+                            case "cancelSwapRequest":
+                            case "declineSwapRequest":
+                                successObject = SwapResponse.fromJson(new JsonObject(data));
+                                break;
+                            case "getAttachments":
+                                successObject = AttachmentFolders.fromJson(new JsonObject(data));
+                                break;
+                            case "getOverviewValues":
+                                successObject = WorkOrderOverviewValues.fromJson(new JsonObject(data));
+                                break;
+                            case "getSignatures":
+                                successObject = Signatures.fromJson(new JsonObject(data));
+                                break;
+                            case "acknowledgeDelay":
+                            case "MassAcceptWorkOrder":
+                            case "massRequests":
+                            case "removeProvider":
+                                successObject = data;
+                                break;
+                            case "getWorkOrderLists":
+                                successObject = SavedList.fromJsonArray(new JsonArray(data));
+                                break;
+                            case "getBonus":
+                            case "getPenalty":
+                                successObject = PayModifier.fromJson(new JsonObject(data));
+                                break;
+                            case "getTasks":
+                                successObject = Tasks.fromJson(new JsonObject(data));
+                                break;
+                            case "getShipments":
+                                successObject = Shipments.fromJson(new JsonObject(data));
+                                break;
+                            case "getHold":
+                                successObject = Hold.fromJson(new JsonObject(data));
+                                break;
+                            case "getTags":
+                                successObject = Tags.fromJson(new JsonObject(data));
+                                break;
+                            case "getOverview":
+                                successObject = WorkOrderOverview.fromJson(new JsonObject(data));
+                                break;
+                            case "getAssignee":
+                                successObject = Assignee.fromJson(new JsonObject(data));
+                                break;
+                            case "getHolds":
+                                successObject = Holds.fromJson(new JsonObject(data));
+                                break;
+                            case "getTag":
+                                successObject = Tag.fromJson(new JsonObject(data));
+                                break;
+                            case "getExpenses":
+                                successObject = Expenses.fromJson(new JsonObject(data));
+                                break;
+                            case "getTask":
+                                successObject = Task.fromJson(new JsonObject(data));
+                                break;
+                            case "getBonuses":
+                            case "getDiscounts":
+                            case "getPenalties":
+                                successObject = PayModifiers.fromJson(new JsonObject(data));
+                                break;
+                            case "getFolder":
+                                successObject = AttachmentFolder.fromJson(new JsonObject(data));
+                                break;
+                            case "getMilestones":
+                                successObject = Milestones.fromJson(new JsonObject(data));
+                                break;
+                            case "getQualifications":
+                                successObject = Qualifications.fromJson(new JsonObject(data));
+                                break;
+                            case "addAlertToWorkOrderAndTask":
+                            case "addAttachment":
+                            case "addBonus":
+                            case "addContact":
+                            case "addDiscount":
+                            case "addExpense":
+                            case "addFolder":
+                            case "addHold":
+                            case "addIncrease":
+                            case "addPenalty":
+                            case "addProblem":
+                            case "addQualification":
+                            case "addShipment":
+                            case "addSignature":
+                            case "addTag":
+                            case "addTask":
+                            case "addTimeLog":
+                            case "addWorkOrder":
+                            case "approveWorkOrder":
+                            case "assignUser":
+                            case "completeWorkOrder":
+                            case "decline":
+                            case "declineRequest":
+                            case "deleteAlert":
+                            case "deleteAlerts":
+                            case "deleteAttachment":
+                            case "deleteBonus":
+                            case "deleteContact":
+                            case "deleteDiscount":
+                            case "deleteExpense":
+                            case "deleteFolder":
+                            case "deleteHold":
+                            case "deleteIncrease":
+                            case "deleteMessage":
+                            case "deletePenalty":
+                            case "deleteProblem":
+                            case "deleteRequest":
+                            case "deleteShipment":
+                            case "deleteSignature":
+                            case "deleteTag":
+                            case "deleteTask":
+                            case "deleteTimeLog":
+                            case "deleteWorkOrder":
+                            case "getWorkOrder":
+                            case "groupTask":
+                            case "incompleteWorkOrder":
+                            case "publish":
+                            case "removeQualification":
+                            case "reorderTask":
+                            case "request":
+                            case "revertWorkOrderToDraft":
+                            case "routeUser":
+                            case "unapproveWorkOrder":
+                            case "unassignUser":
+                            case "unpublish":
+                            case "unRouteUser":
+                            case "updateAllTimeLogs":
+                            case "updateAttachment":
+                            case "updateBonus":
+                            case "updateContact":
+                            case "updateCustomField":
+                            case "updateDiscount":
+                            case "updateETA":
+                            case "updateExpense":
+                            case "updateFolder":
+                            case "updateHold":
+                            case "updateIncrease":
+                            case "updateLocation":
+                            case "updateMessage":
+                            case "updatePay":
+                            case "updatePenalty":
+                            case "updateProblem":
+                            case "updateQualification":
+                            case "updateRatings":
+                            case "updateSchedule":
+                            case "updateShipment":
+                            case "updateTag":
+                            case "updateTask":
+                            case "updateTimeLog":
+                            case "updateWorkOrder":
+                            case "verifyTimeLog":
+                                successObject = WorkOrder.fromJson(new JsonObject(data));
+                                break;
+                            case "getRatings":
+                                successObject = WorkOrderRatings.fromJson(new JsonObject(data));
+                                break;
+                            case "getPay":
+                                successObject = Pay.fromJson(new JsonObject(data));
+                                break;
+                            case "getFile":
+                                successObject = Attachment.fromJson(new JsonObject(data));
+                                break;
+                            case "GetScheduleAndLocation":
+                                successObject = EtaMassAcceptWithLocation.fromJson(new JsonObject(data));
+                                break;
+                            case "getContacts":
+                                successObject = Contacts.fromJson(new JsonObject(data));
+                                break;
+                            case "getProviders":
+                                successObject = Users.fromJsonArray(new JsonArray(data));
+                                break;
+                            case "getLocation":
+                                successObject = Location.fromJson(new JsonObject(data));
+                                break;
+                            case "addMessage":
+                            case "getMessages":
+                            case "replyMessage":
+                                successObject = Messages.fromJson(new JsonObject(data));
+                                break;
+                            case "getSignature":
+                                successObject = Signature.fromJson(new JsonObject(data));
+                                break;
+                            case "getProblem":
+                            case "getProblems":
+                                successObject = Problems.fromJson(new JsonObject(data));
+                                break;
+                            case "getETA":
+                                successObject = ETA.fromJson(new JsonObject(data));
+                                break;
+                            case "getCustomFields":
+                                successObject = CustomFields.fromJson(new JsonObject(data));
+                                break;
+                            case "getSchedule":
+                                successObject = Schedule.fromJson(new JsonObject(data));
+                                break;
+                            case "getTimeLogs":
+                                successObject = TimeLogs.fromJson(new JsonObject(data));
+                                break;
+                            case "getRequest":
+                                successObject = Request.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
+                    } else {
+                        switch (transactionParams.apiFunction) {
+                            case "acceptSwapRequest":
+                            case "acknowledgeDelay":
+                            case "addAlertToWorkOrderAndTask":
+                            case "addAttachment":
+                            case "addBonus":
+                            case "addContact":
+                            case "addDiscount":
+                            case "addExpense":
+                            case "addFolder":
+                            case "addHold":
+                            case "addIncrease":
+                            case "addMessage":
+                            case "addPenalty":
+                            case "addProblem":
+                            case "addQualification":
+                            case "addShipment":
+                            case "addSignature":
+                            case "addTag":
+                            case "addTask":
+                            case "addTimeLog":
+                            case "addWorkOrder":
+                            case "approveWorkOrder":
+                            case "assignUser":
+                            case "cancelSwapRequest":
+                            case "completeWorkOrder":
+                            case "decline":
+                            case "declineRequest":
+                            case "declineSwapRequest":
+                            case "deleteAlert":
+                            case "deleteAlerts":
+                            case "deleteAttachment":
+                            case "deleteBonus":
+                            case "deleteContact":
+                            case "deleteDiscount":
+                            case "deleteExpense":
+                            case "deleteFolder":
+                            case "deleteHold":
+                            case "deleteIncrease":
+                            case "deleteMessage":
+                            case "deletePenalty":
+                            case "deleteProblem":
+                            case "deleteRequest":
+                            case "deleteShipment":
+                            case "deleteSignature":
+                            case "deleteTag":
+                            case "deleteTask":
+                            case "deleteTimeLog":
+                            case "deleteWorkOrder":
+                            case "getAssignee":
+                            case "getAttachments":
+                            case "getBonus":
+                            case "getBonuses":
+                            case "getContacts":
+                            case "getCustomField":
+                            case "getCustomFields":
+                            case "getDiscounts":
+                            case "getETA":
+                            case "getExpenses":
+                            case "getFile":
+                            case "getFolder":
+                            case "getHold":
+                            case "getHolds":
+                            case "getIncrease":
+                            case "getIncreases":
+                            case "getLocation":
+                            case "getMessages":
+                            case "getMilestones":
+                            case "getOverview":
+                            case "getOverviewValues":
+                            case "getPay":
+                            case "getPenalties":
+                            case "getPenalty":
+                            case "getProblem":
+                            case "getProblems":
+                            case "getProviders":
+                            case "getQualifications":
+                            case "getRatings":
+                            case "getRequest":
+                            case "getRequests":
+                            case "GetScheduleAndLocation":
+                            case "getSchedule":
+                            case "getShipments":
+                            case "getSignature":
+                            case "getSignatures":
+                            case "getStatus":
+                            case "getTag":
+                            case "getTags":
+                            case "getTask":
+                            case "getTasks":
+                            case "getTimeLogs":
+                            case "getWorkOrder":
+                            case "getWorkOrderLists":
+                            case "getWorkOrders":
+                            case "groupTask":
+                            case "incompleteWorkOrder":
+                            case "MassAcceptWorkOrder":
+                            case "massRequests":
+                            case "publish":
+                            case "removeProvider":
+                            case "removeQualification":
+                            case "reorderTask":
+                            case "replyMessage":
+                            case "request":
+                            case "revertWorkOrderToDraft":
+                            case "routeUser":
+                            case "unapproveWorkOrder":
+                            case "unassignUser":
+                            case "unpublish":
+                            case "unRouteUser":
+                            case "updateAllTimeLogs":
+                            case "updateAttachment":
+                            case "updateBonus":
+                            case "updateContact":
+                            case "updateCustomField":
+                            case "updateDiscount":
+                            case "updateETA":
+                            case "updateExpense":
+                            case "updateFolder":
+                            case "updateHold":
+                            case "updateIncrease":
+                            case "updateLocation":
+                            case "updateMessage":
+                            case "updatePay":
+                            case "updatePenalty":
+                            case "updateProblem":
+                            case "updateQualification":
+                            case "updateRatings":
+                            case "updateSchedule":
+                            case "updateShipment":
+                            case "updateTag":
+                            case "updateTask":
+                            case "updateTimeLog":
+                            case "updateWorkOrder":
+                            case "verifyTimeLog":
+                                failObject = Error.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                } finally {
+                    Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
+                }
+
+                try {
+                    if (failObject != null && failObject instanceof Error) {
+                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                    }
+                    getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                return true;
+            }
+        }
+    }
+
+    private static class Deliverator implements Runnable {
         private WorkordersWebApi workordersWebApi;
         private TransactionParams transactionParams;
-        private boolean success;
-        private byte[] data;
-
         private Object successObject;
+        private boolean success;
         private Object failObject;
 
-        public AsyncParser(WorkordersWebApi workordersWebApi, Bundle bundle) {
+        public Deliverator(WorkordersWebApi workordersWebApi, TransactionParams transactionParams,
+                           Object successObject, boolean success, Object failObject) {
             this.workordersWebApi = workordersWebApi;
-            transactionParams = bundle.getParcelable("params");
-            success = bundle.getBoolean("success");
-            data = bundle.getByteArray("data");
-
-            executeEx();
+            this.transactionParams = transactionParams;
+            this.successObject = successObject;
+            this.success = success;
+            this.failObject = failObject;
         }
 
         @Override
-        protected Object doInBackground(Object... params) {
-            //Log.v(TAG, "Start doInBackground");
-            Stopwatch watch = new Stopwatch(true);
-            try {
-                if (success) {
-                    switch (transactionParams.apiFunction) {
-                        case "getRequests":
-                            successObject = Requests.fromJson(new JsonObject(data));
-                            break;
-                        case "getWorkOrders":
-                            successObject = WorkOrders.fromJson(new JsonObject(data));
-                            break;
-                        case "getIncreases":
-                            successObject = PayIncreases.fromJson(new JsonObject(data));
-                            break;
-                        case "getStatus":
-                            successObject = com.fieldnation.v2.data.model.Status.fromJson(new JsonObject(data));
-                            break;
-                        case "getCustomField":
-                            successObject = CustomField.fromJson(new JsonObject(data));
-                            break;
-                        case "getIncrease":
-                            successObject = PayIncrease.fromJson(new JsonObject(data));
-                            break;
-                        case "acceptSwapRequest":
-                        case "cancelSwapRequest":
-                        case "declineSwapRequest":
-                            successObject = SwapResponse.fromJson(new JsonObject(data));
-                            break;
-                        case "getAttachments":
-                            successObject = AttachmentFolders.fromJson(new JsonObject(data));
-                            break;
-                        case "getOverviewValues":
-                            successObject = WorkOrderOverviewValues.fromJson(new JsonObject(data));
-                            break;
-                        case "getSignatures":
-                            successObject = Signatures.fromJson(new JsonObject(data));
-                            break;
-                        case "acknowledgeDelay":
-                        case "MassAcceptWorkOrder":
-                        case "massRequests":
-                        case "removeProvider":
-                            successObject = data;
-                            break;
-                        case "getWorkOrderLists":
-                            successObject = SavedList.fromJsonArray(new JsonArray(data));
-                            break;
-                        case "getBonus":
-                        case "getPenalty":
-                            successObject = PayModifier.fromJson(new JsonObject(data));
-                            break;
-                        case "getTasks":
-                            successObject = Tasks.fromJson(new JsonObject(data));
-                            break;
-                        case "getShipments":
-                            successObject = Shipments.fromJson(new JsonObject(data));
-                            break;
-                        case "getHold":
-                            successObject = Hold.fromJson(new JsonObject(data));
-                            break;
-                        case "getTags":
-                            successObject = Tags.fromJson(new JsonObject(data));
-                            break;
-                        case "getOverview":
-                            successObject = WorkOrderOverview.fromJson(new JsonObject(data));
-                            break;
-                        case "getAssignee":
-                            successObject = Assignee.fromJson(new JsonObject(data));
-                            break;
-                        case "getHolds":
-                            successObject = Holds.fromJson(new JsonObject(data));
-                            break;
-                        case "getTag":
-                            successObject = Tag.fromJson(new JsonObject(data));
-                            break;
-                        case "getExpenses":
-                            successObject = Expenses.fromJson(new JsonObject(data));
-                            break;
-                        case "getTask":
-                            successObject = Task.fromJson(new JsonObject(data));
-                            break;
-                        case "getBonuses":
-                        case "getDiscounts":
-                        case "getPenalties":
-                            successObject = PayModifiers.fromJson(new JsonObject(data));
-                            break;
-                        case "getFolder":
-                            successObject = AttachmentFolder.fromJson(new JsonObject(data));
-                            break;
-                        case "getMilestones":
-                            successObject = Milestones.fromJson(new JsonObject(data));
-                            break;
-                        case "getQualifications":
-                            successObject = Qualifications.fromJson(new JsonObject(data));
-                            break;
-                        case "addAlertToWorkOrderAndTask":
-                        case "addAttachment":
-                        case "addBonus":
-                        case "addContact":
-                        case "addDiscount":
-                        case "addExpense":
-                        case "addFolder":
-                        case "addHold":
-                        case "addIncrease":
-                        case "addPenalty":
-                        case "addProblem":
-                        case "addQualification":
-                        case "addShipment":
-                        case "addSignature":
-                        case "addTag":
-                        case "addTask":
-                        case "addTimeLog":
-                        case "addWorkOrder":
-                        case "approveWorkOrder":
-                        case "assignUser":
-                        case "completeWorkOrder":
-                        case "decline":
-                        case "declineRequest":
-                        case "deleteAlert":
-                        case "deleteAlerts":
-                        case "deleteAttachment":
-                        case "deleteBonus":
-                        case "deleteContact":
-                        case "deleteDiscount":
-                        case "deleteExpense":
-                        case "deleteFolder":
-                        case "deleteHold":
-                        case "deleteIncrease":
-                        case "deleteMessage":
-                        case "deletePenalty":
-                        case "deleteProblem":
-                        case "deleteRequest":
-                        case "deleteShipment":
-                        case "deleteSignature":
-                        case "deleteTag":
-                        case "deleteTask":
-                        case "deleteTimeLog":
-                        case "deleteWorkOrder":
-                        case "getWorkOrder":
-                        case "groupTask":
-                        case "incompleteWorkOrder":
-                        case "publish":
-                        case "removeQualification":
-                        case "reorderTask":
-                        case "request":
-                        case "revertWorkOrderToDraft":
-                        case "routeUser":
-                        case "unapproveWorkOrder":
-                        case "unassignUser":
-                        case "unpublish":
-                        case "unRouteUser":
-                        case "updateAllTimeLogs":
-                        case "updateAttachment":
-                        case "updateBonus":
-                        case "updateContact":
-                        case "updateCustomField":
-                        case "updateDiscount":
-                        case "updateETA":
-                        case "updateExpense":
-                        case "updateFolder":
-                        case "updateHold":
-                        case "updateIncrease":
-                        case "updateLocation":
-                        case "updateMessage":
-                        case "updatePay":
-                        case "updatePenalty":
-                        case "updateProblem":
-                        case "updateQualification":
-                        case "updateRatings":
-                        case "updateSchedule":
-                        case "updateShipment":
-                        case "updateTag":
-                        case "updateTask":
-                        case "updateTimeLog":
-                        case "updateWorkOrder":
-                        case "verifyTimeLog":
-                            successObject = WorkOrder.fromJson(new JsonObject(data));
-                            break;
-                        case "getRatings":
-                            successObject = WorkOrderRatings.fromJson(new JsonObject(data));
-                            break;
-                        case "getPay":
-                            successObject = Pay.fromJson(new JsonObject(data));
-                            break;
-                        case "getFile":
-                            successObject = Attachment.fromJson(new JsonObject(data));
-                            break;
-                        case "GetScheduleAndLocation":
-                            successObject = EtaMassAcceptWithLocation.fromJson(new JsonObject(data));
-                            break;
-                        case "getContacts":
-                            successObject = Contacts.fromJson(new JsonObject(data));
-                            break;
-                        case "getProviders":
-                            successObject = Users.fromJsonArray(new JsonArray(data));
-                            break;
-                        case "getLocation":
-                            successObject = Location.fromJson(new JsonObject(data));
-                            break;
-                        case "addMessage":
-                        case "getMessages":
-                        case "replyMessage":
-                            successObject = Messages.fromJson(new JsonObject(data));
-                            break;
-                        case "getSignature":
-                            successObject = Signature.fromJson(new JsonObject(data));
-                            break;
-                        case "getProblem":
-                        case "getProblems":
-                            successObject = Problems.fromJson(new JsonObject(data));
-                            break;
-                        case "getETA":
-                            successObject = ETA.fromJson(new JsonObject(data));
-                            break;
-                        case "getCustomFields":
-                            successObject = CustomFields.fromJson(new JsonObject(data));
-                            break;
-                        case "getSchedule":
-                            successObject = Schedule.fromJson(new JsonObject(data));
-                            break;
-                        case "getTimeLogs":
-                            successObject = TimeLogs.fromJson(new JsonObject(data));
-                            break;
-                        case "getRequest":
-                            successObject = Request.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
-                    }
-                } else {
-                    switch (transactionParams.apiFunction) {
-                        case "acceptSwapRequest":
-                        case "acknowledgeDelay":
-                        case "addAlertToWorkOrderAndTask":
-                        case "addAttachment":
-                        case "addBonus":
-                        case "addContact":
-                        case "addDiscount":
-                        case "addExpense":
-                        case "addFolder":
-                        case "addHold":
-                        case "addIncrease":
-                        case "addMessage":
-                        case "addPenalty":
-                        case "addProblem":
-                        case "addQualification":
-                        case "addShipment":
-                        case "addSignature":
-                        case "addTag":
-                        case "addTask":
-                        case "addTimeLog":
-                        case "addWorkOrder":
-                        case "approveWorkOrder":
-                        case "assignUser":
-                        case "cancelSwapRequest":
-                        case "completeWorkOrder":
-                        case "decline":
-                        case "declineRequest":
-                        case "declineSwapRequest":
-                        case "deleteAlert":
-                        case "deleteAlerts":
-                        case "deleteAttachment":
-                        case "deleteBonus":
-                        case "deleteContact":
-                        case "deleteDiscount":
-                        case "deleteExpense":
-                        case "deleteFolder":
-                        case "deleteHold":
-                        case "deleteIncrease":
-                        case "deleteMessage":
-                        case "deletePenalty":
-                        case "deleteProblem":
-                        case "deleteRequest":
-                        case "deleteShipment":
-                        case "deleteSignature":
-                        case "deleteTag":
-                        case "deleteTask":
-                        case "deleteTimeLog":
-                        case "deleteWorkOrder":
-                        case "getAssignee":
-                        case "getAttachments":
-                        case "getBonus":
-                        case "getBonuses":
-                        case "getContacts":
-                        case "getCustomField":
-                        case "getCustomFields":
-                        case "getDiscounts":
-                        case "getETA":
-                        case "getExpenses":
-                        case "getFile":
-                        case "getFolder":
-                        case "getHold":
-                        case "getHolds":
-                        case "getIncrease":
-                        case "getIncreases":
-                        case "getLocation":
-                        case "getMessages":
-                        case "getMilestones":
-                        case "getOverview":
-                        case "getOverviewValues":
-                        case "getPay":
-                        case "getPenalties":
-                        case "getPenalty":
-                        case "getProblem":
-                        case "getProblems":
-                        case "getProviders":
-                        case "getQualifications":
-                        case "getRatings":
-                        case "getRequest":
-                        case "getRequests":
-                        case "GetScheduleAndLocation":
-                        case "getSchedule":
-                        case "getShipments":
-                        case "getSignature":
-                        case "getSignatures":
-                        case "getStatus":
-                        case "getTag":
-                        case "getTags":
-                        case "getTask":
-                        case "getTasks":
-                        case "getTimeLogs":
-                        case "getWorkOrder":
-                        case "getWorkOrderLists":
-                        case "getWorkOrders":
-                        case "groupTask":
-                        case "incompleteWorkOrder":
-                        case "MassAcceptWorkOrder":
-                        case "massRequests":
-                        case "publish":
-                        case "removeProvider":
-                        case "removeQualification":
-                        case "reorderTask":
-                        case "replyMessage":
-                        case "request":
-                        case "revertWorkOrderToDraft":
-                        case "routeUser":
-                        case "unapproveWorkOrder":
-                        case "unassignUser":
-                        case "unpublish":
-                        case "unRouteUser":
-                        case "updateAllTimeLogs":
-                        case "updateAttachment":
-                        case "updateBonus":
-                        case "updateContact":
-                        case "updateCustomField":
-                        case "updateDiscount":
-                        case "updateETA":
-                        case "updateExpense":
-                        case "updateFolder":
-                        case "updateHold":
-                        case "updateIncrease":
-                        case "updateLocation":
-                        case "updateMessage":
-                        case "updatePay":
-                        case "updatePenalty":
-                        case "updateProblem":
-                        case "updateQualification":
-                        case "updateRatings":
-                        case "updateSchedule":
-                        case "updateShipment":
-                        case "updateTag":
-                        case "updateTask":
-                        case "updateTimeLog":
-                        case "updateWorkOrder":
-                        case "verifyTimeLog":
-                            failObject = Error.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
-                    }
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            } finally {
-                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            try {
-                if (failObject != null && failObject instanceof Error) {
-                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                }
-                workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+        public void run() {
+            workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
         }
     }
 }

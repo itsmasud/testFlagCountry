@@ -223,11 +223,11 @@ public class PigeonRoost {
         @Override
         public void run() {
             pigeon.onMessage(address, message);
+            pigeon = null;
+            message = null;
+            address = null;
             synchronized (POOL) {
                 POOL.add(this);
-                pigeon = null;
-                message = null;
-                address = null;
             }
         }
 
@@ -265,11 +265,12 @@ public class PigeonRoost {
                 pigeonList.remove(0).onMessage(addressList.remove(0), objectList.remove(0));
             }
 
+            pigeonList = null;
+            objectList = null;
+            addressList = null;
+
             synchronized (POOL) {
                 POOL.add(this);
-                pigeonList = null;
-                objectList = null;
-                addressList = null;
             }
         }
 
