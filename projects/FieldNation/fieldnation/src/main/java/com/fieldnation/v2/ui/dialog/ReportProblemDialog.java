@@ -42,6 +42,7 @@ public class ReportProblemDialog extends SimpleDialog {
     // State keys
     private static final String PARAM_WORKORDER_ID = "workOrderId";
     private static final String PARAM_PROBLEMS = "problems";
+    private static final String PARAM_APPROVAL_DAYS = "approvalDays";
 
     private static final String STATE_WORKORDER_ID = "workOrderId";
     private static final String STATE_PROBLEMS = "problems";
@@ -62,6 +63,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private EditText _timeframeEditText;
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
+    private TextView _reviewPeriodTextView;
     private TextView _noteTextView;
     private Button _cancelButton;
     private Button _okButton;
@@ -71,6 +73,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private ProblemType[] _childTypes = null;
     private Problems _problems;
     private int _workOrderId;
+    private int _approvalDays = -1;
 
     // Saved Data
     private int _primaryPosition = -1;
@@ -96,6 +99,7 @@ public class ReportProblemDialog extends SimpleDialog {
         _timeframeEditText = (EditText) v.findViewById(R.id.timeframe_edittext);
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
+        _reviewPeriodTextView = (TextView) v.findViewById(R.id.reviewPeriod_textview);
         _noteTextView = (TextView) v.findViewById(R.id.note_textview);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -120,6 +124,10 @@ public class ReportProblemDialog extends SimpleDialog {
         setLoading(true);
         _workOrderId = payload.getInt(PARAM_WORKORDER_ID);
         _problems = payload.getParcelable("problems");
+        _approvalDays = payload.getInt(PARAM_APPROVAL_DAYS);
+
+        Log.e(TAG, "_approvalDays: " + _approvalDays);
+
 
         populateUi();
         super.show(payload, animate);
@@ -265,6 +273,9 @@ public class ReportProblemDialog extends SimpleDialog {
 
         setLoading(false);
 
+        _explanationEditText.setVisibility(View.VISIBLE);
+        _reviewPeriodTextView.setVisibility(View.GONE);
+
         { // put in a block to limit the scope of pList
             ProblemType[] types = _problems.getTypes();
 
@@ -329,6 +340,8 @@ public class ReportProblemDialog extends SimpleDialog {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _primaryPosition = position;
             _selectedProblem = (ProblemType) getPrimaryAdapter().getItem(position);
+            _explanationEditText.setEnabled(true);
+            _explanationEditText.setLines(1);
             _textEditText_watcherListener.onTextChanged(
                     _explanationEditText.getText().toString(),
                     0, _explanationEditText.getText().toString().length(),
@@ -347,10 +360,21 @@ public class ReportProblemDialog extends SimpleDialog {
             _secondaryPosition = position;
             misc.showKeyboard(_explanationEditText);
             _selectedProblem = (ProblemType) getSecondaryAdapter().getItem(position);
-            _textEditText_watcherListener.onTextChanged(
-                    _explanationEditText.getText().toString(),
-                    0, _explanationEditText.getText().toString().length(),
-                    _explanationEditText.getText().toString().length());
+
+//            if (_selectedProblem.getId() == 9 && /* TODO if review period is over*/) {
+//                _explanationEditText.setVisibility(View.GONE);
+//                _reviewPeriodTextView.setVisibility(View.VISIBLE);
+//                _reviewPeriodTextView.setText(getView().getResources().getString(R.string.review_period_not_past, _approvalDays));
+//                return;
+//            } else {
+                _explanationEditText.setVisibility(View.VISIBLE);
+                _reviewPeriodTextView.setVisibility(View.GONE);
+                _textEditText_watcherListener.onTextChanged(
+                        _explanationEditText.getText().toString(),
+                        0, _explanationEditText.getText().toString().length(),
+                        _explanationEditText.getText().toString().length());
+
+//            }
             populateUi();
 
         }
@@ -477,10 +501,12 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, Problems problems) {
+    public static void show(Context context, String uid, int workOrderId, Problems problems, int approvalDays) {
         Bundle params = new Bundle();
         params.putInt(PARAM_WORKORDER_ID, workOrderId);
         params.putParcelable(PARAM_PROBLEMS, problems);
+        params.putInt(PARAM_APPROVAL_DAYS, approvalDays);
+        Log.e(TAG, "approvalDays: " + approvalDays);
         Controller.show(context, uid, ReportProblemDialog.class, params);
     }
 

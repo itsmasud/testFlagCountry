@@ -1067,6 +1067,9 @@
         <item>Help/Support</item>
     </string-array>
 
+    <string name="review_period_not_past">Work order review period (%1$d days) not past. After past review period you can file a report.</string>
+
+
     <string-array name="search_status">
         <item>Assigned</item>
         <item>Available</item>
