@@ -28,7 +28,6 @@ public class WebTransactionSystem implements WebTransactionConstants {
     private OAuth _auth;
     private ThreadManager _manager;
     private Handler _shutdownChecker;
-    private long _lastRequestTime = 0;
     private static WebTransactionSystem _instance = null;
     private static Handler _mainHandler = null;
 
@@ -104,11 +103,8 @@ public class WebTransactionSystem implements WebTransactionConstants {
         public void run() {
             if (isStillWorking()) {
                 startActivityMonitor();
-            } else if (System.currentTimeMillis() - _lastRequestTime > IDLE_TIMEOUT) {
-                // shutdown
-                shutDown();
             } else {
-                startActivityMonitor();
+                shutDown();
             }
         }
     };
