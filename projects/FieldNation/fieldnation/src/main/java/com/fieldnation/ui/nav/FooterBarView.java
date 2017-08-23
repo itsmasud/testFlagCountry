@@ -29,9 +29,6 @@ public class FooterBarView extends RelativeLayout {
     private IconFontTextView _unreadTextView;
     private Button _testButton;
 
-    // Service
-    private ProfileClient _profileClient;
-
     // Data
     private Profile _profile = null;
 
@@ -75,15 +72,13 @@ public class FooterBarView extends RelativeLayout {
         if (!BuildConfig.DEBUG)
             _testButton.setVisibility(GONE);
 
-        _profileClient = new ProfileClient(_profile_listener);
-        _profileClient.connect(App.get());
-
+        _profileClient.subGet(false);
         populateUi();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_profileClient != null) _profileClient.disconnect(App.get());
+        _profileClient.unsubGet(false);
 
         super.onDetachedFromWindow();
     }
@@ -113,12 +108,7 @@ public class FooterBarView extends RelativeLayout {
         }
     };
 
-    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet(false);
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             if (profile == null || failed)

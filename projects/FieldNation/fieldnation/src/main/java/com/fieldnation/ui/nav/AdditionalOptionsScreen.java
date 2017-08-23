@@ -41,7 +41,7 @@ import java.lang.ref.WeakReference;
  * Created by Michael on 9/1/2016.
  */
 public class AdditionalOptionsScreen extends RelativeLayout {
-    private static final String TAG = "AdditionalOptionsView";
+    private static final String TAG = "AdditionalOptionsScreen";
 
     // Ui
     private ProfilePicView _profilePicView;
@@ -69,10 +69,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     private Listener _listener = null;
     private boolean _activated = false;
-
-    // Services
-    private ProfileClient _profileClient;
-    private ProfilePhotoClient _profilePhotoClient;
 
     // Animations
     private Animation _ccw;
@@ -162,11 +158,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _ccw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_ccw);
         _cw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_cw);
 
-        _profilePhotoClient = new ProfilePhotoClient(_profilePhotoClient_listener);
-        _profilePhotoClient.connect(App.get());
-
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
+        _profilePhotoClient.sub();
+        _profileClient.subGet(false);
+        ProfileClient.get(App.get(), false);
 
         AdditionalOptionsTracker.onShow(App.get());
     }
@@ -177,8 +171,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_profilePhotoClient != null) _profilePhotoClient.disconnect(App.get());
-        if (_profileClient != null) _profileClient.disconnect(App.get());
+        _profilePhotoClient.unsub();
+        _profileClient.unsubGet(false);
+
         super.onDetachedFromWindow();
     }
 
@@ -207,7 +202,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     private void addProfilePhoto() {
-        if (_profile == null || _profilePhotoClient == null || !_profilePhotoClient.isConnected()) {
+        if (_profile == null || _profilePhotoClient == null) {
             _profilePicView.setProfilePic(R.drawable.missing_circle);
             return;
         }
@@ -233,13 +228,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet(false);
-            ProfileClient.get(App.get(), false);
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             if (profile != null) {
@@ -250,12 +239,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final ProfilePhotoClient.Listener _profilePhotoClient_listener = new ProfilePhotoClient.Listener() {
-        @Override
-        public ProfilePhotoClient getClient() {
-            return _profilePhotoClient;
-        }
-
+    private final ProfilePhotoClient _profilePhotoClient = new ProfilePhotoClient() {
         @Override
         public boolean getProfileImage(Uri uri) {
             if (_profileImageUri == null

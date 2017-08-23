@@ -46,8 +46,6 @@ public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
     private final Object LOCK = new Object();
 
-    private ProfileClient _profileClient;
-
     private Handler _activityHandler;
 
     private boolean _haveProfile = false;
@@ -231,7 +229,10 @@ public class WebCrawlerService extends Service {
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         _workOrdersApi.unsub();
-        if (_profileClient != null) _profileClient.disconnect(this);
+        _profileClient.unsubListMessages(true);
+        _profileClient.unsubListNotifications(true);
+        _profileClient.unsubGet(true);
+
         _bundlesApi.unsub();
 
         _isRunning = false;
@@ -277,8 +278,17 @@ public class WebCrawlerService extends Service {
 
         startActivityMonitor();
 
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(this);
+        Log.v(TAG, "_profileClient_listener.onConnected");
+        _profileClient.subListMessages(true);
+        _profileClient.subListNotifications(true);
+        _profileClient.subGet(true);
+
+        incrementPendingRequestCounter(3);
+        incRequestCounter(3);
+        _haveProfile = false;
+        ProfileClient.get(WebCrawlerService.this, 0, true, false);
+        ProfileClient.listMessages(WebCrawlerService.this, 0, true, false);
+        ProfileClient.listNotifications(WebCrawlerService.this, 0, true, false);
 
         _bundlesApi.sub();
 
@@ -371,22 +381,7 @@ public class WebCrawlerService extends Service {
         }
     };
 
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_profileClient_listener.onConnected");
-            _profileClient.subListMessages(true);
-            _profileClient.subListNotifications(true);
-            _profileClient.subGet(true);
-
-            incrementPendingRequestCounter(3);
-            incRequestCounter(3);
-            _haveProfile = false;
-            ProfileClient.get(WebCrawlerService.this, 0, true, false);
-            ProfileClient.listMessages(WebCrawlerService.this, 0, true, false);
-            ProfileClient.listNotifications(WebCrawlerService.this, 0, true, false);
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "ProfileClient.onGet " + _haveProfile);
