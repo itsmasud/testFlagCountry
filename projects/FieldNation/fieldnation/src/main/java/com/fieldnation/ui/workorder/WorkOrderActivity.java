@@ -264,6 +264,18 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        for (int i = 0; i < _fragments.length; i++) {
+            if (_fragments[i] instanceof WorkFragment) {
+                if (((WorkFragment) _fragments[i]).onBackPressed())
+                    return;
+            }
+        }
+
+        super.onBackPressed();
+    }
+
     private void populateUi() {
         Log.v(TAG, "populateUi");
         setTitle("WO:");

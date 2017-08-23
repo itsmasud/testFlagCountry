@@ -140,36 +140,10 @@
         </LinearLayout>
     </com.fieldnation.ui.OverScrollView>
 
-    <View
-        android:id="@+id/bottomSheet_background"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/fn_shadow"
-        android:visibility="gone" />
-
     <com.fieldnation.ui.workorder.detail.WodBottomSheetView
         android:id="@+id/bottomsheet_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
-
-    <Button
-        android:id="@+id/wf_fab_button"
-        style="@style/Material.Button.Circle"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:padding="0dp"
-        android:paddingBottom="0dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:paddingTop="0dp"
-        android:text="+"
-        android:textSize="32sp"
-        android:visibility="gone" />
+        android:layout_height="match_parent" />
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"

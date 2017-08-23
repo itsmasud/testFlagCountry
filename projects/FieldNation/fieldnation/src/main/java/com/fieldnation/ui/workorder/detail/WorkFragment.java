@@ -183,18 +183,8 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
-
     // Bottom Sheet
-    private Button _floatingActionButton;
     private WodBottomSheetView _bottomsheetView;
-    private View _bottomSheetBackground;
-
-
-    // Animations
-    private Animation _fadeIn;
-    private Animation _fadeOut;
-    private Animation _fabSlideOut;
-    private Animation _fabSlideIn;
 
     // Data
     private DocumentClient _docClient;
@@ -227,9 +217,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _testButton = view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
-
-        _floatingActionButton = view.findViewById(R.id.wf_fab_button);
-        _floatingActionButton.setOnClickListener(_fab_onClick);
 
         _topBar = view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -306,49 +293,9 @@ public class WorkFragment extends WorkorderFragment {
         _attachmentSummaryView = view.findViewById(R.id.attachment_summary_view);
         _renderers.add(_attachmentSummaryView);
 
-        // Bottom Sheet
-        _bottomSheetBackground = view.findViewById(R.id.bottomSheet_background);
-        _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
-
         _bottomsheetView = view.findViewById(R.id.bottomsheet_view);
         _bottomsheetView.setListener(_bottomsheetView_listener);
         _renderers.add(_bottomsheetView);
-
-        _fadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
-        _fadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fade_out);
-
-        _fabSlideIn = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_in_right);
-        _fabSlideOut = AnimationUtils.loadAnimation(view.getContext(), R.anim.fg_slide_out_right);
-
-
-        _fadeIn.setAnimationListener(new DefaultAnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                _bottomSheetBackground.setVisibility(View.VISIBLE);
-            }
-        });
-
-        _fadeOut.setAnimationListener(new DefaultAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                _bottomSheetBackground.setVisibility(View.GONE);
-            }
-        });
-
-        _fabSlideIn.setAnimationListener(new DefaultAnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                _floatingActionButton.setVisibility(View.VISIBLE);
-            }
-        });
-
-        _fabSlideOut.setAnimationListener(new DefaultAnimationListener() {
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                _floatingActionButton.setVisibility(View.GONE);
-            }
-        });
-
 
         if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(View.GONE);
@@ -517,6 +464,11 @@ public class WorkFragment extends WorkorderFragment {
         super.onStop();
     }
 
+    public boolean onBackPressed() {
+        return _bottomsheetView.onBackPressed();
+    }
+
+
     @Override
     public void update() {
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
@@ -566,10 +518,6 @@ public class WorkFragment extends WorkorderFragment {
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
-
-        if (shouldFabVisible())
-            _floatingActionButton.setVisibility(View.VISIBLE);
-        else _floatingActionButton.setVisibility(View.GONE);
     }
 
     private void requestWorkorder() {
@@ -590,37 +538,6 @@ public class WorkFragment extends WorkorderFragment {
                 _refreshView.refreshComplete();
             }
         }
-    }
-
-    private boolean shouldFabVisible() {
-        if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
-            return true;
-        else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD))
-            return true;
-        else if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD))
-            return true;
-        else if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD))
-            return true;
-        else if (_workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD))
-            return true;
-        else if (_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD))
-            return true;
-        else if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
-            return true;
-        else if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD))
-            return true;
-        else {
-            final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
-            for (AttachmentFolder attachmentFolder : folders) {
-                if (attachmentFolder.getResults().length > 0
-                        && (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
-                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT))) {
-                    return true;
-                }
-                return false;
-            }
-        }
-        return false;
     }
 
     /*-*********************************************-*/
@@ -1657,48 +1574,16 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            misc.hideKeyboard(v);
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideOut);
-
-            _bottomSheetBackground.setVisibility(View.VISIBLE);
-            _bottomSheetBackground.clearAnimation();
-            _bottomSheetBackground.startAnimation(_fadeIn);
-
-            _bottomsheetView.animateIn();
-        }
-    };
-
-
-    private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            _bottomSheetBackground.clearAnimation();
-            _bottomSheetBackground.startAnimation(_fadeOut);
-            _bottomsheetView.animateOut();
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-        }
-    };
 
 
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
         }
 
         @Override
         public void addRequestNewPay() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
             if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
                 PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
@@ -1709,9 +1594,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addTimeLog() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
             if (_workOrder.getPay() != null && _workOrder.getPay().getType() != null)
                 WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
@@ -1721,45 +1603,30 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addExpense() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
             ExpenseDialog.show(App.get(), DIALOG_EXPENSE, true);
         }
 
         @Override
         public void addDiscount() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
             DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getString(R.string.dialog_add_discount_title));
         }
 
         @Override
         public void addSignature() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             SignOffActivity.startSignOff(getActivity(), _workOrder.getId());
             setLoading(true);
         }
 
         @Override
         public void addShipment() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
                     _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
         public void addAttachment() {
-            _floatingActionButton.clearAnimation();
-            _floatingActionButton.startAnimation(_fabSlideIn);
-            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
             AttachmentFolderDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
         }
     };
