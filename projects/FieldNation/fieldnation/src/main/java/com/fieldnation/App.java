@@ -751,7 +751,7 @@ public class App extends Application {
         return tempFolder.getAbsolutePath();
     }
 
-    private boolean _haveWifi = false;
+    private boolean _haveWifi = true;
     private long _haveWifiLast = 0;
     private static final long HAVE_WIFI_TIMEOUT = 1000;
 
