@@ -80,7 +80,6 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         _list.setAdapter(_adapter);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onOk);
-        PhotoUploadDialog.addOnCancelListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onCancel);
     }
 
     @Override
@@ -117,7 +116,6 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     public void onStop() {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onOk);
-        PhotoUploadDialog.removeOnCancelListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onCancel);
         super.onStop();
     }
 
@@ -198,14 +196,8 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     private final PhotoUploadDialog.OnOkListener _photoUpload_onOk = new PhotoUploadDialog.OnOkListener() {
         @Override
         public void onOk() {
-            dismiss(true);
+            dismiss(false);
             AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
-        }
-    };
-
-    private final PhotoUploadDialog.OnCancelListener _photoUpload_onCancel = new PhotoUploadDialog.OnCancelListener() {
-        @Override
-        public void onCancel() {
         }
     };
 }
