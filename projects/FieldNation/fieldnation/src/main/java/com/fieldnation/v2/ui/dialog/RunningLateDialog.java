@@ -42,6 +42,11 @@ import java.util.Calendar;
 public class RunningLateDialog extends SimpleDialog {
     private static final String TAG = "RunningLateDialog";
 
+    // State
+    private static final String STATE_BODY = "RunningLateDialog:STATE_BODY";
+    private static final String STATE_TIME_FRAME = "RunningLateDialog:TIME_FRAME";
+    private static final String STATE_TIME_FRAME_POSITION = "RunningLateDialog:TIME_FRAME_POSITION";
+
     private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "30", "60", "Other"};
 
     // Ui
@@ -78,6 +83,34 @@ public class RunningLateDialog extends SimpleDialog {
         _sendButton = (Button) v.findViewById(R.id.send_button);
 
         return v;
+    }
+
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_bodyTextView != null && !misc.isEmptyOrNull(_bodyTextView.getText().toString())) {
+            outState.putString(STATE_BODY, _bodyTextView.getText().toString());
+        }
+        if (_timeframeEditText != null && !misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
+            outState.putString(STATE_TIME_FRAME, _timeframeEditText.getText().toString());
+        }
+
+        outState.putInt(STATE_TIME_FRAME_POSITION, _timeframePosition);
+    }
+
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+        if (savedState.containsKey(STATE_BODY)) {
+            _bodyTextView.setText(savedState.getString(STATE_BODY));
+        }
+        if (savedState.containsKey(STATE_TIME_FRAME)) {
+            _timeframeEditText.setText(savedState.getString(STATE_TIME_FRAME));
+        }
+        if (savedState.containsKey(STATE_TIME_FRAME_POSITION)) {
+            _timeframePosition = savedState.getInt(STATE_TIME_FRAME_POSITION);
+            _timeframeSpinner.setSelection(_timeframePosition);
+        }
+
     }
 
     @Override
