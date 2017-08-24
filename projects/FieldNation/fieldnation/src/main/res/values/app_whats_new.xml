@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="added_new_feature">
-&lt;b&gt;What\’s new with Field Nation&lt;/b&gt;&lt;br/&gt;
+&lt;b&gt;What\'s new with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
 We\'ve started the redesign process on the work order details view by making it easier to add items with a floating action button and by moving attachments to the bottom of the view. We have also addressed a lot of the reported bugs with the Android O release on top of fixing other reported bugs.
 &lt;br/&gt;
