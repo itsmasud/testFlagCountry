@@ -56,7 +56,6 @@ import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -79,7 +78,6 @@ import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
-import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
@@ -147,7 +145,6 @@ public class WorkFragment extends WorkorderFragment {
 
     // saved state keys
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
-    private static final String STATE_CURRENT_FOLDER = "WorkFragment:STATE_CURRENT_FOLDER";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
@@ -189,7 +186,6 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private int _workOrderId;
     private SimpleGps _simpleGps;
-    private AttachmentFolder _currentFolder;
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -305,9 +301,6 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_SCANNED_IMAGE_PATH)) {
                 _scannedImagePath = savedInstanceState.getString(STATE_SCANNED_IMAGE_PATH);
             }
-            if (savedInstanceState.containsKey(STATE_CURRENT_FOLDER)) {
-                _currentFolder = savedInstanceState.getParcelable(STATE_CURRENT_FOLDER);
-            }
         }
 
         view.post(new Runnable() {
@@ -329,9 +322,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-
-        if (_currentFolder != null)
-            outState.putParcelable(STATE_CURRENT_FOLDER, _currentFolder);
 
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
@@ -403,7 +393,6 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
-        AttachedFoldersDialog.addOnFolderSelectedListener(DIALOG_ATTACHED_FOLDERS, _attachedFolders_onSelected);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
 
@@ -459,7 +448,6 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
-        AttachedFoldersDialog.removeOnFolderSelectedListener(DIALOG_ATTACHED_FOLDERS, _attachedFolders_onSelected);
 
         _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
@@ -1270,13 +1258,7 @@ public class WorkFragment extends WorkorderFragment {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    if (_currentTask != null) {
-                        PhotoUploadDialog.show(App.get(), "uid", _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                        _currentTask = null;
-                    } else if (_currentFolder != null) {
-                        PhotoUploadDialog.show(App.get(), "uid", _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                        _currentFolder = null;
-                    }
+                    PhotoUploadDialog.show(App.get(), "uid", _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
                 }
@@ -1286,18 +1268,13 @@ public class WorkFragment extends WorkorderFragment {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 try {
                     Attachment attachment = new Attachment();
-                    if (_currentTask != null) {
-                        attachment.folderId(_currentTask.getAttachments().getId());
-                    } else if (_currentFolder != null) {
-                        attachment.folderId(_currentFolder.getId());
-                    }
+                    attachment.folderId(_currentTask.getAttachments().getId());
                     AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
             }
             _currentTask = null;
-            _currentFolder = null;
         }
     };
 
@@ -1640,15 +1617,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void addAttachment() {
             AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _workOrderId, _workOrder.getAttachments());
-        }
-    };
-
-    private final AttachedFoldersDialog.OnFolderSelectedListener _attachedFolders_onSelected = new AttachedFoldersDialog.OnFolderSelectedListener() {
-        @Override
-        public void onFolderSelected(AttachmentFolder folder) {
-            _currentFolder = folder;
-            AttachedFilesDialog.show(App.get(), "", _workOrderId, _workOrder.getAttachments());
-            startAppPickerDialog();
         }
     };
 

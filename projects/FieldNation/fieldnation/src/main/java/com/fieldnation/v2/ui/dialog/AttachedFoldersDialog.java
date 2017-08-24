@@ -1,7 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -9,15 +13,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.ui.OverScrollRecyclerView;
+import com.fieldnation.v2.data.client.AttachmentHelper;
+import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.ui.AttachedFoldersAdapter;
+import com.fieldnation.v2.ui.GetFileIntent;
+
+import java.util.List;
 
 /**
  * Created by mc on 8/24/17.
@@ -26,13 +36,18 @@ import com.fieldnation.v2.ui.AttachedFoldersAdapter;
 public class AttachedFoldersDialog extends FullScreenDialog {
     private static final String TAG = "SlotDialog";
 
+    // Dialog Tags
+    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
+    private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
+
     // Ui
     private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
 
     // Data
     private AttachmentFolders _folders = null;
-    private int _worKOrderId;
+    private int _workOrderId;
+    private AttachmentFolder _currentFolder;
 
     /*-*********----------**********-*/
     /*-         Life Cycle          -*/
@@ -63,6 +78,9 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         super.onStart();
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onOk);
+        PhotoUploadDialog.addOnCancelListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onCancel);
     }
 
     @Override
@@ -76,18 +94,59 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         Log.v(TAG, "show");
         super.show(params, animate);
         _folders = params.getParcelable("folders");
-        _worKOrderId = params.getInt("workOrderId");
+        _workOrderId = params.getInt("workOrderId");
 
         _adapter.setAttachments(_folders);
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState.containsKey("currentFolder"))
+            _currentFolder = savedState.getParcelable("currentFolder");
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_currentFolder != null)
+            outState.putParcelable("currentFolder", _currentFolder);
+        super.onSaveDialogState(outState);
+    }
+
+    @Override
+    public void onStop() {
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onOk);
+        PhotoUploadDialog.removeOnCancelListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onCancel);
+        super.onStop();
     }
 
     private final AttachedFoldersAdapter _adapter = new AttachedFoldersAdapter() {
         @Override
         public void onItemClick(AttachmentFolder attachmentFolder) {
-            _onFolderSelectedDispatcher.dispatch(getUid(), attachmentFolder);
-            dismiss(true);
+            _currentFolder = attachmentFolder;
+            startAppPickerDialog();
         }
     };
+
+    private void startAppPickerDialog() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
+
+        if (getContext().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
+            GetFileDialog.show(getContext(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
+        } else {
+            GetFileDialog.show(getContext(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
+        }
+    }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
@@ -104,31 +163,49 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         Controller.show(context, uid, AttachedFoldersDialog.class, params);
     }
 
-    /*-*********************************-*/
-    /*-         FolderSelected          -*/
-    /*-*********************************-*/
-    public interface OnFolderSelectedListener {
-        void onFolderSelected(AttachmentFolder folder);
-    }
-
-    private static KeyedDispatcher<OnFolderSelectedListener> _onFolderSelectedDispatcher = new KeyedDispatcher<OnFolderSelectedListener>() {
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onDispatch(OnFolderSelectedListener listener, Object... parameters) {
-            listener.onFolderSelected((AttachmentFolder) parameters[0]);
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
+            if (fileResult.size() == 0)
+                return;
+
+            if (fileResult.size() == 1) {
+                GetFileDialog.UriIntent fui = fileResult.get(0);
+                if (fui.uri != null) {
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                } else {
+                    // TODO show a toast?
+                }
+                return;
+            }
+
+            for (GetFileDialog.UriIntent fui : fileResult) {
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_currentFolder.getId());
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+            _currentFolder = null;
+            dismiss(true);
+            AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
         }
     };
 
-    public static void addOnFolderSelectedListener(String uid, OnFolderSelectedListener onFolderSelectedListener) {
-        Log.v(TAG, "addOnFolderSelectedListener");
-        _onFolderSelectedDispatcher.add(uid, onFolderSelectedListener);
-    }
+    private final PhotoUploadDialog.OnOkListener _photoUpload_onOk = new PhotoUploadDialog.OnOkListener() {
+        @Override
+        public void onOk() {
+            dismiss(true);
+            AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
+        }
+    };
 
-    public static void removeOnFolderSelectedListener(String uid, OnFolderSelectedListener onFolderSelectedListener) {
-        Log.v(TAG, "removeOnFolderSelectedListener");
-        _onFolderSelectedDispatcher.remove(uid, onFolderSelectedListener);
-    }
-
-    public static void removeAllOnFolderSelectedListener(String uid) {
-        _onFolderSelectedDispatcher.removeAll(uid);
-    }
+    private final PhotoUploadDialog.OnCancelListener _photoUpload_onCancel = new PhotoUploadDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
+        }
+    };
 }
