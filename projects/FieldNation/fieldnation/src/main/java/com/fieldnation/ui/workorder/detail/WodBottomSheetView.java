@@ -156,7 +156,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             }
         });
 
-
         _sheet.clearAnimation();
         _sheet.startAnimation(_bsSlideIn);
     }
@@ -244,8 +243,9 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
         for (AttachmentFolder attachmentFolder : folders) {
             if (attachmentFolder.getResults().length > 0
-                    && (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
-                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT))) {
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
                 _addAttachmentButton.setVisibility(VISIBLE);
                 break;
             }
@@ -276,8 +276,9 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
             for (AttachmentFolder attachmentFolder : folders) {
                 if (attachmentFolder.getResults().length > 0
-                        && (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
-                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT))) {
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
                     return true;
                 }
                 return false;

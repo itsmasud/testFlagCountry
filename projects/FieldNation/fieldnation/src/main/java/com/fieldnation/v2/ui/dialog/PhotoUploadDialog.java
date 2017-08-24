@@ -236,6 +236,7 @@ public class PhotoUploadDialog extends SimpleDialog {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_okButton_onClick");
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
                 ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
@@ -250,7 +251,6 @@ public class PhotoUploadDialog extends SimpleDialog {
             if (!misc.isEmptyOrNull(_extension) && !_newFileName.endsWith(_extension)) {
                 _newFileName += _extension;
             }
-            dismiss(true);
 
             if (_task != null) {
                 try {
@@ -274,6 +274,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     Log.v(TAG, e);
                 }
             }
+            dismiss(true);
         }
     };
 
