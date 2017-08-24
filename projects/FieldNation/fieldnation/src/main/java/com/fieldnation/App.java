@@ -757,12 +757,15 @@ public class App extends Application {
 
     public boolean haveWifi() {
         if (_haveWifiLast < System.currentTimeMillis()) {
-            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            _haveWifi = wifi.isConnected();
-            _haveWifiLast = System.currentTimeMillis() + HAVE_WIFI_TIMEOUT;
+            try {
+                ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                _haveWifi = wifi.isConnected();
+                _haveWifiLast = System.currentTimeMillis() + HAVE_WIFI_TIMEOUT;
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
-
         return _haveWifi;
     }
 
