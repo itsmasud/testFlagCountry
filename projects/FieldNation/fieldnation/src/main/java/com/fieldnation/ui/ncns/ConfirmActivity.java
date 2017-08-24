@@ -150,6 +150,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
             if (workOrders == null) {
                 return;
             }
+            if (_doneButton == null)
+                return;
 
             _doneButton.post(new Runnable() {
                 @Override
