@@ -21,8 +21,6 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +36,6 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -59,7 +56,6 @@ import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -70,23 +66,16 @@ import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
-import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
 import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.ProblemType;
-import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
-import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Signatures;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
@@ -1573,7 +1562,6 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
         }
     };
-
 
 
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
