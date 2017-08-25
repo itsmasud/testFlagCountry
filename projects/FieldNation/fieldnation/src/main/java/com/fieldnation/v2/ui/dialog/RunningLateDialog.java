@@ -108,7 +108,8 @@ public class RunningLateDialog extends SimpleDialog {
         }
         if (savedState.containsKey(STATE_TIME_FRAME_POSITION)) {
             _timeframePosition = savedState.getInt(STATE_TIME_FRAME_POSITION);
-            _timeframeSpinner.setSelection(_timeframePosition);
+            if (_timeframePosition != -1)
+                _timeframeSpinner.setSelection(_timeframePosition);
         }
 
     }
