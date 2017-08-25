@@ -11,7 +11,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
+import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
@@ -93,7 +93,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AttachmentFolderDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
+            AttachedFilesDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
         }
     };
 

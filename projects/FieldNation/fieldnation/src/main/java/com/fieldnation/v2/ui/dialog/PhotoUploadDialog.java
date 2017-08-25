@@ -27,6 +27,7 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
@@ -214,6 +215,12 @@ public class PhotoUploadDialog extends SimpleDialog {
         _fileNameEditText.setText(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
     }
 
+    @Override
+    public void cancel() {
+        _onCancelDispatcher.dispatch(getUid());
+        super.cancel();
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -236,6 +243,7 @@ public class PhotoUploadDialog extends SimpleDialog {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_okButton_onClick");
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
                 ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
@@ -250,7 +258,6 @@ public class PhotoUploadDialog extends SimpleDialog {
             if (!misc.isEmptyOrNull(_extension) && !_newFileName.endsWith(_extension)) {
                 _newFileName += _extension;
             }
-            dismiss(true);
 
             if (_task != null) {
                 try {
@@ -274,12 +281,15 @@ public class PhotoUploadDialog extends SimpleDialog {
                     Log.v(TAG, e);
                 }
             }
+            _onOkDispatcher.dispatch(getUid());
+            dismiss(true);
         }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            _onCancelDispatcher.dispatch(getUid());
             dismiss(true);
         }
     };
@@ -384,4 +394,57 @@ public class PhotoUploadDialog extends SimpleDialog {
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
+
+    /*-**********************-*/
+    /*-         Ok           -*/
+    /*-**********************-*/
+    public interface OnOkListener {
+        void onOk();
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
+        @Override
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk();
+        }
+    };
+
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-**************************-*/
+    /*-         Cancel           -*/
+    /*-**************************-*/
+    public interface OnCancelListener {
+        void onCancel();
+    }
+
+    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
+        @Override
+        public void onDispatch(OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
+
 }

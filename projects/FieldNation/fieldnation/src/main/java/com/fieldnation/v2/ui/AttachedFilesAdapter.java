@@ -16,7 +16,7 @@ import java.util.List;
  * Created by mc on 8/3/17.
  */
 
-public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFilesViewHolder> {
+public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesViewHolder> {
     private static final String TAG = "AttachmentFoldersAdapter";
 
     private AttachmentFolders folders = null;
