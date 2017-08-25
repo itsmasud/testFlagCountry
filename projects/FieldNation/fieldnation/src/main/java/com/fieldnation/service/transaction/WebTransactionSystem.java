@@ -7,8 +7,6 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ThreadManager;
-import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
@@ -73,7 +71,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
         t._isFirstThread = true;
         _manager.addThread(t); // 0
 
-        _manager.addThread(new QueueThread(_manager));
+        _manager.addThread(new QueueProcessingThread(_manager));
 
         //_manager.addThread(new TransactionThread(_manager, this, false)); // 0
         _manager.addThread(new TransactionThread(_manager, this, true)); // 1
@@ -163,55 +161,15 @@ public class WebTransactionSystem implements WebTransactionConstants {
     /*-*************************-*/
     /*-         Queue           -*/
     /*-*************************-*/
-    private static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
+    protected static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
 
     public static void queueTransaction(Context context, WebTransaction transaction) {
         synchronized (TRANSACTION_QUEUE) {
             TRANSACTION_QUEUE.add(transaction);
         }
-
         getInstance()._manager.wakeUp();
     }
 
-    private static class QueueThread extends ThreadManager.ManagedThread {
-        private final String TAG = UniqueTag.makeTag("QueueThread");
-
-        public QueueThread(ThreadManager manager) {
-            super(manager);
-            setName(TAG);
-            start();
-        }
-
-        @Override
-        public boolean doWork() {
-            WebTransaction webTransaction = null;
-            synchronized (TRANSACTION_QUEUE) {
-                if (TRANSACTION_QUEUE.size() > 0) {
-                    webTransaction = TRANSACTION_QUEUE.remove(0);
-                }
-            }
-            if (webTransaction == null)
-                return false;
-
-            try {
-                if (webTransaction.getKey() != null && WebTransaction.keyExists(webTransaction.getKey())) {
-                    Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
-                    return true;
-                }
-                //Log.v(TAG, "processIntent saving transaction");
-                webTransaction.setState(WebTransaction.State.IDLE);
-                webTransaction.save();
-
-                String listenerName = webTransaction.getListenerName();
-                if (!misc.isEmptyOrNull(listenerName)) {
-                    WebTransactionDispatcher.queued(App.get(), listenerName, webTransaction);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            return true;
-        }
-    }
 }
 
 
