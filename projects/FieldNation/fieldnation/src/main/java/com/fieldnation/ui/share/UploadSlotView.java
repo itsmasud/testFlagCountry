@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.IconFontTextView;
@@ -59,11 +58,6 @@ public class UploadSlotView extends RelativeLayout {
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
 
         populateUi();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
     }
 
     public void setListener(Listener listener) {

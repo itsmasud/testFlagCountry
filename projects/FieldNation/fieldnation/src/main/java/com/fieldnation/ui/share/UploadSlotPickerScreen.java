@@ -78,11 +78,6 @@ public class UploadSlotPickerScreen extends FrameLayout {
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-    }
-
-    @Override
     protected void onDetachedFromWindow() {
         _workOrderApi.sub();
         super.onDetachedFromWindow();
