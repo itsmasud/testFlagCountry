@@ -50,10 +50,10 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
         if (isInEditMode())
             return;
 
-        _shipmentsLayout = (LinearLayout) findViewById(R.id.shipments_linearlayout);
-        _noShipmentsTextView = (TextView) findViewById(R.id.noShipments_textview);
+        _shipmentsLayout = findViewById(R.id.shipments_linearlayout);
+        _noShipmentsTextView = findViewById(R.id.noShipments_textview);
 
-        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton = findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
     }
 

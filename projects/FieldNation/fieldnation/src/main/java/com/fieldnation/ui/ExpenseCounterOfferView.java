@@ -48,9 +48,9 @@ public class ExpenseCounterOfferView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
-        _categoryTextView = (TextView) findViewById(R.id.category_textview);
-        _costTextView = (TextView) findViewById(R.id.cost_textview);
+        _descriptionTextView = findViewById(R.id.description_textview);
+        _categoryTextView = findViewById(R.id.category_textview);
+        _costTextView = findViewById(R.id.cost_textview);
 
         ExpenseCategories categories = new ExpenseCategories(getContext());
         categories.setListener(_categoriesListener);

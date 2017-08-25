@@ -60,11 +60,11 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
         if (isInEditMode())
             return;
 
-        _listView = (LinearLayout) findViewById(R.id.listview);
+        _listView = findViewById(R.id.listview);
 
-        _noDataTextView = (TextView) findViewById(R.id.nodata_textview);
+        _noDataTextView = findViewById(R.id.nodata_textview);
 
-        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton = findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
 
         populateUI();

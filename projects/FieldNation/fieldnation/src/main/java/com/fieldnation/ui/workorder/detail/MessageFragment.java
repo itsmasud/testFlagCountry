@@ -56,15 +56,15 @@ public class MessageFragment extends WorkorderFragment {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onViewCreated");
 
-        _messagesList = (OverScrollRecyclerView) view.findViewById(R.id.messages_listview);
+        _messagesList = view.findViewById(R.id.messages_listview);
         _messagesList.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         _messagesList.setAdapter(_adapter);
 
-        _inputView = (MessageInputView) view.findViewById(R.id.input_view);
+        _inputView = view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
 
-        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView = view.findViewById(R.id.refresh_view);
     }
 
     @Override

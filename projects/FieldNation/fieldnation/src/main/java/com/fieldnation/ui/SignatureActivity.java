@@ -65,18 +65,18 @@ public class SignatureActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_signature);
 
-        _sigView = (SignatureView) findViewById(R.id.sig_view);
-        _arrivalTextView = (TextView) findViewById(R.id.arrival_textview);
-        _arrivalLayout = (LinearLayout) findViewById(R.id.arrival_layout);
+        _sigView = findViewById(R.id.sig_view);
+        _arrivalTextView = findViewById(R.id.arrival_textview);
+        _arrivalLayout = findViewById(R.id.arrival_layout);
         _arrivalLayout.setOnClickListener(_arrival_onClick);
-        _departureTextView = (TextView) findViewById(R.id.departure_textview);
-        _departureLayout = (LinearLayout) findViewById(R.id.departure_layout);
+        _departureTextView = findViewById(R.id.departure_textview);
+        _departureLayout = findViewById(R.id.departure_layout);
         _departureLayout.setOnClickListener(_departure_onClick);
-        _nameTextView = (TextView) findViewById(R.id.name_textview);
+        _nameTextView = findViewById(R.id.name_textview);
         _nameTextView.setOnClickListener(_name_onClick);
-        _okButton = (Button) findViewById(R.id.done_button);
+        _okButton = findViewById(R.id.done_button);
         _okButton.setOnClickListener(_ok_onClick);
-        _clearButton = (Button) findViewById(R.id.clear_button);
+        _clearButton = findViewById(R.id.clear_button);
         _clearButton.setOnClickListener(_clear_onClick);
 
         Intent intent = getIntent();

@@ -47,10 +47,10 @@ public class SavedSearchRow extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _titleTextView = findViewById(R.id.title_textview);
         _titleTextView.setOnClickListener(_title_onClick);
 
-        _editTextView = (IconFontTextView) findViewById(R.id.edit_textview);
+        _editTextView = findViewById(R.id.edit_textview);
         _editTextView.setOnClickListener(_edit_onClick);
 
         populateUi();

@@ -38,7 +38,7 @@ public class ResolveMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _button = (Button) findViewById(R.id.resolve_button);
+        _button = findViewById(R.id.resolve_button);
     }
 
     public Button getButton() {

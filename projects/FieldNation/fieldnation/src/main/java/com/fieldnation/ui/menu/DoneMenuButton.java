@@ -38,7 +38,7 @@ public class DoneMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _button = (Button) findViewById(R.id.done_button);
+        _button = findViewById(R.id.done_button);
     }
 
     public Button getButton() {

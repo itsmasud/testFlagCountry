@@ -56,10 +56,10 @@ public class TimeLogRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _devicesTextView = (TextView) findViewById(R.id.devices_textview);
-        _hoursTextView = (TextView) findViewById(R.id.hours_textview);
+        _dateTextView = findViewById(R.id.date_textview);
+        _timeTextView = findViewById(R.id.time_textview);
+        _devicesTextView = findViewById(R.id.devices_textview);
+        _hoursTextView = findViewById(R.id.hours_textview);
 
         setOnClickListener(_edit_onClick);
         setOnLongClickListener(_delete_onClick);

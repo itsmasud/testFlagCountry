@@ -35,8 +35,8 @@ public class DiscountView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _amountTextView = (TextView) findViewById(R.id.amount_textview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _amountTextView = findViewById(R.id.amount_textview);
     }
 
     public void setDiscount(PayModifier discount) {

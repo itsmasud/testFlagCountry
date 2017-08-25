@@ -54,10 +54,10 @@ public class CustomFieldRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _customFieldNameTextView = (TextView) findViewById(R.id.customFieldName_textview);
-        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
-        _optionalTextView = (TextView) findViewById(R.id.optional_textview);
+        _iconView = findViewById(R.id.icon_view);
+        _customFieldNameTextView = findViewById(R.id.customFieldName_textview);
+        _descriptionTextView = findViewById(R.id.description_textview);
+        _optionalTextView = findViewById(R.id.optional_textview);
 
         setOnClickListener(_check_listener);
 

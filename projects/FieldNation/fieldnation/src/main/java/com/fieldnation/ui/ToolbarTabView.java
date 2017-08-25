@@ -39,8 +39,8 @@ public class ToolbarTabView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_toolbar_tab, this, true);
 
-        _back = (TextView) findViewById(R.id.back);
-        _front = (SlideTextView) findViewById(R.id.front);
+        _back = findViewById(R.id.back);
+        _front = findViewById(R.id.front);
     }
 
 

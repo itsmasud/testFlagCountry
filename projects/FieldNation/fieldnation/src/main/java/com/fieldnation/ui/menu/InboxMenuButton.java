@@ -49,7 +49,7 @@ public class InboxMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _inboxCountTextView = (TextView) findViewById(R.id.inboxCount_textview);
+        _inboxCountTextView = findViewById(R.id.inboxCount_textview);
 
         setOnClickListener(_inbox_onClick);
 

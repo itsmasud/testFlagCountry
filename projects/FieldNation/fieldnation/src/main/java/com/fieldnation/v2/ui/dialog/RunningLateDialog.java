@@ -74,13 +74,13 @@ public class RunningLateDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_running_late, container, false);
 
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
-        _timeframeSpinner = (HintSpinner) v.findViewById(R.id.timeframe_spinner);
-        _timeframeLayout = (TextInputLayout) v.findViewById(R.id.timeframe_layout);
-        _timeframeEditText = (EditText) v.findViewById(R.id.timeframe_edittext);
-        _callButton = (Button) v.findViewById(R.id.call_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _sendButton = (Button) v.findViewById(R.id.send_button);
+        _bodyTextView = v.findViewById(R.id.body_textview);
+        _timeframeSpinner = v.findViewById(R.id.timeframe_spinner);
+        _timeframeLayout = v.findViewById(R.id.timeframe_layout);
+        _timeframeEditText = v.findViewById(R.id.timeframe_edittext);
+        _callButton = v.findViewById(R.id.call_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _sendButton = v.findViewById(R.id.send_button);
 
         return v;
     }

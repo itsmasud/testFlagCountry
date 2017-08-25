@@ -65,16 +65,16 @@ public class UploadSlotPickerScreen extends FrameLayout {
         if (isInEditMode())
             return;
 
-        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar = findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setTitle(R.string.select_a_task);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
-        _workOrderTitleTextView = (TextView) findViewById(R.id.workOrderTitle_textview);
+        _workOrderTitleTextView = findViewById(R.id.workOrderTitle_textview);
 
-        _uploadSlotLayout = (LinearLayout) findViewById(R.id.uploadSlot_layout);
+        _uploadSlotLayout = findViewById(R.id.uploadSlot_layout);
 
-        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView = findViewById(R.id.refresh_view);
     }
 
     @Override

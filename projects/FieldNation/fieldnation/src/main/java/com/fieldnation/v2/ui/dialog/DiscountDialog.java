@@ -48,11 +48,11 @@ public class DiscountDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_discount, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _amountEditText = (EditText) v.findViewById(R.id.amount_edittext);
-        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _amountEditText = v.findViewById(R.id.amount_edittext);
+        _descriptionEditText = v.findViewById(R.id.description_edittext);
 
         return v;
     }

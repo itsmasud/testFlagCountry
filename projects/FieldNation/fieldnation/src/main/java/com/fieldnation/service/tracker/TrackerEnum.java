@@ -5,5 +5,5 @@ package com.fieldnation.service.tracker;
  */
 
 public enum TrackerEnum {
-    PHOTOS, DELIVERABLES;
+    PHOTOS, DELIVERABLES
 }

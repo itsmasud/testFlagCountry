@@ -54,12 +54,12 @@ public class PaymentWorkorderView extends RelativeLayout {
 //        _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
 //        _iconView.setText(R.string.icon_circle_add);
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _titleTextView = findViewById(R.id.title_textview);
 
-        _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
+        _subTitleTextView = findViewById(R.id.subtitle_textview);
 
-        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _paymentTextView = findViewById(R.id.payment_textview);
+        _payTypeTextView = findViewById(R.id.paytype_textview);
         _payTypeTextView.setVisibility(GONE);
 
 

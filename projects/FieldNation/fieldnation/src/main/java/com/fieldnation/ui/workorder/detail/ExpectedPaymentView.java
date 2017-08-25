@@ -54,19 +54,19 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         if (isInEditMode())
             return;
 
-        _laborTextView = (TextView) findViewById(R.id.labor_textview);
-        _expensesTextView = (TextView) findViewById(R.id.expenses_textview);
-        _bonusTextView = (TextView) findViewById(R.id.bonus_textview);
-        _penaltyTextView = (TextView) findViewById(R.id.penalty_textview);
-        _discountsTextView = (TextView) findViewById(R.id.discounts_textview);
+        _laborTextView = findViewById(R.id.labor_textview);
+        _expensesTextView = findViewById(R.id.expenses_textview);
+        _bonusTextView = findViewById(R.id.bonus_textview);
+        _penaltyTextView = findViewById(R.id.penalty_textview);
+        _discountsTextView = findViewById(R.id.discounts_textview);
 
-        _feePercentTextView = (TextView) findViewById(R.id.feePercentage_textview);
-        _feeTextView = (TextView) findViewById(R.id.fee_textview);
+        _feePercentTextView = findViewById(R.id.feePercentage_textview);
+        _feeTextView = findViewById(R.id.fee_textview);
 
-        _insurancePercentTextView = (TextView) findViewById(R.id.insurancePercentage_textview);
-        _insuranceFeeTextView = (TextView) findViewById(R.id.insuranceFee_textview);
-        _totalTextView = (TextView) findViewById(R.id.total_textview);
-        _payStatusTextView = (TextView) findViewById(R.id.paystatus_textview);
+        _insurancePercentTextView = findViewById(R.id.insurancePercentage_textview);
+        _insuranceFeeTextView = findViewById(R.id.insuranceFee_textview);
+        _totalTextView = findViewById(R.id.total_textview);
+        _payStatusTextView = findViewById(R.id.paystatus_textview);
 
         populateUi();
     }

@@ -47,7 +47,7 @@ public class ProblemSummaryView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _countTextView = (TextView) findViewById(R.id.count_textview);
+        _countTextView = findViewById(R.id.count_textview);
 
         setOnClickListener(_this_onClick);
         setVisibility(GONE);

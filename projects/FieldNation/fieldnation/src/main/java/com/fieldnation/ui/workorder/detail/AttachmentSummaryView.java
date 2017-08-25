@@ -50,7 +50,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
             return;
 
         _attachmentView = findViewById(R.id.attachment_layout);
-        _countTextView = (TextView) findViewById(R.id.count_textview);
+        _countTextView = findViewById(R.id.count_textview);
 
         _attachmentView.setOnClickListener(_this_onClick);
         setVisibility(GONE);

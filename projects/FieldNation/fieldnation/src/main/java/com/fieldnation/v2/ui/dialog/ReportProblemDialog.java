@@ -87,18 +87,18 @@ public class ReportProblemDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_report_problem, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _loadingBar = (ProgressBar) v.findViewById(R.id.loadingBar);
-        _primarySpinner = (HintSpinner) v.findViewById(R.id.primary_spinner);
-        _secondarySpinner = (HintSpinner) v.findViewById(R.id.secondary_spinner);
-        _timeframeSpinner = (HintSpinner) v.findViewById(R.id.timeframe_spinner);
-        _timeframeLayout = (TextInputLayout) v.findViewById(R.id.timeframe_layout);
-        _timeframeEditText = (EditText) v.findViewById(R.id.timeframe_edittext);
-        _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
-        _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
-        _noteTextView = (TextView) v.findViewById(R.id.note_textview);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _loadingBar = v.findViewById(R.id.loadingBar);
+        _primarySpinner = v.findViewById(R.id.primary_spinner);
+        _secondarySpinner = v.findViewById(R.id.secondary_spinner);
+        _timeframeSpinner = v.findViewById(R.id.timeframe_spinner);
+        _timeframeLayout = v.findViewById(R.id.timeframe_layout);
+        _timeframeEditText = v.findViewById(R.id.timeframe_edittext);
+        _explanationLayout = v.findViewById(R.id.explanation_layout);
+        _explanationEditText = v.findViewById(R.id.explanation_edittext);
+        _noteTextView = v.findViewById(R.id.note_textview);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _okButton = v.findViewById(R.id.ok_button);
 
         return v;
     }

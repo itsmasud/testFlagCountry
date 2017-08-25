@@ -50,9 +50,9 @@ public class CancelWarningDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_cancel_warning, container, false);
 
-        _reviewTosButton = (Button) v.findViewById(R.id.review_tos_button);
-        _cancelWorkButton = (Button) v.findViewById(R.id.cancelWork_button);
-        _acceptButton = (Button) v.findViewById(R.id.accept_button);
+        _reviewTosButton = v.findViewById(R.id.review_tos_button);
+        _cancelWorkButton = v.findViewById(R.id.cancelWork_button);
+        _acceptButton = v.findViewById(R.id.accept_button);
 
         return v;
     }

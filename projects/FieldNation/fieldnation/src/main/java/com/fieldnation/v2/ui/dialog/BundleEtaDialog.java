@@ -72,18 +72,18 @@ public class BundleEtaDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_bundle_eta, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
 
-        _incompleteLayout = (RelativeLayout) v.findViewById(R.id.incompleteEta_layout);
-        _incompleteList = (LinearLayout) v.findViewById(R.id.incompleteEta_list);
-        _completeLayout = (RelativeLayout) v.findViewById(R.id.completeEta_layout);
+        _incompleteLayout = v.findViewById(R.id.incompleteEta_layout);
+        _incompleteList = v.findViewById(R.id.incompleteEta_list);
+        _completeLayout = v.findViewById(R.id.completeEta_layout);
         _completeLayout.setVisibility(View.GONE);
-        _completeList = (LinearLayout) v.findViewById(R.id.completeEta_list);
+        _completeList = v.findViewById(R.id.completeEta_list);
 
         return v;
     }

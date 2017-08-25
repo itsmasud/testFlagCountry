@@ -64,17 +64,17 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onViewCreated");
 
-        _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
+        _loadingView = view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
 
         _adapter.setOnLoadingCompleteListener(_adapterListener);
 
-        _listView = (OverScrollListView) view.findViewById(R.id.listview);
+        _listView = view.findViewById(R.id.listview);
         _listView.setDivider(null);
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
 
-        _emptyView = (EmptyCardView) view.findViewById(R.id.empty_view);
+        _emptyView = view.findViewById(R.id.empty_view);
         _emptyView.setData(EmptyCardView.PARAM_VIEW_TYPE_NOTIFICATION);
     }
 

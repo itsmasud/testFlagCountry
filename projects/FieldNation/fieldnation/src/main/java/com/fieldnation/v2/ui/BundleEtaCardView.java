@@ -51,10 +51,10 @@ public class BundleEtaCardView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _dateTextView = (TextView) findViewById(R.id.schedule_textview);
-        _addressTextView = (TextView) findViewById(R.id.address_textview);
-        _locationTextView = (TextView) findViewById(R.id.location_textview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _dateTextView = findViewById(R.id.schedule_textview);
+        _addressTextView = findViewById(R.id.address_textview);
+        _locationTextView = findViewById(R.id.location_textview);
 
 
         setOnClickListener(_this_onClick);

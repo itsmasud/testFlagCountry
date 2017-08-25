@@ -47,9 +47,9 @@ public class ListTimeHeader extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _dayTextView = (TextView) findViewById(R.id.day_textView);
-        _dateTextView = (TextView) findViewById(R.id.date_textView);
-        _dotTextView = (TextView) findViewById(R.id.dot_textView);
+        _dayTextView = findViewById(R.id.day_textView);
+        _dateTextView = findViewById(R.id.date_textView);
+        _dotTextView = findViewById(R.id.dot_textView);
 
         populateUi();
     }

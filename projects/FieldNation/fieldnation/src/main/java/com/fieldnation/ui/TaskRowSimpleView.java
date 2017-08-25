@@ -41,7 +41,7 @@ public class TaskRowSimpleView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _textView = (TextView) findViewById(R.id.textview);
+        _textView = findViewById(R.id.textview);
         populateUi();
     }
 

@@ -51,9 +51,9 @@ public class MonthHeaderView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _monthTextView = (TextView) findViewById(R.id.month_textview);
-        _moneyTextView = (TextView) findViewById(R.id.money_textview);
-        _yearTextView = (TextView) findViewById(R.id.year_textview);
+        _monthTextView = findViewById(R.id.month_textview);
+        _moneyTextView = findViewById(R.id.money_textview);
+        _yearTextView = findViewById(R.id.year_textview);
     }
 
     public void setData(Header header) {

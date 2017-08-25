@@ -203,9 +203,7 @@ public class Holds implements Parcelable {
         if (getResults().length == 0)
             return false;
 
-        if (getResults().length > 0)
-            return true;
-        return false;
+        return getResults().length > 0;
     }
 
     public boolean areHoldsAcknowledged() {

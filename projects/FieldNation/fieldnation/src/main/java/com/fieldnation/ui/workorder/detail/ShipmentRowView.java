@@ -52,10 +52,10 @@ public class ShipmentRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _trackingIdTextView = (TextView) findViewById(R.id.trackingid_textview);
-        _carrierTextView = (TextView) findViewById(R.id.carrier_textview);
-        _descTextView = (TextView) findViewById(R.id.description_textview);
-        _directionTextView = (TextView) findViewById(R.id.direction_textview);
+        _trackingIdTextView = findViewById(R.id.trackingid_textview);
+        _carrierTextView = findViewById(R.id.carrier_textview);
+        _descTextView = findViewById(R.id.description_textview);
+        _directionTextView = findViewById(R.id.direction_textview);
 
         setOnLongClickListener(_delete_onClick);
         setOnClickListener(_assign_onClick);

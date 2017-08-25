@@ -214,10 +214,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final ProfilePhotoClient _profilePhotoClient = new ProfilePhotoClient() {
         @Override
         public boolean getProfileImage(Uri uri) {
-            if (_currentUri == null || !_currentUri.toString().equals(uri.toString())) {
-                return true;
-            }
-            return false;
+            return _currentUri == null || !_currentUri.toString().equals(uri.toString());
         }
 
         @Override

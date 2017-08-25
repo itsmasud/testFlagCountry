@@ -47,7 +47,7 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
         if (isInEditMode())
             return;
 
-        _searchEditText = (SearchEditText) findViewById(R.id.searchEditText);
+        _searchEditText = findViewById(R.id.searchEditText);
         _searchEditText.setListener(_searchEditText_listener);
     }
 

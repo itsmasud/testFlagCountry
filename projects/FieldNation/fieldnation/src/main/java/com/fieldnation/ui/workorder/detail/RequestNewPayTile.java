@@ -50,11 +50,11 @@ public class RequestNewPayTile extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _statusTextView = (TextView) findViewById(R.id.requestPayStatus_textview);
-        _iconTextView = (IconFontTextView) findViewById(R.id.requestPayIcon_textview);
-        _basisTextView = (TextView) findViewById(R.id.requestPayBasis_textview);
-        _captionTextView = (TextView) findViewById(R.id.requestPayCaption_textview);
-        _payTextView = (TextView) findViewById(R.id.requestPayAmount_textview);
+        _statusTextView = findViewById(R.id.requestPayStatus_textview);
+        _iconTextView = findViewById(R.id.requestPayIcon_textview);
+        _basisTextView = findViewById(R.id.requestPayBasis_textview);
+        _captionTextView = findViewById(R.id.requestPayCaption_textview);
+        _payTextView = findViewById(R.id.requestPayAmount_textview);
 
         populateUi();
     }
