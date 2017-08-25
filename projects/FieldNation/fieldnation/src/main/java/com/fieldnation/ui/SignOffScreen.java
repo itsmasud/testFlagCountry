@@ -21,6 +21,8 @@ import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -184,8 +186,7 @@ public class SignOffScreen extends RelativeLayout {
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);
             _tasksLinearLayout.setVisibility(View.VISIBLE);
-
-            _tasksLinearLayout.removeAllViews();
+            final List<View> taskView = new LinkedList<>();
 
             ForLoopRunnable r = new ForLoopRunnable(tasks.length, new Handler()) {
                 private final Task[] _tasks = tasks;
@@ -212,13 +213,17 @@ public class SignOffScreen extends RelativeLayout {
 
                     TaskRowSimpleView v = new TaskRowSimpleView(getContext());
                     v.setText(display);
-                    _tasksLinearLayout.addView(v);
+                    taskView.add(v);
                 }
 
                 @Override
                 public void finish(int count) throws Exception {
                     super.finish(count);
                     if (!_waitLogs) {
+                        _tasksLinearLayout.removeAllViews();
+                        for (View v : taskView) {
+                            _tasksLinearLayout.addView(v);
+                        }
                         setLoading(false);
                     }
                     _waitTasks = false;
