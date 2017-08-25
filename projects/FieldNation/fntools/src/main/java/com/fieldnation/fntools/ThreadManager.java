@@ -46,9 +46,15 @@ public class ThreadManager {
     }
 
     public void wakeUp() {
-        synchronized (THREAD_PAUSE) {
-            THREAD_PAUSE.notifyAll();
-        }
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                synchronized (THREAD_PAUSE) {
+                    THREAD_PAUSE.notifyAll();
+                }
+                return null;
+            }
+        }.executeEx();
     }
 
     public static abstract class ManagedThread extends Thread {

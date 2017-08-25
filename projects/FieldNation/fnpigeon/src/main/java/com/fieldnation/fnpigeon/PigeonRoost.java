@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.Stopwatch;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -113,6 +114,7 @@ public class PigeonRoost {
      * @param sticky
      */
     public static void sendMessage(String address, Object message, Sticky sticky) {
+        Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "sendMessage " + address);
         List<Pigeon> pigeonList = new LinkedList<>();
         List<Object> objectList = new LinkedList<>();
@@ -153,6 +155,7 @@ public class PigeonRoost {
             }
         }
         getMainHandler().post(MessagesRunnable.getInstance(pigeonList, addressList, objectList));
+        Log.v(TAG, "sendMessage time: " + stopwatch.finish());
     }
 
     public static void clearAddressCache(String address) {
@@ -194,100 +197,6 @@ public class PigeonRoost {
             }
             Log.v(TAG, "Pruning stickies done: " + (_stickies.size() - ns.size()) + "/" + _stickies.size());
             _stickies = ns;
-        }
-    }
-
-    private static class StickyContainer {
-        public Object message;
-        public long createdDate;
-        public Sticky stickyType;
-
-        public StickyContainer(Object message, Sticky stickyType) {
-            createdDate = System.currentTimeMillis();
-            this.stickyType = stickyType;
-            this.message = message;
-        }
-    }
-
-    private static class MessageRunnable implements Runnable {
-        Pigeon pigeon;
-        Object message;
-        String address;
-
-        private MessageRunnable(Pigeon pigeon, String address, Object message) {
-            this.pigeon = pigeon;
-            this.message = message;
-            this.address = address;
-        }
-
-        @Override
-        public void run() {
-            pigeon.onMessage(address, message);
-            pigeon = null;
-            message = null;
-            address = null;
-            synchronized (POOL) {
-                POOL.add(this);
-            }
-        }
-
-        private static final List<MessageRunnable> POOL = new LinkedList<>();
-
-        public static MessageRunnable getInstance(Pigeon pigeon, String address, Object message) {
-            synchronized (POOL) {
-                if (POOL.size() > 0) {
-                    MessageRunnable mr = POOL.remove(0);
-                    mr.pigeon = pigeon;
-                    mr.address = address;
-                    mr.message = message;
-                    return mr;
-                } else {
-                    return new MessageRunnable(pigeon, address, message);
-                }
-            }
-        }
-    }
-
-    private static class MessagesRunnable implements Runnable {
-        List<Pigeon> pigeonList;
-        List<Object> objectList;
-        List<String> addressList;
-
-        private MessagesRunnable(List<Pigeon> pigeonList, List<String> addressList, List<Object> objectList) {
-            this.pigeonList = pigeonList;
-            this.objectList = objectList;
-            this.addressList = addressList;
-        }
-
-        @Override
-        public void run() {
-            while (pigeonList.size() > 0) {
-                pigeonList.remove(0).onMessage(addressList.remove(0), objectList.remove(0));
-            }
-
-            pigeonList = null;
-            objectList = null;
-            addressList = null;
-
-            synchronized (POOL) {
-                POOL.add(this);
-            }
-        }
-
-        private static final List<MessagesRunnable> POOL = new LinkedList<>();
-
-        public static MessagesRunnable getInstance(List<Pigeon> pigeonList, List<String> addressList, List<Object> objectList) {
-            synchronized (POOL) {
-                if (POOL.size() > 0) {
-                    MessagesRunnable mr = POOL.remove(0);
-                    mr.pigeonList = pigeonList;
-                    mr.objectList = objectList;
-                    mr.addressList = addressList;
-                    return mr;
-                } else {
-                    return new MessagesRunnable(pigeonList, addressList, objectList);
-                }
-            }
         }
     }
 }

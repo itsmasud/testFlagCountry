@@ -148,8 +148,6 @@ public class WebTransactionSystem implements WebTransactionConstants {
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             setAuth(oauth);
-            if (_manager != null)
-                _manager.wakeUp();
         }
 
         @Override
