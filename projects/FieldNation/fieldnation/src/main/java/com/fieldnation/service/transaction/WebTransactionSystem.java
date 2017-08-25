@@ -39,9 +39,11 @@ public class WebTransactionSystem implements WebTransactionConstants {
     }
 
     public static WebTransactionSystem getInstance() {
-        if (_instance == null)
-            _instance = new WebTransactionSystem();
-        return _instance;
+        synchronized (TAG) {
+            if (_instance == null)
+                _instance = new WebTransactionSystem();
+            return _instance;
+        }
     }
 
     public static void stop() {
@@ -84,7 +86,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
     }
 
     public boolean isStillWorking() {
-        boolean stillWorking = WebTransaction.count() > 0;
+        boolean stillWorking = WebTransaction.count() > 0 && App.get().isConnected();
         synchronized (TRANSACTION_QUEUE) {
             stillWorking = stillWorking || TRANSACTION_QUEUE.size() > 0;
         }
@@ -110,7 +112,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
     };
 
     public void shutDown() {
-        Log.v(TAG, "onDestroy");
+        Log.v(TAG, "shutDown");
         _authClient.unsubAuthStateChange();
         _appMessagingClient.unsubNetworkConnect();
         _manager.shutdown();

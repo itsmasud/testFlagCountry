@@ -435,7 +435,8 @@ public class App extends Application {
             ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AppMessagingClient.networkConnect();
+                    AppMessagingClient.networkConnected();
+                    WebTransactionSystem.getInstance();
                 }
             }, Snackbar.LENGTH_INDEFINITE);
         }

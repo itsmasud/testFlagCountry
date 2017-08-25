@@ -111,6 +111,15 @@ class TransactionThread extends ThreadManager.ManagedThread {
     public boolean doWork() {
         // try to get a transaction
         if (!App.get().isConnected()) {
+            if (!_isFirstThread) {
+                Log.v(TAG, "Connection down, skipping");
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException ex) {
+                }
+                return false;
+            }
+
             Log.v(TAG, "Testing connection");
             try {
                 HttpJson.run(App.get(), TEST_QUERY);
