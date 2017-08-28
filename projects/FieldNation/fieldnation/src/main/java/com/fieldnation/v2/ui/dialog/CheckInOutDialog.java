@@ -59,6 +59,9 @@ public class CheckInOutDialog extends FullScreenDialog {
     // Dialog Uids
     private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
 
+    // State
+    private static final String STATE_SPINNER_POSITION = "CheckInOutDialog:STATE_SPINNER_POSITION";
+
     // Params
     public static final String PARAM_DIALOG_TYPE_CHECK_IN = "checkin";
     public static final String PARAM_DIALOG_TYPE_CHECK_OUT = "checkout";
@@ -92,7 +95,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private Calendar _startCalendar;
     private long _durationMilliseconds = INVALID_NUMBER;
     private long _expiringDurationMilliseconds = INVALID_NUMBER;
-    private int _itemSelectedPosition;
+    private int _itemSelectedPosition = INVALID_NUMBER;
 
     // Services
     private SimpleGps _simpleGps;
@@ -209,6 +212,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (savedState.containsKey("startCalendar"))
             _startCalendar = (Calendar) savedState.getSerializable("startCalendar");
 
+        if (savedState.containsKey(STATE_SPINNER_POSITION))
+            _itemSelectedPosition = savedState.getInt(STATE_SPINNER_POSITION);
+
         super.onRestoreDialogState(savedState);
 
         // UI
@@ -238,6 +244,9 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         if (_startCalendar != null)
             outState.putSerializable("startCalendar", _startCalendar);
+
+        if (_itemSelectedPosition != INVALID_NUMBER)
+            outState.putInt(STATE_SPINNER_POSITION, _itemSelectedPosition);
 
         super.onSaveDialogState(outState);
     }
@@ -294,6 +303,8 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _startDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
         _startTimeButton.setText(DateUtils.formatTimeLong(_startCalendar));
+        if (_spinner != null && _itemSelectedPosition != INVALID_NUMBER)
+            _spinner.setSelection(_itemSelectedPosition);
     }
 
     public HintSpinner getSpinner() {
