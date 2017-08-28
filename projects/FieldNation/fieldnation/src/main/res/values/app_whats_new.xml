@@ -10,6 +10,7 @@ We\'ve started the redesign process on the work order details view by making it 
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
 &lt;li&gt;A floating action button to make it easier to add items to a work order&lt;/li&gt;
+&lt;li&gt;Monthly pay totals to payments screen&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;What we changed:&lt;/b&gt;
