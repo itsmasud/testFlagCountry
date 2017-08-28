@@ -83,6 +83,7 @@ public class App extends Application {
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
+    public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
 
     private static App _context;
 
@@ -520,6 +521,18 @@ public class App extends Application {
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks
         edit.apply();
+    }
+
+    public void startConfirmationRemindMe() {
+        SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = setting.edit();
+        edit.putLong(PREF_CONFIRMATION_REMIND_EXPIRE, System.currentTimeMillis() + 1800000); // 30 min
+
+    }
+
+    public boolean confirmRemindMeExpired() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getLong(PREF_CONFIRMATION_REMIND_EXPIRE, 0) < System.currentTimeMillis();
     }
 
     public void setNeedsConfirmation(boolean needsConfirmation) {
