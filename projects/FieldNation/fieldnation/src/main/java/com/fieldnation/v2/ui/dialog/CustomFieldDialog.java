@@ -301,7 +301,7 @@ public class CustomFieldDialog extends SimpleDialog {
 
             switch (_customField.getType()) {
                 case PREDEFINED:
-                    _onOkDispatcher.dispatch(getUid(), _customField, (String) _spinner.getAdapter().getItem(_itemSelectedPosition));
+                    _onOkDispatcher.dispatch(getUid(), _customField, _spinner.getAdapter().getItem(_itemSelectedPosition));
                     break;
                 default:
                     _onOkDispatcher.dispatch(getUid(), _customField, _textEditText.getText().toString());

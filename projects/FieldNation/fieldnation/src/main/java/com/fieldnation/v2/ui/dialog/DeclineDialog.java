@@ -218,7 +218,7 @@ public class DeclineDialog extends FullScreenDialog {
     }
 
     private void onDeclined() {
-        _onDeclinedDispatcher.dispatch(getUid(), (long) _workOrderId);
+        _onDeclinedDispatcher.dispatch(getUid(), _workOrderId);
     }
 
     /*-*********************************-*/
@@ -378,13 +378,13 @@ public class DeclineDialog extends FullScreenDialog {
     /*-         Declined           -*/
     /*-****************************-*/
     public interface OnDeclinedListener {
-        void onDeclined(long workOrderId);
+        void onDeclined(int workOrderId);
     }
 
     private static KeyedDispatcher<OnDeclinedListener> _onDeclinedDispatcher = new KeyedDispatcher<OnDeclinedListener>() {
         @Override
         public void onDispatch(OnDeclinedListener listener, Object... parameters) {
-            listener.onDeclined((Long) parameters[0]);
+            listener.onDeclined((Integer) parameters[0]);
         }
     };
 

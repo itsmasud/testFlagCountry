@@ -160,7 +160,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
                     return;
                 }
 
-                if (_workOrderId == (int) workOrder.getId()) {
+                if (_workOrderId == workOrder.getId()) {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
                     populateUi();

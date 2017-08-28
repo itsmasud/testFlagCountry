@@ -241,7 +241,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            ETA[] etaAll = (ETA[]) _etaList.values().toArray(new ETA[_etaList.size()]);
+            ETA[] etaAll = _etaList.values().toArray(new ETA[_etaList.size()]);
             WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
             _onAcceptedDispatcher.dispatch(getUid(), _bundleId);
 

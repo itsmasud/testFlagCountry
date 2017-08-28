@@ -43,7 +43,7 @@ public abstract class FullScreenDialog implements Dialog {
 
         _root = inflater.inflate(R.layout.dialog_fullscreen, container, false);
         _clickBarrier = _root.findViewById(R.id.click_barrier);
-        _container = (RelativeLayout) _root.findViewById(R.id.container);
+        _container = _root.findViewById(R.id.container);
 
         _child = onCreateView(inflater, context, _container);
         _container.addView(_child);

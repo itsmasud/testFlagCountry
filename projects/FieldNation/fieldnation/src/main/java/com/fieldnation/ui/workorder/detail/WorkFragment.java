@@ -1312,7 +1312,7 @@ public class WorkFragment extends WorkorderFragment {
 
     private final DeclineDialog.OnDeclinedListener _declineDialog_onDecline = new DeclineDialog.OnDeclinedListener() {
         @Override
-        public void onDeclined(long workOrderId) {
+        public void onDeclined(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrderId);
         }
     };

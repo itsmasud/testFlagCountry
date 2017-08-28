@@ -288,7 +288,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
         @Override
-        public void onDeclined(long workOrderId) {
+        public void onDeclined(int workOrderId) {
             setLoading(true);
         }
     };

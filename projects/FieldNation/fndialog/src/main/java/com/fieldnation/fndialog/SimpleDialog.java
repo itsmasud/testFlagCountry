@@ -42,7 +42,7 @@ public abstract class SimpleDialog implements Dialog {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         _root = inflater.inflate(R.layout.dialog_simple, container, false);
-        _container = (RelativeLayout) _root.findViewById(R.id.container);
+        _container = _root.findViewById(R.id.container);
         _clickBarrier = _root.findViewById(R.id.click_barrier);
 
         _child = onCreateView(inflater, context, _container);

@@ -202,7 +202,7 @@ public abstract class ToastClient extends Pigeon {
         }
 
         Snackbar snackbar = Snackbar.make(findCoordinatorLayoutView(), title, duration);
-        TextView tv = (TextView) snackbar.getView().findViewById(getSnackbarTextId());
+        TextView tv = snackbar.getView().findViewById(getSnackbarTextId());
         tv.setTextColor(getActivity().getResources().getColor(R.color.fn_white_text));
         snackbar.setActionTextColor(getActivity().getResources().getColor(R.color.fn_clickable_text));
 

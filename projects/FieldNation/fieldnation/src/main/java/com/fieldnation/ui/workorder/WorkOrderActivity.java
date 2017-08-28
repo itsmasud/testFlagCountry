@@ -407,7 +407,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     return;
                 }
 
-                if (_workOrderId == (int) workOrder.getId()) {
+                if (_workOrderId == workOrder.getId()) {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
 

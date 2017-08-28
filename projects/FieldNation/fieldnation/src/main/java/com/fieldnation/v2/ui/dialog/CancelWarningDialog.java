@@ -102,7 +102,7 @@ public class CancelWarningDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             Tracker.event(App.get(), new CustomEvent.Builder()
-                    .addContext(new SpWorkOrderContext.Builder().workOrderId((int) _workOrderId).build())
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                     .addContext(new SpUIContext.Builder()
                             .elementAction("Click")
                             .elementIdentity("Abort Cancel Work Order")

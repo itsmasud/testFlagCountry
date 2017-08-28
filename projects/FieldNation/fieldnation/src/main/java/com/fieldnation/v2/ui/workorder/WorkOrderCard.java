@@ -15,8 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.BuildConfig;
 import com.fieldnation.AppMessagingClient;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -835,7 +835,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
         @Override
-        public void onDeclined(long workOrderId) {
+        public void onDeclined(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)
@@ -959,7 +959,7 @@ public class WorkOrderCard extends RelativeLayout {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
         }
     };
 
@@ -986,7 +986,7 @@ public class WorkOrderCard extends RelativeLayout {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
         }
     };
 
