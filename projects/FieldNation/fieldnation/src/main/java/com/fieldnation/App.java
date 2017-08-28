@@ -524,13 +524,15 @@ public class App extends Application {
     }
 
     public void startConfirmationRemindMe() {
+        Log.v(TAG, "startConfirmationRemindMe");
         SharedPreferences setting = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = setting.edit();
         edit.putLong(PREF_CONFIRMATION_REMIND_EXPIRE, System.currentTimeMillis() + 1800000); // 30 min
-
+        edit.apply();
     }
 
     public boolean confirmRemindMeExpired() {
+        Log.v(TAG, "confirmRemindMeExpired");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         return settings.getLong(PREF_CONFIRMATION_REMIND_EXPIRE, 0) < System.currentTimeMillis();
     }
