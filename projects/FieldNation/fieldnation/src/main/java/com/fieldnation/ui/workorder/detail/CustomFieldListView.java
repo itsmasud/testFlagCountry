@@ -57,7 +57,7 @@ public class CustomFieldListView extends RelativeLayout implements WorkOrderRend
         if (isInEditMode())
             return;
 
-        _fieldsList = (LinearLayout) findViewById(R.id.fields_list);
+        _fieldsList = findViewById(R.id.fields_list);
 
         populateUi();
     }

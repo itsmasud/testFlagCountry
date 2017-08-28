@@ -4,27 +4,27 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/pay1_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/pay2_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/pay3_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/pay4_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/pay5_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

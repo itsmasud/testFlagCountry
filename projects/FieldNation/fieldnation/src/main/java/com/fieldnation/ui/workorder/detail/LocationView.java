@@ -24,6 +24,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.gmaps.GmapsDirections;
 import com.fieldnation.data.gmaps.GmapsRoute;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -98,30 +99,30 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _noLocationTextView = (TextView) findViewById(R.id.noLocation_textview);
+        _noLocationTextView = findViewById(R.id.noLocation_textview);
 
-        _mapLayout = (RelativeLayout) findViewById(R.id.map_layout);
-        _mapImageView = (ImageView) findViewById(R.id.mapview);
+        _mapLayout = findViewById(R.id.map_layout);
+        _mapImageView = findViewById(R.id.mapview);
         _mapImageView.setOnClickListener(_map_onClick);
-        _loadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
+        _loadingProgress = findViewById(R.id.loading_progress);
 
-        _noMapLayout = (LinearLayout) findViewById(R.id.noMap_layout);
-        _gpsError1TextView = (TextView) findViewById(R.id.gpsError1_textview);
-        _gpsError2TextView = (TextView) findViewById(R.id.gpsError2_textview);
+        _noMapLayout = findViewById(R.id.noMap_layout);
+        _gpsError1TextView = findViewById(R.id.gpsError1_textview);
+        _gpsError2TextView = findViewById(R.id.gpsError2_textview);
 
-        _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
+        _addressLayout = findViewById(R.id.address_layout);
 
-        _siteTitleTextView = (TextView) findViewById(R.id.siteTitle_textview);
-        _addressTextView = (TextView) findViewById(R.id.address_textview);
+        _siteTitleTextView = findViewById(R.id.siteTitle_textview);
+        _addressTextView = findViewById(R.id.address_textview);
 
-        _locationTypeLayout = (LinearLayout) findViewById(R.id.locationType_layout);
-        _locationIconTextView = (IconFontTextView) findViewById(R.id.locationIcon_textview);
-        _locationTypeTextView = (TextView) findViewById(R.id.locationType_textview);
+        _locationTypeLayout = findViewById(R.id.locationType_layout);
+        _locationIconTextView = findViewById(R.id.locationIcon_textview);
+        _locationTypeTextView = findViewById(R.id.locationType_textview);
 
-        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
-        _noteTextView = (TextView) findViewById(R.id.note_textview);
+        _distanceTextView = findViewById(R.id.distance_textview);
+        _noteTextView = findViewById(R.id.note_textview);
 
-        _actionButton = (Button) findViewById(R.id.navigate_button);
+        _actionButton = findViewById(R.id.navigate_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         _gmapsClient = new GmapsClient(_gmapsClient_listener);
@@ -455,7 +456,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
                     final Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                     break;
                 }
                 case ACTION_MESSAGES: {

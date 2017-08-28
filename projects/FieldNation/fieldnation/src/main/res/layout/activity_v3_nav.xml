@@ -28,6 +28,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+
+
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -40,7 +42,7 @@
                 style="?attr/fnToolbarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_scrollFlags="scroll|enterAlways"
+                app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"
                 android:theme="@style/FieldNation.Material.ToolBar">
 
                 <com.fieldnation.ui.IconFontTextView
@@ -55,10 +57,11 @@
 
         </android.support.design.widget.AppBarLayout>
 
+        <com.fieldnation.fndialog.DialogManager
+            android:id="@+id/dialogManager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
     </android.support.design.widget.CoordinatorLayout>
 
-    <com.fieldnation.fndialog.DialogManager
-        android:id="@+id/dialogManager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 </RelativeLayout>

@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -76,15 +76,15 @@ public class RequestBundleDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_accept_bundle, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
-        _expiresTextView = (TextView) v.findViewById(R.id.expires_textview);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _bodyTextView = v.findViewById(R.id.body_textview);
+        _expiresTextView = v.findViewById(R.id.expires_textview);
         _dividerView = v.findViewById(R.id.divider);
-        _expiresCheckBox = (CheckBox) v.findViewById(R.id.expires_checkbox);
-        _expireSpinner = (HintSpinner) v.findViewById(R.id.expire_duration_spinner);
-        _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _expiresCheckBox = v.findViewById(R.id.expires_checkbox);
+        _expireSpinner = v.findViewById(R.id.expire_duration_spinner);
+        _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _okButton = v.findViewById(R.id.ok_button);
 
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getView().getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
@@ -187,7 +187,7 @@ public class RequestBundleDialog extends SimpleDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -196,7 +196,7 @@ public class RequestBundleDialog extends SimpleDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 

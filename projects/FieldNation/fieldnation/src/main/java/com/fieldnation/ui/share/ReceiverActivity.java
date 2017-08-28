@@ -21,7 +21,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -112,6 +112,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
+        _workOrderPicker.onStart();
     }
 
     @Override
@@ -138,7 +139,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
-
+        _workOrderPicker.onStop();
         super.onStop();
     }
 
@@ -241,7 +242,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(_sharedFiles[0].getFileName()));
 
-                    AttachmentService.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
+                    AttachmentHelper.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -278,7 +279,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(file.getFileName()));
 
-                    AttachmentService.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
+                    AttachmentHelper.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -289,10 +290,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     };
 
     private void startWorkOrderDetails() {
-        Intent intent = WorkOrderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId().intValue());
-        intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DELIVERABLES);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId()));
         finish();
     }
 

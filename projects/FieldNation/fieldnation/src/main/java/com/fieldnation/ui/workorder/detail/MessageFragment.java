@@ -41,7 +41,6 @@ public class MessageFragment extends WorkorderFragment {
 
     // Data
     private WorkOrder _workorder;
-    private WorkordersWebApi _workOrderApi;
     private boolean _isMarkedRead = false;
 
     /*-*************************************-*/
@@ -57,33 +56,29 @@ public class MessageFragment extends WorkorderFragment {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onViewCreated");
 
-        _messagesList = (OverScrollRecyclerView) view.findViewById(R.id.messages_listview);
+        _messagesList = view.findViewById(R.id.messages_listview);
         _messagesList.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         _messagesList.setAdapter(_adapter);
 
-        _inputView = (MessageInputView) view.findViewById(R.id.input_view);
+        _inputView = view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
 
-        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView = view.findViewById(R.id.refresh_view);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         populateUi();
     }
 
     @Override
     public void onPause() {
-        if (_workOrderApi != null) {
-            _workOrderApi.disconnect(App.get());
-            _workOrderApi = null;
-        }
+        _workOrderApi.unsub();
 
         misc.hideKeyboard(_inputView);
         super.onPause();
@@ -187,13 +182,7 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("addMessage")

@@ -44,8 +44,8 @@ public class ProblemRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _detailTextView = (TextView) findViewById(R.id.detail_textview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _detailTextView = findViewById(R.id.detail_textview);
 
         populateUi();
     }

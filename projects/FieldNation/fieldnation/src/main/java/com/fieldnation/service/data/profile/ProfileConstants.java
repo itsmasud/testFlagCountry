@@ -6,12 +6,12 @@ package com.fieldnation.service.data.profile;
 public interface ProfileConstants {
     long CALL_BOUNCE_TIMER = 30000;
 
-    String TOPIC_ID_GET = "ProfileDataService:TOPIC_ID_GET";
-    String TOPIC_ID_NOTIFICATION_LIST = "ProfileDataService:TOPIC_ID_NOTIFICATION_LIST";
-    String TOPIC_ID_MESSAGE_LIST = "ProfileDataService:TOPIC_ID_MESSAGE_LIST";
-    String TOPIC_ID_ACTION_COMPLETE = "ProfileConstants:TOPIC_ID_ACTION_COMPLETE";
-    String TOPIC_ID_SWITCH_USER = "ProfileConstants:TOPIC_ID_SWITCH_USER";
-    String TOPIC_ID_UPLOAD_PHOTO = "ProfileConstants:TOPIC_ID_UPLOAD_PHOTO";
+    String ADDRESS_GET = "ProfileDataService:ADDRESS_GET";
+    String ADDRESS_NOTIFICATION_LIST = "ProfileDataService:ADDRESS_NOTIFICATION_LIST";
+    String ADDRESS_MESSAGE_LIST = "ProfileDataService:ADDRESS_MESSAGE_LIST";
+    String ADDRESS_ACTION_COMPLETE = "ProfileConstants:ADDRESS_ACTION_COMPLETE";
+    String ADDRESS_SWITCH_USER = "ProfileConstants:ADDRESS_SWITCH_USER";
+    String ADDRESS_UPLOAD_PHOTO = "ProfileConstants:ADDRESS_UPLOAD_PHOTO";
 
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_GET = "PARAM_ACTION_GET";
@@ -19,7 +19,6 @@ public interface ProfileConstants {
     String PARAM_ACTION_LIST_MESSAGES = "PARAM_ACTION_LIST_MESSAGES";
     String PARAM_ACTION_SWITCH_USER = "PARAM_ACTION_SWITCH_USER";
     String PARAM_ACTION_PHOTO_UPLOAD = "PARAM_ACTION_PHOTO_UPLOAD";
-
 
     String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
     String PARAM_PAGE = "PARAM_PAGE";

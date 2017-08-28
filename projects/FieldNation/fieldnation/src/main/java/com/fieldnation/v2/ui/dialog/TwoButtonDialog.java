@@ -15,8 +15,8 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 9/21/2016.
@@ -50,10 +50,10 @@ public class TwoButtonDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = LayoutInflater.from(context).inflate(R.layout.dialog_v2_two_button, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
-        _primaryButton = (Button) v.findViewById(R.id.primary_button);
-        _secondaryButton = (Button) v.findViewById(R.id.secondary_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _bodyTextView = v.findViewById(R.id.body_textview);
+        _primaryButton = v.findViewById(R.id.primary_button);
+        _secondaryButton = v.findViewById(R.id.secondary_button);
 
         return v;
     }
@@ -95,7 +95,7 @@ public class TwoButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        _onCanceledDispatcher.dispatch(getUid());
+        _onCanceledDispatcher.dispatch(getUid(), getExtraData());
         super.cancel();
 
         if (onCancel())
@@ -105,7 +105,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _primary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onPrimaryDispatcher.dispatch(getUid());
+            _onPrimaryDispatcher.dispatch(getUid(), getExtraData());
             if (onPrimaryClick())
                 dismiss(true);
         }
@@ -114,7 +114,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _secondary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onSecondaryDispatcher.dispatch(getUid());
+            _onSecondaryDispatcher.dispatch(getUid(), getExtraData());
             if (onSecondaryClick())
                 dismiss(true);
         }
@@ -180,13 +180,13 @@ public class TwoButtonDialog extends SimpleDialog {
     /*-         Primary Listener           -*/
     /*-************************************-*/
     public interface OnPrimaryListener {
-        void onPrimary();
+        void onPrimary(Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnPrimaryListener> _onPrimaryDispatcher = new KeyedDispatcher<OnPrimaryListener>() {
         @Override
         public void onDispatch(OnPrimaryListener listener, Object... parameters) {
-            listener.onPrimary();
+            listener.onPrimary((Parcelable) parameters[0]);
         }
     };
 
@@ -202,17 +202,17 @@ public class TwoButtonDialog extends SimpleDialog {
         _onPrimaryDispatcher.removeAll(uid);
     }
 
-    /*-************************************-*/
+    /*-**************************************-*/
     /*-         Secondary Listener           -*/
-    /*-************************************-*/
+    /*-**************************************-*/
     public interface OnSecondaryListener {
-        void onSecondary();
+        void onSecondary(Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnSecondaryListener> _onSecondaryDispatcher = new KeyedDispatcher<OnSecondaryListener>() {
         @Override
         public void onDispatch(OnSecondaryListener listener, Object... parameters) {
-            listener.onSecondary();
+            listener.onSecondary((Parcelable) parameters[0]);
         }
     };
 
@@ -232,13 +232,13 @@ public class TwoButtonDialog extends SimpleDialog {
     /*-         Canceled Listener           -*/
     /*-*************************************-*/
     public interface OnCanceledListener {
-        void onCanceled();
+        void onCanceled(Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
         @Override
         public void onDispatch(OnCanceledListener listener, Object... parameters) {
-            listener.onCanceled();
+            listener.onCanceled((Parcelable) parameters[0]);
         }
     };
 

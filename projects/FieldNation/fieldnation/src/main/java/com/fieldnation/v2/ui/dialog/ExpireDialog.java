@@ -13,7 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
-import com.fieldnation.v2.ui.KeyValuePairView;
+import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
 /**
  * Created by mc on 7/12/17.
@@ -94,15 +94,15 @@ public class ExpireDialog extends FullScreenDialog {
             super(itemView);
         }
 
-        public KeyValuePairView getView() {
-            return (KeyValuePairView) itemView;
+        public ListItemTwoHorizView getView() {
+            return (ListItemTwoHorizView) itemView;
         }
     }
 
     private final RecyclerView.Adapter<VH> adapter = new RecyclerView.Adapter<VH>() {
         @Override
         public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-            KeyValuePairView kvp = new KeyValuePairView(parent.getContext());
+            ListItemTwoHorizView kvp = new ListItemTwoHorizView(parent.getContext());
             kvp.setOnClickListener(_item_onClick);
             return new VH(kvp);
         }

@@ -170,6 +170,7 @@
     <string name="snackbar_feedback_success_message">Success! Your feedback has been sent.</string>
     <string name="snackbar_feedback_connection_failed">Could not send your feedback. Please check your connection.</string>
     <string name="snackbar_feedback_sent_failed">Failed. Your feedback could not be sent.</string>
+    <string name="snackbar_location_disabled">We would like to use your location to provide more accurate status information to the buyer.</string>
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
@@ -358,6 +359,7 @@
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
     <string name="add_profile">Add Profile</string>
+    <string name="additional_information">Additional Information</string>
     <string name="add_time">Add Time</string>
     <string name="address">Address</string>
     <string name="address_1">Address 1</string>
@@ -371,6 +373,8 @@
     <string name="tv_date">Date</string>
     <string name="tv_start_time">Start Time</string>
     <string name="assign_add_new">Assign/Add New</string>
+    <string name="attached_files">Attached Files</string>
+    <string name="attachment_files">Attachment Files</string>
     <string name="between">Between</string>
     <string name="earliest_arrival">Earliest Arrival</string>
     <string name="latest_arrival">Latest Arrival</string>

@@ -10,6 +10,6 @@ public interface ProfilePhotoConstants {
     String PARAM_ACTION_UPLOAD = "upload";
     String PARAM_UPLOAD_URI = "uri";
 
-    String TOPIC_ID_GET = "ProfilePhotoConstants:GET";
+    String ADDRESS_GET = "ProfilePhotoConstants:GET";
     String PARAM_LOCAL_URI = "uriCache";
 }

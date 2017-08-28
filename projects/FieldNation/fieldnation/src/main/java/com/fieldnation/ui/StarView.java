@@ -51,7 +51,7 @@ public class StarView extends FrameLayout {
             return;
 
         _star = getContext().getResources().getString(R.string.icon_star);
-        _starContainer = (LinearLayout) findViewById(R.id.star_container);
+        _starContainer = findViewById(R.id.star_container);
 
         setStars(_goldStars, _totalStars);
     }

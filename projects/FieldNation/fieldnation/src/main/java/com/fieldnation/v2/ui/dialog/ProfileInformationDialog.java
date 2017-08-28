@@ -60,7 +60,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private Profile _profile;
     private WeakReference<Drawable> _profilePic = null;
     private Uri _currentUri;
-    private ProfilePhotoClient _profilePhotoClient;
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -99,8 +98,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         super.onStart();
         Log.v(TAG, "onStart");
 
-        _profilePhotoClient = new ProfilePhotoClient(_profilePhotoClient_listener);
-        _profilePhotoClient.connect(App.get());
+        _profilePhotoClient.sub();
     }
 
     @Override
@@ -131,7 +129,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
-        if (_profilePhotoClient != null) _profilePhotoClient.disconnect(App.get());
+        _profilePhotoClient.unsub();
         super.onStop();
         Log.v(TAG, "onStop");
     }
@@ -195,7 +193,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
             _zipCodeEditText.setText(_profile.getZip());
 
 
-        if (_profilePhotoClient.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+        if (_profilePic == null || _profilePic.get() == null) {
             _picView.setProfilePic(R.drawable.missing_circle);
             ProfilePhotoClient.get(App.get());
         } else if (_profilePic != null && _profilePic.get() != null) {
@@ -213,25 +211,10 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
-    private final ProfilePhotoClient.Listener _profilePhotoClient_listener = new ProfilePhotoClient.Listener() {
-
-        @Override
-        public void onConnected() {
-            super.onConnected();
-            populateUi();
-        }
-
-        @Override
-        public ProfilePhotoClient getClient() {
-            return _profilePhotoClient;
-        }
-
+    private final ProfilePhotoClient _profilePhotoClient = new ProfilePhotoClient() {
         @Override
         public boolean getProfileImage(Uri uri) {
-            if (_currentUri == null || !_currentUri.toString().equals(uri.toString())) {
-                return true;
-            }
-            return false;
+            return _currentUri == null || !_currentUri.toString().equals(uri.toString());
         }
 
         @Override

@@ -6,7 +6,7 @@ import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -33,7 +33,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                                     .path("/api/rest/v1/accounting/payment-queue/all")
                                     .urlParams("?page=" + page)
                     ).build();
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -55,7 +55,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                                     .method("GET")
                                     .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
                     ).build();
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

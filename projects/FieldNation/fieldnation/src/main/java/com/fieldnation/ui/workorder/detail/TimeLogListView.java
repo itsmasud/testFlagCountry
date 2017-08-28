@@ -70,10 +70,10 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        ppulateUi();
+        populateUi();
     }
 
-    public void ppulateUi() {
+    public void populateUi() {
         if (_workOrder == null)
             return;
 

@@ -8,12 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by mc on 1/20/17.
@@ -22,19 +20,13 @@ import com.fieldnation.v2.data.model.WorkOrder;
 public class MarkCompleteDialog extends SimpleDialog {
     private static final String TAG = "MarkCompleteDialog";
 
-    // Dialog uids
-    private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
-
-    // State
-    private static final String PARAM_WORKORDER = "workOrder";
-
     // Ui
     private LinearLayout _signatureLayout;
     private Button _continueButton;
     private Button _cancelButton;
 
     // Data
-    private WorkOrder _workOrder;
+    private boolean _hasSignature;
 
     public MarkCompleteDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -44,9 +36,9 @@ public class MarkCompleteDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_mark_complete, container, false);
 
-        _signatureLayout = (LinearLayout) v.findViewById(R.id.signature_layout);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _continueButton = (Button) v.findViewById(R.id.continue_button);
+        _signatureLayout = v.findViewById(R.id.signature_layout);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _continueButton = v.findViewById(R.id.continue_button);
 
         return v;
     }
@@ -54,7 +46,6 @@ public class MarkCompleteDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
-
         _signatureLayout.setOnClickListener(_signature_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
         _continueButton.setOnClickListener(_continue_onClick);
@@ -62,7 +53,7 @@ public class MarkCompleteDialog extends SimpleDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
-        _workOrder = payload.getParcelable(PARAM_WORKORDER);
+        _hasSignature = payload.getBoolean("hasSignatures");
 
         super.show(payload, animate);
 
@@ -70,21 +61,18 @@ public class MarkCompleteDialog extends SimpleDialog {
     }
 
     private void populateUi() {
-        if (_workOrder == null)
-            return;
-
         if (_continueButton == null)
             return;
 
-        if (_workOrder.getSignatures().getMetadata().getTotal() > 0)
+        if (_hasSignature)
             _signatureLayout.setVisibility(View.GONE);
         else
             _signatureLayout.setVisibility(View.VISIBLE);
     }
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, boolean hasSignatures) {
         Bundle payload = new Bundle();
-        payload.putParcelable(PARAM_WORKORDER, workOrder);
+        payload.putBoolean("hasSignatures", hasSignatures);
         Controller.show(context, uid, MarkCompleteDialog.class, payload);
     }
 
@@ -111,10 +99,6 @@ public class MarkCompleteDialog extends SimpleDialog {
         public void onClick(View v) {
             _onContinueClickDispatcher.dispatch(getUid());
             dismiss(true);
-
-            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
-                RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder, _workOrder.getCompany().getName());
-            }
         }
     };
 

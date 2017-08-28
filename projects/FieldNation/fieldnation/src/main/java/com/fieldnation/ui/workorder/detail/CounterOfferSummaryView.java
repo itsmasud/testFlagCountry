@@ -66,13 +66,13 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         if (isInEditMode())
             return;
 
-        _payLayout = (LinearLayout) findViewById(R.id.pay_layout);
-        _payTextView = (TextView) findViewById(R.id.pay_textview);
-        _scheduleLayout = (LinearLayout) findViewById(R.id.schedule_layout);
-        _scheduleTextView = (TextView) findViewById(R.id.schedule_textview);
-        _expenseLayout = (LinearLayout) findViewById(R.id.expense_layout);
+        _payLayout = findViewById(R.id.pay_layout);
+        _payTextView = findViewById(R.id.pay_textview);
+        _scheduleLayout = findViewById(R.id.schedule_layout);
+        _scheduleTextView = findViewById(R.id.schedule_textview);
+        _expenseLayout = findViewById(R.id.expense_layout);
 
-        _counterOfferButton = (Button) findViewById(R.id.counterOffer_button);
+        _counterOfferButton = findViewById(R.id.counterOffer_button);
         _counterOfferButton.setOnClickListener(_counterOffer_onClick);
     }
 

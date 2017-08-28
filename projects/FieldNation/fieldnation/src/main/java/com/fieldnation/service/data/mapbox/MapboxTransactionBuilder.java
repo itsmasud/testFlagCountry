@@ -7,7 +7,7 @@ import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael on 6/22/2016.
@@ -42,7 +42,7 @@ public class MapboxTransactionBuilder implements MapboxConstants {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -81,7 +81,7 @@ public class MapboxTransactionBuilder implements MapboxConstants {
                     .request(builder)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

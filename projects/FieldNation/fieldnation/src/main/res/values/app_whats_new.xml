@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="added_new_feature">
-&lt;b&gt;What\'s New with Field Nation&lt;/b&gt;&lt;br/&gt;
+&lt;b&gt;What\'s new with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
-Improved file uploading performance, opening the app from a link, and added the ability to call a work order contact directly from the work order lists.
+We\'ve started the redesign process on the work order details view by making it easier to add items with a floating action button and by moving attachments to the bottom of the view. We have also addressed a lot of the reported bugs with the Android O release on top of fixing other reported bugs.
 &lt;br/&gt;
 &lt;br/&gt;
+
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Ability to copy/paste on work order messages&lt;/li&gt;
-&lt;li&gt;Profile picture upload enhancements&lt;/li&gt;
-&lt;li&gt;Call a work order contact from the work order lists&lt;/li&gt;
+&lt;li&gt;A floating action button to make it easier to add items to a work order&lt;/li&gt;
+&lt;li&gt;Monthly pay totals to payments screen&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;b&gt;What we changed:&lt;/b&gt;
+&lt;ul&gt;
+&lt;li&gt;Moved attachments out of the top tabs and to the bottom of the work order details view to get us one step closer to a complete redesign&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Splash screen hanging after clearing data&lt;/li&gt;
-&lt;li&gt;Links to work order details not opening in the app&lt;/li&gt;
-&lt;li&gt;Unable to upload a file&lt;/li&gt;
-&lt;ul&gt;
-&lt;li&gt;On tasks&lt;/li&gt;
-&lt;li&gt;In landscape mode&lt;/li&gt;
-&lt;/ul&gt;
+&lt;li&gt;Crashes on Android O&lt;/li&gt;
+&lt;li&gt;Issues around dialogs and actions not working for larger work orders&lt;/li&gt;
+&lt;li&gt;Check in/out locations being off&lt;/li&gt;
+&lt;li&gt;Crash on empty work order lists&lt;/li&gt;
 &lt;/ul&gt;
     </string>
 </resources>

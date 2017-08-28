@@ -50,7 +50,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
         if (isInEditMode())
             return;
 
-        _listLayout = (LinearLayout) findViewById(R.id.contactList_layout);
+        _listLayout = findViewById(R.id.contactList_layout);
 
         setVisibility(GONE);
     }

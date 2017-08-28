@@ -15,16 +15,16 @@ import com.fieldnation.Debug;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 
 import java.util.List;
 
@@ -36,10 +36,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_CURRENT_TAB = TAG + ".currentTab";
     public static final String INTENT_FIELD_ACTION = TAG + ".action";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
+    public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
 
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;
-    public static final int TAB_DELIVERABLES = 2;
 
     // SavedInstance fields
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
@@ -52,13 +52,14 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private WorkorderTabView _tabview;
 
     // Data
-    private WorkordersWebApi _workOrderApi;
     private int _workOrderId = 0;
     private int _currentTab = 0;
     private int _currentFragment = 0;
     private boolean _created = false;
     private WorkOrder _workOrder = null;
     private boolean _hidingTasks;
+
+    private boolean _showAttachments = false;
 
     // Services
     private PagerAdapter _pagerAdapter;
@@ -92,6 +93,13 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (intent.hasExtra(INTENT_FIELD_ACTION)) {
                 if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_CONFIRM)) {
                     Log.v(TAG, "INTENT_FIELD_ACTION/ACTION_CONFIRM");
+                } else if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_ATTACHMENTS)) {
+                    if (_workOrder != null) {
+                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        _showAttachments = false;
+                    } else {
+                        _showAttachments = true;
+                    }
                 }
             }
 
@@ -185,10 +193,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     private void buildFragments(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
-        _viewPager.setOffscreenPageLimit(3);
+        _viewPager.setOffscreenPageLimit(2);
 
         if (_fragments == null) {
-            _fragments = new WorkorderFragment[3];
+            _fragments = new WorkorderFragment[2];
 
             if (savedInstanceState != null) {
                 List<Fragment> fragments = getSupportFragmentManager().getFragments();
@@ -208,11 +216,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                             _fragments[1].setLoadingListener(_workorderFrag_loadingListener);
                         }
 
-                        if (frag instanceof DeliverableFragment) {
-                            _fragments[2] = (WorkorderFragment) frag;
-                            _fragments[2].setPageRequestListener(_pageRequestListener);
-                            _fragments[2].setLoadingListener(_workorderFrag_loadingListener);
-                        }
                     }
                 }
             }
@@ -221,8 +224,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 _fragments[0] = new WorkFragment();
             if (_fragments[1] == null)
                 _fragments[1] = new MessageFragment();
-            if (_fragments[2] == null)
-                _fragments[2] = new DeliverableFragment();
 
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);
@@ -250,17 +251,29 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workorderApi.sub();
+        setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
 
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workorderApi.unsub();
 
         super.onPause();
+    }
+
+    @Override
+    public void onBackPressed() {
+        for (int i = 0; i < _fragments.length; i++) {
+            if (_fragments[i] instanceof WorkFragment) {
+                if (((WorkFragment) _fragments[i]).onBackPressed())
+                    return;
+            }
+        }
+
+        super.onBackPressed();
     }
 
     private void populateUi() {
@@ -378,14 +391,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            //Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
-            _workOrderApi.subWorkordersWebApi();
-            setLoading(true);
-        }
-
+    private final WorkordersWebApi _workorderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return !methodName.equals("getWorkOrders");
@@ -404,6 +410,12 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 if (_workOrderId == (int) workOrder.getId()) {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
+
+                    if (_showAttachments) {
+                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        _showAttachments = false;
+                    }
+
                     populateUi();
                 }
             } else if (!methodName.startsWith("get")) {
@@ -428,7 +440,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, tab);
-        ActivityResultClient.startActivity(context, intent);
+        ActivityClient.startActivity(intent);
     }
 
     public static Intent makeIntentConfirm(Context context, int workOrderId) {
@@ -439,6 +451,16 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
+        return intent;
+    }
+
+    public static Intent makeIntentAttachments(Context context, int workOrderId) {
+        Log.v(TAG, "makeIntentAttachments");
+        Intent intent = new Intent(context, WorkOrderActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_ACTION, ACTION_ATTACHMENTS);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         return intent;
     }
 

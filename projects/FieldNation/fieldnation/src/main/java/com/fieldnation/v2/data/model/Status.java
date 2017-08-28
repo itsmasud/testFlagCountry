@@ -64,12 +64,6 @@ public class Status implements Parcelable {
     @Json(name = "ncns")
     private Boolean _ncns;
 
-    @Json(name = "problem")
-    private Problem _problem;
-
-    @Json(name = "problem_reported")
-    private Boolean _problemReported;
-
     @Json(name = "sub_status")
     private String _subStatus;
 
@@ -279,53 +273,6 @@ public class Status implements Parcelable {
     public Status ncns(Boolean ncns) throws ParseException {
         _ncns = ncns;
         SOURCE.put("ncns", ncns);
-        return this;
-    }
-
-    public void setProblem(Problem problem) throws ParseException {
-        _problem = problem;
-        SOURCE.put("problem", problem.getJson());
-    }
-
-    public Problem getProblem() {
-        try {
-            if (_problem == null && SOURCE.has("problem") && SOURCE.get("problem") != null)
-                _problem = Problem.fromJson(SOURCE.getJsonObject("problem"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_problem == null)
-            _problem = new Problem();
-
-            return _problem;
-    }
-
-    public Status problem(Problem problem) throws ParseException {
-        _problem = problem;
-        SOURCE.put("problem", problem.getJson());
-        return this;
-    }
-
-    public void setProblemReported(Boolean problemReported) throws ParseException {
-        _problemReported = problemReported;
-        SOURCE.put("problem_reported", problemReported);
-    }
-
-    public Boolean getProblemReported() {
-        try {
-            if (_problemReported == null && SOURCE.has("problem_reported") && SOURCE.get("problem_reported") != null)
-                _problemReported = SOURCE.getBoolean("problem_reported");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _problemReported;
-    }
-
-    public Status problemReported(Boolean problemReported) throws ParseException {
-        _problemReported = problemReported;
-        SOURCE.put("problem_reported", problemReported);
         return this;
     }
 

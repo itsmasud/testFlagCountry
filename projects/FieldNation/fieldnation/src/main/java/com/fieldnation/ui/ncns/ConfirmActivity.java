@@ -88,6 +88,12 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        _recyclerView.onStart();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         _recyclerView.onResume();
@@ -98,6 +104,12 @@ public class ConfirmActivity extends AuthSimpleActivity {
     protected void onPause() {
         _recyclerView.onPause();
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        _recyclerView.onStop();
+        super.onStop();
     }
 
     @Override
@@ -138,6 +150,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
             if (workOrders == null) {
                 return;
             }
+            if (_doneButton == null)
+                return;
 
             _doneButton.post(new Runnable() {
                 @Override

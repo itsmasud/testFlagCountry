@@ -26,21 +26,21 @@ import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnactivityresult.ActivityRequestHandler;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.data.profile.ProfileService;
-import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.ui.ncns.RemindMeService;
+import com.fieldnation.service.data.profile.ProfileSystem;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
@@ -72,11 +72,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     // animation
     private Animation _fadeout;
 
-    // Services
-    private GlobalTopicClient _globalClient;
-    private ActivityResultClient _activityResultClient;
-    private PermissionsClient _permissionsClient;
-
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -93,22 +88,22 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             getActionBar().hide();
         }
 
-        _contentLayout = (LinearLayout) findViewById(R.id.content_layout);
+        _contentLayout = findViewById(R.id.content_layout);
         _contentLayout.setVisibility(View.GONE);
 
-        _usernameEditText = (EditText) findViewById(R.id.username_edittext);
+        _usernameEditText = findViewById(R.id.username_edittext);
         _usernameEditText.setOnEditorActionListener(_onEditorUserName);
 
-        _passwordEditText = (EditText) findViewById(R.id.password_edittext);
+        _passwordEditText = findViewById(R.id.password_edittext);
         _passwordEditText.setOnEditorActionListener(_onEditorPassword);
 
-        _loginButton = (Button) findViewById(R.id.login_button);
+        _loginButton = findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
 
-        _forgotButton = (Button) findViewById(R.id.forgot_button);
+        _forgotButton = findViewById(R.id.forgot_button);
         _forgotButton.setOnClickListener(_forgot_onClick);
 
-        _signupButton = (Button) findViewById(R.id.signup_button);
+        _signupButton = findViewById(R.id.signup_button);
         _signupButton.setOnClickListener(_signup_onClick);
         _signupButton.setVisibility(View.GONE);
 
@@ -117,14 +112,14 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _fader = findViewById(R.id.fader);
 
-        _versionTextView = (TextView) findViewById(R.id.version_textview);
+        _versionTextView = findViewById(R.id.version_textview);
         _versionTextView.setText("Version " +
                 (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
 
-        _dialogManager = (DialogManager) findViewById(R.id.dialogManager);
+        _dialogManager = findViewById(R.id.dialogManager);
 
         _authcomplete = false;
 
@@ -148,8 +143,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _dialogManager.onStart();
 
-        _permissionsClient = new PermissionsClient(_permissionsListener);
-        _permissionsClient.connect(App.get());
+        _permissionsListener.sub();
         PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
     }
 
@@ -157,10 +151,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(App.get());
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
+        _appMessagingClient.subUpdateApp();
+        _activityRequestHandler.sub();
 
         _dialogManager.onResume();
     }
@@ -169,9 +161,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
 
-        if (_globalClient != null) _globalClient.disconnect(App.get());
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
-
+        _appMessagingClient.unsubUpdateApp();
+        _activityRequestHandler.unsub();
         _dialogManager.onPause();
 
         super.onPause();
@@ -179,7 +170,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     protected void onStop() {
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        _permissionsListener.unsub();
 
         super.onStop();
 
@@ -200,7 +191,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             return;
         }
 
-        GlobalTopicClient.appShutdown(this);
+        AppMessagingClient.appShutdown();
 
         super.onBackPressed();
     }
@@ -208,24 +199,18 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+        ActivityRequestHandler.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+        PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalClient.subUpdateApp();
-            _globalClient.subGotProfile();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onNeedAppUpdate() {
             UpdateDialog.show(App.get());
@@ -239,27 +224,17 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+    private final PermissionsRequestHandler _permissionsListener = new PermissionsRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthActivity.this;
-        }
-
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
+    private final ActivityRequestHandler _activityRequestHandler = new ActivityRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthActivity.this;
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
         }
     };
 
@@ -276,8 +251,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         @Override
         public void onClick(View v) {
             misc.hideKeyboard(getCurrentFocus());
-            startService(new Intent(AuthActivity.this, ProfileService.class));
-            startService(new Intent(AuthActivity.this, WebTransactionService.class));
+            startService(new Intent(AuthActivity.this, ProfileSystem.class));
 
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
@@ -301,7 +275,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
 
-                        GlobalTopicClient.networkConnected(AuthActivity.this);
+                        AppMessagingClient.networkConnected();
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
@@ -314,7 +288,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 protected void onPostExecute(OAuth auth) {
                     if (auth == null) {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        GlobalTopicClient.networkDisconnected(AuthActivity.this);
+                        AppMessagingClient.networkDisconnected();
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                         _stiltView.setVisibility(View.VISIBLE);
@@ -324,7 +298,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     String error = auth.getErrorType();
 
                     if ("invalid_client".equals(error)) {
-                        GlobalTopicClient.updateApp(AuthActivity.this);
+                        AppMessagingClient.updateApp();
                     } else if (authToken != null) {
                         Log.v(TAG, "have authtoken");
                         Account account = new Account(_username, getString(R.string.auth_account_type));
@@ -343,7 +317,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.setResult(RESULT_OK, intent);
                         AuthActivity.this.finish();
 
-                        AuthTopicClient.addedAccountCommand(AuthActivity.this);
+                        AuthClient.addedAccountCommand();
                         SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
@@ -405,7 +379,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        ActivityResultClient.startActivity(context, intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        ActivityClient.startActivity(intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 }
 

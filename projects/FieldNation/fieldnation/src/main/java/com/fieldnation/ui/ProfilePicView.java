@@ -47,8 +47,8 @@ public class ProfilePicView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_profile_pic, this, true);
 
-        _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
-        _alertStub = (ViewStub) findViewById(R.id.alert_stub);
+        _profileImageView = findViewById(R.id.profile_imageview);
+        _alertStub = findViewById(R.id.alert_stub);
     }
 
     @Override

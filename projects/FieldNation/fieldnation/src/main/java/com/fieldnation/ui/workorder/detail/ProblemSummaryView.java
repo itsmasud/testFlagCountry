@@ -47,7 +47,7 @@ public class ProblemSummaryView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _countTextView = (TextView) findViewById(R.id.count_textview);
+        _countTextView = findViewById(R.id.count_textview);
 
         setOnClickListener(_this_onClick);
         setVisibility(GONE);
@@ -89,7 +89,7 @@ public class ProblemSummaryView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            UnresolvedProblemsDialog.show(App.get(), null, _workOrder);
+            UnresolvedProblemsDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getProblems());
         }
     };
 }

@@ -21,16 +21,18 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
@@ -213,6 +215,12 @@ public class PhotoUploadDialog extends SimpleDialog {
         _fileNameEditText.setText(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
     }
 
+    @Override
+    public void cancel() {
+        _onCancelDispatcher.dispatch(getUid());
+        super.cancel();
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -235,21 +243,21 @@ public class PhotoUploadDialog extends SimpleDialog {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_okButton_onClick");
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_insert_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
             if (!FileUtils.isValidFileName(_newFileName)) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.dialog_invalid_file_name), Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.dialog_invalid_file_name, Toast.LENGTH_LONG);
                 return;
             }
 
             if (!misc.isEmptyOrNull(_extension) && !_newFileName.endsWith(_extension)) {
                 _newFileName += _extension;
             }
-            dismiss(true);
 
             if (_task != null) {
                 try {
@@ -257,7 +265,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
                     // TODO: API cant take notes with the attachment
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -268,17 +276,20 @@ public class PhotoUploadDialog extends SimpleDialog {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
             }
+            _onOkDispatcher.dispatch(getUid());
+            dismiss(true);
         }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            _onCancelDispatcher.dispatch(getUid());
             dismiss(true);
         }
     };
@@ -334,7 +345,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
             try {
                 if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
+                    ActivityClient.startActivity(intent);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -383,4 +394,57 @@ public class PhotoUploadDialog extends SimpleDialog {
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
+
+    /*-**********************-*/
+    /*-         Ok           -*/
+    /*-**********************-*/
+    public interface OnOkListener {
+        void onOk();
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
+        @Override
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk();
+        }
+    };
+
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-**************************-*/
+    /*-         Cancel           -*/
+    /*-**************************-*/
+    public interface OnCancelListener {
+        void onCancel();
+    }
+
+    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
+        @Override
+        public void onDispatch(OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
+
 }

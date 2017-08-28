@@ -9,13 +9,12 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 
 /**
  * Created by Michael Carver on 6/24/2015.
@@ -31,9 +30,6 @@ public class UnavailableCardView extends FrameLayout {
     // Data
     private WorkorderDataSelector _displayView = null;
     private Profile _profile = null;
-
-    // Service
-    private ProfileClient _profileClient;
 
     public UnavailableCardView(Context context) {
         super(context);
@@ -55,19 +51,19 @@ public class UnavailableCardView extends FrameLayout {
 
         if (isInEditMode())
             return;
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _captionTexView = (TextView) findViewById(R.id.caption_textview);
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _titleTextView = findViewById(R.id.title_textview);
+        _captionTexView = findViewById(R.id.caption_textview);
+        _actionButton = findViewById(R.id.action_button);
 
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
+
+        _profileClient.subGet(false);
 
         populateUi();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_profileClient != null) _profileClient.disconnect(App.get());
+        _profileClient.unsubGet(false);
 
         super.onDetachedFromWindow();
     }
@@ -194,12 +190,7 @@ public class UnavailableCardView extends FrameLayout {
         }
     }
 
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet(false);
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             _profile = profile;
@@ -220,7 +211,7 @@ public class UnavailableCardView extends FrameLayout {
 
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.showContactUsDialog(getContext(), "UnavailableCardView");
+            ContactUsDialog.show(getContext(), null, "UnavailableCardView");
         }
     };
 

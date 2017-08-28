@@ -67,13 +67,13 @@ public class CustomFieldDialog extends SimpleDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_custom_field, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _textEditText = (EditText) v.findViewById(R.id.text_edittext);
-        _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
-        _spinner = (HintSpinner) v.findViewById(R.id.spinner);
-        _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _textEditText = v.findViewById(R.id.text_edittext);
+        _dateTimeButton = v.findViewById(R.id.datetime_button);
+        _spinner = v.findViewById(R.id.spinner);
+        _tipTextView = v.findViewById(R.id.tip_textview);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }

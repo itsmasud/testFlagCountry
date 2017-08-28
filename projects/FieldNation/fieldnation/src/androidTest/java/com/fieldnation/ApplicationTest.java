@@ -22,17 +22,14 @@ public class ApplicationTest extends ApplicationTestCase<App> {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        if (_client != null)
-            _client.disconnect(App.get());
+        _workOrdersApi.unsub();
     }
 
-    private WorkordersWebApi _client;
     private CountDownLatch signal;
 
     public void test_api() throws Exception {
         signal = new CountDownLatch(1);
-        _client = new WorkordersWebApi(_workordersWebApi_listener);
-        _client.connect(App.get());
+        _workOrdersApi.sub();
 
         WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
@@ -40,13 +37,7 @@ public class ApplicationTest extends ApplicationTestCase<App> {
         Log.v(TAG, "break!");
     }
 
-
-    private WorkordersWebApi.Listener _workordersWebApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _client.subWorkordersWebApi();
-        }
-
+    private WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists");

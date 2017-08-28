@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -67,10 +67,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private WorkOrders _workOrders;
 
     // Services
-    private BundlesWebApi _bundlesApi;
     private SimpleGps _simpleGps;
     private WorkorderClient _workOrderClient;
-    private WorkordersWebApi _workOrdersApiClient;
 
 
     @Override
@@ -107,11 +105,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         _listview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         _listview.setAdapter(_adapter);
 
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
-
         BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
     }
 
@@ -126,6 +119,15 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         setLoading(true);
@@ -136,11 +138,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         DeclineDialog.addOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
-        _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
-        _bundlesApi.connect(App.get());
+        _bundlesApi.sub();
 
-        _workOrdersApiClient = new WorkordersWebApi(_workOrdersApiClient_listener);
-        _workOrdersApiClient.connect(App.get());
+        _workOrdersApi.sub();
 
         _workOrderClient = new WorkorderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
@@ -148,11 +148,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
-        if (_bundlesApi != null) _bundlesApi.disconnect(App.get());
+        _bundlesApi.unsub();
 
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
-        if (_workOrdersApiClient != null) _workOrdersApiClient.disconnect(App.get());
+        _workOrdersApi.unsub();
 
         BundleEtaDialog.removeOnAcceptedListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onAccepted);
         BundleEtaDialog.removeOnCancelListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onCancel);
@@ -161,6 +161,12 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
+        super.onStop();
     }
 
     private void populateUi() {
@@ -312,12 +318,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final BundlesWebApi.Listener _bundlesWebApi_listener = new BundlesWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _bundlesApi.subBundlesWebApi();
-        }
-
+    private final BundlesWebApi _bundlesApi = new BundlesWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getBundleWorkOrders");
@@ -360,12 +361,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrdersApiClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrdersApiClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.contains("decline")
@@ -454,7 +450,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     public static void startNew(Context context, int bundleId) {
         Intent intent = new Intent(context, BundleDetailActivity.class);
         intent.putExtra(BundleDetailActivity.INTENT_FIELD_BUNDLE_ID, bundleId);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        ActivityClient.startActivity(intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }
 

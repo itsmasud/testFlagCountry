@@ -90,15 +90,15 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         if (isInEditMode())
             return;
 
-        _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
-        _picView = (ImageView) findViewById(R.id.pic_view);
-        _filenameTextView = (TextView) findViewById(R.id.filename_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _byTextView = (TextView) findViewById(R.id.by_textview);
-        _usernameTextView = (TextView) findViewById(R.id.username_textview);
+        _fileTypeIconFont = findViewById(R.id.filetype_imageview);
+        _picView = findViewById(R.id.pic_view);
+        _filenameTextView = findViewById(R.id.filename_textview);
+        _dateTextView = findViewById(R.id.date_textview);
+        _byTextView = findViewById(R.id.by_textview);
+        _usernameTextView = findViewById(R.id.username_textview);
 
-        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
+        _progressBar = findViewById(R.id.progressBar);
+        _statusTextView = findViewById(R.id.status_textview);
 
         _docClient = new DocumentClient(_docClient_listener);
         _docClient.connect(App.get());
@@ -157,7 +157,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _progressBar.setIndeterminate(true);
             return;
         }
-
 
         _statusTextView.setText("Uploading...");
         _progressBar.setIndeterminate(false);
@@ -230,7 +229,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             String lastName = _doc.getAuthor().getLastName();
             _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
         }
-
 
         if (_doc.getActionsSet().contains(Attachment.ActionsEnum.DELETE))
             setOnLongClickListener(_delete_onClick);
@@ -324,7 +322,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             }
 
             if (!App.get().isFreeSpaceAvailable()) {
-                Toast.makeText(getContext(), getResources().getString(R.string.toast_no_disk_space), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.toast_no_disk_space, Toast.LENGTH_LONG).show();
                 return;
             }
 
@@ -359,6 +357,5 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         void onDelete(UploadedDocumentView v, Attachment document);
 
         Drawable getPhoto(UploadedDocumentView view, String url, boolean circle);
-
     }
 }

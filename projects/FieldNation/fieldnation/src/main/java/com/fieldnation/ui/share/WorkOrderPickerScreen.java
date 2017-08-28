@@ -58,14 +58,18 @@ public class WorkOrderPickerScreen extends FrameLayout {
         if (isInEditMode())
             return;
 
-        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar = findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.setTitle(R.string.select_a_work_order);
 
-        _workOrderScreen = (SearchResultScreen) findViewById(R.id.recyclerView);
+        _workOrderScreen = findViewById(R.id.recyclerView);
         _workOrderScreen.setOnChildClickListener(_searchResultScreen_listener);
         _workOrderScreen.startSearch(_searchParams);
+    }
+
+    public void onStart() {
+        _workOrderScreen.onStart();
     }
 
     public void onResume() {
@@ -74,6 +78,10 @@ public class WorkOrderPickerScreen extends FrameLayout {
 
     public void onPause() {
         _workOrderScreen.onPause();
+    }
+
+    public void onStop() {
+        _workOrderScreen.onStop();
     }
 
     public void setListener(Listener listener) {

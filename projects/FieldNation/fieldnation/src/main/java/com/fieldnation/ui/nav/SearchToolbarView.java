@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.ui.search.SearchEditText;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 
@@ -47,7 +47,7 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
         if (isInEditMode())
             return;
 
-        _searchEditText = (SearchEditText) findViewById(R.id.searchEditText);
+        _searchEditText = findViewById(R.id.searchEditText);
         _searchEditText.setListener(_searchEditText_listener);
     }
 
@@ -108,15 +108,9 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
     private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
         @Override
         public void onLookupWorkOrder(final int workOrderId) {
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ActivityResultClient.startActivity(
-                            App.get(),
-                            WorkOrderActivity.makeIntentShow(App.get(), workOrderId),
-                            R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
-                }
-            }, 100);
+            ActivityClient.startActivity(
+                    WorkOrderActivity.makeIntentShow(App.get(), workOrderId),
+                    R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
             hide();
         }
     };

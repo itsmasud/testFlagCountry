@@ -20,12 +20,14 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
@@ -52,10 +54,6 @@ public class GetFileDialog extends SimpleDialog {
     private Uri _sourceUri;
     private Intent _cameraIntent = null;
 
-    // Clients
-    private PermissionsClient _permissionsClient;
-    private ActivityResultClient _activityResultClient;
-
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
     }
@@ -76,9 +74,8 @@ public class GetFileDialog extends SimpleDialog {
         super.onStart();
         Log.v(TAG, "onStart");
         _items.setAdapter(new GetFilePackageAdapter(_activityList, _app_onClick));
-
-        _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
-        _activityResultClient.connect(App.get());
+        _permissionsListener.sub();
+        _activityResultListener.sub();
     }
 
     @Override
@@ -127,8 +124,8 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void onStop() {
         Log.v(TAG, "onStop");
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
+        _permissionsListener.unsub();
+        _activityResultListener.unsub();
         super.onStop();
     }
 
@@ -172,7 +169,7 @@ public class GetFileDialog extends SimpleDialog {
 
             if (intent.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + intent.toString());
-                ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+                ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
                 int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
                 File f = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".jpg");
@@ -189,12 +186,10 @@ public class GetFileDialog extends SimpleDialog {
                 }
 
                 if (grant == PackageManager.PERMISSION_DENIED) {
-                    _permissionsClient = new PermissionsClient(_permissionsClient_listener);
-                    _permissionsClient.connect(App.get());
-                    PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
                     _cameraIntent = intent;
+                    PermissionsClient.requestPermissions(new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
                 } else {
-                    ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+                    ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
                 }
             }
         }
@@ -208,17 +203,13 @@ public class GetFileDialog extends SimpleDialog {
         Controller.show(context, uid, GetFileDialog.class, params);
     }
 
-    private final PermissionsClient.ResponseListener _permissionsClient_listener = new PermissionsClient.ResponseListener() {
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
-        }
-
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
+            Log.v(TAG, "PermissionsResponseListener.onComplete");
             if (permission.equals(Manifest.permission.CAMERA) && _cameraIntent != null) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                    ActivityResultClient.startActivityForResult(App.get(), _cameraIntent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+                    ActivityClient.startActivityForResult(_cameraIntent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
                     _cameraIntent = null;
                 } else {
                     ToastClient.toast(App.get(), "Camera Permission denied. Please try again.", Toast.LENGTH_SHORT);
@@ -227,16 +218,7 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
-        @Override
-        public void onConnected() {
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
+    private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
 
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {

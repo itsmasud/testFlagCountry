@@ -47,8 +47,8 @@ public class MessageSentView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_sent, this);
 
-        _messageTextView = (TextView) findViewById(R.id.message_textview);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
+        _messageTextView = findViewById(R.id.message_textview);
+        _statusTextView = findViewById(R.id.status_textview);
         _messageTextView.setOnLongClickListener(_message_onLongClick);
     }
 
@@ -82,7 +82,7 @@ public class MessageSentView extends RelativeLayout {
             ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = android.content.ClipData.newPlainText("Copied Text", _message.getMessage());
             clipboard.setPrimaryClip(clip);
-            ToastClient.toast(App.get(), getResources().getString(R.string.toast_copied_to_clipboard), Toast.LENGTH_LONG);
+            ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
             return true;
         }
     };

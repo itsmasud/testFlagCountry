@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.IconFontTextView;
@@ -51,19 +50,14 @@ public class UploadSlotView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _Layout = (RelativeLayout) findViewById(R.id.layoutRoot);
+        _Layout = findViewById(R.id.layoutRoot);
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
-        _titleTextView = (TextView) findViewById(R.id.name_textview);
+        _titleTextView = findViewById(R.id.name_textview);
         _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
-        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _iconView = findViewById(R.id.icon_view);
 
         populateUi();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
     }
 
     public void setListener(Listener listener) {

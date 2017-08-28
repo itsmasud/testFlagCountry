@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fngps.SimpleGps;
@@ -48,8 +48,6 @@ public class SearchResultScreen extends RelativeLayout {
 
     // Service
     private SimpleGps _simpleGps;
-    private WorkordersWebApi _workOrderClient;
-    private GlobalTopicClient _globalTopicClient;
 
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
@@ -81,10 +79,10 @@ public class SearchResultScreen extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView = findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
+        _workOrderList = findViewById(R.id.workOrderList_recyclerView);
         _workOrderList.setOnOverScrollListener(_refreshView);
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
@@ -96,11 +94,6 @@ public class SearchResultScreen extends RelativeLayout {
                 _refreshView.startRefreshing();
             }
         });
-
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
     }
 
     @Override
@@ -110,18 +103,30 @@ public class SearchResultScreen extends RelativeLayout {
         FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
-    public void onResume() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+    public void onStart() {
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
+    }
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
+    public void onResume() {
+        _workOrderApi.sub();
+        _adapter.refreshAll();
+
+        _appMessagingClient.subUserSwitched();
     }
 
     public void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+        _workOrderApi.unsub();
+        _appMessagingClient.unsubUserSwitched();
     }
+
+    public void onStop() {
+        if (_simpleGps != null && _simpleGps.isRunning())
+            _simpleGps.stop();
+    }
+
 
     @Override
     protected void onDetachedFromWindow() {
@@ -142,6 +147,7 @@ public class SearchResultScreen extends RelativeLayout {
                 _filterParams.longitude = _location.getLongitude();
             }
             _simpleGps.stop();
+            _adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -212,13 +218,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-            _adapter.refreshAll();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders")
@@ -271,12 +271,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalTopicClient.subUserSwitched();
-        }
-
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
             _adapter.refreshAll();

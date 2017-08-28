@@ -7,7 +7,8 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.KeyedDispatcher;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.Company;
+import com.fieldnation.v2.data.model.Location;
 
 /**
  * Created by mc on 1/20/17.
@@ -21,7 +22,9 @@ public class RateBuyerYesNoDialog extends TwoButtonDialog {
 
     private static final String PARAM_WORKORDER = "workOrder";
 
-    private WorkOrder _workOrder;
+    private int _workOrderId;
+    private Company _company;
+    private Location _location;
 
     public RateBuyerYesNoDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -31,13 +34,16 @@ public class RateBuyerYesNoDialog extends TwoButtonDialog {
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
 
-        _workOrder = (WorkOrder) getExtraData();
+        Bundle extraData = (Bundle) getExtraData();
+        _workOrderId = extraData.getInt("workOrderId");
+        _company = extraData.getParcelable("company");
+        _location = extraData.getParcelable("location");
     }
 
     @Override
     public boolean onPrimaryClick() {
         _onContinueDispatcher.dispatch(getUid());
-        RateBuyerDialog.show(App.get(), DIALOG_RATE_BUYER, _workOrder);
+        RateBuyerDialog.show(App.get(), DIALOG_RATE_BUYER, _workOrderId, _company, _location);
         return super.onPrimaryClick();
     }
 
@@ -47,13 +53,18 @@ public class RateBuyerYesNoDialog extends TwoButtonDialog {
         return super.onSecondaryClick();
     }
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String companyName) {
+    public static void show(Context context, String uid, int workOrderId, Company company, Location location) {
+        Bundle extraData = new Bundle();
+        extraData.putInt("workOrderId", workOrderId);
+        extraData.putParcelable("company", company);
+        extraData.putParcelable("location", location);
+
         show(context, uid, RateBuyerYesNoDialog.class,
                 context.getString(R.string.modal_rate_buyer_title),
-                context.getString(R.string.modal_rate_buyer_body, companyName),
+                context.getString(R.string.modal_rate_buyer_body, company.getName()),
                 context.getString(R.string.btn_continue),
                 context.getString(R.string.btn_remind_me_later),
-                true, workOrder);
+                true, extraData);
     }
 
     /*-*****************************-*/

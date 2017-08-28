@@ -12,7 +12,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.Shipments;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ShipmentRowView extends RelativeLayout {
     private static final String TAG = "ShipmentRowView";
@@ -24,7 +23,7 @@ public class ShipmentRowView extends RelativeLayout {
     private TextView _directionTextView;
 
     // Data
-    private WorkOrder _workOrder;
+    private Shipments _shipments;
     private Shipment _shipment;
     private Listener _listener;
     private boolean _taskMode = false;
@@ -53,10 +52,10 @@ public class ShipmentRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _trackingIdTextView = (TextView) findViewById(R.id.trackingid_textview);
-        _carrierTextView = (TextView) findViewById(R.id.carrier_textview);
-        _descTextView = (TextView) findViewById(R.id.description_textview);
-        _directionTextView = (TextView) findViewById(R.id.direction_textview);
+        _trackingIdTextView = findViewById(R.id.trackingid_textview);
+        _carrierTextView = findViewById(R.id.carrier_textview);
+        _descTextView = findViewById(R.id.description_textview);
+        _directionTextView = findViewById(R.id.direction_textview);
 
         setOnLongClickListener(_delete_onClick);
         setOnClickListener(_assign_onClick);
@@ -71,9 +70,9 @@ public class ShipmentRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(WorkOrder workOrder, Shipment shipment) {
+    public void setData(Shipments shipments, Shipment shipment) {
         _shipment = shipment;
-        _workOrder = workOrder;
+        _shipments = shipments;
 
         populateUi();
     }
@@ -117,7 +116,7 @@ public class ShipmentRowView extends RelativeLayout {
             _directionTextView.setText("From Site");
         }
 
-        setEnabled(_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD));
+        setEnabled(_shipments.getActionsSet().contains(Shipments.ActionsEnum.ADD));
     }
 
     /*-*********************************-*/

@@ -41,8 +41,8 @@ public class MessageInputView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _messageEditText = (EditText) findViewById(R.id.message_edittext);
-        _sendButton = (Button) findViewById(R.id.send_button);
+        _messageEditText = findViewById(R.id.message_edittext);
+        _sendButton = findViewById(R.id.send_button);
     }
 
     public void setOnSendButtonClick(View.OnClickListener listener) {

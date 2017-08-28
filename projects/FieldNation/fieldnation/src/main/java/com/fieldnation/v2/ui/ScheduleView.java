@@ -22,8 +22,8 @@ public class ScheduleView extends LinearLayout {
     private static final String TAG = "ScheduleView";
 
     // Ui
-    private KeyValuePairView _schedule1View;
-    private KeyValuePairView _schedule2View;
+    private ListItemTwoHorizView _schedule1View;
+    private ListItemTwoHorizView _schedule2View;
 
     // Data
     private Schedule _schedule;

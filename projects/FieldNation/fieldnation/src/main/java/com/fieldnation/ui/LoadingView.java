@@ -59,13 +59,13 @@ public class LoadingView extends RelativeLayout {
 
 		_vib = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 
-		_gear1 = (ImageView) findViewById(R.id.loading_gear1);
-		_gear2 = (ImageView) findViewById(R.id.loading_gear2);
-		_gear3 = (ImageView) findViewById(R.id.loading_gear3);
-		_center = (ImageView) findViewById(R.id.center_imageview);
+		_gear1 = findViewById(R.id.loading_gear1);
+		_gear2 = findViewById(R.id.loading_gear2);
+		_gear3 = findViewById(R.id.loading_gear3);
+		_center = findViewById(R.id.center_imageview);
 		_center.setOnTouchListener(_cetner_onTouch);
-		_messageTextview = (TextView) findViewById(R.id.message_textview);
-		_obstructTextView = (TextView) findViewById(R.id.obstruct_textview);
+		_messageTextview = findViewById(R.id.message_textview);
+		_obstructTextView = findViewById(R.id.obstruct_textview);
 
 		_rotateAnim1 = (RotateAnimation) AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_cw);
 		_rotateAnim2 = (RotateAnimation) AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_cw);

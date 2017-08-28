@@ -22,10 +22,10 @@ import com.fieldnation.fndialog.RightDrawerDialog;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.ui.search.FilterParams;
 
 import java.util.List;
@@ -64,13 +64,13 @@ public class FilterDrawerDialog extends RightDrawerDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_filter_drawer, container, false);
 
-        _locationSpinner = (HintSpinner) v.findViewById(R.id.location_spinner);
-        _otherLocationEditText = (EditText) v.findViewById(R.id.otherLocation_edittext);
-        _distanceTextView = (TextView) v.findViewById(R.id.distance_textview);
-        _distanceSpinner = (HintSpinner) v.findViewById(R.id.distance_spinner);
-        _applyButton = (Button) v.findViewById(R.id.apply_button);
-        _clearButton = (Button) v.findViewById(R.id.clear_button);
-        _closeButton = (Button) v.findViewById(R.id.close_button);
+        _locationSpinner = v.findViewById(R.id.location_spinner);
+        _otherLocationEditText = v.findViewById(R.id.otherLocation_edittext);
+        _distanceTextView = v.findViewById(R.id.distance_textview);
+        _distanceSpinner = v.findViewById(R.id.distance_spinner);
+        _applyButton = v.findViewById(R.id.apply_button);
+        _clearButton = v.findViewById(R.id.clear_button);
+        _closeButton = v.findViewById(R.id.close_button);
 
         _simpleGps = new SimpleGps(App.get());
 
@@ -112,6 +112,12 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         _filterParams = FilterParams.load(payload.getString("listId"));
 
         populateUi();
+    }
+
+    @Override
+    public void onStop() {
+        if (_simpleGps != null) _simpleGps.stop();
+        super.onStop();
     }
 
     private void populateUi() {

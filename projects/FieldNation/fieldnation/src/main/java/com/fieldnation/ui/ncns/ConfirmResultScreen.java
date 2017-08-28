@@ -46,7 +46,6 @@ public class ConfirmResultScreen extends RelativeLayout {
 
     // Service
     private SimpleGps _simpleGps;
-    private WorkordersWebApi _workOrderClient;
 
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
@@ -55,6 +54,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     private Location _location;
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
+    private ListEnvelope _envelope = null;
 
     public ConfirmResultScreen(Context context) {
         super(context);
@@ -77,10 +77,10 @@ public class ConfirmResultScreen extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView = findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
+        _workOrderList = findViewById(R.id.workOrderList_recyclerView);
         _workOrderList.setOnOverScrollListener(_refreshView);
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
@@ -92,11 +92,6 @@ public class ConfirmResultScreen extends RelativeLayout {
                 _refreshView.startRefreshing();
             }
         });
-
-        _simpleGps = new SimpleGps(App.get())
-                .updateListener(_gps_listener)
-                .priority(SimpleGps.Priority.HIGHEST)
-                .start(App.get());
     }
 
     @Override
@@ -105,13 +100,24 @@ public class ConfirmResultScreen extends RelativeLayout {
         FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
+    public void onStart() {
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
+                .start(App.get());
+    }
+
     public void onResume() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
     }
 
     public void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
+    }
+
+    public void onStop() {
+        if (_simpleGps != null && _simpleGps.isRunning())
+            _simpleGps.stop();
     }
 
     @Override
@@ -133,6 +139,7 @@ public class ConfirmResultScreen extends RelativeLayout {
                 _filterParams.longitude = _location.getLongitude();
             }
             _simpleGps.stop();
+            _adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -153,14 +160,18 @@ public class ConfirmResultScreen extends RelativeLayout {
         if (_workOrdersOptions == null)
             return;
 
-        _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
-        _workOrdersOptions.setPerPage(25);
+        if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
+            _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
+            _workOrdersOptions.setPerPage(25);
 
-        // this is locked down so that we don't have multiple pages
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+            // this is locked down so that we don't have multiple pages
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
-        if (_refreshView != null)
-            _refreshView.startRefreshing();
+            if (_refreshView != null)
+                _refreshView.startRefreshing();
+        } else {
+            _refreshView.refreshComplete();
+        }
     }
 
     public void startSearch(SavedList savedList) {
@@ -201,12 +212,7 @@ public class ConfirmResultScreen extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders") || !methodName.startsWith("get");
@@ -229,6 +235,7 @@ public class ConfirmResultScreen extends RelativeLayout {
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
                 ListEnvelope envelope = workOrders.getMetadata();
+                _envelope = envelope;
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();

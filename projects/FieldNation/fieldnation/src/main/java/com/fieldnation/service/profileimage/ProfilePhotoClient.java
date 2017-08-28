@@ -1,33 +1,33 @@
 package com.fieldnation.service.profileimage;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.Pigeon;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
-import com.fieldnation.fnpigeon.TopicClient;
-import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
-import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by mc on 6/28/17.
  */
 
-public class ProfilePhotoClient extends TopicClient implements ProfilePhotoConstants {
-    private static final String STAG = "ProfilePhotoClient";
-    private final String TAG = UniqueTag.makeTag("ProfilePhotoClient");
+public abstract class ProfilePhotoClient extends Pigeon implements ProfilePhotoConstants {
+    private static final String TAG = "ProfilePhotoClient";
 
-    public ProfilePhotoClient(Listener listener) {
-        super(listener);
+    public void sub() {
+        PigeonRoost.sub(this, ADDRESS_GET);
+    }
+
+    public void unsub() {
+        PigeonRoost.unsub(this, ADDRESS_GET);
     }
 
     /**
@@ -36,9 +36,7 @@ public class ProfilePhotoClient extends TopicClient implements ProfilePhotoConst
      * @param context
      */
     public static void get(Context context) {
-        Intent intent = new Intent(context, ProfilePhotoService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
-        context.startService(intent);
+        ProfilePhotoSystem.getInstance().get(context, App.get().getProfile().getPhoto().getLarge());
     }
 
     /**
@@ -48,67 +46,51 @@ public class ProfilePhotoClient extends TopicClient implements ProfilePhotoConst
      * @param uri
      */
     public static void upload(Context context, Uri uri) {
-        Intent intent = new Intent(context, ProfilePhotoService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD);
-        intent.putExtra(PARAM_UPLOAD_URI, uri);
-        context.startService(intent);
+        ProfilePhotoSystem.getInstance().upload(context, uri);
     }
 
     static void dispatchGet(Context context, Uri uri) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_LOCAL_URI, uri);
-        TopicService.dispatchEvent(context, TOPIC_ID_GET, bundle, Sticky.FOREVER);
+        PigeonRoost.sendMessage(ADDRESS_GET, bundle, Sticky.FOREVER);
     }
 
     @Override
-    public String getUserTag() {
-        return TAG;
-    }
+    public void onMessage(String topicId, Object payload) {
+        Bundle bundle = (Bundle) payload;
 
-    public static abstract class Listener extends TopicClient.Listener {
-        @Override
-        public void onConnected() {
-            getClient().register(TOPIC_ID_GET);
+        Uri uri = bundle.getParcelable(PARAM_LOCAL_URI);
+
+        if (getProfileImage(uri)) {
+            new AsyncTaskEx<Uri, Object, BitmapDrawable>() {
+
+                @Override
+                protected BitmapDrawable doInBackground(Uri... uris) {
+                    try {
+                        Uri uri = uris[0];
+
+                        Bitmap image = MemUtils.getMemoryEfficientBitmap(App.get(), uri, 95);
+                        Bitmap circle = ImageUtils.extractCircle(image);
+                        image.recycle();
+
+                        return new BitmapDrawable(App.get().getResources(), circle);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(BitmapDrawable drawable) {
+                    onProfileImage(drawable);
+                }
+            }.executeEx(uri);
         }
 
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Bundle bundle = (Bundle) payload;
-
-            Uri uri = bundle.getParcelable(PARAM_LOCAL_URI);
-
-            if (getProfileImage(uri)) {
-                new AsyncTaskEx<Uri, Object, BitmapDrawable>() {
-
-                    @Override
-                    protected BitmapDrawable doInBackground(Uri... uris) {
-                        try {
-                            Uri uri = uris[0];
-
-                            Bitmap image = MemUtils.getMemoryEfficientBitmap(App.get(), uri, 95);
-                            Bitmap circle = ImageUtils.extractCircle(image);
-                            image.recycle();
-
-                            return new BitmapDrawable(App.get().getResources(), circle);
-                        } catch (Exception ex) {
-                            Log.v(STAG, ex);
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(BitmapDrawable drawable) {
-                        onProfileImage(drawable);
-                    }
-                }.executeEx(uri);
-            }
-
-        }
-
-        public abstract ProfilePhotoClient getClient();
-
-        public abstract boolean getProfileImage(Uri uri);
-
-        public abstract void onProfileImage(BitmapDrawable drawable);
     }
+
+    public abstract boolean getProfileImage(Uri uri);
+
+    public abstract void onProfileImage(BitmapDrawable drawable);
 }
+

@@ -52,12 +52,12 @@ public class FileRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _Layout = (RelativeLayout) findViewById(R.id.layoutRoot);
+        _Layout = findViewById(R.id.layoutRoot);
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
-        _titleTextView = (TextView) findViewById(R.id.name_textview);
+        _titleTextView = findViewById(R.id.name_textview);
         _titleTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _iconView = findViewById(R.id.icon_view);
 
         populateUi();
     }

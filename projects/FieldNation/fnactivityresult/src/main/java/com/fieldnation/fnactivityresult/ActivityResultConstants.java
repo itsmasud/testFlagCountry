@@ -4,9 +4,9 @@ package com.fieldnation.fnactivityresult;
  * Created by Michael on 7/8/2016.
  */
 public interface ActivityResultConstants {
-    String TOPIC_ID_START_ACTIVITY_FOR_RESULT = "ActivityResultConstants:TOPIC_ID_START_ACTIVITY_FOR_RESULT";
-    String TOPIC_ID_START_ACTIVITY = "ActivityResultConstants:TOPIC_ID_START_ACTIVITY";
-    String TOPIC_ID_ON_ACTIVITY_RESULT = "ActivityResultConstants:TOPIC_ID_ON_ACTIVITY_RESULT";
+    String ADDRESS_START_ACTIVITY_FOR_RESULT = "ActivityResultConstants:ADDRESS_START_ACTIVITY_FOR_RESULT";
+    String ADDRESS_START_ACTIVITY = "ActivityResultConstants:ADDRESS_START_ACTIVITY";
+    String ADDRESS_ON_ACTIVITY_RESULT = "ActivityResultConstants:ADDRESS_ON_ACTIVITY_RESULT";
 
     String PARAM_INTENT = "PARAM_INTENT";
     String PARAM_REQUEST_CODE = "PARAM_REQUEST_CODE";

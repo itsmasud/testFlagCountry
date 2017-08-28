@@ -42,8 +42,8 @@ public class PaymentFeeView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _paymentTextView = findViewById(R.id.payment_textview);
     }
 
     public void setWorkorder(Payment payment, Fee fee) {

@@ -42,9 +42,9 @@ public class ProgressNode extends LinearLayout {
 		if (isInEditMode())
 			return;
 		
-		_linearlayoutWoProgressBar = (LinearLayout) findViewById(R.id.linearlayout_wo_progress_bar);
-		_iconImageView = (ImageView) findViewById(R.id.icon_imageview);
-		_labelTextView = (TextView) findViewById(R.id.label_textview);
+		_linearlayoutWoProgressBar = findViewById(R.id.linearlayout_wo_progress_bar);
+		_iconImageView = findViewById(R.id.icon_imageview);
+		_labelTextView = findViewById(R.id.label_textview);
 
 		if (attrs != null) {
 			TypedArray t = getContext().obtainStyledAttributes(attrs, R.styleable.WorkorderDetail_ProgressLabel);

@@ -41,8 +41,8 @@ public class GetFilePackageRowView extends RelativeLayout {
             return;
         }
 
-        _icon = (ImageView) findViewById(R.id.icon_imageview);
-        _name = (TextView) findViewById(R.id.name_textview);
+        _icon = findViewById(R.id.icon_imageview);
+        _name = findViewById(R.id.name_textview);
 
         setOnClickListener(_this_onClick);
     }

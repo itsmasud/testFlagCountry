@@ -83,14 +83,14 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
         LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
 
-        _leftWhiteButton = (Button) findViewById(R.id.leftWhite_button);
-        _leftGreenButton = (Button) findViewById(R.id.leftGreen_button);
-        _leftOrangeButton = (Button) findViewById(R.id.leftOrange_button);
-        _leftGrayButton = (Button) findViewById(R.id.leftGray_button);
-        _rightWhiteButton = (Button) findViewById(R.id.rightWhite_button);
-        _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
-        _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
-        _rightGrayButton = (Button) findViewById(R.id.rightGray_button);
+        _leftWhiteButton = findViewById(R.id.leftWhite_button);
+        _leftGreenButton = findViewById(R.id.leftGreen_button);
+        _leftOrangeButton = findViewById(R.id.leftOrange_button);
+        _leftGrayButton = findViewById(R.id.leftGray_button);
+        _rightWhiteButton = findViewById(R.id.rightWhite_button);
+        _rightGreenButton = findViewById(R.id.rightGreen_button);
+        _rightOrangeButton = findViewById(R.id.rightOrange_button);
+        _rightGrayButton = findViewById(R.id.rightGray_button);
 
         setVisibility(View.GONE);
         _inflated = true;
@@ -141,12 +141,12 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         if (false) {
 
             // ack hold
-        } else if (_workOrder.isOnHold()) {
+        } else if (_workOrder.getHolds().isOnHold()) {
             inflate();
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
-            if (_workOrder.areHoldsAcknowledged()) {
+            if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightWhiteButton.setText(R.string.btn_on_hold);
                 _rightWhiteButton.setEnabled(false);
             } else {
@@ -371,7 +371,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                     null, _workOrder.getId());
 
-            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
+            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder.getId(), _workOrder.getEta(),
+                    _workOrder.getSchedule(), _workOrder.getContacts(), _workOrder.getTitle());
         }
     };
 

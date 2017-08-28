@@ -23,7 +23,6 @@ public class InboxMenuButton extends RelativeLayout {
 
     // data
     private Profile _profile = null;
-    private ProfileClient _profileClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -50,19 +49,19 @@ public class InboxMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _inboxCountTextView = (TextView) findViewById(R.id.inboxCount_textview);
+        _inboxCountTextView = findViewById(R.id.inboxCount_textview);
 
         setOnClickListener(_inbox_onClick);
 
-        _profileClient = new ProfileClient(_profileCLient_listener);
-        _profileClient.connect(App.get());
+        _profileClient.subGet();
+        ProfileClient.get(App.get());
 
         refresh();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_profileClient != null) _profileClient.disconnect(App.get());
+        _profileClient.unsubGet();
         super.onDetachedFromWindow();
     }
 
@@ -75,13 +74,7 @@ public class InboxMenuButton extends RelativeLayout {
         }
     };
 
-    private final ProfileClient.Listener _profileCLient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet();
-            ProfileClient.get(App.get());
-        }
-
+    private final ProfileClient _profileClient = new ProfileClient() {
         @Override
         public void onGet(Profile profile, boolean failed) {
             _profile = profile;

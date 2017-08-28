@@ -38,7 +38,7 @@ public class TileTextView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _textview = (TextView) findViewById(R.id.textview);
+        _textview = findViewById(R.id.textview);
     }
 
     public void setText(String text) {

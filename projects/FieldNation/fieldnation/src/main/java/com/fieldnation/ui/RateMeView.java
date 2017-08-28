@@ -13,11 +13,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 
 /**
  * Created by Michael Carver on 5/21/2015.
@@ -83,12 +83,12 @@ public class RateMeView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _messageTextView = (TextView) findViewById(R.id.message_textview);
+        _messageTextView = findViewById(R.id.message_textview);
 
-        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton = findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancelButton_onClick);
 
-        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton = findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
 
         populateUi();
@@ -143,7 +143,7 @@ public class RateMeView extends RelativeLayout {
                                     .action("Feedback")
                                     .build());
                     if (_listener != null) {
-                        GlobalTopicClient.showContactUsDialog(getContext(), "RateMeCard");
+                        ContactUsDialog.show(getContext(), null, "RateMeCard");
                         _listener.onHide();
                     }
                     break;

@@ -233,11 +233,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service
-            android:name=".v2.data.client.AttachmentService"
-            android:exported="false"
-            android:process=":frontside" />
-
-        <service
             android:name=".service.GpsTrackingService"
             android:exported="false"
             android:process=":frontside" />
@@ -275,22 +270,6 @@
         <!--web/data-->
         <service
             android:name=".service.AnalyticsPassThroughService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.auth.AuthTopicService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.transaction.WebTransactionService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.data.photo.PhotoService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.data.profile.ProfileService"
             android:exported="false"
             android:process=":frontside" />
         <service
@@ -341,11 +320,6 @@
 
         <service
             android:name=".ui.ncns.RemindMeService"
-            android:exported="false"
-            android:process=":frontside" />
-
-        <service
-            android:name=".service.profileimage.ProfilePhotoService"
             android:exported="false"
             android:process=":frontside" />
 

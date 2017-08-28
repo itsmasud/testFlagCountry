@@ -63,20 +63,20 @@ public class FilePickerScreen extends FrameLayout {
         if (isInEditMode())
             return;
 
-        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar = findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setTitle(R.string.select_files);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.inflateMenu(R.menu.share);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _sendMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.send_menuitem);
+        _sendMenu = _toolbar.findViewById(R.id.send_menuitem);
 
 
-        _uploadSlotTextView = (TextView) findViewById(R.id.uploadSlot_textview);
+        _uploadSlotTextView = findViewById(R.id.uploadSlot_textview);
 
-        _fileLayout = (LinearLayout) findViewById(R.id.fileList);
+        _fileLayout = findViewById(R.id.fileList);
 
-        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView = findViewById(R.id.refresh_view);
     }
 
     public void setListener(Listener listener) {

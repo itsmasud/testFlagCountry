@@ -13,7 +13,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +48,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(http)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -72,7 +72,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                                     .urlParams("?page=" + page)
                     ).build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -96,7 +96,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                                     .urlParams("?page=" + page)
                     ).build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -117,7 +117,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                                     .method("GET")
                                     .path("/api/rest/v1/profile/" + userId + "/switch")
                     ).build();
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -158,7 +158,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(http)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -204,7 +204,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(http)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -233,7 +233,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         if (upFile == null) {
             ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
             Log.logException(new Exception("PA-332 - UpFile is null"));
-            ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
+            ProfileDispatch.uploadProfilePhoto(filePath, false, true);
             return;
         }
 
@@ -241,7 +241,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         if (upFile.size() > 100000000) { // 100 MB?
             StoredObject.delete(context, upFile);
             ToastClient.toast(context, "File is too long: " + filePath, Toast.LENGTH_LONG);
-            ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
+            ProfileDispatch.uploadProfilePhoto(filePath, false, true);
             return;
         }
 
@@ -283,11 +283,9 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .setTrackType(TrackerEnum.PHOTOS)
                     .build();
 
-            WebTransactionService.queueTransaction(context, transaction);
+            WebTransactionSystem.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
     }
-
-
 }

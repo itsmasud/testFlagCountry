@@ -57,25 +57,25 @@ public class DurationDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_duration, container, false);
 
-        _dayTextView = (TextView) v.findViewById(R.id.day_textview);
-        _hourTextView = (TextView) v.findViewById(R.id.hour_textview);
-        _minTextView = (TextView) v.findViewById(R.id.min_textview);
+        _dayTextView = v.findViewById(R.id.day_textview);
+        _hourTextView = v.findViewById(R.id.hour_textview);
+        _minTextView = v.findViewById(R.id.min_textview);
 
         _numberPad = new Button[10];
-        _numberPad[0] = (Button) v.findViewById(R.id.button0);
-        _numberPad[1] = (Button) v.findViewById(R.id.button1);
-        _numberPad[2] = (Button) v.findViewById(R.id.button2);
-        _numberPad[3] = (Button) v.findViewById(R.id.button3);
-        _numberPad[4] = (Button) v.findViewById(R.id.button4);
-        _numberPad[5] = (Button) v.findViewById(R.id.button5);
-        _numberPad[6] = (Button) v.findViewById(R.id.button6);
-        _numberPad[7] = (Button) v.findViewById(R.id.button7);
-        _numberPad[8] = (Button) v.findViewById(R.id.button8);
-        _numberPad[9] = (Button) v.findViewById(R.id.button9);
+        _numberPad[0] = v.findViewById(R.id.button0);
+        _numberPad[1] = v.findViewById(R.id.button1);
+        _numberPad[2] = v.findViewById(R.id.button2);
+        _numberPad[3] = v.findViewById(R.id.button3);
+        _numberPad[4] = v.findViewById(R.id.button4);
+        _numberPad[5] = v.findViewById(R.id.button5);
+        _numberPad[6] = v.findViewById(R.id.button6);
+        _numberPad[7] = v.findViewById(R.id.button7);
+        _numberPad[8] = v.findViewById(R.id.button8);
+        _numberPad[9] = v.findViewById(R.id.button9);
 
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _deleteButton = (IconFontButton) v.findViewById(R.id.delete_imageview);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _deleteButton = v.findViewById(R.id.delete_imageview);
 
         return v;
     }

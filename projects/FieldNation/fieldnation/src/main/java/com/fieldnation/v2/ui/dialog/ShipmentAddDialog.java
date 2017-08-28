@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,11 +21,12 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -34,11 +34,12 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.WorkOrder;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -68,13 +69,12 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     // Data
     private String _title = null;
-    private WorkOrder _workOrder;
+    private int _workOrderId;
+    private AttachmentFolders _attachmentFolders;
     private int _carrierPosition = -1;
     private int _directionPosition = -1;
     private String _shipmentDescription;
     private Task _task;
-    private ActivityResultClient _activityResultClient;
-    private PermissionsClient _permissionsClient;
 
     // Barcode stuff
     private Uri _scannedImageUri;
@@ -98,16 +98,16 @@ public class ShipmentAddDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_add_shipment, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _trackingIdEditText = (EditText) v.findViewById(R.id.trackingid_edittext);
-        _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
-        _carrierSpinner = (HintSpinner) v.findViewById(R.id.carrier_spinner);
-        _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
-        _carrierLayout = (TextInputLayout) v.findViewById(R.id.carrier_layout);
-        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-        _directionSpinner = (HintSpinner) v.findViewById(R.id.direction_spinner);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _trackingIdEditText = v.findViewById(R.id.trackingid_edittext);
+        _scanButton = v.findViewById(R.id.scanBarcode_button);
+        _carrierSpinner = v.findViewById(R.id.carrier_spinner);
+        _carrierEditText = v.findViewById(R.id.carrier_edittext);
+        _carrierLayout = v.findViewById(R.id.carrier_layout);
+        _descriptionEditText = v.findViewById(R.id.description_edittext);
+        _directionSpinner = v.findViewById(R.id.direction_spinner);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }
@@ -131,16 +131,14 @@ public class ShipmentAddDialog extends SimpleDialog {
         getDirectionSpinner().setHint(App.get().getString(R.string.dialog_shipment_direction_spinner_default_text));
         getDirectionSpinner().clearSelection();
 
-        _permissionsClient = new PermissionsClient(_permissions_response);
-        _permissionsClient.connect(App.get());
+        _permissionsListener.sub();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
-        _activityResultClient.connect(App.get());
+        _activityResultListener.sub();
 
         if (_title != null) {
             _titleTextView.setText(_title);
@@ -155,7 +153,10 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (payload.containsKey("description"))
             _shipmentDescription = payload.getString("description");
 
-        _workOrder = payload.getParcelable("workOrder");
+        _workOrderId = payload.getInt("workOrderId");
+        _attachmentFolders = payload.getParcelable("attachmentFolders");
+
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
 
         populateUi();
         super.show(payload, animate);
@@ -202,13 +203,13 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
+        _activityResultListener.unsub();
         super.onPause();
     }
 
     @Override
     public void onStop() {
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        _permissionsListener.unsub();
         super.onStop();
     }
 
@@ -329,22 +330,22 @@ public class ShipmentAddDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_tracking_number), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_tracking_number, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (_carrierPosition == -1) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_carrier_not_selected, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_missing_description, Toast.LENGTH_SHORT);
                 return;
             }
 
             if (_directionPosition == -1) {
-                ToastClient.toast(App.get(), App.get().getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_direction_not_selected, Toast.LENGTH_SHORT);
                 return;
             }
 
@@ -419,13 +420,13 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (_scannedImageUri == null)
             return;
 
-        if (_workOrder.getAttachments() == null)
+        if (_attachmentFolders == null)
             return;
 
-        if (_workOrder.getAttachments().getResults() == null || _workOrder.getAttachments().getResults().length == 0)
+        if (_attachmentFolders.getResults() == null || _attachmentFolders.getResults().length == 0)
             return;
 
-        AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+        AttachmentFolder[] folders = _attachmentFolders.getResults();
         AttachmentFolder miscFolder = null;
         for (AttachmentFolder folder : folders) {
             if (folder.getType() == AttachmentFolder.TypeEnum.SLOT && folder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
@@ -436,7 +437,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
         if (miscFolder != null) {
             String fileName = FileUtils.getFileNameFromUri(App.get(), _scannedImageUri);
-            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getId(), miscFolder.getId(), fileName, _scannedImageUri);
+            WorkorderClient.uploadDeliverable(App.get(), _workOrderId, miscFolder.getId(), fileName, _scannedImageUri);
         }
 
     }
@@ -455,7 +456,7 @@ public class ShipmentAddDialog extends SimpleDialog {
             int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
 
             if (grant == PackageManager.PERMISSION_DENIED) {
-                PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
+                PermissionsClient.requestPermissions(new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
             } else {
                 IntentIntegrator integrator = new IntentIntegrator((Activity) getContext());
                 integrator.setPrompt(App.get().getString(R.string.dialog_scan_barcode_title));
@@ -467,22 +468,8 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String title, String description, Task task) {
-        Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
-        params.putString("title", title);
-        params.putString("description", description);
-        params.putParcelable("task", task);
 
-        Controller.show(context, uid, ShipmentAddDialog.class, params);
-    }
-
-    private final PermissionsClient.ResponseListener _permissions_response = new PermissionsClient.ResponseListener() {
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
-        }
-
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
             if (permission.equals(Manifest.permission.CAMERA)) {
@@ -495,26 +482,9 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
-        @Override
-        public void onConnected() {
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Log.v(TAG, topicId);
-            super.onEvent(topicId, payload);
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
-
+    private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-            _activityResultClient.clearOnActivityResult();
             Log.v(TAG, "onActivityResult");
 
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
@@ -543,6 +513,17 @@ public class ShipmentAddDialog extends SimpleDialog {
             return true;
         }
     };
+
+    public static void show(Context context, String uid, int workOrderId, AttachmentFolders attachmentFolders, String title, String description, Task task) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+        params.putParcelable("attachmentFolders", attachmentFolders);
+        params.putString("title", title);
+        params.putString("description", description);
+        params.putParcelable("task", task);
+
+        Controller.show(context, uid, ShipmentAddDialog.class, params);
+    }
 
     /*-**********************-*/
     /*-         Ok           -*/

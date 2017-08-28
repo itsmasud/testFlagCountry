@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.ui.AuthSimpleActivity;
 
@@ -61,13 +61,13 @@ public class SettingsActivity extends AuthSimpleActivity {
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        ActivityClient.startActivity(intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 
     public static void startNewLegal(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("SHOW_LEGAL", true);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        ActivityClient.startActivity(intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }

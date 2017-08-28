@@ -1,9 +1,8 @@
 package com.fieldnation.service.data.help;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -14,6 +13,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 
 /**
  * Created by Michael Carver on 7/20/2015.
@@ -63,17 +63,20 @@ public class HelpTransactionListener extends WebTransactionListener {
 
         } else if (result == Result.DELETE) {
             try {
-                Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
+                final WebTransaction webTransaction = HelpTransactionBuilder.actionPostContactUsIntent(
                         params.getString("message"),
                         params.getString("internalTeam"),
                         params.getString("uri"),
                         params.getString("extraData"),
                         params.getString("extraType"));
 
-                PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
                 ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_connection_failed),
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+                        "TRY AGAIN", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                WebTransactionSystem.queueTransaction(App.get(), webTransaction);
+                            }
+                        }, Snackbar.LENGTH_LONG);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);

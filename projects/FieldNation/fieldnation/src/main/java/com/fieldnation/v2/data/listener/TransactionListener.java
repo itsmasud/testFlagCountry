@@ -7,8 +7,8 @@ import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
-import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.service.tracker.UploadTrackerClient;
@@ -52,7 +52,7 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "queued");
-            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadQueued(context, transaction.getTrackType());
@@ -69,7 +69,7 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "start");
-            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
@@ -86,7 +86,7 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "paused");
-            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
@@ -106,7 +106,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putLong("pos", pos);
             bundle.putLong("size", size);
             bundle.putLong("time", time);
-            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -137,7 +137,7 @@ public class TransactionListener extends WebTransactionListener {
                 bundle.putString("type", "complete");
 
                 //Log.v(TAG, "topicId: " + params.topicId);
-                TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+                PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
                 if (transaction.isTracked()) {
                     UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
@@ -175,7 +175,7 @@ public class TransactionListener extends WebTransactionListener {
                 bundle.putBoolean("success", false);
                 bundle.putString("type", "complete");
 
-                TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
+                PigeonRoost.sendMessage(params.topicId, bundle, Sticky.TEMP);
 
                 if (transaction.isTracked()) {
                     UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);

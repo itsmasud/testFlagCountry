@@ -216,8 +216,7 @@ public class ScheduleCoView extends RelativeLayout {
     }
 
     public boolean isValidSchedule() {
-        if (_mode == -1) return false;
-        return true;
+        return _mode != -1;
     }
 
     private void initializeTimePicker() {
@@ -240,7 +239,7 @@ public class ScheduleCoView extends RelativeLayout {
             if (tag.equals("start")) {
                 _startCal.set(year, monthOfYear, dayOfMonth);
                 if (DateUtils.isBeforeToday(_startCal)) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), R.string.toast_previous_date_not_allowed, Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -256,7 +255,7 @@ public class ScheduleCoView extends RelativeLayout {
             } else if (tag.equals("end")) {
                 _endCal.set(year, monthOfYear, dayOfMonth);
                 if (DateUtils.isBeforeToday(_endCal)) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), R.string.toast_previous_date_not_allowed, Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -284,7 +283,7 @@ public class ScheduleCoView extends RelativeLayout {
 
                 // truncate milliseconds to seconds
                 if (_startCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), R.string.toast_previous_time_not_allowed, Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -311,7 +310,7 @@ public class ScheduleCoView extends RelativeLayout {
 
                 // truncate milliseconds to seconds
                 if (_endCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), R.string.toast_previous_time_not_allowed, Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
