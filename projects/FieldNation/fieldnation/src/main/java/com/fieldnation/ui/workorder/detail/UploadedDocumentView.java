@@ -90,15 +90,15 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         if (isInEditMode())
             return;
 
-        _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
-        _picView = (ImageView) findViewById(R.id.pic_view);
-        _filenameTextView = (TextView) findViewById(R.id.filename_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _byTextView = (TextView) findViewById(R.id.by_textview);
-        _usernameTextView = (TextView) findViewById(R.id.username_textview);
+        _fileTypeIconFont = findViewById(R.id.filetype_imageview);
+        _picView = findViewById(R.id.pic_view);
+        _filenameTextView = findViewById(R.id.filename_textview);
+        _dateTextView = findViewById(R.id.date_textview);
+        _byTextView = findViewById(R.id.by_textview);
+        _usernameTextView = findViewById(R.id.username_textview);
 
-        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
+        _progressBar = findViewById(R.id.progressBar);
+        _statusTextView = findViewById(R.id.status_textview);
 
         _docClient = new DocumentClient(_docClient_listener);
         _docClient.connect(App.get());

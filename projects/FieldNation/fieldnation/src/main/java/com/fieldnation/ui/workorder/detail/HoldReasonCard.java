@@ -36,7 +36,7 @@ public class HoldReasonCard extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _holdReasonTextView = (TextView) findViewById(R.id.hold_reason_textview);
+        _holdReasonTextView = findViewById(R.id.hold_reason_textview);
 
 
         setOnClickListener(null);

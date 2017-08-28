@@ -46,8 +46,8 @@ public class HeaderView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _iconFontView = (IconFontTextView) findViewById(R.id.icon_view);
-        _filtersTextView = (TextView) findViewById(R.id.filter_textview);
+        _iconFontView = findViewById(R.id.icon_view);
+        _filtersTextView = findViewById(R.id.filter_textview);
 
         populateUi();
     }

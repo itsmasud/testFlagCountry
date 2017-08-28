@@ -79,10 +79,10 @@ public class SearchResultScreen extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView = findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
+        _workOrderList = findViewById(R.id.workOrderList_recyclerView);
         _workOrderList.setOnOverScrollListener(_refreshView);
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);

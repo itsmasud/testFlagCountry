@@ -49,15 +49,15 @@ public class ResolveProblemDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_resolve_problem, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setTitle("Problem");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+        _titleTextView = v.findViewById(R.id.title_textview);
 
-        _commentsTextView = (TextView) v.findViewById(R.id.comments_textview);
+        _commentsTextView = v.findViewById(R.id.comments_textview);
 
-        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
+        _refreshView = v.findViewById(R.id.refresh_view);
 
         return v;
     }

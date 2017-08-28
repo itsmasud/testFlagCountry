@@ -36,9 +36,9 @@ public class MarkCompleteDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_mark_complete, container, false);
 
-        _signatureLayout = (LinearLayout) v.findViewById(R.id.signature_layout);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _continueButton = (Button) v.findViewById(R.id.continue_button);
+        _signatureLayout = v.findViewById(R.id.signature_layout);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _continueButton = v.findViewById(R.id.continue_button);
 
         return v;
     }

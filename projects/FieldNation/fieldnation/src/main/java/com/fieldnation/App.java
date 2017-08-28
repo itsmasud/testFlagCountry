@@ -47,6 +47,7 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -186,6 +187,7 @@ public class App extends Application {
 
         // trigger authentication and web crawler
         AuthSystem.start();
+        WebTransactionSystem.getInstance();
 /*
         new AsyncTaskEx<Context, Object, Object>() {
             @Override
@@ -287,6 +289,7 @@ public class App extends Application {
         _appMessagingClient.unsubNetworkState();
         _authClient.unsubAuthStateChange();
         AuthSystem.stop();
+        WebTransactionSystem.stop();
         super.onTerminate();
         _context = null;
     }
@@ -432,7 +435,8 @@ public class App extends Application {
             ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    AppMessagingClient.networkConnect();
+                    AppMessagingClient.networkConnected();
+                    WebTransactionSystem.getInstance();
                 }
             }, Snackbar.LENGTH_INDEFINITE);
         }
@@ -748,18 +752,21 @@ public class App extends Application {
         return tempFolder.getAbsolutePath();
     }
 
-    private boolean _haveWifi = false;
+    private boolean _haveWifi = true;
     private long _haveWifiLast = 0;
     private static final long HAVE_WIFI_TIMEOUT = 1000;
 
     public boolean haveWifi() {
         if (_haveWifiLast < System.currentTimeMillis()) {
-            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            _haveWifi = wifi.isConnected();
-            _haveWifiLast = System.currentTimeMillis() + HAVE_WIFI_TIMEOUT;
+            try {
+                ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+                _haveWifi = wifi.isConnected();
+                _haveWifiLast = System.currentTimeMillis() + HAVE_WIFI_TIMEOUT;
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
-
         return _haveWifi;
     }
 

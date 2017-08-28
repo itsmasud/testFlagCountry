@@ -40,8 +40,8 @@ public class NavProfileItemView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _picView = (ProfilePicView) findViewById(R.id.pic_view);
-        _nameTextView = (TextView) findViewById(R.id.name_textview);
-        _companyTextView = (TextView) findViewById(R.id.company_textview);
+        _picView = findViewById(R.id.pic_view);
+        _nameTextView = findViewById(R.id.name_textview);
+        _companyTextView = findViewById(R.id.company_textview);
     }
 }

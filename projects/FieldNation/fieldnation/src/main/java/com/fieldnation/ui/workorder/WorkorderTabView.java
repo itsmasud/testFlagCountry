@@ -48,7 +48,7 @@ public class WorkorderTabView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _detailLayout = (RelativeLayout) findViewById(R.id.detail_layout);
+        _detailLayout = findViewById(R.id.detail_layout);
         _detailLayout.setOnClickListener(_detailLayout_onClick);
 
 /*
@@ -56,8 +56,8 @@ public class WorkorderTabView extends RelativeLayout {
         _tasksLayout.setOnClickListener(_tasksLayout_onClick);
 */
 
-        _messagesTextView = (TextView) findViewById(R.id.messages_textview);
-        _messagesLayout = (RelativeLayout) findViewById(R.id.messages_layout);
+        _messagesTextView = findViewById(R.id.messages_textview);
+        _messagesLayout = findViewById(R.id.messages_layout);
         _messagesLayout.setOnClickListener(_messagesLayout_onClick);
 
         _buttons = new View[2];

@@ -55,10 +55,10 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
         if (isInEditMode())
             return;
 
-        _noDataTextView = (TextView) findViewById(R.id.nodata_textview);
-        _listView = (LinearLayout) findViewById(R.id.listview);
+        _noDataTextView = findViewById(R.id.nodata_textview);
+        _listView = findViewById(R.id.listview);
 
-        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton = findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
 
         setVisibility(GONE);

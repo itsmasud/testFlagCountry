@@ -21,8 +21,6 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,7 +36,6 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -59,7 +56,6 @@ import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -70,26 +66,19 @@ import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
-import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
 import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.ProblemType;
-import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
-import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Signatures;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
-import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
+import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
@@ -152,6 +141,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_DELETE_EXPENSE = TAG + ".deleteExpenseDialog";
     private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
+    private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
 
     // saved state keys
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
@@ -513,7 +503,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
@@ -544,7 +534,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-				Check In Process				-*/
     /*-*********************************************-*/
     private void doCheckin() {
-        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrderId,
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
@@ -576,10 +566,10 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (_deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrderId,
                     _workOrder.getTimeLogs(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder.getId(),
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrderId,
                     _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
@@ -639,7 +629,7 @@ public class WorkFragment extends WorkorderFragment {
                 requestWorkorder();
 
                 if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder.getId(), _workOrder.getCompany(), _workOrder.getLocation());
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
                 }
             }
         } catch (Exception ex) {
@@ -664,7 +654,7 @@ public class WorkFragment extends WorkorderFragment {
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
 
-            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
 
         }
     };
@@ -697,7 +687,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAcknowledgeHold() {
             setLoading(true);
-            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder.getId(), _workOrder.getHolds());
+            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrderId, _workOrder.getHolds());
         }
 
         @Override
@@ -718,7 +708,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onReportProblem() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId(), _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod());
         }
 
         @Override
@@ -758,7 +748,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onEta() {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
@@ -783,7 +773,7 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
@@ -798,7 +788,7 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
@@ -932,7 +922,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onSetEta(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
@@ -1037,10 +1027,10 @@ public class WorkFragment extends WorkorderFragment {
             }
 
             if (shipments.size() == 0) {
-                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
                         _workOrder.getAttachments(), getString(R.string.dialog_task_shipment_title), null, task);
             } else {
-                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder.getId(),
+                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrderId,
                         _workOrder.getShipments(), getString(R.string.dialog_task_shipment_title), task);
             }
         }
@@ -1048,7 +1038,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onSignature(Task task) {
             _currentTask = task;
-            SignOffActivity.startSignOff(getActivity(), _workOrder.getId(), task.getId());
+            SignOffActivity.startSignOff(getActivity(), _workOrderId, task.getId());
             setLoading(true);
         }
 
@@ -1090,7 +1080,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
                     _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
         }
 
@@ -1130,7 +1120,7 @@ public class WorkFragment extends WorkorderFragment {
     private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrder.getId());
+            SignOffActivity.startSignOff(getActivity(), _workOrderId);
             setLoading(true);
         }
 
@@ -1184,7 +1174,7 @@ public class WorkFragment extends WorkorderFragment {
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
         }
     };
 
@@ -1267,12 +1257,11 @@ public class WorkFragment extends WorkorderFragment {
 
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
-                if (fui.uri != null)
+                if (fui.uri != null) {
                     PhotoUploadDialog.show(App.get(), "uid", _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                else {
+                } else {
                     // TODO show a toast?
                 }
-
                 return;
             }
 
@@ -1285,6 +1274,7 @@ public class WorkFragment extends WorkorderFragment {
                     Log.v(TAG, ex);
                 }
             }
+            _currentTask = null;
         }
     };
 
@@ -1423,7 +1413,7 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
 
             if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
-                RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder.getId(), _workOrder.getCompany(), _workOrder.getLocation());
+                RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
             }
         }
     };
@@ -1575,11 +1565,10 @@ public class WorkFragment extends WorkorderFragment {
     };
 
 
-
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
         }
 
         @Override
@@ -1615,22 +1604,21 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrder.getId());
+            SignOffActivity.startSignOff(getActivity(), _workOrderId);
             setLoading(true);
         }
 
         @Override
         public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder.getId(),
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
                     _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
         public void addAttachment() {
-            AttachmentFolderDialog.show(App.get(), "", _workOrder.getId(), _workOrder.getAttachments());
+            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _workOrderId, _workOrder.getAttachments());
         }
     };
-
 
     /*-*****************************-*/
     /*-				Web				-*/

@@ -92,37 +92,37 @@ public class WorkorderCardView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _bundleIconFontView = (IconFontTextView) findViewById(R.id.bundle_iconFont);
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _companyNameTextView = (TextView) findViewById(R.id.companyName_textview);
-        _workorderIdTextView = (TextView) findViewById(R.id.workorderId_textview);
+        _bundleIconFontView = findViewById(R.id.bundle_iconFont);
+        _titleTextView = findViewById(R.id.title_textview);
+        _companyNameTextView = findViewById(R.id.companyName_textview);
+        _workorderIdTextView = findViewById(R.id.workorderId_textview);
 
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _time2TextView = (TextView) findViewById(R.id.time2_textview);
+        _timeTextView = findViewById(R.id.time_textview);
+        _time2TextView = findViewById(R.id.time2_textview);
 
-        _priceTextView = (TextView) findViewById(R.id.price_textview);
-        _price2TextView = (TextView) findViewById(R.id.price2_textview);
+        _priceTextView = findViewById(R.id.price_textview);
+        _price2TextView = findViewById(R.id.price2_textview);
 
-        _extraTextView = (TextView) findViewById(R.id.extra_textview);
-        _extra2TextView = (TextView) findViewById(R.id.extra2_textview);
+        _extraTextView = findViewById(R.id.extra_textview);
+        _extra2TextView = findViewById(R.id.extra2_textview);
 
-        _stateTextView = (TextView) findViewById(R.id.status_textview);
-        _state2TextView = (TextView) findViewById(R.id.status2_textview);
+        _stateTextView = findViewById(R.id.status_textview);
+        _state2TextView = findViewById(R.id.status2_textview);
 
-        _remoteWorkTextView = (TextView) findViewById(R.id.remoteWork_textview);
+        _remoteWorkTextView = findViewById(R.id.remoteWork_textview);
 
-        _price_layout = (LinearLayout) findViewById(R.id.price_layout);
+        _price_layout = findViewById(R.id.price_layout);
 
-        _leftButton = (Button) findViewById(R.id.left_button);
+        _leftButton = findViewById(R.id.left_button);
         _leftButton.setOnClickListener(_left_onClick);
 
-        _rightWhiteButton = (Button) findViewById(R.id.rightWhite_button);
+        _rightWhiteButton = findViewById(R.id.rightWhite_button);
         _rightWhiteButton.setOnClickListener(_right_onClick);
 
-        _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
+        _rightGreenButton = findViewById(R.id.rightGreen_button);
         _rightGreenButton.setOnClickListener(_right_onClick);
 
-        _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
+        _rightOrangeButton = findViewById(R.id.rightOrange_button);
         _rightOrangeButton.setOnClickListener(_right_onClick);
 
         // attach my listeners

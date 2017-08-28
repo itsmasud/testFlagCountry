@@ -38,7 +38,7 @@ public class RemindMeMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _button = (Button) findViewById(R.id.remindme_button);
+        _button = findViewById(R.id.remindme_button);
     }
 
     public Button getButton() {

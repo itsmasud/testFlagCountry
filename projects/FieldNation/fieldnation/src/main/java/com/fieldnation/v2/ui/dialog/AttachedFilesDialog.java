@@ -34,7 +34,7 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.ui.AttachmentFoldersAdapter;
+import com.fieldnation.v2.ui.AttachedFilesAdapter;
 import com.fieldnation.v2.ui.GetFileIntent;
 
 import java.io.File;
@@ -44,8 +44,8 @@ import java.util.List;
  * Created by mc on 3/9/17.
  */
 
-public class AttachmentFolderDialog extends FullScreenDialog {
-    private static final String TAG = "AttachmentFolderDialog";
+public class AttachedFilesDialog extends FullScreenDialog {
+    private static final String TAG = "AttachedFilesDialog";
 
     // Dialog
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
@@ -63,7 +63,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     // Data
     private AttachmentFolders folders = null;
-    private AttachmentFoldersAdapter adapter = null;
+    private AttachedFilesAdapter adapter = null;
     private int _workOrderId;
     private AttachmentFolder _selectedFolder = null;
     private Attachment _selectedAttachment = null;
@@ -71,14 +71,14 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    public AttachmentFolderDialog(Context context, ViewGroup container) {
+    public AttachedFilesDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_v2_attachment_folder, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_toolbar_recycle, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
@@ -117,7 +117,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         super.show(payload, animate);
         folders = payload.getParcelable("folders");
         _workOrderId = payload.getInt("workOrderId");
-        adapter = new AttachmentFoldersAdapter();
+        adapter = new AttachedFilesAdapter();
         adapter.setAttachments(folders);
         adapter.setListener(_attachmentFolder_listener);
         _list.setAdapter(adapter);
@@ -192,7 +192,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     }
 
     // Ui listeners
-    private final AttachmentFoldersAdapter.Listener _attachmentFolder_listener = new AttachmentFoldersAdapter.Listener() {
+    private final AttachedFilesAdapter.Listener _attachmentFolder_listener = new AttachedFilesAdapter.Listener() {
         @Override
         public void onShowAttachment(Attachment attachment) {
             Log.v(TAG, "AttachmentFoldersAdapter.onShowAttachment");
@@ -432,6 +432,6 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         params.putInt("workOrderId", workOrderId);
         params.putParcelable("folders", folders);
 
-        Controller.show(context, uid, AttachmentFolderDialog.class, params);
+        Controller.show(context, uid, AttachedFilesDialog.class, params);
     }
 }

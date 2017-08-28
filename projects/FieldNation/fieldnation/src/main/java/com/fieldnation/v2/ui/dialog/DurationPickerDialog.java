@@ -50,11 +50,11 @@ public class DurationPickerDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_duration_picker, container, false);
 
-        _hourFnNumberPicker = (FnNumberPicker) v.findViewById(R.id.hourNumberPicker);
-        _minuteFnNumberPicker = (FnNumberPicker) v.findViewById(R.id.minuteNumberumberPicker);
+        _hourFnNumberPicker = v.findViewById(R.id.hourNumberPicker);
+        _minuteFnNumberPicker = v.findViewById(R.id.minuteNumberumberPicker);
 
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _okButton = v.findViewById(R.id.ok_button);
 
         return v;
     }

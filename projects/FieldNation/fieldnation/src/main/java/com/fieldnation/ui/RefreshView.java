@@ -61,8 +61,8 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
             return;
 
         _contentLayout = findViewById(R.id.content_layout);
-        _spinnerImageView = (ImageView) findViewById(R.id.spinner_imageview);
-        _gradientImageView = (ImageView) findViewById(R.id.gradient_imageview);
+        _spinnerImageView = findViewById(R.id.spinner_imageview);
+        _gradientImageView = findViewById(R.id.gradient_imageview);
 
         _rotateAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_cw);
         _rotateRevAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_ccw);

@@ -45,8 +45,8 @@ public class SignatureCardView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _nameTextView = (TextView) findViewById(R.id.name_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _nameTextView = findViewById(R.id.name_textview);
+        _dateTextView = findViewById(R.id.date_textview);
 
         populateUi();
     }

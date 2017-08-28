@@ -34,7 +34,6 @@ public class SharedFile implements Parcelable {
         return _uri;
     }
 
-
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/

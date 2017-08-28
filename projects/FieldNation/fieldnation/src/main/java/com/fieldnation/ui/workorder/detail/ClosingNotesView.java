@@ -40,12 +40,12 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         if (isInEditMode())
             return;
 
-        _noNotesTextView = (TextView) findViewById(R.id.noNotes_textview);
+        _noNotesTextView = findViewById(R.id.noNotes_textview);
 
-        _notesTextView = (TextView) findViewById(R.id.notes_textview);
+        _notesTextView = findViewById(R.id.notes_textview);
         _notesTextView.setOnClickListener(_notes_onClick);
 
-        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton = findViewById(R.id.add_button);
         _addButton.setOnClickListener(_notes_onClick);
 
         setVisibility(View.GONE);

@@ -83,12 +83,12 @@ public class RateMeView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _messageTextView = (TextView) findViewById(R.id.message_textview);
+        _messageTextView = findViewById(R.id.message_textview);
 
-        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton = findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancelButton_onClick);
 
-        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton = findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
 
         populateUi();

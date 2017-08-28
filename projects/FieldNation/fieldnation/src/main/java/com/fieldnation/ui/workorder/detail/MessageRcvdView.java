@@ -59,11 +59,11 @@ public class MessageRcvdView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_rcvd, this);
 
-        _messageTextView = (TextView) findViewById(R.id.message_textview);
+        _messageTextView = findViewById(R.id.message_textview);
         _messageTextView.setOnLongClickListener(_message_onLongClick);
-        _picView = (ProfilePicView) findViewById(R.id.pic_view);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _usernameTextView = (TextView) findViewById(R.id.username_textview);
+        _picView = findViewById(R.id.pic_view);
+        _timeTextView = findViewById(R.id.time_textview);
+        _usernameTextView = findViewById(R.id.username_textview);
 
         _photoClient.sub();
     }

@@ -24,7 +24,7 @@ import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
+import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     Log.v(TAG, "INTENT_FIELD_ACTION/ACTION_CONFIRM");
                 } else if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_ATTACHMENTS)) {
                     if (_workOrder != null) {
-                        AttachmentFolderDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
                         _showAttachments = false;
                     } else {
                         _showAttachments = true;
@@ -412,7 +412,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     _workOrder = workOrder;
 
                     if (_showAttachments) {
-                        AttachmentFolderDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
                         _showAttachments = false;
                     }
 

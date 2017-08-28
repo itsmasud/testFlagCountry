@@ -48,9 +48,9 @@ public class ClosingNotesDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_closing_notes, container, false);
 
-        _editText = (EditText) v.findViewById(R.id.notes_edittext);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _editText = v.findViewById(R.id.notes_edittext);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }

@@ -71,35 +71,35 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _projectNameTextView = (TextView) findViewById(R.id.projectname_textview);
-        _workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
-        _customDisplayFieldsTextView = (TextView) findViewById(R.id.customdisplayfields_textview);
-        _worktypeTextView = (TextView) findViewById(R.id.worktype_textview);
+        _projectNameTextView = findViewById(R.id.projectname_textview);
+        _workorderIdTextView = findViewById(R.id.workorderid_textview);
+        _customDisplayFieldsTextView = findViewById(R.id.customdisplayfields_textview);
+        _worktypeTextView = findViewById(R.id.worktype_textview);
 
-        _descriptionContainer = (LinearLayout) findViewById(R.id.description_container);
+        _descriptionContainer = findViewById(R.id.description_container);
 
-        _descriptionWebView = (WebView) findViewById(R.id.description_webview);
+        _descriptionWebView = findViewById(R.id.description_webview);
 
-        _descriptionShortLayout = (RelativeLayout) findViewById(R.id.descriptionShort_layout);
-        _descriptionShortTextView = (TextView) findViewById(R.id.descriptionShort_textview);
+        _descriptionShortLayout = findViewById(R.id.descriptionShort_layout);
+        _descriptionShortTextView = findViewById(R.id.descriptionShort_textview);
         _descriptionShortTextView.setOnLongClickListener(_editMode_listener);
 
-        _confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
+        _confidentialTextView = findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
 
-        _policiesTextView = (TextView) findViewById(R.id.policies_textview);
+        _policiesTextView = findViewById(R.id.policies_textview);
         _policiesTextView.setOnClickListener(_policies_onClick);
 
-        _standardInstructionTextView = (TextView) findViewById(R.id.standardInstructions_textview);
+        _standardInstructionTextView = findViewById(R.id.standardInstructions_textview);
         _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
-        _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
+        _bundleWarningTextView = findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
-        _readMoreButton = (Button) findViewById(R.id.readMore_button);
+        _readMoreButton = findViewById(R.id.readMore_button);
         _readMoreButton.setOnClickListener(_readMore_onClick);
 
-        _problemSummaryView = (ProblemSummaryView) findViewById(R.id.problemsummary_view);
+        _problemSummaryView = findViewById(R.id.problemsummary_view);
 
         setVisibility(View.GONE);
     }

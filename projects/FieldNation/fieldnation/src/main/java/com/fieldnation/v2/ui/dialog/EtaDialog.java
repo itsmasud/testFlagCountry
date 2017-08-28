@@ -134,32 +134,32 @@ public class EtaDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
 
-        _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
+        _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
 
         // Expiration stuff
-        _expirationLayout = (RelativeLayout) v.findViewById(R.id.request_layout); // expiration layout
-        _expiresCheckBox = (CheckBox) v.findViewById(R.id.expires_checkbox);
-        _expireSpinner = (HintSpinner) v.findViewById(R.id.expire_duration_spinner);
+        _expirationLayout = v.findViewById(R.id.request_layout); // expiration layout
+        _expiresCheckBox = v.findViewById(R.id.expires_checkbox);
+        _expireSpinner = v.findViewById(R.id.expire_duration_spinner);
 
         // schedule description
-        _scheduleTextView = (TextView) v.findViewById(R.id.schedule_textview);
+        _scheduleTextView = v.findViewById(R.id.schedule_textview);
 
         // ETA layout
-        _etaSwitchLabel = (TextView) v.findViewById(R.id.switchLabel_textview);
-        _etaSwitch = (Switch) v.findViewById(R.id.eta_switch);
-        _etaLayout = (RelativeLayout) v.findViewById(R.id.eta_layout);
-        _etaStartDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
-        _etaStartTimeButton = (Button) v.findViewById(R.id.etaStartTime_button);
-        _durationButton = (Button) v.findViewById(R.id.duration_button);
-        _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
+        _etaSwitchLabel = v.findViewById(R.id.switchLabel_textview);
+        _etaSwitch = v.findViewById(R.id.eta_switch);
+        _etaLayout = v.findViewById(R.id.eta_layout);
+        _etaStartDateButton = v.findViewById(R.id.etaStartDate_button);
+        _etaStartTimeButton = v.findViewById(R.id.etaStartTime_button);
+        _durationButton = v.findViewById(R.id.duration_button);
+        _noteEditText = v.findViewById(R.id.note_edittext);
 
-        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
+        _refreshView = v.findViewById(R.id.refresh_view);
 
         _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.expire_duration_values);
 
@@ -434,12 +434,8 @@ public class EtaDialog extends FullScreenDialog {
                 ecal.set(Calendar.DAY_OF_MONTH, scal.get(Calendar.DAY_OF_MONTH));
 
                 // if too early, then bump a day
-                if (arrival.getTimeInMillis() < scal.getTimeInMillis()
-                        && arrival.getTimeInMillis() >= ecal.getTimeInMillis()) {
-                    return false;
-                } else {
-                    return true;
-                }
+                return !(arrival.getTimeInMillis() < scal.getTimeInMillis()
+                        && arrival.getTimeInMillis() >= ecal.getTimeInMillis());
 
             } else {
                 Calendar scal = schedule.getServiceWindow().getStart().getCalendar();

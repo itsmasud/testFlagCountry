@@ -52,7 +52,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _textView = (IconFontTextView) findViewById(R.id.loading_textView);
+        _textView = findViewById(R.id.loading_textView);
         _textView.setText(_icons[_iconIndex]);
 
         _shrinkAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.shrink_horrizontal);

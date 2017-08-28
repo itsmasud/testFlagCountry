@@ -60,11 +60,11 @@ public class NotificationTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _timeBoldTextView = (TextView) findViewById(R.id.timebold_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _workorderTextView = (TextView) findViewById(R.id.workorder_textview);
-        _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _timeBoldTextView = findViewById(R.id.timebold_textview);
+        _timeTextView = findViewById(R.id.time_textview);
+        _workorderTextView = findViewById(R.id.workorder_textview);
+        _messageBodyTextView = findViewById(R.id.messagebody_textview);
 
         _overlayView = findViewById(R.id.click_overlay);
         _overlayView.setOnClickListener(_this_onClick);

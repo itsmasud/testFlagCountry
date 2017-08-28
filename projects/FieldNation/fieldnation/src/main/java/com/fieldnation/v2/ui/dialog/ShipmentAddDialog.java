@@ -98,16 +98,16 @@ public class ShipmentAddDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_add_shipment, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _trackingIdEditText = (EditText) v.findViewById(R.id.trackingid_edittext);
-        _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
-        _carrierSpinner = (HintSpinner) v.findViewById(R.id.carrier_spinner);
-        _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
-        _carrierLayout = (TextInputLayout) v.findViewById(R.id.carrier_layout);
-        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-        _directionSpinner = (HintSpinner) v.findViewById(R.id.direction_spinner);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _trackingIdEditText = v.findViewById(R.id.trackingid_edittext);
+        _scanButton = v.findViewById(R.id.scanBarcode_button);
+        _carrierSpinner = v.findViewById(R.id.carrier_spinner);
+        _carrierEditText = v.findViewById(R.id.carrier_edittext);
+        _carrierLayout = v.findViewById(R.id.carrier_layout);
+        _descriptionEditText = v.findViewById(R.id.description_edittext);
+        _directionSpinner = v.findViewById(R.id.direction_spinner);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }

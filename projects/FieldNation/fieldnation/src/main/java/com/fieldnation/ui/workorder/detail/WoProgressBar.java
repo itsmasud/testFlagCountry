@@ -47,18 +47,18 @@ public class WoProgressBar extends RelativeLayout {
 
         _nodes = new ProgressNode[4];
 
-        _nodes[0] = (ProgressNode) findViewById(R.id.progressNode1);
-        _nodes[1] = (ProgressNode) findViewById(R.id.progressNode2);
-        _nodes[2] = (ProgressNode) findViewById(R.id.progressNode3);
-        _nodes[3] = (ProgressNode) findViewById(R.id.progressNode4);
+        _nodes[0] = findViewById(R.id.progressNode1);
+        _nodes[1] = findViewById(R.id.progressNode2);
+        _nodes[2] = findViewById(R.id.progressNode3);
+        _nodes[3] = findViewById(R.id.progressNode4);
 
         _nodeLayouts = new LinearLayout[4];
-        _nodeLayouts[0] = (LinearLayout) findViewById(R.id.progressnode_layout1);
-        _nodeLayouts[1] = (LinearLayout) findViewById(R.id.progressnode_layout2);
-        _nodeLayouts[2] = (LinearLayout) findViewById(R.id.progressnode_layout3);
-        _nodeLayouts[3] = (LinearLayout) findViewById(R.id.progressnode_layout4);
+        _nodeLayouts[0] = findViewById(R.id.progressnode_layout1);
+        _nodeLayouts[1] = findViewById(R.id.progressnode_layout2);
+        _nodeLayouts[2] = findViewById(R.id.progressnode_layout3);
+        _nodeLayouts[3] = findViewById(R.id.progressnode_layout4);
 
-        _nodeLayout = (LinearLayout) findViewById(R.id.node_layout);
+        _nodeLayout = findViewById(R.id.node_layout);
     }
 
     public void setSubstatus(WorkorderSubstatus substatus) {

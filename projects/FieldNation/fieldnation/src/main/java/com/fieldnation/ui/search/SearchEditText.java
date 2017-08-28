@@ -68,17 +68,17 @@ public class SearchEditText extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _searchIconFont = (IconFontTextView) findViewById(R.id.left_textview);
+        _searchIconFont = findViewById(R.id.left_textview);
         _searchIconFont.setOnClickListener(_search_onClick);
 
-        _searchTermEditText = (EditText) findViewById(R.id.search_edittext);
+        _searchTermEditText = findViewById(R.id.search_edittext);
         _searchTermEditText.setOnEditorActionListener(_searchTermEditText_onEdit);
         _searchTermEditText.addTextChangedListener(_searchTermEditText_watcher);
 
-        _micIconFont = (IconFontTextView) findViewById(R.id.right_textview);
+        _micIconFont = findViewById(R.id.right_textview);
         _micIconFont.setOnClickListener(_micIconFont_onClick);
 
-        _progressBar = (ProgressBar) findViewById(R.id.progress_view);
+        _progressBar = findViewById(R.id.progress_view);
 
         _activityResultListener.sub();
 

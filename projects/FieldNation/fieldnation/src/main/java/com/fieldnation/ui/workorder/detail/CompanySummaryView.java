@@ -61,18 +61,18 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         if (isInEditMode())
             return;
 
-        _nameTextView = (TextView) findViewById(R.id.company_textview);
-        _starRating = (StarView) findViewById(R.id.star_rating);
-        _reviewsTextView = (TextView) findViewById(R.id.reviews_textview);
-        _newBuyerTextView = (TextView) findViewById(R.id.newBuyer_textview);
-        _detailsLayout = (RelativeLayout) findViewById(R.id.details_layout);
-        _expectationsProgressBar = (ProgressBar) findViewById(R.id.expectations_progressBar);
-        _professionalismProgressBar = (ProgressBar) findViewById(R.id.professionalism_progressBar);
-        _expectationsTextView = (TextView) findViewById(R.id.expectations_textView);
-        _professionalismTextView = (TextView) findViewById(R.id.professionalism_textView);
-        _daysTextView = (TextView) findViewById(R.id.days_textview);
-        _timeToApprovalLayout = (RelativeLayout) findViewById(R.id.timeToApproval_layout);
-        _percentageApprovalTextView = (TextView) findViewById(R.id.percentageApproval_textview);
+        _nameTextView = findViewById(R.id.company_textview);
+        _starRating = findViewById(R.id.star_rating);
+        _reviewsTextView = findViewById(R.id.reviews_textview);
+        _newBuyerTextView = findViewById(R.id.newBuyer_textview);
+        _detailsLayout = findViewById(R.id.details_layout);
+        _expectationsProgressBar = findViewById(R.id.expectations_progressBar);
+        _professionalismProgressBar = findViewById(R.id.professionalism_progressBar);
+        _expectationsTextView = findViewById(R.id.expectations_textView);
+        _professionalismTextView = findViewById(R.id.professionalism_textView);
+        _daysTextView = findViewById(R.id.days_textview);
+        _timeToApprovalLayout = findViewById(R.id.timeToApproval_layout);
+        _percentageApprovalTextView = findViewById(R.id.percentageApproval_textview);
 
         setVisibility(GONE);
     }

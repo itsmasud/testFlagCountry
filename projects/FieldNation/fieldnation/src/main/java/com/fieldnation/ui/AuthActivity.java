@@ -88,22 +88,22 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             getActionBar().hide();
         }
 
-        _contentLayout = (LinearLayout) findViewById(R.id.content_layout);
+        _contentLayout = findViewById(R.id.content_layout);
         _contentLayout.setVisibility(View.GONE);
 
-        _usernameEditText = (EditText) findViewById(R.id.username_edittext);
+        _usernameEditText = findViewById(R.id.username_edittext);
         _usernameEditText.setOnEditorActionListener(_onEditorUserName);
 
-        _passwordEditText = (EditText) findViewById(R.id.password_edittext);
+        _passwordEditText = findViewById(R.id.password_edittext);
         _passwordEditText.setOnEditorActionListener(_onEditorPassword);
 
-        _loginButton = (Button) findViewById(R.id.login_button);
+        _loginButton = findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
 
-        _forgotButton = (Button) findViewById(R.id.forgot_button);
+        _forgotButton = findViewById(R.id.forgot_button);
         _forgotButton.setOnClickListener(_forgot_onClick);
 
-        _signupButton = (Button) findViewById(R.id.signup_button);
+        _signupButton = findViewById(R.id.signup_button);
         _signupButton.setOnClickListener(_signup_onClick);
         _signupButton.setVisibility(View.GONE);
 
@@ -112,14 +112,14 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _fader = findViewById(R.id.fader);
 
-        _versionTextView = (TextView) findViewById(R.id.version_textview);
+        _versionTextView = findViewById(R.id.version_textview);
         _versionTextView.setText("Version " +
                 (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
 
-        _dialogManager = (DialogManager) findViewById(R.id.dialogManager);
+        _dialogManager = findViewById(R.id.dialogManager);
 
         _authcomplete = false;
 

@@ -47,8 +47,8 @@ public class MessageSentView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_sent, this);
 
-        _messageTextView = (TextView) findViewById(R.id.message_textview);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
+        _messageTextView = findViewById(R.id.message_textview);
+        _statusTextView = findViewById(R.id.status_textview);
         _messageTextView.setOnLongClickListener(_message_onLongClick);
     }
 

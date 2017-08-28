@@ -51,9 +51,9 @@ public class UnavailableCardView extends FrameLayout {
 
         if (isInEditMode())
             return;
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _captionTexView = (TextView) findViewById(R.id.caption_textview);
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _titleTextView = findViewById(R.id.title_textview);
+        _captionTexView = findViewById(R.id.caption_textview);
+        _actionButton = findViewById(R.id.action_button);
 
 
         _profileClient.subGet(false);

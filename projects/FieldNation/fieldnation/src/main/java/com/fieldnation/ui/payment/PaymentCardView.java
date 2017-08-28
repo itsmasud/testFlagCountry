@@ -55,11 +55,11 @@ public class PaymentCardView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
-        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _nextPaymentDateTextView = (TextView) findViewById(R.id.nextPaymentDate_textview);
+        _iconView = findViewById(R.id.icon_view);
+        _titleTextView = findViewById(R.id.title_textview);
+        _subTitleTextView = findViewById(R.id.subtitle_textview);
+        _paymentTextView = findViewById(R.id.payment_textview);
+        _nextPaymentDateTextView = findViewById(R.id.nextPaymentDate_textview);
 
         setOnClickListener(_this_onClick);
     }

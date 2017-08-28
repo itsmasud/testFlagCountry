@@ -7,37 +7,38 @@
         android:id="@+id/month_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
+        android:paddingBottom="16dp"
         android:paddingTop="16dp"
+        android:text="December"
         android:textColor="@color/fn_light_text"
-        android:text="December" />
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/year_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
         android:layout_marginLeft="4dp"
-        android:paddingTop="16dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
         android:layout_toRightOf="@+id/month_textview"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
         android:text="2015"
-        android:textColor="@color/fn_light_text" />
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-    <!--<TextView-->
-    <!--android:id="@+id/money_textview"-->
-    <!--style="@style/Text_Subhead"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:layout_marginBottom="8dp"-->
-    <!--android:layout_marginRight="16dp"-->
-    <!--android:layout_marginTop="8dp"-->
-    <!--android:text="$20,840.00" />-->
+    <TextView
+        android:id="@+id/money_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="$20,840.00" />
 
 
     <View

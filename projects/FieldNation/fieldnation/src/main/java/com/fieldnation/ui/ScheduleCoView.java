@@ -216,8 +216,7 @@ public class ScheduleCoView extends RelativeLayout {
     }
 
     public boolean isValidSchedule() {
-        if (_mode == -1) return false;
-        return true;
+        return _mode != -1;
     }
 
     private void initializeTimePicker() {

@@ -53,9 +53,9 @@ public class ContactTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _nameTextView = (TextView) findViewById(R.id.name_textview);
-        _phoneTextView = (TextView) findViewById(R.id.phone_textview);
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _nameTextView = findViewById(R.id.name_textview);
+        _phoneTextView = findViewById(R.id.phone_textview);
+        _titleTextView = findViewById(R.id.title_textview);
 
         setOnClickListener(_this_onClick);
     }

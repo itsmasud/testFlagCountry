@@ -48,9 +48,9 @@ public class OneButtonDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup parent) {
         View v = inflater.inflate(R.layout.dialog_v2_one_button, parent, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
-        _primaryButton = (Button) v.findViewById(R.id.primary1_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _bodyTextView = v.findViewById(R.id.body_textview);
+        _primaryButton = v.findViewById(R.id.primary1_button);
 
         return v;
     }

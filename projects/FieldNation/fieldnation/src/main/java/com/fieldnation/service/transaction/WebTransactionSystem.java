@@ -7,7 +7,6 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ThreadManager;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
@@ -27,13 +26,27 @@ public class WebTransactionSystem implements WebTransactionConstants {
     private OAuth _auth;
     private ThreadManager _manager;
     private Handler _shutdownChecker;
-    private long _lastRequestTime = 0;
     private static WebTransactionSystem _instance = null;
+    private static Handler _mainHandler = null;
+
+    private static Handler getHandler() {
+        if (_mainHandler == null) {
+            _mainHandler = new Handler(App.get().getMainLooper());
+        }
+        return _mainHandler;
+    }
 
     public static WebTransactionSystem getInstance() {
-        if (_instance == null)
-            _instance = new WebTransactionSystem();
-        return _instance;
+        synchronized (TAG) {
+            if (_instance == null)
+                _instance = new WebTransactionSystem();
+            return _instance;
+        }
+    }
+
+    public static void stop() {
+        if (_instance != null)
+            _instance.shutDown();
     }
 
     private WebTransactionSystem() {
@@ -58,6 +71,8 @@ public class WebTransactionSystem implements WebTransactionConstants {
         t._isFirstThread = true;
         _manager.addThread(t); // 0
 
+        _manager.addThread(new QueueProcessingThread(_manager));
+
         //_manager.addThread(new TransactionThread(_manager, this, false)); // 0
         _manager.addThread(new TransactionThread(_manager, this, true)); // 1
         for (int i = 2; i < threadCount; i++) {
@@ -69,12 +84,16 @@ public class WebTransactionSystem implements WebTransactionConstants {
     }
 
     public boolean isStillWorking() {
-        return WebTransaction.count() > 0;
+        boolean stillWorking = WebTransaction.count() > 0 && App.get().isConnected();
+        synchronized (TRANSACTION_QUEUE) {
+            stillWorking = stillWorking || TRANSACTION_QUEUE.size() > 0;
+        }
+        return stillWorking;
     }
 
     private void startActivityMonitor() {
         if (_shutdownChecker == null) {
-            _shutdownChecker = new Handler();
+            _shutdownChecker = new Handler(App.get().getMainLooper());
         }
         _shutdownChecker.postDelayed(_activityChecker_runnable, IDLE_TIMEOUT);
     }
@@ -84,17 +103,14 @@ public class WebTransactionSystem implements WebTransactionConstants {
         public void run() {
             if (isStillWorking()) {
                 startActivityMonitor();
-            } else if (System.currentTimeMillis() - _lastRequestTime > IDLE_TIMEOUT) {
-                // shutdown
-                shutDown();
             } else {
-                startActivityMonitor();
+                shutDown();
             }
         }
     };
 
     public void shutDown() {
-        Log.v(TAG, "onDestroy");
+        Log.v(TAG, "shutDown");
         _authClient.unsubAuthStateChange();
         _appMessagingClient.unsubNetworkConnect();
         _manager.shutdown();
@@ -130,8 +146,6 @@ public class WebTransactionSystem implements WebTransactionConstants {
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             setAuth(oauth);
-            if (_manager != null)
-                _manager.wakeUp();
         }
 
         @Override
@@ -140,68 +154,22 @@ public class WebTransactionSystem implements WebTransactionConstants {
         }
     };
 
-    public boolean isAuthenticated() {
+    protected boolean isAuthenticated() {
         return _auth != null;
     }
 
     /*-*************************-*/
     /*-         Queue           -*/
     /*-*************************-*/
-    private static Handler _mainHandler = null;
-    private static List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
-
-    private static Handler getHandler() {
-        if (_mainHandler == null) {
-            _mainHandler = new Handler(App.get().getMainLooper());
-        }
-        return _mainHandler;
-    }
+    protected static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
 
     public static void queueTransaction(Context context, WebTransaction transaction) {
         synchronized (TRANSACTION_QUEUE) {
             TRANSACTION_QUEUE.add(transaction);
         }
-
-        // Put on main thread
-        getHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                processQueue();
-            }
-        });
-    }
-
-    private static void processQueue() {
-        while (true) {
-            WebTransaction webTransaction = null;
-            synchronized (TRANSACTION_QUEUE) {
-                if (TRANSACTION_QUEUE.size() > 0) {
-                    webTransaction = TRANSACTION_QUEUE.remove(0);
-                }
-            }
-            if (webTransaction == null)
-                break;
-
-            try {
-
-                if (webTransaction.getKey() != null && WebTransaction.keyExists(webTransaction.getKey())) {
-                    Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
-                    break;
-                }
-                //Log.v(TAG, "processIntent saving transaction");
-                webTransaction.setState(WebTransaction.State.IDLE);
-                webTransaction.save();
-
-                String listenerName = webTransaction.getListenerName();
-                if (!misc.isEmptyOrNull(listenerName)) {
-                    WebTransactionDispatcher.queued(App.get(), listenerName, webTransaction);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
         getInstance()._manager.wakeUp();
     }
+
 }
 
 

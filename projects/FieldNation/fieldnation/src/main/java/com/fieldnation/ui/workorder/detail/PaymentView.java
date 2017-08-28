@@ -52,13 +52,13 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _requestNewPayStub = (ViewStub) findViewById(R.id.requestNewPayTile_viewstub);
+        _requestNewPayStub = findViewById(R.id.requestNewPayTile_viewstub);
 
-        _payTextView = (TextView) findViewById(R.id.pay_textview);
-        _termsTextView = (TextView) findViewById(R.id.terms_textview);
+        _payTextView = findViewById(R.id.pay_textview);
+        _termsTextView = findViewById(R.id.terms_textview);
         _termsTextView.setOnClickListener(_terms_onClick);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _actionButton = findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         setVisibility(View.GONE);

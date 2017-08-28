@@ -60,7 +60,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         if (isInEditMode())
             return;
 
-        _paramList = (LinearLayout) findViewById(R.id.param_list);
+        _paramList = findViewById(R.id.param_list);
 
         populateUi();
     }

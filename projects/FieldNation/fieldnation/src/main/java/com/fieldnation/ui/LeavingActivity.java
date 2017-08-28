@@ -63,19 +63,19 @@ public class LeavingActivity extends Activity {
                 _uri = savedInstanceState.getParcelable(INTENT_URI);
         }
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _titleTextView = findViewById(R.id.title_textview);
         _titleTextView.setText(_title);
-        _subTextView = (TextView) findViewById(R.id.subtext_textview);
+        _subTextView = findViewById(R.id.subtext_textview);
         _subTextView.setText(_subtext);
 
-        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton = findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
-        _continueButton = (Button) findViewById(R.id.continue_button);
+        _continueButton = findViewById(R.id.continue_button);
         _continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -54,15 +54,15 @@ public class FooterBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _inboxTextView = (IconFontTextView) findViewById(R.id.inbox_textview);
+        _inboxTextView = findViewById(R.id.inbox_textview);
         _inboxTextView.setOnClickListener(_inbox_onClick);
 
-        _menuTextView = (IconFontTextView) findViewById(R.id.menu_textview);
+        _menuTextView = findViewById(R.id.menu_textview);
         _menuTextView.setOnClickListener(_menu_onClick);
 
-        _unreadTextView = (IconFontTextView) findViewById(R.id.unread_textview);
+        _unreadTextView = findViewById(R.id.unread_textview);
 
-        _testButton = (Button) findViewById(R.id.test_button);
+        _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

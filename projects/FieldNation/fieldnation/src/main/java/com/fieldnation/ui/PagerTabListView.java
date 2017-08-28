@@ -45,7 +45,7 @@ public class PagerTabListView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_pager_tab_list, this, true);
 
-        _tabContainer = (LinearLayout) findViewById(R.id.tab_container);
+        _tabContainer = findViewById(R.id.tab_container);
 //        _tabSelector = findViewById(R.id.tab_selector);
     }
 
