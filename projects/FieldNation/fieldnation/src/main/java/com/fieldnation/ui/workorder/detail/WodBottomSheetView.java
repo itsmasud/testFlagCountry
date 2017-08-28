@@ -243,8 +243,7 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
         _addAttachmentButton.setVisibility(GONE);
         for (AttachmentFolder attachmentFolder : folders) {
-            if (attachmentFolder.getResults().length > 0
-                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
+            if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
                     || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
                     || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
                 _addAttachmentButton.setVisibility(VISIBLE);
@@ -275,8 +274,7 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         else {
             final AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
             for (AttachmentFolder attachmentFolder : folders) {
-                if (attachmentFolder.getResults().length > 0
-                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
+                if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
                         || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
                         || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
                     return true;
