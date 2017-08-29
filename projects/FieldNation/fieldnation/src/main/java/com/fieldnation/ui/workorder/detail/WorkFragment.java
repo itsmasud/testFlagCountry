@@ -708,7 +708,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onReportProblem() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(), _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
         }
 
         @Override
