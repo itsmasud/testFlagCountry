@@ -28,6 +28,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_ACTION = TAG + ".action";
     public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
+    public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
     // SavedInstance fields
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
@@ -106,6 +107,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 _showAttachments = true;
             } else if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_MESSAGES)) {
                 _showMessages = true;
+            } else if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_CONFIRM)) {
+                // TODO handle confirm
             }
         }
     }
@@ -237,6 +240,16 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_MESSAGES);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        return intent;
+    }
+
+    public static Intent makeIntentConfirm(Context context, int workOrderId) {
+        Log.v(TAG, "makeIntentMessages");
+        Intent intent = new Intent(context, WorkOrderActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         return intent;
     }
