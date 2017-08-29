@@ -21,6 +21,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthClient;
@@ -209,6 +210,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             Log.v(TAG, "show release notes");
+            StoredObject.flushAllOfType(App.get(), "V2_DATA");
+            StoredObject.flushAllOfType(App.get(), "V2_PARAMS");
             WhatsNewDialog.show(App.get(), DIALOG_WHATS_NEW_DIALOG);
             return;
         }

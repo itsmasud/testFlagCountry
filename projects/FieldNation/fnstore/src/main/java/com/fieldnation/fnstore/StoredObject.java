@@ -638,6 +638,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static boolean flushAllOfType(Context context, String objectTypeName) {
+        Stopwatch stopwatch = new Stopwatch(true);
         boolean success = false;
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
@@ -647,6 +648,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     Column.OBJ_NAME + " = ?",
                     new String[]{objectTypeName}) > 0;
         }
+        Log.v(TAG, "flushAllOfType " + objectTypeName + " " + stopwatch.finish() + "ms");
         return success;
     }
 

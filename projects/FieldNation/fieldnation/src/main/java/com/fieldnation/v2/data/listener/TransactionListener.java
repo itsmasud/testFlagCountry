@@ -181,6 +181,7 @@ public class TransactionListener extends WebTransactionListener {
                     UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
                 }
 
+/*
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
                     StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
@@ -190,6 +191,7 @@ public class TransactionListener extends WebTransactionListener {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray(), true);
                     }
                 }
+*/
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 // TODO error!
