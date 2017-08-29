@@ -33,12 +33,6 @@
                     android:text="TEST BUTTON"
                     android:visibility="gone" />
 
-                <!-- top action bar -->
-                <com.fieldnation.ui.workorder.detail.ActionBarTopView
-                    android:id="@+id/actiontop_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
                 <!-- Summary -->
                 <com.fieldnation.ui.workorder.detail.WorkSummaryView
                     android:id="@+id/summary_view"
@@ -169,7 +163,14 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:theme="@style/FieldNation.Material.ToolBar"
-            app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
+            app:layout_scrollFlags="scroll|enterAlways" />
+
+        <com.fieldnation.ui.workorder.detail.ActionBarTopView
+            android:id="@+id/actiontop_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
     </android.support.design.widget.AppBarLayout>
 
     <com.fieldnation.ui.workorder.detail.WodBottomSheetView

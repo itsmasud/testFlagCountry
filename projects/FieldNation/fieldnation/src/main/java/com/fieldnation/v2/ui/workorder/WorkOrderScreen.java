@@ -168,6 +168,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
     // UI
     private Toolbar _toolbar;
+    private Button _toolbarActionButton;
     private Button _testButton;
     private NestedScrollView _scrollView;
     private ActionBarTopView _topBar;
@@ -232,7 +233,7 @@ public class WorkOrderScreen extends RelativeLayout {
         _toolbar = findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.inflateMenu(R.menu.wod);
-        _toolbar.setTitle("WO: loading...");
+        _toolbar.setTitle("WO loading...");
         _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
 
         _testButton = findViewById(R.id.test_button);
@@ -496,7 +497,7 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        _toolbar.setTitle("WO: " + _workOrderId);
+        _toolbar.setTitle("WO " + _workOrderId);
 
         _activityResultListener.sub();
 
@@ -650,12 +651,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-//            ConfirmActivity.startNew(App.get());
-//            _actionbartop_listener.onMyWay();
-
             CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
-
         }
     };
 
@@ -1562,10 +1558,6 @@ public class WorkOrderScreen extends RelativeLayout {
             setLoading(true);
         }
     };
-
-    public WodBottomSheetView.Listener getBottomSheetListener() {
-        return _bottomsheetView_listener;
-    }
 
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override

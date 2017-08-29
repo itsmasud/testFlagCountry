@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.fieldnation.MainActivity">
 
+<!-- TODO goes here
     <item
         android:id="@+id/messages_menu"
         android:enabled="true"
@@ -17,5 +18,6 @@
         android:orderInCategory="300"
         android:title="|"
         app:showAsAction="always" />
+-->
 
 </menu>
