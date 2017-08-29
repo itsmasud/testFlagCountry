@@ -45,6 +45,9 @@ public class WorkOrderRatingsBuyerWorkOrder implements Parcelable {
     @Json(name = "recommend")
     private Boolean _recommend;
 
+    @Json(name = "remaining_approval_period")
+    private Boolean _remainingApprovalPeriod;
+
     @Json(name = "stars")
     private Integer _stars;
 
@@ -221,6 +224,28 @@ public class WorkOrderRatingsBuyerWorkOrder implements Parcelable {
     public WorkOrderRatingsBuyerWorkOrder recommend(Boolean recommend) throws ParseException {
         _recommend = recommend;
         SOURCE.put("recommend", recommend);
+        return this;
+    }
+
+    public void setRemainingApprovalPeriod(Boolean remainingApprovalPeriod) throws ParseException {
+        _remainingApprovalPeriod = remainingApprovalPeriod;
+        SOURCE.put("remaining_approval_period", remainingApprovalPeriod);
+    }
+
+    public Boolean getRemainingApprovalPeriod() {
+        try {
+            if (_remainingApprovalPeriod == null && SOURCE.has("remaining_approval_period") && SOURCE.get("remaining_approval_period") != null)
+                _remainingApprovalPeriod = SOURCE.getBoolean("remaining_approval_period");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _remainingApprovalPeriod;
+    }
+
+    public WorkOrderRatingsBuyerWorkOrder remainingApprovalPeriod(Boolean remainingApprovalPeriod) throws ParseException {
+        _remainingApprovalPeriod = remainingApprovalPeriod;
+        SOURCE.put("remaining_approval_period", remainingApprovalPeriod);
         return this;
     }
 

@@ -43,6 +43,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String PARAM_WORKORDER_ID = "workOrderId";
     private static final String PARAM_PROBLEMS = "problems";
     private static final String PARAM_APPROVAL_DAYS = "approvalDays";
+    private static final String PARAM_REMAINING_APPROVAL_PERIOD = "remainingApprovalPeriod";
 
     private static final String STATE_WORKORDER_ID = "workOrderId";
     private static final String STATE_PROBLEMS = "problems";
@@ -74,6 +75,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private Problems _problems;
     private int _workOrderId;
     private int _approvalDays = -1;
+    private boolean _remainingApprovalPeriod = false;
 
     // Saved Data
     private int _primaryPosition = -1;
@@ -125,9 +127,7 @@ public class ReportProblemDialog extends SimpleDialog {
         _workOrderId = payload.getInt(PARAM_WORKORDER_ID);
         _problems = payload.getParcelable("problems");
         _approvalDays = payload.getInt(PARAM_APPROVAL_DAYS);
-
-        Log.e(TAG, "_approvalDays: " + _approvalDays);
-
+        _remainingApprovalPeriod = payload.getBoolean(PARAM_REMAINING_APPROVAL_PERIOD);
 
         populateUi();
         super.show(payload, animate);
@@ -196,11 +196,6 @@ public class ReportProblemDialog extends SimpleDialog {
                     getSecondaryAdapter().clear();
                     getSecondaryAdapter().addAll((Object[]) _childTypes);
                 }
-                if (_secondaryPosition != -1 && _childTypes != null && _childTypes.length > 0) {
-                    getSecondarySpinner().setSelection(_secondaryPosition);
-                } else {
-                    getSecondarySpinner().clearSelection();
-                }
             } else {
                 getPrimarySpinner().clearSelection();
             }
@@ -265,6 +260,7 @@ public class ReportProblemDialog extends SimpleDialog {
     }
 
     private void populateUi() {
+        Log.e(TAG, "populateUi");
         if (_noteTextView == null)
             return;
 
@@ -272,9 +268,6 @@ public class ReportProblemDialog extends SimpleDialog {
             return;
 
         setLoading(false);
-
-        _explanationEditText.setVisibility(View.VISIBLE);
-        _reviewPeriodTextView.setVisibility(View.GONE);
 
         { // put in a block to limit the scope of pList
             ProblemType[] types = _problems.getTypes();
@@ -319,6 +312,23 @@ public class ReportProblemDialog extends SimpleDialog {
         if (_childTypes != null) {
             getSecondarySpinner().setVisibility(View.VISIBLE);
             getSecondarySpinner().clearFocus();
+            getSecondarySpinner().clearSelection();
+        }
+
+        if (_secondaryPosition != -1 && _childTypes != null && _childTypes.length > 0) {
+            getSecondarySpinner().setSelection(_secondaryPosition);
+
+            if (_childTypes[_secondaryPosition].getId() == 9 && _remainingApprovalPeriod) {
+                _explanationEditText.setVisibility(View.GONE);
+                _reviewPeriodTextView.setVisibility(View.VISIBLE);
+                _reviewPeriodTextView.setText(getView().getResources().getString(R.string.review_period_not_past, _approvalDays));
+            }else {
+                _explanationEditText.requestFocus();
+                misc.showKeyboard(_explanationEditText);
+                _explanationEditText.setVisibility(View.VISIBLE);
+                _reviewPeriodTextView.setVisibility(View.GONE);
+            }
+
         }
 
         if (!misc.isEmptyOrNull(_explanationEditText.getText().toString()) && _selectedProblem != null) {
@@ -331,8 +341,6 @@ public class ReportProblemDialog extends SimpleDialog {
             return;
         }
 
-        _explanationEditText.requestFocus();
-        misc.showKeyboard(_explanationEditText);
     }
 
     private final AdapterView.OnItemSelectedListener _problem1_onItemClick = new AdapterView.OnItemSelectedListener() {
@@ -341,11 +349,13 @@ public class ReportProblemDialog extends SimpleDialog {
             _primaryPosition = position;
             _selectedProblem = (ProblemType) getPrimaryAdapter().getItem(position);
             _explanationEditText.setEnabled(true);
-            _explanationEditText.setLines(1);
             _textEditText_watcherListener.onTextChanged(
                     _explanationEditText.getText().toString(),
                     0, _explanationEditText.getText().toString().length(),
                     _explanationEditText.getText().toString().length());
+
+            _explanationEditText.setVisibility(View.VISIBLE);
+            _reviewPeriodTextView.setVisibility(View.GONE);
             populateUi();
         }
 
@@ -361,20 +371,22 @@ public class ReportProblemDialog extends SimpleDialog {
             misc.showKeyboard(_explanationEditText);
             _selectedProblem = (ProblemType) getSecondaryAdapter().getItem(position);
 
-//            if (_selectedProblem.getId() == 9 && /* TODO if review period is over*/) {
-//                _explanationEditText.setVisibility(View.GONE);
-//                _reviewPeriodTextView.setVisibility(View.VISIBLE);
-//                _reviewPeriodTextView.setText(getView().getResources().getString(R.string.review_period_not_past, _approvalDays));
-//                return;
-//            } else {
+            if (_selectedProblem.getId() == 9 && _remainingApprovalPeriod) {
+                _explanationEditText.setVisibility(View.GONE);
+                _reviewPeriodTextView.setVisibility(View.VISIBLE);
+                _reviewPeriodTextView.setText(getView().getResources().getString(R.string.review_period_not_past, _approvalDays));
+                return;
+            } else {
                 _explanationEditText.setVisibility(View.VISIBLE);
+                _explanationEditText.requestFocus();
+                misc.showKeyboard(_explanationEditText);
                 _reviewPeriodTextView.setVisibility(View.GONE);
                 _textEditText_watcherListener.onTextChanged(
                         _explanationEditText.getText().toString(),
                         0, _explanationEditText.getText().toString().length(),
                         _explanationEditText.getText().toString().length());
 
-//            }
+            }
             populateUi();
 
         }
@@ -501,12 +513,12 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, Problems problems, int approvalDays) {
+    public static void show(Context context, String uid, int workOrderId, Problems problems, int approvalDays, boolean remainingApprovalPeriod) {
         Bundle params = new Bundle();
         params.putInt(PARAM_WORKORDER_ID, workOrderId);
         params.putParcelable(PARAM_PROBLEMS, problems);
         params.putInt(PARAM_APPROVAL_DAYS, approvalDays);
-        Log.e(TAG, "approvalDays: " + approvalDays);
+        params.putBoolean(PARAM_REMAINING_APPROVAL_PERIOD, remainingApprovalPeriod);
         Controller.show(context, uid, ReportProblemDialog.class, params);
     }
 
