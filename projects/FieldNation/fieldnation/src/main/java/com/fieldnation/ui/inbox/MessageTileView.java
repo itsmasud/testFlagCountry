@@ -11,12 +11,13 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 public class MessageTileView extends RelativeLayout {
     private static final String TAG = "MessageTileView";
@@ -173,7 +174,7 @@ public class MessageTileView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderActivity.startNew(getContext(), _message.getWorkorderId().intValue(), WorkOrderActivity.TAB_MESSAGE);
+            ActivityClient.startActivity(WorkOrderActivity.makeIntentMessages(getContext(), _message.getWorkorderId().intValue()));
         }
     };
 

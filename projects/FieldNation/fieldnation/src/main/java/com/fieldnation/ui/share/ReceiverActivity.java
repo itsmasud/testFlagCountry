@@ -20,11 +20,11 @@ import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.util.ArrayList;
 

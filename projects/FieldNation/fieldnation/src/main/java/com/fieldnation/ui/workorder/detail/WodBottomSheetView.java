@@ -28,7 +28,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     private static final String TAG = "WodBottomSheetView";
 
     // Ui
-//    private View _bottomSheetBackground;
     private View _background;
     private View _sheet;
     private View _sheetContainer;

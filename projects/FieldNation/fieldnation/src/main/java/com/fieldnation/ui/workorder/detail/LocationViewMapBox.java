@@ -33,7 +33,7 @@ import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 public class LocationViewMapBox extends LinearLayout {
     private static final String TAG = "LocationViewMapBox";
@@ -449,7 +449,7 @@ public class LocationViewMapBox extends LinearLayout {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkOrderActivity.startNew(getContext(), _workorder.getWorkorderId().intValue(), WorkOrderActivity.TAB_MESSAGE);
+                    ActivityClient.startActivity(WorkOrderActivity.makeIntentMessages(getContext(), _workorder.getWorkorderId().intValue()));
                     break;
                 }
                 case ACTION_NAVIGATE: {

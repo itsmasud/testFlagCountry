@@ -30,7 +30,6 @@ import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
@@ -967,7 +966,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getId());
-            WorkOrderActivity.startNew(App.get(), _workOrder.getId(), WorkOrderActivity.TAB_MESSAGE);
+            ActivityClient.startActivity(WorkOrderActivity.makeIntentMessages(App.get(), _workOrder.getId()));
         }
     };
 
