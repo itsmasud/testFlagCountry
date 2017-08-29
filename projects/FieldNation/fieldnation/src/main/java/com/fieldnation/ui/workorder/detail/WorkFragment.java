@@ -50,7 +50,6 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -498,6 +497,7 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
+/*
         if (getArguments() != null) {
             if (getArguments().containsKey(WorkOrderActivity.INTENT_FIELD_ACTION)
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
@@ -508,6 +508,7 @@ public class WorkFragment extends WorkorderFragment {
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
+*/
     }
 
     private void requestWorkorder() {

@@ -2,21 +2,15 @@ package com.fieldnation.ui.workorder;
 
 import android.support.v4.app.Fragment;
 
-import com.fieldnation.ui.workorder.WorkOrderActivity.PageRequestListener;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 public abstract class WorkorderFragment extends Fragment {
-    protected PageRequestListener pageRequestListener;
     protected LoadingListener _loadingListener;
 
 
     public abstract void update();
 
     public abstract void setWorkOrder(WorkOrder workorder);
-
-    public void setPageRequestListener(PageRequestListener listener) {
-        pageRequestListener = listener;
-    }
 
     public void setLoadingListener(LoadingListener listener) {
         _loadingListener = listener;
