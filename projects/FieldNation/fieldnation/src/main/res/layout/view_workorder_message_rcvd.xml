@@ -14,9 +14,17 @@
 
     <TextView
         android:id="@+id/message_textview"
-        style="@style/MessageView_MessageRcvd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/pic_view"
-        android:text="@string/placeholder_paragraph" />
+        android:background="@drawable/message_left_top"
+        android:paddingBottom="10dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingTop="10dp"
+        android:text="@string/placeholder_paragraph"
+        android:textColor="#FFFFFFFF" />
 
     <TextView
         android:id="@+id/sent_textview"

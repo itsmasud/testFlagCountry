@@ -27,7 +27,7 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.ui.workorder.MessagePagingAdapter;
+import com.fieldnation.v2.ui.workorder.MessageAdapter;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,6 +50,7 @@ public class MessagesDialog extends FullScreenDialog {
     // Data
     private int _workOrderId;
     private boolean _isMarkedRead = false;
+    private final MessageAdapter _adapter = new MessageAdapter();
 
     public MessagesDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -130,11 +131,6 @@ public class MessagesDialog extends FullScreenDialog {
         _refreshView.refreshComplete();
     }
 
-    private final MessagePagingAdapter _adapter = new MessagePagingAdapter() {
-        @Override
-        public void requestPage(int page, boolean allowCache) {
-        }
-    };
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -256,7 +252,7 @@ public class MessagesDialog extends FullScreenDialog {
                         }
                     });
 
-                    _adapter.addObjects(messages.getMetadata().getPage(), flatList);
+                    _adapter.setMessages(flatList);
 
                     rebuildList();
                 } else if (successObject instanceof Message) {
