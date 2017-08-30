@@ -32,7 +32,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
 
     // Ui
-    private Button _leftGreenButton;
     private Button _rightGreenButton;
 
     // Data
@@ -77,7 +76,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
         LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
 
-        _leftGreenButton = findViewById(R.id.leftGreen_button);
         _rightGreenButton = findViewById(R.id.rightGreen_button);
 
         setVisibility(View.GONE);
@@ -89,7 +87,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         _workOrder = workOrder;
 
         if (_inflated) {
-            _leftGreenButton.setVisibility(View.GONE);
             _rightGreenButton.setVisibility(View.GONE);
         }
         setVisibility(View.GONE);
@@ -101,6 +98,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
         Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
 
+/*
         if (false) {
 
             // running late
@@ -119,6 +117,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _leftGreenButton.setOnClickListener(_reportProblem_onClick);
             setVisibility(View.VISIBLE);
         }
+*/
 
         if (false) {
 
@@ -226,9 +225,11 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // accept
         } else if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             inflate();
+/*
             _leftGreenButton.setVisibility(VISIBLE);
             _leftGreenButton.setOnClickListener(_notInterested_onClick);
             _leftGreenButton.setText(R.string.btn_not_interested);
+*/
 
             _rightGreenButton.setVisibility(VISIBLE);
             _rightGreenButton.setOnClickListener(_accept_onClick);
@@ -239,9 +240,11 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // request
         } else if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
             inflate();
+/*
             _leftGreenButton.setVisibility(VISIBLE);
             _leftGreenButton.setOnClickListener(_notInterested_onClick);
             _leftGreenButton.setText(R.string.btn_not_interested);
+*/
 
             _rightGreenButton.setVisibility(VISIBLE);
             _rightGreenButton.setOnClickListener(_request_onClick);
@@ -252,9 +255,11 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // withdraw
         } else if (_workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             inflate();
+/*
             _leftGreenButton.setVisibility(VISIBLE);
             _leftGreenButton.setOnClickListener(_withdraw_onClick);
             _leftGreenButton.setText(R.string.btn_withdraw);
+*/
 
             setVisibility(View.VISIBLE);
 
@@ -279,6 +284,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)
                 && workOrderActions.contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
             inflate();
+/*
             _leftGreenButton.setVisibility(VISIBLE);
             if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
                 _leftGreenButton.setText(R.string.btn_check_in_again);
@@ -287,6 +293,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 _leftGreenButton.setText(R.string.btn_check_in);
                 _leftGreenButton.setOnClickListener(_checkin_onClick);
             }
+*/
 
             _rightGreenButton.setVisibility(VISIBLE);
             _rightGreenButton.setOnClickListener(_closing_onClick);

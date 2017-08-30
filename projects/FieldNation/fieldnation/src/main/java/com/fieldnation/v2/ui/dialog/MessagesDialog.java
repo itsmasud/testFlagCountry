@@ -1,0 +1,276 @@
+package com.fieldnation.v2.ui.dialog;
+
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.fieldnation.App;
+import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.OverScrollRecyclerView;
+import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.workorder.detail.MessageInputView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.Messages;
+import com.fieldnation.v2.ui.workorder.MessagePagingAdapter;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+
+/**
+ * Created by mc on 8/30/17.
+ */
+
+public class MessagesDialog extends FullScreenDialog {
+    private static final String TAG = "MessagesDialog";
+
+    // UI
+    private Toolbar _toolbar;
+    private OverScrollRecyclerView _messagesList;
+    private MessageInputView _inputView;
+    private RefreshView _refreshView;
+
+    // Data
+    private int _workOrderId;
+    private boolean _isMarkedRead = false;
+
+    public MessagesDialog(Context context, ViewGroup container) {
+        super(context, container);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.dialog_v2_message, container, false);
+
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.setTitle("Messages");
+
+        _messagesList = v.findViewById(R.id.messages_listview);
+        _inputView = v.findViewById(R.id.input_view);
+        _refreshView = v.findViewById(R.id.refresh_view);
+
+        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _messagesList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        _messagesList.setAdapter(_adapter);
+        _inputView.setOnSendButtonClick(_send_onClick);
+        _inputView.setButtonEnabled(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        _workOrderApi.sub();
+        populateUi();
+    }
+
+    @Override
+    public void show(Bundle params, boolean animate) {
+        super.show(params, animate);
+
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
+        _workOrderId = params.getInt("workOrderId");
+        _refreshView.startRefreshing();
+        WorkordersWebApi.getMessages(App.get(), _workOrderId, true, false);
+    }
+
+    @Override
+    public void onPause() {
+        _workOrderApi.unsub();
+
+        misc.hideKeyboard(_inputView);
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    private void populateUi() {
+        if (_inputView == null)
+            return;
+
+        _inputView.setButtonEnabled(true);
+
+        if (!_isMarkedRead) {
+            _isMarkedRead = true;
+// TODO                WorkorderClient.actionMarkMessagesRead(App.get(), _workorder.getWorkorderId());
+            ProfileClient.get(App.get());
+        }
+    }
+
+    private void rebuildList() {
+        _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
+        _refreshView.refreshComplete();
+    }
+
+    private final MessagePagingAdapter _adapter = new MessagePagingAdapter() {
+        @Override
+        public void requestPage(int page, boolean allowCache) {
+        }
+    };
+
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            cancel();
+            dismiss(true);
+        }
+    };
+
+    private final View.OnClickListener _send_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _refreshView.startRefreshing();
+            if (misc.isEmptyOrNull(_inputView.getInputText())) {
+                ToastClient.toast(App.get(), "Please enter a message", Toast.LENGTH_SHORT);
+                return;
+            }
+
+            if (App.get().getProfile() == null) {
+                ToastClient.toast(App.get(), "Can't send message right now, please try again later", Toast.LENGTH_LONG);
+                return;
+            }
+
+            Log.v(TAG, "_send_onClick");
+
+            //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));``
+
+            try {
+                Message msg = new Message();
+                msg.setMessage(_inputView.getInputText());
+                WorkordersWebApi.addMessage(App.get(), _workOrderId, msg, App.get().getSpUiContext());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            _inputView.clearText();
+            misc.hideKeyboard(_inputView);
+        }
+    };
+
+    /*-*****************************-*/
+    /*-				Web				-*/
+    /*-*****************************-*/
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("addMessage")
+                    || methodName.equals("getMessages")
+                    || methodName.equals("replyMessage");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            try {
+                if (successObject instanceof Messages) {
+                    Messages messages = (Messages) successObject;
+                    Error error = (Error) failObject;
+                    if (!success || error != null)
+                        return;
+
+                    JsonObject methodParams = new JsonObject(transactionParams.methodParams);
+
+                    if (methodParams.has("workOrderId")
+                            && methodParams.getInt("workOrderId") != _workOrderId) {
+                        Log.v(TAG, "not my work order!");
+                        return;
+                    }
+
+                    if (messages == null || messages.getResults() == null) {
+                        _refreshView.refreshComplete();
+                        return;
+                    }
+
+                    // flatten the tree with a depth first search
+                    // first create a stack to store nodes that need to be searched
+                    // push the messages into the stack
+                    List<Message> stack = new LinkedList<>();
+                    for (Message message : messages.getResults()) {
+                        stack.add(message);
+                    }
+
+                    List<Message> flatList = new LinkedList<>();
+                    while (stack.size() > 0) {
+                        // pop the first item
+                        Message message = stack.remove(0);
+                        // add it to the list
+                        flatList.add(message);
+
+                        // get the replies and add them to the stack
+                        if (message.getReplies() != null
+                                && message.getReplies().length > 0) {
+                            Message[] replies = message.getReplies();
+                            for (int i = replies.length - 1; i >= 0; i--) {
+                                stack.add(replies[i]);
+                            }
+                        }
+                    }
+
+                    Collections.sort(flatList, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message lhs, Message rhs) {
+                            try {
+                                long lhsT = lhs.getCreated().getUtcLong();
+                                long rhsT = rhs.getCreated().getUtcLong();
+                                if (lhsT < rhsT) {
+                                    return -1;
+                                } else if (lhsT > rhsT) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
+                            } catch (Exception ex) {
+                                Log.v(TAG, ex);
+                                return 0;
+                            }
+                        }
+                    });
+
+                    _adapter.addObjects(messages.getMetadata().getPage(), flatList);
+
+                    rebuildList();
+                } else if (successObject instanceof Message) {
+                    rebuildList();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
+
+    public static void show(Context context, int workOrderId) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+        Controller.show(context, null, MessagesDialog.class, params);
+    }
+}

@@ -42,5 +42,6 @@ public class MessagesMenuButton extends RelativeLayout {
 
         _iconTextView = findViewById(R.id.icon_textview);
         _indicatorView = findViewById(R.id.indicator_View);
+        _indicatorView.setVisibility(GONE);
     }
 }

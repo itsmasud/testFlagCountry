@@ -16,6 +16,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
+import com.fieldnation.v2.ui.dialog.MessagesDialog;
 
 import java.util.List;
 
@@ -197,7 +198,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                         _showAttachments = false;
                     }
                     if (_showMessages) {
-                        // TODO show messages dialog here
+                        MessagesDialog.show(App.get(), _workOrderId);
                         _showMessages = false;
                     }
 

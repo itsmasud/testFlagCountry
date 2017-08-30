@@ -118,6 +118,7 @@ import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.MessagesDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
@@ -245,18 +246,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _toolbar = findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.inflateMenu(R.menu.wod);
-        _toolbar.setTitle("WO loading...");
-        _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
-
-        _messagesMenuButton = _toolbar.findViewById(R.id.messages_menu);
-        _messagesMenuButton.setOnClickListener(_messagesMenuButton_onClick);
-
-        _moreMenuButton = _toolbar.findViewById(R.id.more_menu);
-        _moreMenuButton.setOnClickListener(_moreMenuButton_onClick);
-
-        _morePopup = new PopupMenu(getContext(), _moreMenuButton);
-        _morePopup.setOnMenuItemClickListener(_morePopup_onClick);
 
         _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
@@ -414,6 +403,21 @@ public class WorkOrderScreen extends RelativeLayout {
 
     public void onStart() {
         Log.v(TAG, "onStart");
+
+        _toolbar.getMenu().clear();
+        _toolbar.inflateMenu(R.menu.wod);
+        _toolbar.setTitle("WO LOADING...");
+        _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
+
+        _messagesMenuButton = _toolbar.findViewById(R.id.messages_menu);
+        _messagesMenuButton.setOnClickListener(_messagesMenuButton_onClick);
+
+        _moreMenuButton = _toolbar.findViewById(R.id.more_menu);
+        _moreMenuButton.setOnClickListener(_moreMenuButton_onClick);
+
+        _morePopup = new PopupMenu(getContext(), _moreMenuButton);
+        _morePopup.setOnMenuItemClickListener(_morePopup_onClick);
+
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
 
@@ -680,7 +684,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private final View.OnClickListener _messagesMenuButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            // TODO show messages dialog
+            MessagesDialog.show(App.get(), _workOrderId);
         }
     };
 
