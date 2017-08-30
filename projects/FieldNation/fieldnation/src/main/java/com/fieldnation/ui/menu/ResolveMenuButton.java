@@ -33,7 +33,7 @@ public class ResolveMenuButton extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_toolbar_resolve_button, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.menu_resolve_button, this);
 
         if (isInEditMode())
             return;

@@ -33,7 +33,7 @@ public class RemindMeMenuButton extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_toolbar_remindme_button, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.menu_remind_me_button, this);
 
         if (isInEditMode())
             return;

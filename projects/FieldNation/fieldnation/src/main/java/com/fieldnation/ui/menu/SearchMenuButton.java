@@ -31,7 +31,7 @@ public class SearchMenuButton extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_search_action_bar, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.menu_search_button, this);
 
         if (isInEditMode())
             return;

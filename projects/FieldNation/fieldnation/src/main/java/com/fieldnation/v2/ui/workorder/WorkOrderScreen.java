@@ -50,6 +50,7 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
+import com.fieldnation.ui.menu.MessagesMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.detail.ActionBarTopView;
@@ -193,6 +194,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WodBottomSheetView _bottomsheetView;
+    private MessagesMenuButton _messagesMenuButton;
 
     // Data
     private DocumentClient _docClient;
@@ -235,6 +237,10 @@ public class WorkOrderScreen extends RelativeLayout {
         _toolbar.inflateMenu(R.menu.wod);
         _toolbar.setTitle("WO loading...");
         _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
+
+        _messagesMenuButton = _toolbar.findViewById(R.id.messages_menu);
+        _messagesMenuButton.setOnClickListener(_messagesMenuButton_onClick);
+
 
         _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
@@ -652,6 +658,13 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
+        }
+    };
+
+    private final View.OnClickListener _messagesMenuButton_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            // TODO show messages dialog
         }
     };
 
