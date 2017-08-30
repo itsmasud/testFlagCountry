@@ -112,7 +112,8 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (App.get().needsConfirmation()) {
+        if (App.get().needsConfirmation()
+                && App.get().confirmRemindMeExpired()) {
             launchConfirmActivity();
         }
         _recyclerView.onResume();
