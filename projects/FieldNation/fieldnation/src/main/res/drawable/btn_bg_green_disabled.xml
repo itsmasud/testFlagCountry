@@ -20,7 +20,7 @@
             <!--android:startColor="@color/btn_status_green_disabled_top" />-->
 
             <!--<solid android:color="@color/btn_status_green_disabled" />-->
-            <solid android:color="@color/btn_status_white_disabled" />
+            <solid android:color="@color/btn_status_green_disabled" />
 
             <corners android:radius="@dimen/btn_gradient_corner_radius" />
         </shape>
@@ -33,7 +33,7 @@
         android:top="@dimen/btn_shadow_top">
         <shape>
             <!--<solid android:color="@color/btn_status_green_disabled" />-->
-            <solid android:color="@color/btn_status_white_disabled" />
+            <solid android:color="@color/btn_status_green_disabled" />
             <corners android:radius="@dimen/btn_corner_radius" />
         </shape>
     </item>

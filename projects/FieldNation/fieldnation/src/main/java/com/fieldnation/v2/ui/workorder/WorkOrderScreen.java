@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.workorder;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,29 +9,31 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.util.Linkify;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -42,7 +44,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
-import com.fieldnation.ui.OverScrollView;
+import com.fieldnation.ui.NestedScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
@@ -50,7 +52,25 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
-import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.ui.workorder.detail.ActionBarTopView;
+import com.fieldnation.ui.workorder.detail.AttachmentSummaryView;
+import com.fieldnation.ui.workorder.detail.ClosingNotesView;
+import com.fieldnation.ui.workorder.detail.CompanySummaryView;
+import com.fieldnation.ui.workorder.detail.ContactListView;
+import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
+import com.fieldnation.ui.workorder.detail.CustomFieldListView;
+import com.fieldnation.ui.workorder.detail.CustomFieldRowView;
+import com.fieldnation.ui.workorder.detail.DiscountListLayout;
+import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
+import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
+import com.fieldnation.ui.workorder.detail.LocationView;
+import com.fieldnation.ui.workorder.detail.PaymentView;
+import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
+import com.fieldnation.ui.workorder.detail.ShipmentListView;
+import com.fieldnation.ui.workorder.detail.TaskListView;
+import com.fieldnation.ui.workorder.detail.TimeLogListView;
+import com.fieldnation.ui.workorder.detail.WodBottomSheetView;
+import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -102,14 +122,13 @@ import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WebViewDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WorkFragment extends WorkorderFragment {
+public class WorkOrderScreen extends RelativeLayout {
     private static final String TAG = "WorkFragment";
 
     // Dialog tags
@@ -148,8 +167,10 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
     // UI
+    private Toolbar _toolbar;
+    private Button _toolbarActionButton;
     private Button _testButton;
-    private OverScrollView _scrollView;
+    private NestedScrollView _scrollView;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
@@ -171,8 +192,6 @@ public class WorkFragment extends WorkorderFragment {
     private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
-
-    // Bottom Sheet
     private WodBottomSheetView _bottomsheetView;
 
     // Data
@@ -186,108 +205,156 @@ public class WorkFragment extends WorkorderFragment {
     private int _workOrderId;
     private SimpleGps _simpleGps;
 
-    private final List<Runnable> _untilAdded = new LinkedList<>();
-
     /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
-        return inflater.inflate(R.layout.fragment_workorder_work, container, false);
+    public WorkOrderScreen(Context context) {
+        super(context);
+        init();
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.v(TAG, "onViewCreated");
-        super.onViewCreated(view, savedInstanceState);
+    public WorkOrderScreen(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public WorkOrderScreen(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.screen_work_order_details, this, true);
+
+        if (isInEditMode()) return;
 
         _renderers.clear();
 
-        _testButton = view.findViewById(R.id.test_button);
+        _toolbar = findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.inflateMenu(R.menu.wod);
+        _toolbar.setTitle("WO loading...");
+        _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
+
+        _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
 
-        _topBar = view.findViewById(R.id.actiontop_view);
+        _topBar = findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
         _renderers.add(_topBar);
 
-        _sumView = view.findViewById(R.id.summary_view);
+        _sumView = findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
 
-        _companySummaryView = view.findViewById(R.id.companySummary_view);
+        _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
 
-        _contactListView = view.findViewById(R.id.contactList_view);
+        _contactListView = findViewById(R.id.contactList_view);
         _renderers.add(_contactListView);
 
-        _locView = view.findViewById(R.id.location_view);
+        _locView = findViewById(R.id.location_view);
         _renderers.add(_locView);
 
-        _scheduleView = view.findViewById(R.id.schedule_view);
+        _scheduleView = findViewById(R.id.schedule_view);
         _renderers.add(_scheduleView);
 
-        _payView = view.findViewById(R.id.payment_view);
+        _payView = findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
         _renderers.add(_payView);
 
-        _coSummaryView = view.findViewById(R.id.counterOfferSummary_view);
+        _coSummaryView = findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
         _renderers.add(_coSummaryView);
 
-        _expenseListView = view.findViewById(R.id.expenseListLayout_view);
+        _expenseListView = findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
         _renderers.add(_expenseListView);
 
-        _discountListView = view.findViewById(R.id.discountListLayout_view);
+        _discountListView = findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
         _renderers.add(_discountListView);
 
-        _exView = view.findViewById(R.id.expected_pay_view);
+        _exView = findViewById(R.id.expected_pay_view);
         _renderers.add(_exView);
 
-        _bundleWarningTextView = view.findViewById(R.id.bundlewarning2_textview);
+        _bundleWarningTextView = findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
-        _refreshView = view.findViewById(R.id.refresh_view);
+        _refreshView = findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _scrollView = view.findViewById(R.id.scroll_view);
+        _scrollView = findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipments = view.findViewById(R.id.shipment_view);
+        _shipments = findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
         _renderers.add(_shipments);
 
-        _taskList = view.findViewById(R.id.scope_view);
+        _taskList = findViewById(R.id.scope_view);
         _taskList.setTaskListViewListener(_taskListView_listener);
         _renderers.add(_taskList);
 
-        _timeLogged = view.findViewById(R.id.timelogged_view);
+        _timeLogged = findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
         _renderers.add(_timeLogged);
 
-        _closingNotes = view.findViewById(R.id.closingnotes_view);
+        _closingNotes = findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
-        _customFields = view.findViewById(R.id.customfields_view);
+        _customFields = findViewById(R.id.customfields_view);
         _customFields.setListener(_customFields_listener);
         _renderers.add(_customFields);
 
-        _signatureView = view.findViewById(R.id.signature_view);
+        _signatureView = findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
 
-        _attachmentSummaryView = view.findViewById(R.id.attachment_summary_view);
+        _attachmentSummaryView = findViewById(R.id.attachment_summary_view);
         _renderers.add(_attachmentSummaryView);
 
-        _bottomsheetView = view.findViewById(R.id.bottomsheet_view);
+        _bottomsheetView = findViewById(R.id.bottomsheet_view);
         _bottomsheetView.setListener(_bottomsheetView_listener);
         _renderers.add(_bottomsheetView);
 
         if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(View.GONE);
+
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                _refreshView.startRefreshing();
+            }
+        });
+
+        populateUi();
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle outState = new Bundle();
+        outState.putParcelable("super", super.onSaveInstanceState());
+
+        outState.putInt("workOrderId", _workOrderId);
+        if (_deviceCount > -1)
+            outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
+
+        if (_currentTask != null)
+            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
+
+        if (_scannedImagePath != null)
+            outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
+
+        return outState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Bundle savedInstanceState = (Bundle) state;
+
+        super.onRestoreInstanceState(savedInstanceState.getParcelable("super"));
 
         if (savedInstanceState != null) {
             _workOrderId = savedInstanceState.getInt("workOrderId");
@@ -301,38 +368,8 @@ public class WorkFragment extends WorkorderFragment {
                 _scannedImagePath = savedInstanceState.getString(STATE_SCANNED_IMAGE_PATH);
             }
         }
-
-        view.post(new Runnable() {
-            @Override
-            public void run() {
-                _refreshView.startRefreshing();
-            }
-        });
-
-        populateUi();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-
-        outState.putInt("workOrderId", _workOrderId);
-        if (_deviceCount > -1)
-            outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
-
-        if (_currentTask != null)
-            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-
-        if (_scannedImagePath != null)
-            outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        Log.v(TAG, "onActivityCreated");
-        super.onActivityCreated(savedInstanceState);
-    }
 
     private void startAppPickerDialog() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -343,7 +380,7 @@ public class WorkFragment extends WorkorderFragment {
         }
         GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
 
-        if (getActivity().getPackageManager().hasSystemFeature(
+        if (App.get().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
@@ -353,15 +390,10 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-    @Override
     public void onStart() {
         Log.v(TAG, "onStart");
-        super.onStart();
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
-
-        while (_untilAdded.size() > 0) {
-            _untilAdded.remove(0).run();
-        }
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
@@ -401,21 +433,15 @@ public class WorkFragment extends WorkorderFragment {
                 .start(App.get());
     }
 
-    @Override
     public void onResume() {
-        super.onResume();
-
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
     }
 
-    @Override
     public void onPause() {
         if (_docClient != null) _docClient.disconnect(App.get());
-        super.onPause();
     }
 
-    @Override
     public void onStop() {
         Log.v(TAG, "onStop");
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
@@ -450,20 +476,14 @@ public class WorkFragment extends WorkorderFragment {
 
         _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
-        super.onStop();
+        if (_activityResultListener != null) _activityResultListener.unsub();
     }
+
 
     public boolean onBackPressed() {
         return _bottomsheetView.onBackPressed();
     }
 
-
-    @Override
-    public void update() {
-        App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
-    }
-
-    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         //Log.v(TAG, "setWorkOrder");
         _workOrder = workOrder;
@@ -472,13 +492,14 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
-        misc.hideKeyboard(getView());
+        misc.hideKeyboard(this);
 
         if (_workOrder == null)
             return;
 
-        if (getActivity() == null)
-            return;
+        _toolbar.setTitle("WO " + _workOrderId);
+
+        _activityResultListener.sub();
 
         setLoading(true);
 
@@ -496,19 +517,6 @@ public class WorkFragment extends WorkorderFragment {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
         }
-
-/*
-        if (getArguments() != null) {
-            if (getArguments().containsKey(WorkOrderActivity.INTENT_FIELD_ACTION)
-                    && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
-                    .equals(WorkOrderActivity.ACTION_CONFIRM)) {
-
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
-                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
-                getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
-            }
-        }
-*/
     }
 
     private void requestWorkorder() {
@@ -520,7 +528,6 @@ public class WorkFragment extends WorkorderFragment {
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
     }
 
-    @Override
     public void setLoading(boolean isLoading) {
         if (_refreshView != null) {
             if (isLoading) {
@@ -586,6 +593,13 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _toolbarNavigation_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AppMessagingClient.finishActivity();
+        }
+    };
+
     private final SimpleGps.Listener _simpleGps_listener = new SimpleGps.Listener() {
         @Override
         public void onLocation(SimpleGps simpleGps, Location location) {
@@ -607,43 +621,29 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.v(TAG, "WorkFragment#onActivityResult");
-        if (!isAdded() || _workOrder == null) {
-            Log.v(TAG, "onActivityResult -> try later");
-            _untilAdded.add(new Runnable() {
-                @Override
-                public void run() {
-                    onActivityResult(requestCode, resultCode, data);
+    private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
+        @Override
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+            Log.v(TAG, "WorkFragment#onActivityResult");
+            try {
+                Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+                Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
+
+                if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                    Log.v(TAG, "signature response");
+                    requestWorkorder();
+
+                    if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+                        RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
+                    }
                 }
-            });
-            return;
-        }
-
-        try {
-            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-            Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
-
-            if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-                Log.v(TAG, "signature response");
-                requestWorkorder();
-
-                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
-                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            Log.logException(ex);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onActivityResult(requestCode, resultCode, data);
-                }
-            }, 100);
+            return true;
         }
-    }
+    };
+
 
     /*-*********************************************-*/
     /*-				Main View Listeners				-*/
@@ -651,12 +651,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-//            ConfirmActivity.startNew(App.get());
-//            _actionbartop_listener.onMyWay();
-
             CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
-
         }
     };
 
@@ -854,21 +849,21 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void showConfidentialInfo(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
-            WebViewDialog.show(App.get(), getString(R.string.dialog_confidential_information_title),
+            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_confidential_information_title),
                     Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
 
         @Override
         public void showCustomerPolicies(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
-            WebViewDialog.show(App.get(), getString(R.string.dialog_policy_title),
+            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_policy_title),
                     Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
 
         @Override
         public void showStandardInstructions(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
-            WebViewDialog.show(App.get(), getString(R.string.dialog_standard_instruction_title),
+            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_standard_instruction_title),
                     Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
     };
@@ -954,7 +949,7 @@ public class WorkFragment extends WorkorderFragment {
             String email = task.getEmail();
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:" + email));
-            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
+            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
             try {
                 WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
@@ -997,10 +992,10 @@ public class WorkFragment extends WorkorderFragment {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
                         String phNum = "tel:" + task.getPhone();
                         callIntent.setData(Uri.parse(phNum));
-                        startActivity(callIntent);
+                        ActivityClient.startActivity(callIntent);
                         setLoading(true);
                     } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         builder.setMessage(R.string.dialog_no_number_message);
                         builder.setTitle(R.string.dialog_no_number_title);
                         builder.setPositiveButton(R.string.btn_ok, null);
@@ -1008,7 +1003,7 @@ public class WorkFragment extends WorkorderFragment {
                     }
 
                 } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                     builder.setMessage(R.string.dialog_no_number_message);
                     builder.setTitle(R.string.dialog_no_number_title);
                     builder.setPositiveButton(R.string.btn_ok, null);
@@ -1029,17 +1024,17 @@ public class WorkFragment extends WorkorderFragment {
 
             if (shipments.size() == 0) {
                 ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
-                        _workOrder.getAttachments(), getString(R.string.dialog_task_shipment_title), null, task);
+                        _workOrder.getAttachments(), getContext().getString(R.string.dialog_task_shipment_title), null, task);
             } else {
                 TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrderId,
-                        _workOrder.getShipments(), getString(R.string.dialog_task_shipment_title), task);
+                        _workOrder.getShipments(), getContext().getString(R.string.dialog_task_shipment_title), task);
             }
         }
 
         @Override
         public void onSignature(Task task) {
             _currentTask = task;
-            SignOffActivity.startSignOff(getActivity(), _workOrderId, task.getId());
+            SignOffActivity.startSignOff(App.get(), _workOrderId, task.getId());
             setLoading(true);
         }
 
@@ -1082,7 +1077,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void addShipment() {
             ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
-                    _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
+                    _workOrder.getAttachments(), getContext().getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
@@ -1121,13 +1116,13 @@ public class WorkFragment extends WorkorderFragment {
     private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrderId);
+            SignOffActivity.startSignOff(App.get(), _workOrderId);
             setLoading(true);
         }
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(getActivity(), signature);
+            SignatureDisplayActivity.startIntent(App.get(), signature);
             setLoading(true);
         }
 
@@ -1168,7 +1163,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onShowTerms(WorkOrder workOrder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
+            TermsDialog.show(App.get(), DIALOG_TERMS, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));
         }
     };
 
@@ -1212,7 +1207,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getString(R.string.dialog_add_discount_title));
+            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getContext().getString(R.string.dialog_add_discount_title));
         }
 
         @Override
@@ -1388,8 +1383,7 @@ public class WorkFragment extends WorkorderFragment {
                 protected Object doInBackground(Object... params) {
                     try {
                         Log.v(TAG, "onSignatureClick ");
-                        Context context = (Context) params[0];
-                        WorkOrder workOrder = (WorkOrder) params[1];
+                        WorkOrder workOrder = (WorkOrder) params[0];
 
                         SignOffActivity.startSignOff(App.get(), workOrder.getId(), true);
                         return null;
@@ -1399,7 +1393,7 @@ public class WorkFragment extends WorkorderFragment {
                     }
                     return null;
                 }
-            }.executeEx(getActivity(), _workOrder);
+            }.executeEx(_workOrder);
         }
     };
 
@@ -1516,7 +1510,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onAddShipment(int workOrderId, Shipment shipment, Task task) {
             ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workOrderId,
                     _workOrder.getAttachments(),
-                    getString(R.string.dialog_shipment_title),
+                    getContext().getString(R.string.dialog_shipment_title),
                     shipment == null ? "" : shipment.getName(), task);
         }
     };
@@ -1565,7 +1559,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
@@ -1600,19 +1593,19 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getString(R.string.dialog_add_discount_title));
+            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getContext().getString(R.string.dialog_add_discount_title));
         }
 
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrderId);
+            SignOffActivity.startSignOff(App.get(), _workOrderId);
             setLoading(true);
         }
 
         @Override
         public void addShipment() {
             ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
-                    _workOrder.getAttachments(), getString(R.string.dialog_shipment_title), null, null);
+                    _workOrder.getAttachments(), App.get().getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override

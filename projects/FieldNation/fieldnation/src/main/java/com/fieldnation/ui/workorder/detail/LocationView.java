@@ -33,10 +33,10 @@ import com.fieldnation.service.data.gmaps.GmapsClient;
 import com.fieldnation.service.data.gmaps.Marker;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Location;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 public class LocationView extends LinearLayout implements WorkOrderRenderer {
@@ -460,7 +460,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkOrderActivity.startNew(getContext(), _workOrder.getId(), WorkOrderActivity.TAB_MESSAGE);
+                    ActivityClient.startActivity(WorkOrderActivity.makeIntentMessages(getContext(), _workOrder.getId()));
                     break;
                 }
                 case ACTION_NAVIGATE: {

@@ -129,6 +129,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.subUpdateApp();
         _appMessagingClient.subAppShutdown();
         _appMessagingClient.subProfileInvalid();
+        _appMessagingClient.subFinishActivity();
         ProfileClient.get(App.get());
 
         _activityRequestHandler.sub();
@@ -144,6 +145,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubUpdateApp();
         _appMessagingClient.unsubAppShutdown();
         _appMessagingClient.unsubProfileInvalid();
+        _appMessagingClient.unsubFinishActivity();
 
         _authClient.unsubNeedUsernameAndPassword();
         _toastClient.unSubToast();
@@ -375,6 +377,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNetworkDisconnected() {
+        }
+
+        @Override
+        public void onFinish() {
+            AuthSimpleActivity.this.finish();
         }
     };
 

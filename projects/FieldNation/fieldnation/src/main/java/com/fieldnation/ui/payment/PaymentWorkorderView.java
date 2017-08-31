@@ -11,7 +11,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 public class PaymentWorkorderView extends RelativeLayout {
     private static final String TAG = "PaymentWorkorderView";

@@ -24,8 +24,8 @@ import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionSystem;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.text.ParseException;
 
@@ -647,7 +647,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         } else if (result == Result.DELETE) {
             final Intent intent = new Intent(context, WorkOrderActivity.class);
             intent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
-            intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             if (intent != null) {
                 View.OnClickListener buttonListener = new View.OnClickListener() {

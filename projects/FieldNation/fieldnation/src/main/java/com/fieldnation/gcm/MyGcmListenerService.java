@@ -41,7 +41,7 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.ui.ncns.ConfirmActivity;
-import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -103,7 +103,6 @@ public class MyGcmListenerService extends GcmListenerService {
                         workorderIntent.setAction("DUMMY");
                         workorderIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, Integer.parseInt(action.getId()));
-                        workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }

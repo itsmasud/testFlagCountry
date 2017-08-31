@@ -32,14 +32,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
 
     // Ui
-    private Button _leftWhiteButton;
-    private Button _leftGrayButton;
     private Button _leftGreenButton;
-    private Button _leftOrangeButton;
-    private Button _rightWhiteButton;
-    private Button _rightGrayButton;
     private Button _rightGreenButton;
-    private Button _rightOrangeButton;
 
     // Data
     private Listener _listener;
@@ -83,14 +77,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
         LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
 
-        _leftWhiteButton = findViewById(R.id.leftWhite_button);
         _leftGreenButton = findViewById(R.id.leftGreen_button);
-        _leftOrangeButton = findViewById(R.id.leftOrange_button);
-        _leftGrayButton = findViewById(R.id.leftGray_button);
-        _rightWhiteButton = findViewById(R.id.rightWhite_button);
         _rightGreenButton = findViewById(R.id.rightGreen_button);
-        _rightOrangeButton = findViewById(R.id.rightOrange_button);
-        _rightGrayButton = findViewById(R.id.rightGray_button);
 
         setVisibility(View.GONE);
         _inflated = true;
@@ -101,14 +89,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         _workOrder = workOrder;
 
         if (_inflated) {
-            _leftWhiteButton.setVisibility(View.GONE);
             _leftGreenButton.setVisibility(View.GONE);
-            _leftOrangeButton.setVisibility(View.GONE);
-            _leftGrayButton.setVisibility(View.GONE);
-            _rightWhiteButton.setVisibility(View.GONE);
             _rightGreenButton.setVisibility(View.GONE);
-            _rightOrangeButton.setVisibility(View.GONE);
-            _rightGrayButton.setVisibility(View.GONE);
         }
         setVisibility(View.GONE);
         populateButtons();
@@ -124,17 +106,17 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // running late
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
             inflate();
-            _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setText(R.string.btn_running_late);
-            _leftWhiteButton.setOnClickListener(_runningLate_onClick);
+            _leftGreenButton.setVisibility(VISIBLE);
+            _leftGreenButton.setText(R.string.btn_running_late);
+            _leftGreenButton.setOnClickListener(_runningLate_onClick);
             setVisibility(View.VISIBLE);
 
             // report a problem
         } else if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             inflate();
-            _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+            _leftGreenButton.setVisibility(VISIBLE);
+            _leftGreenButton.setText(R.string.btn_report_a_problem);
+            _leftGreenButton.setOnClickListener(_reportProblem_onClick);
             setVisibility(View.VISIBLE);
         }
 
@@ -144,173 +126,173 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         } else if (_workOrder.getHolds().isOnHold()) {
             inflate();
 
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
-                _rightWhiteButton.setText(R.string.btn_on_hold);
-                _rightWhiteButton.setEnabled(false);
+                _rightGreenButton.setText(R.string.btn_on_hold);
+                _rightGreenButton.setEnabled(false);
             } else {
-                _rightWhiteButton.setText(R.string.btn_review_hold);
-                _rightWhiteButton.setEnabled(true);
+                _rightGreenButton.setText(R.string.btn_review_hold);
+                _rightGreenButton.setEnabled(true);
             }
             setVisibility(View.VISIBLE);
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_eta_onClick);
-            _rightWhiteButton.setText(R.string.btn_set_eta);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_eta_onClick);
+            _rightGreenButton.setText(R.string.btn_set_eta);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.MARK_READY_TO_GO)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_readyToGo_onClick);
-            _rightWhiteButton.setText(R.string.btn_ready_to_go);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_readyToGo_onClick);
+            _rightGreenButton.setText(R.string.btn_ready_to_go);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // confirm
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_confirm_onClick);
-            _rightWhiteButton.setText(R.string.btn_confirm);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_confirm_onClick);
+            _rightGreenButton.setText(R.string.btn_confirm);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // on my way
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_onMyWay_onClick);
-            _rightWhiteButton.setText(R.string.btn_on_my_way);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_onMyWay_onClick);
+            _rightGreenButton.setText(R.string.btn_on_my_way);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // check_out
         } else if (_workOrder.getTimeLogs().getOpenTimeLog().getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_checkout_onClick);
-            _rightWhiteButton.setText(R.string.btn_check_out);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_checkout_onClick);
+            _rightGreenButton.setText(R.string.btn_check_out);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // Mark complete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.COMPLETE)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_markComplete_onClick);
-            _rightWhiteButton.setText(R.string.btn_complete);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_markComplete_onClick);
+            _rightGreenButton.setText(R.string.btn_complete);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // check_in
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightGreenButton.setVisibility(VISIBLE);
             if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
-                _rightWhiteButton.setText(R.string.btn_check_in_again);
-                _rightWhiteButton.setOnClickListener(_checkinAgain_onClick);
-                _rightWhiteButton.setEnabled(true);
+                _rightGreenButton.setText(R.string.btn_check_in_again);
+                _rightGreenButton.setOnClickListener(_checkinAgain_onClick);
+                _rightGreenButton.setEnabled(true);
             } else {
-                _rightWhiteButton.setText(R.string.btn_check_in);
-                _rightWhiteButton.setOnClickListener(_checkin_onClick);
-                _rightWhiteButton.setEnabled(true);
+                _rightGreenButton.setText(R.string.btn_check_in);
+                _rightGreenButton.setOnClickListener(_checkin_onClick);
+                _rightGreenButton.setEnabled(true);
             }
             setVisibility(View.VISIBLE);
 
             // mark incomplete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_markIncomplete_onClick);
-            _rightWhiteButton.setText(R.string.btn_incomplete);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_markIncomplete_onClick);
+            _rightGreenButton.setText(R.string.btn_incomplete);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // view_bundle
         } else if (_workOrder.getBundle().getActionsSet().contains(Bundle.ActionsEnum.VIEW)) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
-            _rightWhiteButton.setText(getResources().getString(R.string.btn_view_bundle_num,
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_viewBundle_onClick);
+            _rightGreenButton.setText(getResources().getString(R.string.btn_view_bundle_num,
                     _workOrder.getBundle().getMetadata().getTotal() + 1));
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // accept
         } else if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             inflate();
-            _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setOnClickListener(_notInterested_onClick);
-            _leftWhiteButton.setText(R.string.btn_not_interested);
+            _leftGreenButton.setVisibility(VISIBLE);
+            _leftGreenButton.setOnClickListener(_notInterested_onClick);
+            _leftGreenButton.setText(R.string.btn_not_interested);
 
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_accept_onClick);
-            _rightWhiteButton.setText(R.string.btn_accept);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_accept_onClick);
+            _rightGreenButton.setText(R.string.btn_accept);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // request
         } else if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
             inflate();
-            _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setOnClickListener(_notInterested_onClick);
-            _leftWhiteButton.setText(R.string.btn_not_interested);
+            _leftGreenButton.setVisibility(VISIBLE);
+            _leftGreenButton.setOnClickListener(_notInterested_onClick);
+            _leftGreenButton.setText(R.string.btn_not_interested);
 
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_request_onClick);
-            _rightWhiteButton.setText(R.string.btn_request);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_request_onClick);
+            _rightGreenButton.setText(R.string.btn_request);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // withdraw
         } else if (_workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             inflate();
-            _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setOnClickListener(_withdraw_onClick);
-            _leftWhiteButton.setText(R.string.btn_withdraw);
+            _leftGreenButton.setVisibility(VISIBLE);
+            _leftGreenButton.setOnClickListener(_withdraw_onClick);
+            _leftGreenButton.setText(R.string.btn_withdraw);
 
             setVisibility(View.VISIBLE);
 
             // View payments
         } else if (_workOrder.getStatus().getId() == 6) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setText(R.string.btn_payments);
-            _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setText(R.string.btn_payments);
+            _rightGreenButton.setOnClickListener(_viewPayment_onClick);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
             // View fees
         } else if (_workOrder.getStatus().getId() == 7) {
             inflate();
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setText(R.string.btn_fees);
-            _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setText(R.string.btn_fees);
+            _rightGreenButton.setOnClickListener(_viewPayment_onClick);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
 
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)
                 && workOrderActions.contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
             inflate();
-            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftGreenButton.setVisibility(VISIBLE);
             if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
-                _leftWhiteButton.setText(R.string.btn_check_in_again);
-                _leftWhiteButton.setOnClickListener(_checkinAgain_onClick);
+                _leftGreenButton.setText(R.string.btn_check_in_again);
+                _leftGreenButton.setOnClickListener(_checkinAgain_onClick);
             } else {
-                _leftWhiteButton.setText(R.string.btn_check_in);
-                _leftWhiteButton.setOnClickListener(_checkin_onClick);
+                _leftGreenButton.setText(R.string.btn_check_in);
+                _leftGreenButton.setOnClickListener(_checkin_onClick);
             }
 
-            _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_closing_onClick);
-            _rightWhiteButton.setText(R.string.btn_closing_notes);
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_closing_onClick);
+            _rightGreenButton.setText(R.string.btn_closing_notes);
             setVisibility(View.VISIBLE);
-            _rightWhiteButton.setEnabled(true);
+            _rightGreenButton.setEnabled(true);
         }
     }
 
