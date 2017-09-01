@@ -22,7 +22,7 @@ import java.util.List;
  * Created by mc on 8/30/17.
  */
 
-public class ChatAdapter extends RecyclerView.Adapter<MessageViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
     private static final String TAG = "MessageAdapter";
 
     private List<Message> source = null;
@@ -39,7 +39,7 @@ public class ChatAdapter extends RecyclerView.Adapter<MessageViewHolder> {
 
         if (source == null || source.size() == 0) {
             Tuple tuple = new Tuple();
-            tuple.type = MessageViewHolder.TYPE_EMPTY;
+            tuple.type = ChatViewHolder.TYPE_EMPTY;
             objects.add(tuple);
             return;
         }
@@ -91,7 +91,7 @@ public class ChatAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                 try {
                     if (day.size() > 0) {
                         Tuple tuple = new Tuple();
-                        tuple.type = MessageViewHolder.TYPE_HEADER_TIME;
+                        tuple.type = ChatViewHolder.TYPE_HEADER_TIME;
                         tuple.object = day.get(0).getCreated().getCalendar().getTime();
                         objects.add(tuple);
                     }
@@ -105,7 +105,7 @@ public class ChatAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                         Message message = group.get(0);
                         boolean isMine = thisUserId == message.getFrom().getId();
                         Tuple t = new Tuple();
-                        t.type = isMine ? MessageViewHolder.TYPE_RIGHT_FULL : MessageViewHolder.TYPE_LEFT_FULL;
+                        t.type = isMine ? ChatViewHolder.TYPE_RIGHT_FULL : ChatViewHolder.TYPE_LEFT_FULL;
                         t.object = message;
                         objects.add(t);
                     } else {
@@ -117,15 +117,15 @@ public class ChatAdapter extends RecyclerView.Adapter<MessageViewHolder> {
                             t.object = message;
                             // first
                             if (i == 0) {
-                                t.type = isMine ? MessageViewHolder.TYPE_RIGHT_TOP : MessageViewHolder.TYPE_LEFT_TOP;
+                                t.type = isMine ? ChatViewHolder.TYPE_RIGHT_TOP : ChatViewHolder.TYPE_LEFT_TOP;
 
                                 // end
                             } else if (i == group.size() - 1) {
-                                t.type = isMine ? MessageViewHolder.TYPE_RIGHT_BOTTOM : MessageViewHolder.TYPE_LEFT_BOTTOM;
+                                t.type = isMine ? ChatViewHolder.TYPE_RIGHT_BOTTOM : ChatViewHolder.TYPE_LEFT_BOTTOM;
 
                                 // middle
                             } else {
-                                t.type = isMine ? MessageViewHolder.TYPE_RIGHT_CENTER : MessageViewHolder.TYPE_LEFT_CENTER;
+                                t.type = isMine ? ChatViewHolder.TYPE_RIGHT_CENTER : ChatViewHolder.TYPE_LEFT_CENTER;
                             }
                             objects.add(t);
                         }
@@ -143,61 +143,61 @@ public class ChatAdapter extends RecyclerView.Adapter<MessageViewHolder> {
     }
 
     @Override
-    public MessageViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
         switch (viewType) {
-            case MessageViewHolder.TYPE_EMPTY:
+            case ChatViewHolder.TYPE_EMPTY:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_messages, parent, false);
                 break;
-            case MessageViewHolder.TYPE_RIGHT_TOP:
-            case MessageViewHolder.TYPE_RIGHT_CENTER:
-            case MessageViewHolder.TYPE_RIGHT_BOTTOM:
-            case MessageViewHolder.TYPE_RIGHT_FULL:
+            case ChatViewHolder.TYPE_RIGHT_TOP:
+            case ChatViewHolder.TYPE_RIGHT_CENTER:
+            case ChatViewHolder.TYPE_RIGHT_BOTTOM:
+            case ChatViewHolder.TYPE_RIGHT_FULL:
                 view = new ChatRightView(parent.getContext());
                 break;
-            case MessageViewHolder.TYPE_LEFT_TOP:
-            case MessageViewHolder.TYPE_LEFT_CENTER:
-            case MessageViewHolder.TYPE_LEFT_BOTTOM:
-            case MessageViewHolder.TYPE_LEFT_FULL:
+            case ChatViewHolder.TYPE_LEFT_TOP:
+            case ChatViewHolder.TYPE_LEFT_CENTER:
+            case ChatViewHolder.TYPE_LEFT_BOTTOM:
+            case ChatViewHolder.TYPE_LEFT_FULL:
                 view = new ChatLeftView(parent.getContext());
                 break;
-            case MessageViewHolder.TYPE_HEADER_TIME:
+            case ChatViewHolder.TYPE_HEADER_TIME:
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_chat_time_header, parent, false);
                 break;
         }
 
-        return new MessageViewHolder(view, viewType);
+        return new ChatViewHolder(view, viewType);
     }
 
     private static final SimpleDateFormat HEADER_FORMAT = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
     @Override
-    public void onBindViewHolder(MessageViewHolder holder, int position) {
-        if (holder.type == MessageViewHolder.TYPE_HEADER_TIME) {
+    public void onBindViewHolder(ChatViewHolder holder, int position) {
+        if (holder.type == ChatViewHolder.TYPE_HEADER_TIME) {
             TextView tv = (TextView) holder.itemView;
             try {
                 tv.setText(HEADER_FORMAT.format((Date) objects.get(position).object));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-        } else if (holder.type != MessageViewHolder.TYPE_EMPTY) {
+        } else if (holder.type != ChatViewHolder.TYPE_EMPTY) {
             ChatRenderer cr = (ChatRenderer) holder.itemView;
             cr.setMessage((Message) objects.get(position).object);
             switch (holder.type) {
-                case MessageViewHolder.TYPE_RIGHT_TOP:
-                case MessageViewHolder.TYPE_LEFT_TOP:
+                case ChatViewHolder.TYPE_RIGHT_TOP:
+                case ChatViewHolder.TYPE_LEFT_TOP:
                     cr.setPosition(Position.TOP);
                     break;
-                case MessageViewHolder.TYPE_LEFT_CENTER:
-                case MessageViewHolder.TYPE_RIGHT_CENTER:
+                case ChatViewHolder.TYPE_LEFT_CENTER:
+                case ChatViewHolder.TYPE_RIGHT_CENTER:
                     cr.setPosition(Position.CENTER);
                     break;
-                case MessageViewHolder.TYPE_RIGHT_BOTTOM:
-                case MessageViewHolder.TYPE_LEFT_BOTTOM:
+                case ChatViewHolder.TYPE_RIGHT_BOTTOM:
+                case ChatViewHolder.TYPE_LEFT_BOTTOM:
                     cr.setPosition(Position.BOTTOM);
                     break;
-                case MessageViewHolder.TYPE_RIGHT_FULL:
-                case MessageViewHolder.TYPE_LEFT_FULL:
+                case ChatViewHolder.TYPE_RIGHT_FULL:
+                case ChatViewHolder.TYPE_LEFT_FULL:
                     cr.setPosition(Position.FULL);
                     break;
             }

@@ -7,7 +7,7 @@ import android.view.View;
  * Created by mc on 8/30/17.
  */
 
-public class MessageViewHolder extends ViewHolder {
+public class ChatViewHolder extends ViewHolder {
     public static final int TYPE_EMPTY = 0;
 
     public static final int TYPE_RIGHT_TOP = 1;
@@ -22,7 +22,7 @@ public class MessageViewHolder extends ViewHolder {
 
     public int type;
 
-    public MessageViewHolder(View itemView, int type) {
+    public ChatViewHolder(View itemView, int type) {
         super(itemView);
         this.type = type;
     }
