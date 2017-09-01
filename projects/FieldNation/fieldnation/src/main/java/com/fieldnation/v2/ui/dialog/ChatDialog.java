@@ -232,6 +232,7 @@ public class ChatDialog extends FullScreenDialog {
                         }
                     }
 
+                    // sort by time
                     Collections.sort(flatList, new Comparator<Message>() {
                         @Override
                         public int compare(Message lhs, Message rhs) {
