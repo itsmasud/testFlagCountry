@@ -36,7 +36,7 @@ public class MessageFragment extends WorkorderFragment {
 
     // UI
     private OverScrollRecyclerView _messagesList;
-    private MessageInputView _inputView;
+    private ChatInputView _inputView;
     private RefreshView _refreshView;
 
     // Data

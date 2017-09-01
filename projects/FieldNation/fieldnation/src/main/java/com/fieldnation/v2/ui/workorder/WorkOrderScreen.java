@@ -118,7 +118,7 @@ import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
-import com.fieldnation.v2.ui.dialog.MessagesDialog;
+import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
@@ -684,7 +684,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private final View.OnClickListener _messagesMenuButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            MessagesDialog.show(App.get(), _workOrderId);
+            ChatDialog.show(App.get(), _workOrderId);
         }
     };
 

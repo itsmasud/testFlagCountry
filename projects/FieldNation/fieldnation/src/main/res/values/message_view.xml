@@ -25,7 +25,7 @@
         <item name="android:paddingLeft">25dp</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
-        <item name="android:background">@drawable/message_left_top</item>
+        <item name="android:background">@drawable/chat_left_top</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_alignParentTop">true</item>

@@ -9,4 +9,6 @@ import com.fieldnation.v2.data.model.Message;
 public interface ChatRenderer {
 
     void setMessage(Message message);
+
+    void setPosition(Position position);
 }

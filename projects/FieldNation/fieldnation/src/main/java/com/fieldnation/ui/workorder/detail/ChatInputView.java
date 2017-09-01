@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 
-public class MessageInputView extends RelativeLayout {
+public class ChatInputView extends RelativeLayout {
     // UI
     private EditText _messageEditText;
     private Button _sendButton;
@@ -20,23 +20,23 @@ public class MessageInputView extends RelativeLayout {
     /*-*************************************-*/
     /*-				LifeCycle				-*/
 	/*-*************************************-*/
-    public MessageInputView(Context context) {
+    public ChatInputView(Context context) {
         super(context);
         init();
     }
 
-    public MessageInputView(Context context, AttributeSet attrs) {
+    public ChatInputView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public MessageInputView(Context context, AttributeSet attrs, int defStyle) {
+    public ChatInputView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_message_input, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_chat_input, this);
 
         if (isInEditMode())
             return;

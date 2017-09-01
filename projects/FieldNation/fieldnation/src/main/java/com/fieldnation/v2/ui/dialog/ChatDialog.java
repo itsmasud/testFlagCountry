@@ -21,13 +21,13 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.workorder.detail.MessageInputView;
+import com.fieldnation.ui.workorder.detail.ChatInputView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.ui.workorder.MessageAdapter;
+import com.fieldnation.v2.ui.workorder.ChatAdapter;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,33 +38,33 @@ import java.util.List;
  * Created by mc on 8/30/17.
  */
 
-public class MessagesDialog extends FullScreenDialog {
-    private static final String TAG = "MessagesDialog";
+public class ChatDialog extends FullScreenDialog {
+    private static final String TAG = "ChatDialog";
 
     // UI
     private Toolbar _toolbar;
-    private OverScrollRecyclerView _messagesList;
-    private MessageInputView _inputView;
+    private OverScrollRecyclerView _chatList;
+    private ChatInputView _inputView;
     private RefreshView _refreshView;
 
     // Data
     private int _workOrderId;
     private boolean _isMarkedRead = false;
-    private final MessageAdapter _adapter = new MessageAdapter();
+    private final ChatAdapter _adapter = new ChatAdapter();
 
-    public MessagesDialog(Context context, ViewGroup container) {
+    public ChatDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_v2_message, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_chat, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setTitle("Messages");
+        _toolbar.setTitle("Chat");
 
-        _messagesList = v.findViewById(R.id.messages_listview);
+        _chatList = v.findViewById(R.id.chat_listview);
         _inputView = v.findViewById(R.id.input_view);
         _refreshView = v.findViewById(R.id.refresh_view);
 
@@ -76,8 +76,8 @@ public class MessagesDialog extends FullScreenDialog {
         super.onStart();
 
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _messagesList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        _messagesList.setAdapter(_adapter);
+        _chatList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        _chatList.setAdapter(_adapter);
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
     }
@@ -127,7 +127,7 @@ public class MessagesDialog extends FullScreenDialog {
     }
 
     private void rebuildList() {
-        _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
+        _chatList.scrollToPosition(_adapter.getItemCount() - 1);
         _refreshView.refreshComplete();
     }
 
@@ -267,6 +267,6 @@ public class MessagesDialog extends FullScreenDialog {
     public static void show(Context context, int workOrderId) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
-        Controller.show(context, null, MessagesDialog.class, params);
+        Controller.show(context, null, ChatDialog.class, params);
     }
 }

@@ -7,14 +7,14 @@
     android:clickable="true">
 
     <com.fieldnation.ui.OverScrollRecyclerView
-        android:id="@+id/messages_listview"
+        android:id="@+id/chat_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/input_view"
         android:layout_below="@+id/toolbar"
         android:scrollbars="vertical" />
 
-    <com.fieldnation.ui.workorder.detail.MessageInputView
+    <com.fieldnation.ui.workorder.detail.ChatInputView
         android:id="@+id/input_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:scrollbars="vertical" />
 
-    <com.fieldnation.ui.workorder.detail.MessageInputView
+    <com.fieldnation.ui.workorder.detail.ChatInputView
         android:id="@+id/input_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -18,6 +18,7 @@ public class MessageViewHolder extends ViewHolder {
     public static final int TYPE_LEFT_CENTER = 6;
     public static final int TYPE_LEFT_BOTTOM = 7;
     public static final int TYPE_LEFT_FULL = 8;
+    public static final int TYPE_HEADER_TIME = 9;
 
     public int type;
 
