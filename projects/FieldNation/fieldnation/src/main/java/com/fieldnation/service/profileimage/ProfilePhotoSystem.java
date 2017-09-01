@@ -25,9 +25,11 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
     private static ProfilePhotoSystem _instance = null;
 
     public static ProfilePhotoSystem getInstance() {
-        if (_instance == null) _instance = new ProfilePhotoSystem();
+        synchronized (TAG) {
+            if (_instance == null) _instance = new ProfilePhotoSystem();
 
-        return _instance;
+            return _instance;
+        }
     }
 
     private ProfilePhotoSystem() {
