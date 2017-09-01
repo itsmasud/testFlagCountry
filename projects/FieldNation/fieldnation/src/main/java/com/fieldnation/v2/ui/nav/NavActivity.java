@@ -258,7 +258,6 @@ public class NavActivity extends AuthSimpleActivity {
             if (methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
                 if (savedList == null) {
-                    WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
                     return;
                 }
                 if (_savedList == null) {
