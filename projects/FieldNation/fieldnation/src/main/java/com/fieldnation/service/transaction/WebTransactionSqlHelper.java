@@ -9,18 +9,17 @@ import com.fieldnation.fnlog.Log;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.WeakHashMap;
 
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-class WebTransactionSqlHelper extends SQLiteOpenHelper {
+public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
     private static final int TABLE_VER = 6; // last update: 2-20-2017 PA-592
     public static final String TABLE_NAME = "transactions";
 
-    private static final WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
+    private static WebTransactionSqlHelper _instance = null;
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
@@ -99,12 +98,21 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
     }
 
     public static WebTransactionSqlHelper getInstance(Context context) {
-        Context app = context.getApplicationContext();
-        if (!_instances.containsKey(app)) {
-            _instances.put(app, new WebTransactionSqlHelper(app));
+        synchronized (TAG) {
+            if (_instance == null) {
+                _instance = new WebTransactionSqlHelper(context.getApplicationContext());
+            }
+            return _instance;
         }
+    }
 
-        return _instances.get(app);
+    public static void stop() {
+        synchronized (TAG) {
+            if (_instance != null) {
+                _instance.close();
+            }
+            _instance = null;
+        }
     }
 
     @Override
