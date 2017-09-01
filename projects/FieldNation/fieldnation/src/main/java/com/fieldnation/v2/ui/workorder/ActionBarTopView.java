@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,7 +13,6 @@ import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.ETA;
-import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;

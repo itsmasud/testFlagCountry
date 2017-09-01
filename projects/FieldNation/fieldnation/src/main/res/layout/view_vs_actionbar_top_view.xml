@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fieldnation.ui.workorder.detail.ActionBarTopView
+<com.fieldnation.v2.ui.workorder.ActionBarTopView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/actiontop_view"
     android:layout_width="match_parent"

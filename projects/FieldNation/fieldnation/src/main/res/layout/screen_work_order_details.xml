@@ -124,7 +124,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.fieldnation.ui.workorder.detail.AttachmentSummaryView
+                <com.fieldnation.v2.ui.workorder.AttachmentSummaryView
                     android:id="@+id/attachment_summary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -166,7 +166,7 @@
             android:theme="@style/FieldNation.Material.ToolBar"
             app:layout_scrollFlags="scroll|enterAlways" />
 
-        <com.fieldnation.ui.workorder.detail.ActionBarTopView
+        <com.fieldnation.v2.ui.workorder.ActionBarTopView
             android:id="@+id/actiontop_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
