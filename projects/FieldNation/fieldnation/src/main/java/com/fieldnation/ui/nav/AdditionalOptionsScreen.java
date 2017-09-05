@@ -91,7 +91,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_additional_options, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.screen_additional_options, this);
 
         if (isInEditMode())
             return;

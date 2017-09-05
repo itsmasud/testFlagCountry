@@ -72,7 +72,6 @@ import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
-import com.fieldnation.ui.workorder.detail.WodBottomSheetView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;

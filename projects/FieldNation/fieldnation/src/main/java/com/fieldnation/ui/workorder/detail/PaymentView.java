@@ -18,7 +18,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 public class PaymentView extends LinearLayout implements WorkOrderRenderer {
-    private static final String TAG = "ui.workorder.detail.PaymentView";
+    private static final String TAG = "PaymentView";
 
     // UI
     // TODO need to grab the description views at the top

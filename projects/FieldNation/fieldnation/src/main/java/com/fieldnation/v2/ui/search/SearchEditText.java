@@ -1,4 +1,4 @@
-package com.fieldnation.ui.search;
+package com.fieldnation.v2.ui.search;
 
 import android.app.Activity;
 import android.content.Context;

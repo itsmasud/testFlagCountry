@@ -174,7 +174,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <com.fieldnation.ui.workorder.detail.WodBottomSheetView
+    <com.fieldnation.v2.ui.workorder.WodBottomSheetView
         android:id="@+id/bottomsheet_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

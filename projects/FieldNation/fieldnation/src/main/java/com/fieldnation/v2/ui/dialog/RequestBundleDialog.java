@@ -52,7 +52,6 @@ public class RequestBundleDialog extends SimpleDialog {
     private TextView _expiresTextView;
     private CheckBox _expiresCheckBox;
     private HintSpinner _expireSpinner;
-    private View _dividerView;
     private TextView _termsWarningTextView;
     private Button _cancelButton;
     private Button _okButton;
@@ -79,7 +78,6 @@ public class RequestBundleDialog extends SimpleDialog {
         _titleTextView = v.findViewById(R.id.title_textview);
         _bodyTextView = v.findViewById(R.id.body_textview);
         _expiresTextView = v.findViewById(R.id.expires_textview);
-        _dividerView = v.findViewById(R.id.divider);
         _expiresCheckBox = v.findViewById(R.id.expires_checkbox);
         _expireSpinner = v.findViewById(R.id.expire_duration_spinner);
         _termsWarningTextView = v.findViewById(R.id.termswarning_textview);

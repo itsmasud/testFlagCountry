@@ -48,6 +48,6 @@
         android:id="@+id/switchUserOverlay_viewstub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout="@layout/view_vs_switch_overlay"
+        android:layout="@layout/stub_switch_overlay"
         android:visibility="gone" />
 </FrameLayout>

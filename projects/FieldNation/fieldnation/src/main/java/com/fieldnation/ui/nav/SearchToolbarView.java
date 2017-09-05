@@ -12,7 +12,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
-import com.fieldnation.ui.search.SearchEditText;
+import com.fieldnation.v2.ui.search.SearchEditText;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 /**
