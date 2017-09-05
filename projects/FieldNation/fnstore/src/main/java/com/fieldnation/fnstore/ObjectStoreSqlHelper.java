@@ -6,17 +6,17 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.WeakHashMap;
 
 /**
  * Created by Michael Carver on 2/26/2015.
  */
-class ObjectStoreSqlHelper extends SQLiteOpenHelper {
+public class ObjectStoreSqlHelper extends SQLiteOpenHelper {
+    private static final String TAG = "ObjectStoreSqlHelper";
     // Note: increment this value every time the structure of the database is
     // changed.
     private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "object_store";
-    private static final WeakHashMap<Context, ObjectStoreSqlHelper> _instances = new WeakHashMap<>();
+    private static ObjectStoreSqlHelper _instance = null;
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
@@ -84,12 +84,20 @@ class ObjectStoreSqlHelper extends SQLiteOpenHelper {
     }
 
     public static ObjectStoreSqlHelper getInstance(Context context) {
-        Context app = context.getApplicationContext();
-        if (!_instances.containsKey(app)) {
-            _instances.put(app, new ObjectStoreSqlHelper(app));
+        synchronized (TAG) {
+            if (_instance == null)
+                _instance = new ObjectStoreSqlHelper(context.getApplicationContext());
+            return _instance;
         }
+    }
 
-        return _instances.get(app);
+    public static void stop() {
+        synchronized (TAG) {
+            if (_instance != null) {
+                _instance.close();
+            }
+            _instance = null;
+        }
     }
 
     @Override

@@ -257,6 +257,9 @@ public class NavActivity extends AuthSimpleActivity {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
+                if (savedList == null) {
+                    return;
+                }
                 if (_savedList == null) {
                     _savedList = savedList[0];
                     _recyclerView.startSearch(_savedList);

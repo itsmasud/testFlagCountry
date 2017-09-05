@@ -34,6 +34,7 @@ import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.ObjectStoreSqlHelper;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -47,6 +48,8 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.TransformSqlHelper;
+import com.fieldnation.service.transaction.WebTransactionSqlHelper;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.google.android.gms.security.ProviderInstaller;
 
@@ -291,6 +294,9 @@ public class App extends Application {
         _authClient.unsubAuthStateChange();
         AuthSystem.stop();
         WebTransactionSystem.stop();
+        WebTransactionSqlHelper.stop();
+        TransformSqlHelper.stop();
+        ObjectStoreSqlHelper.stop();
         super.onTerminate();
         _context = null;
     }
