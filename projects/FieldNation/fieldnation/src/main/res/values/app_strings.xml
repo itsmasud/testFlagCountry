@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <!-- general strings -->
     <string name="activity_login_title">Field Nation Login</string>
     <string name="activity_login_username">Username</string>
@@ -131,7 +130,6 @@
     <string name="complete">Complete</string>
     <string name="reasons">Reasons</string>
 
-
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_change_schedule_or_cancel">Please change the schedule or tap Cancel</string>
@@ -215,7 +213,6 @@
 
     <string name="dialog_review_hold_title">Hold Review</string>
 
-
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
@@ -256,7 +253,6 @@
 
     <string name="modal_rate_buyer_title">Would you like to rate this buyer now?</string>
     <string name="modal_rate_buyer_body">Your work order has been marked as complete and you can now rate %1$s</string>
-
 
     <string name="dialog_update_title">Please Update</string>
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
@@ -350,7 +346,6 @@
     <string name="tab_routed">ROUTED</string>
     <string name="tab_messages">MESSAGES</string>
     <string name="tab_notifications">NOTIFICATIONS</string>
-
 
     <string name="aborted">Aborted</string>
     <string name="accept_bundle">Accept Bundle</string>
@@ -542,7 +537,6 @@
     <string name="empty_state_payment_body">Check out what is available around you to get the ball rolling.</string>
     <string name="empty_state_message_body">Currently, you have no messages to review.</string>
     <string name="empty_state_notification_body">We\'ll let you know when we\'ve got something new for you.</string>
-
 
     <string name="no_confirm_work">No work orders to confirm</string>
     <string name="no_documents_headline">No documents</string>
@@ -832,7 +826,6 @@
         <item>PM</item>
     </string-array>
 
-
     <!-- sync settings -->
     <string name="pref_string_sync_category_title">Sync Settings</string>
 
@@ -951,7 +944,6 @@
         <item>Approved</item>
     </string-array>
 
-
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
         <item>Available</item>
@@ -1038,7 +1030,6 @@
         <item>172800</item>
     </integer-array>
 
-
     <!-- If you change any of these, make sure you update
         com.fieldnation.service.data.workorder.ReportProblemType -->
     <string name="i_cant_make_my_assignment">I can\'t make my assignment</string>
@@ -1069,7 +1060,6 @@
 
     <string name="review_period_not_past">Work order review period (%1$d days) not past. After past review period you can file a report.</string>
 
-
     <string-array name="search_status">
         <item>Assigned</item>
         <item>Available</item>
@@ -1097,5 +1087,4 @@
         <item>300 miles</item>
         <item>500 miles</item>
     </string-array>
-
 </resources>
