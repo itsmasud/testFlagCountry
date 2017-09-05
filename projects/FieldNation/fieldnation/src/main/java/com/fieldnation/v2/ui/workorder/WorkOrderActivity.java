@@ -21,7 +21,7 @@ import com.fieldnation.v2.ui.dialog.ChatDialog;
 import java.util.List;
 
 public class WorkOrderActivity extends AuthSimpleActivity {
-    private static final String TAG = "WorkFragment";
+    private static final String TAG = "WorkOrderActivity";
 
     // Intent stuff
     public static final String INTENT_FIELD_WORKORDER_ID = TAG + ".workOrderId";
@@ -31,9 +31,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
-    // SavedInstance fields
-    private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
-
     // UI
     private WorkOrderScreen _workOrderScreen;
 
@@ -41,7 +38,9 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private int _workOrderId;
     private WorkOrder _workOrder;
     private boolean _showAttachments = false;
+    private boolean _attachmentsShown = false;
     private boolean _showMessages = false;
+    private boolean _messagesShown = false;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -89,8 +88,14 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("_workOrderId")) {
-                _workOrderId = savedInstanceState.getInt("_workOrderId");
+            if (savedInstanceState.containsKey("workOrderId")) {
+                _workOrderId = savedInstanceState.getInt("workOrderId");
+            }
+            if (savedInstanceState.containsKey("attachmentsShown")) {
+                _attachmentsShown = savedInstanceState.getBoolean("attachmentsShown");
+            }
+            if (savedInstanceState.containsKey("messagesShown")) {
+                _messagesShown = savedInstanceState.getBoolean("messagesShown");
             }
         }
 
@@ -128,7 +133,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     protected void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
         if (_workOrderId != 0)
-            outState.putInt(STATE_WORKORDERID, _workOrderId);
+            outState.putInt("workOrderId", _workOrderId);
+
+        outState.putBoolean("attachmentsShown", _attachmentsShown);
+        outState.putBoolean("messagesShown", _messagesShown);
 
         super.onSaveInstanceState(outState);
     }
@@ -193,13 +201,15 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
 
-                    if (_showAttachments) {
+                    if (_showAttachments && !_attachmentsShown) {
                         AttachedFilesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
                         _showAttachments = false;
+                        _attachmentsShown = true;
                     }
-                    if (_showMessages) {
+                    if (_showMessages && !_messagesShown) {
                         ChatDialog.show(App.get(), _workOrderId);
                         _showMessages = false;
+                        _messagesShown = true;
                     }
 
                     _workOrderScreen.setWorkOrder(_workOrder);

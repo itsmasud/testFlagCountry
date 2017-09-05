@@ -138,7 +138,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WorkOrderScreen extends RelativeLayout {
-    private static final String TAG = "WorkFragment";
+    private static final String TAG = "WorkOrderScreen";
 
     // Dialog tags
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
