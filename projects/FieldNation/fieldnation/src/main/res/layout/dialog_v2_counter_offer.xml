@@ -29,7 +29,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_horizontal"
-                    android:text="Build Your Counter Offer"
+                    android:text="@string/build_your_counter_offer"
                     android:textStyle="bold" />
 
                 <TextView
@@ -42,7 +42,7 @@
                     android:gravity="center"
                     android:paddingLeft="20dp"
                     android:paddingRight="20dp"
-                    android:text="Add counter offer parameters by tapping on the plus icon below."
+                    android:text="@string/add_counter_offer_parameters"
                     android:textColor="@color/fn_dark_text"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -175,7 +175,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/expires_menu"
                     android:padding="16dp"
-                    android:text="Expire"
+                    android:text="@string/expire"
                     android:textColor="@color/fn_dark_text_50"
                     android:textStyle="bold" />
 
@@ -215,7 +215,7 @@
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/reasons_menu"
                     android:padding="16dp"
-                    android:text="Reason"
+                    android:text="@string/reason"
                     android:textColor="@color/fn_dark_text_50"
                     android:textStyle="bold" />
 
@@ -294,13 +294,12 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginTop="16dp"
-                android:text="By countering this work order you are agreeing to our Work Order Terms and Conditions" />
+                android:text="@string/by_countering_this_work_order" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_below="@+id/termswarning_textview" />
-
 
         </RelativeLayout>
     </ScrollView>
@@ -318,8 +317,8 @@
         style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
     <Button
         android:id="@+id/action_button"
@@ -358,7 +357,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Change Pay" />
+            android:text="@string/change_pay" />
 
         <View style="@style/DividerFull" />
 
@@ -367,7 +366,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Change Schedule" />
+            android:text="@string/change_schedule" />
 
         <View style="@style/DividerFull" />
 
@@ -376,7 +375,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Add Expense" />
+            android:text="@string/add_expense" />
 
         <View style="@style/DividerFull" />
 
@@ -385,7 +384,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Set Expiration" />
+            android:text="@string/set_expiration" />
 
         <View style="@style/DividerFull" />
 
@@ -394,7 +393,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Set Reason" />
-
+            android:text="@string/set_reason" />
     </LinearLayout>
 </RelativeLayout>
