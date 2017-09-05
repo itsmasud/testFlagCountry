@@ -47,30 +47,32 @@ public class SnowplowWrapper implements TrackerWrapper {
     private static Tracker _tracker = null;
 
     private static Tracker getTracker(Context context) {
-        Context appContext = context.getApplicationContext();
-        if (_tracker == null) {
-            // Build the emitter
-            Emitter emitter = new Emitter.EmitterBuilder(
-                    appContext.getString(R.string.sp_collector_uri), appContext)
-                    .build();
+        synchronized (TAG) {
+            Context appContext = context.getApplicationContext();
+            if (_tracker == null) {
+                // Build the emitter
+                Emitter emitter = new Emitter.EmitterBuilder(
+                        appContext.getString(R.string.sp_collector_uri), appContext)
+                        .build();
 
-            // Build the snowplow tracker
-            _tracker = Tracker.init(
-                    new Tracker.TrackerBuilder
-                            (
-                                    emitter,
-                                    appContext.getString(R.string.sp_namespace),
-                                    appContext.getString(R.string.sp_app_id),
-                                    appContext
-                            )
-                            .subject(new Subject.SubjectBuilder().build())
-                            .platform(DevicePlatforms.Mobile)
-                            .geoLocationContext(true)
-                            .mobileContext(true)
-                            .sessionContext(true)
-                            .build());
+                // Build the snowplow tracker
+                _tracker = Tracker.init(
+                        new Tracker.TrackerBuilder
+                                (
+                                        emitter,
+                                        appContext.getString(R.string.sp_namespace),
+                                        appContext.getString(R.string.sp_app_id),
+                                        appContext
+                                )
+                                .subject(new Subject.SubjectBuilder().build())
+                                .platform(DevicePlatforms.Mobile)
+                                .geoLocationContext(true)
+                                .mobileContext(true)
+                                .sessionContext(true)
+                                .build());
+            }
+            return _tracker;
         }
-        return _tracker;
     }
 
     private List<SelfDescribingJson> buildExtraContexts(Context context, JsonArray extraContext) {
