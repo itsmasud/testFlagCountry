@@ -30,7 +30,6 @@ public abstract class WebTransactionListener {
 
     public enum Result {RETRY, CONTINUE, DELETE}
 
-
     protected void preOnQueued(Context context, WebTransaction transaction) {
         onQueued(context, transaction);
     }
@@ -212,5 +211,4 @@ public abstract class WebTransactionListener {
 
         return defaultMessage;
     }
-
 }

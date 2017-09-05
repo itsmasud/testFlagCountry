@@ -205,11 +205,9 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
         PigeonRoost.unsub(this, topicId);
     }
 
-
     /*-******************************-*/
     /*-          Listener            -*/
     /*-******************************-*/
-
     @Override
     public void onMessage(String address, Object message) {
         if (!(message instanceof Bundle)) {
@@ -247,7 +245,6 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     }
 
     public void onSwitchUser(long userId, boolean failed) {
-
     }
 
     private void preOnAction(Bundle payload) {

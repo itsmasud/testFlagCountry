@@ -32,6 +32,5 @@ public class PhotoTransactionBuilder implements PhotoConstants {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-
     }
 }

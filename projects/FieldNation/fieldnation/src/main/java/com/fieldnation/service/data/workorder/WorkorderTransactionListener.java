@@ -292,7 +292,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         return null;
     }
 
-
     public static byte[] pRating(int satisfactionRating, int scopeRating,
                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
         try {
@@ -310,7 +309,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
         return null;
     }
-
 
     /*-***********************************-*/
     /*-             onStart               -*/
@@ -341,10 +339,10 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
     }
+
     /*-**************************************-*/
     /*-             onProgress               -*/
     /*-**************************************-*/
-
     @Override
     public void onProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
         try {

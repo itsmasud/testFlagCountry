@@ -312,6 +312,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns an error/success message
+/*
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type, Integer delayInSeconds) {
         if (misc.isEmptyOrNull(explanation)) {
             action(context, workorderId, "report-problem", null,
@@ -326,6 +327,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             + (delayInSeconds == null ? "" : "&delay=" + delayInSeconds));
         }
     }
+*/
 
     // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId, String dateTime) {

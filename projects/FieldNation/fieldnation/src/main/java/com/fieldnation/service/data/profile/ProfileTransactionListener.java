@@ -117,7 +117,6 @@ public class ProfileTransactionListener extends WebTransactionListener implement
     /*-**************************************-*/
     /*-             onComplete               -*/
     /*-**************************************-*/
-
     @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Log.v(TAG, "onComplete");
@@ -251,7 +250,6 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         }
     }
 
-
     private Result onUploadPhoto(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long providerId = params.getLong("profileId");
         String filename = params.getString("filename");
@@ -279,5 +277,4 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             return Result.RETRY;
         }
     }
-
 }

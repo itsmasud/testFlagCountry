@@ -237,7 +237,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             return;
         }
 
-
         if (upFile.size() > 100000000) { // 100 MB?
             StoredObject.delete(context, upFile);
             ToastClient.toast(context, "File is too long: " + filePath, Toast.LENGTH_LONG);

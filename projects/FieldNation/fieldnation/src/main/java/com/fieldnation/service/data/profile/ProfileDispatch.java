@@ -93,7 +93,6 @@ public class ProfileDispatch implements ProfileConstants {
         PigeonRoost.sendMessage(address, bundle, Sticky.NONE);
     }
 
-
     public static void action(long profileId, String action, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, action);

@@ -35,8 +35,6 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
     /*-********************************-*/
     /*-         Data Interface         -*/
     /*-********************************-*/
-
-
     // get all
     public static void list(Context context, int page) {
         list(context, page, false);

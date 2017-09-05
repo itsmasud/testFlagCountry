@@ -90,7 +90,6 @@ public abstract class ProfilePhotoClient extends Pigeon implements ProfilePhotoC
                 }
             }.executeEx(uri);
         }
-
     }
 
     public abstract boolean getProfileImage(Uri uri);

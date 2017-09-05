@@ -569,7 +569,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return 0;
     }
 
-
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/

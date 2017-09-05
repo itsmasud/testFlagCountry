@@ -169,7 +169,6 @@ public class WebTransactionSystem implements WebTransactionConstants {
         }
         getInstance()._manager.wakeUp();
     }
-
 }
 
 

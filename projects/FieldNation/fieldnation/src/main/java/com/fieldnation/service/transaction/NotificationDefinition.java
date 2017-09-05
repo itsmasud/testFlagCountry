@@ -56,7 +56,6 @@ public class NotificationDefinition implements Parcelable {
         }
     }
 
-
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/

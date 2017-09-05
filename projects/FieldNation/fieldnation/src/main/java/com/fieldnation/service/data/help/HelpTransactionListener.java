@@ -39,7 +39,6 @@ public class HelpTransactionListener extends WebTransactionListener {
     /*-*****************************-*/
     /*-             Good            -*/
     /*-*****************************-*/
-
     @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         try {

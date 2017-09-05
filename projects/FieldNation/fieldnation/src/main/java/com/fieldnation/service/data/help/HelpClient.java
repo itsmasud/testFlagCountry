@@ -8,7 +8,6 @@ import com.fieldnation.service.transaction.WebTransactionSystem;
  * Created by Shoaib on 7/7/2015.
  */
 public class HelpClient {
-
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
@@ -16,6 +15,4 @@ public class HelpClient {
         WebTransactionSystem.queueTransaction(context,
                 HelpTransactionBuilder.actionPostContactUsIntent(message, internalTeam, uri, extra_data, extra_type));
     }
-
-
 }
