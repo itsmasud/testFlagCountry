@@ -65,7 +65,7 @@ public class CustomFieldDialog extends SimpleDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_custom_field, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_custom_field, container, false);
 
         _titleTextView = v.findViewById(R.id.title_textview);
         _textEditText = v.findViewById(R.id.text_edittext);

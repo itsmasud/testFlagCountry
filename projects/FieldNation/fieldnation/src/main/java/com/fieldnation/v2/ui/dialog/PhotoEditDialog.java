@@ -56,7 +56,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
-        View v = inflater.inflate(R.layout.dialog_photo_edit, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_photo_edit, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setTitle("Profile Photo");

@@ -80,7 +80,7 @@ public class RateBuyerDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_rate_buyer, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_rate_buyer, container, false);
 
         _titleTextView = v.findViewById(R.id.title_textview);
         _rateStarView = v.findViewById(R.id.star_rating);

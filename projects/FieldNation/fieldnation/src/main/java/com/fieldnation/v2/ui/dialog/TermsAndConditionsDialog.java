@@ -32,7 +32,7 @@ public class TermsAndConditionsDialog extends SimpleDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_toc, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_toc, container, false);
 
         _reviewTermsOfServiceButton = v.findViewById(R.id.review_tos_button);
         _acceptButton = v.findViewById(R.id.accept_button);

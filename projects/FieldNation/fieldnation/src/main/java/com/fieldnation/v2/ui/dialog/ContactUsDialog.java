@@ -64,7 +64,7 @@ public class ContactUsDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_contact_us, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_contact_us, container, false);
 
         _reasonSpinner = v.findViewById(R.id.reason_spinner);
         _explanationEditText = v.findViewById(R.id.explanation_edittext);

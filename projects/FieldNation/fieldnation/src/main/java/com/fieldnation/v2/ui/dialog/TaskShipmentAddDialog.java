@@ -46,7 +46,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_task_add_shipment, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_task_add_shipment, container, false);
 
         _titleTextView = v.findViewById(R.id.title_textview);
         _shipmentsLayout = v.findViewById(R.id.shipments_linearlayout);
