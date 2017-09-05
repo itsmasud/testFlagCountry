@@ -83,7 +83,6 @@ public class NavProfileDetailListView extends RelativeLayout {
             });
             _profileList.addView(v);
         }
-
     }
 
     private final OnClickListener _add_onClick = new OnClickListener() {
