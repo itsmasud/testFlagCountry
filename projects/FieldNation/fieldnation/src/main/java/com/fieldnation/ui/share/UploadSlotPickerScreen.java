@@ -166,7 +166,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
                     populateUi();
                 }
             } else if (!methodName.startsWith("get")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
 
             if (methodName.startsWith("get") || !success)
