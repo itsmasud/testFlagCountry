@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ChatTextBase">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:layout_marginTop">1dp</item>
+    </style>
+
+
+    <style name="ChatTextRight" parent="@style/ChatTextBase">
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentTop">true</item>
+    </style>
+
+    <style name="ChatTextLeft" parent="@style/ChatTextBase">
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_marginLeft">56dp</item>
+    </style>
+
+</resources>

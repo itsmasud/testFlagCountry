@@ -5,15 +5,6 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/leftGreen_button"
-        style="?attr/buttonGreenStyle"
-        android:layout_width="match_parent"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_weight="1"
-        android:visibility="gone" />
-
-    <Button
         android:id="@+id/rightGreen_button"
         style="?attr/buttonGreenStyle"
         android:layout_width="match_parent"

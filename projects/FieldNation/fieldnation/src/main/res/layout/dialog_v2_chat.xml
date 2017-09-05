@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg"
+    android:clickable="true">
 
     <com.fieldnation.ui.OverScrollRecyclerView
-        android:id="@+id/messages_listview"
+        android:id="@+id/chat_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/input_view"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/toolbar"
         android:scrollbars="vertical" />
 
-    <com.fieldnation.ui.workorder.detail.MessageInputView
+    <com.fieldnation.v2.ui.workorder.ChatInputView
         android:id="@+id/input_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,5 +27,13 @@
         android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
 </RelativeLayout>

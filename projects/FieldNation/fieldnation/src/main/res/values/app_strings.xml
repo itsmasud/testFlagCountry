@@ -757,7 +757,7 @@
     <string name="work_orders">Work Orders</string>
     <string name="work_performed_colon">Work Performed: </string>
     <string name="would_you_like_to_continue">Would you like to continue?</string>
-    <string name="write_your_message">Write your message…</string>
+    <string name="type_a_message">Type a message</string>
     <string name="wo_id_x">WO ID: %1$s</string>
     <string name="wo_x">WO %1$d</string>
     <string name="work_complete">Work Complete</string>

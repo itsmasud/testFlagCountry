@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/inbox_layout"
+    android:layout_width="40dp"
+    android:layout_height="match_parent">
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/icon_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/icon_chat_solid"
+        android:textColor="@color/fn_clickable_bg"
+        android:textSize="17sp"
+        android:textStyle="normal" />
+
+    <View
+        android:id="@+id/indicator_View"
+        android:layout_width="9dp"
+        android:layout_height="9dp"
+        android:layout_alignRight="@+id/icon_textview"
+        android:layout_alignTop="@+id/icon_textview"
+        android:layout_marginRight="-3dp"
+        android:layout_marginTop="-3dp"
+        android:background="@drawable/circle_orange" />
+
+</RelativeLayout>

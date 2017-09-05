@@ -13,12 +13,15 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -50,10 +53,10 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
+import com.fieldnation.ui.menu.MessagesMenuButton;
+import com.fieldnation.ui.menu.MoreMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
-import com.fieldnation.ui.workorder.detail.ActionBarTopView;
-import com.fieldnation.ui.workorder.detail.AttachmentSummaryView;
 import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.ContactListView;
@@ -89,6 +92,9 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.ProblemType;
+import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
@@ -110,11 +116,14 @@ import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
+import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
+import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
@@ -129,7 +138,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class WorkOrderScreen extends RelativeLayout {
-    private static final String TAG = "WorkFragment";
+    private static final String TAG = "WorkOrderScreen";
 
     // Dialog tags
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
@@ -193,6 +202,9 @@ public class WorkOrderScreen extends RelativeLayout {
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WodBottomSheetView _bottomsheetView;
+    private MessagesMenuButton _messagesMenuButton;
+    private MoreMenuButton _moreMenuButton;
+    private PopupMenu _morePopup;
 
     // Data
     private DocumentClient _docClient;
@@ -232,9 +244,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _toolbar = findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.inflateMenu(R.menu.wod);
-        _toolbar.setTitle("WO loading...");
-        _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
 
         _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
@@ -392,6 +401,21 @@ public class WorkOrderScreen extends RelativeLayout {
 
     public void onStart() {
         Log.v(TAG, "onStart");
+
+        _toolbar.getMenu().clear();
+        _toolbar.inflateMenu(R.menu.wod);
+        _toolbar.setTitle("WO LOADING...");
+        _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
+
+        _messagesMenuButton = _toolbar.findViewById(R.id.messages_menu);
+        _messagesMenuButton.setOnClickListener(_messagesMenuButton_onClick);
+
+        _moreMenuButton = _toolbar.findViewById(R.id.more_menu);
+        _moreMenuButton.setOnClickListener(_moreMenuButton_onClick);
+
+        _morePopup = new PopupMenu(getContext(), _moreMenuButton);
+        _morePopup.setOnMenuItemClickListener(_morePopup_onClick);
+
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
 
@@ -652,6 +676,85 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
+        }
+    };
+
+    private final View.OnClickListener _messagesMenuButton_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ChatDialog.show(App.get(), _workOrderId);
+        }
+    };
+
+    private final View.OnClickListener _moreMenuButton_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Menu menu = _morePopup.getMenu();
+            menu.clear();
+
+            if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
+                menu.add(0, 0, 300, "Running Late");
+            }
+            if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
+                menu.add(0, 1, 300, "Report A Problem");
+            }
+            if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+                    || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                menu.add(0, 2, 300, "Not Interested");
+            }
+            if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
+                menu.add(0, 3, 300, "Print");
+            }
+
+            // TODO rate buyer
+
+            _morePopup.show();
+        }
+    };
+
+    private final PopupMenu.OnMenuItemClickListener _morePopup_onClick = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            switch (item.getItemId()) {
+                case 0: // running late
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE, null, _workOrder.getId());
+
+                    RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder.getId(),
+                            _workOrder.getEta(), _workOrder.getSchedule(), _workOrder.getContacts(),
+                            _workOrder.getTitle());
+                    break;
+                case 1: // report a problem
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
+
+                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId,
+                            _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
+                            _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+                    break;
+                case 2: // not interested
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
+
+                    if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+                        DeclineDialog.show(
+                                App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
+                                _workOrderId, _workOrder.getCompany().getId());
+                    } else {
+                        DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId());
+                    }
+                    break;
+                case 3: // print
+                    String url = "https://mono-mobile.fndev.net/marketplace/wo_print.php?workorder_id=" + _workOrderId;
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    ActivityClient.startActivity(intent);
+                    break;
+                case 4: // rate buyer
+                    RateBuyerDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
+                    break;
+            }
+
+            return true;
         }
     };
 

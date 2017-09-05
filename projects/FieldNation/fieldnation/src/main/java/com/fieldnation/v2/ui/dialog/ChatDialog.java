@@ -1,7 +1,9 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -17,54 +21,65 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.v2.ui.workorder.ChatInputView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.workorder.MessagePagingAdapter;
+import com.fieldnation.v2.ui.workorder.ChatAdapter;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MessageFragment extends WorkorderFragment {
-    private static final String TAG = "MessageFragment";
+/**
+ * Created by mc on 8/30/17.
+ */
+
+public class ChatDialog extends FullScreenDialog {
+    private static final String TAG = "ChatDialog";
 
     // UI
-    private OverScrollRecyclerView _messagesList;
-    private MessageInputView _inputView;
+    private Toolbar _toolbar;
+    private OverScrollRecyclerView _chatList;
+    private ChatInputView _inputView;
     private RefreshView _refreshView;
 
     // Data
-    private WorkOrder _workorder;
+    private int _workOrderId;
     private boolean _isMarkedRead = false;
+    private final ChatAdapter _adapter = new ChatAdapter();
 
-    /*-*************************************-*/
-    /*-				LifeCycle				-*/
-    /*-*************************************-*/
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workorder_messages, container, false);
+    public ChatDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.v(TAG, "onViewCreated");
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.dialog_v2_chat, container, false);
 
-        _messagesList = view.findViewById(R.id.messages_listview);
-        _messagesList.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
-        _messagesList.setAdapter(_adapter);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.setTitle("Chat");
 
-        _inputView = view.findViewById(R.id.input_view);
+        _chatList = v.findViewById(R.id.chat_listview);
+        _inputView = v.findViewById(R.id.input_view);
+        _refreshView = v.findViewById(R.id.refresh_view);
+
+        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _chatList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        _chatList.setAdapter(_adapter);
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
-
-        _refreshView = view.findViewById(R.id.refresh_view);
     }
 
     @Override
@@ -72,8 +87,17 @@ public class MessageFragment extends WorkorderFragment {
         super.onResume();
 
         _workOrderApi.sub();
-
         populateUi();
+    }
+
+    @Override
+    public void show(Bundle params, boolean animate) {
+        super.show(params, animate);
+
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
+        _workOrderId = params.getInt("workOrderId");
+        _refreshView.startRefreshing();
+        WorkordersWebApi.getMessages(App.get(), _workOrderId, true, false);
     }
 
     @Override
@@ -85,97 +109,68 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
-    public void update() {
-        Log.v(TAG, "update");
-        App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
-        if (_workorder != null) {
-            _refreshView.startRefreshing();
-            WorkordersWebApi.getMessages(App.get(), _workorder.getId(), true, false);
-        }
-    }
-
-    @Override
-    public void setWorkOrder(WorkOrder workorder) {
-        _workorder = workorder;
-        populateUi();
-        getMessages();
-    }
-
-    private void getMessages() {
-        if (_workorder == null)
-            return;
-
-        Log.v(TAG, "getMessages");
-        WorkordersWebApi.getMessages(App.get(), _workorder.getId(), false, false);
+    public void onStop() {
+        super.onStop();
     }
 
     private void populateUi() {
         if (_inputView == null)
             return;
 
-        if (_workorder != null) {
-            _inputView.setButtonEnabled(true);
+        _inputView.setButtonEnabled(true);
 
-            if (!_isMarkedRead) {
-                _isMarkedRead = true;
+        if (!_isMarkedRead) {
+            _isMarkedRead = true;
 // TODO                WorkorderClient.actionMarkMessagesRead(App.get(), _workorder.getWorkorderId());
-                ProfileClient.get(App.get());
-            }
-
-        } else {
-            _inputView.setButtonEnabled(false);
+            ProfileClient.get(App.get());
         }
-
-    }
-
-    @Override
-    public void setLoading(boolean isLoading) {
     }
 
     private void rebuildList() {
-        _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
+        _chatList.scrollToPosition(_adapter.getItemCount() - 1);
         _refreshView.refreshComplete();
     }
 
-    private final MessagePagingAdapter _adapter = new MessagePagingAdapter() {
-        @Override
-        public void requestPage(int page, boolean allowCache) {
-        }
-    };
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            cancel();
+            dismiss(true);
+        }
+    };
+
     private final View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (getActivity() != null) {
-
-                if (misc.isEmptyOrNull(_inputView.getInputText())) {
-                    ToastClient.toast(App.get(), "Please enter a message", Toast.LENGTH_SHORT);
-                    return;
-                }
-
-                if (App.get().getProfile() == null) {
-                    ToastClient.toast(App.get(), "Can't send message right now, please try again later", Toast.LENGTH_LONG);
-                    return;
-                }
-
-                Log.v(TAG, "_send_onClick");
-
-                //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));``
-
-                try {
-                    Message msg = new Message();
-                    msg.setMessage(_inputView.getInputText());
-                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg, App.get().getSpUiContext());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-
-                _inputView.clearText();
-                misc.hideKeyboard(_inputView);
+            _refreshView.startRefreshing();
+            if (misc.isEmptyOrNull(_inputView.getInputText())) {
+                ToastClient.toast(App.get(), "Please enter a message", Toast.LENGTH_SHORT);
+                return;
             }
+
+            if (App.get().getProfile() == null) {
+                ToastClient.toast(App.get(), "Can't send message right now, please try again later", Toast.LENGTH_LONG);
+                return;
+            }
+
+            Log.v(TAG, "_send_onClick");
+
+            //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));``
+
+            try {
+                Message msg = new Message();
+                msg.setMessage(_inputView.getInputText());
+                WorkordersWebApi.addMessage(App.get(), _workOrderId, msg, App.get().getSpUiContext());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            _inputView.clearText();
+            misc.hideKeyboard(_inputView);
         }
     };
 
@@ -201,13 +196,13 @@ public class MessageFragment extends WorkorderFragment {
 
                     JsonObject methodParams = new JsonObject(transactionParams.methodParams);
 
-                    if (methodParams.has("workOrderId") && _workorder != null
-                            && methodParams.getInt("workOrderId") != _workorder.getId()) {
+                    if (methodParams.has("workOrderId")
+                            && methodParams.getInt("workOrderId") != _workOrderId) {
                         Log.v(TAG, "not my work order!");
                         return;
                     }
 
-                    if (messages == null || messages.getResults() == null || _workorder == null) {
+                    if (messages == null || messages.getResults() == null) {
                         _refreshView.refreshComplete();
                         return;
                     }
@@ -237,6 +232,7 @@ public class MessageFragment extends WorkorderFragment {
                         }
                     }
 
+                    // sort by time
                     Collections.sort(flatList, new Comparator<Message>() {
                         @Override
                         public int compare(Message lhs, Message rhs) {
@@ -257,7 +253,7 @@ public class MessageFragment extends WorkorderFragment {
                         }
                     });
 
-                    _adapter.addObjects(messages.getMetadata().getPage(), flatList);
+                    _adapter.setMessages(flatList);
 
                     rebuildList();
                 } else if (successObject instanceof Message) {
@@ -268,4 +264,10 @@ public class MessageFragment extends WorkorderFragment {
             }
         }
     };
+
+    public static void show(Context context, int workOrderId) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+        Controller.show(context, null, ChatDialog.class, params);
+    }
 }

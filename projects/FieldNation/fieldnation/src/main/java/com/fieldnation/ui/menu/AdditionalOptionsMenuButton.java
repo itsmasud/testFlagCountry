@@ -39,7 +39,7 @@ public class AdditionalOptionsMenuButton extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_additional_options_action_bar, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.menu_additional_options_button, this);
 
         if (isInEditMode())
             return;

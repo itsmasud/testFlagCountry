@@ -60,7 +60,6 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     // Data
     private boolean _clear = false;
-    private Listener _listener;
     private boolean _hasToastShown = false;
     private int _goldStar = 0;
     private Boolean _hasSelectedScopeRating = null;
@@ -210,10 +209,6 @@ public class RateBuyerDialog extends FullScreenDialog {
         Log.v(TAG, "onPause");
         _photoClient.unsub();
         super.onPause();
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     private void populateUi() {
@@ -385,10 +380,5 @@ public class RateBuyerDialog extends FullScreenDialog {
         params.putParcelable("location", location);
 
         Controller.show(context, uid, RateBuyerDialog.class, params);
-    }
-
-    private interface Listener {
-        void onOk(long workorderId, int satisfactionRating, int scopeRating,
-                  int respectRating, String otherComments);
     }
 }

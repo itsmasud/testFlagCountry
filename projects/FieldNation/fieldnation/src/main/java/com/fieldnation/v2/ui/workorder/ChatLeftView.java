@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.workorder;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -17,53 +17,57 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.v2.data.model.Message;
 
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
-public class MessageRcvdView extends RelativeLayout {
-    private static final String TAG = "MessageRcvdView";
+/**
+ * Created by mc on 8/30/17.
+ */
 
-    // UI
+public class ChatLeftView extends RelativeLayout implements ChatRenderer {
+    private static final String TAG = "ChatLeftView";
+    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a");
+
+    // Ui
     private TextView _messageTextView;
     private ProfilePicView _picView;
     private TextView _timeTextView;
-    private TextView _usernameTextView;
 
     // Data
     private Message _message = null;
     private WeakReference<Drawable> _profilePic = null;
+    private Position _position = null;
 
-    public MessageRcvdView(Context context) {
+    public ChatLeftView(Context context) {
         super(context);
         init();
     }
 
-    public MessageRcvdView(Context context, AttributeSet attrs) {
+    public ChatLeftView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public MessageRcvdView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    public ChatLeftView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_rcvd, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_chat_left, this, true);
+
+        if (isInEditMode()) return;
 
         _messageTextView = findViewById(R.id.message_textview);
         _messageTextView.setOnLongClickListener(_message_onLongClick);
         _picView = findViewById(R.id.pic_view);
         _timeTextView = findViewById(R.id.time_textview);
-        _usernameTextView = findViewById(R.id.username_textview);
 
         _photoClient.sub();
     }
@@ -79,8 +83,17 @@ public class MessageRcvdView extends RelativeLayout {
         populateUi();
     }
 
+    @Override
+    public void setPosition(Position position) {
+        _position = position;
+        populateUi();
+    }
+
     private void populateUi() {
         if (_message == null)
+            return;
+
+        if (_position == null)
             return;
 
         try {
@@ -90,24 +103,48 @@ public class MessageRcvdView extends RelativeLayout {
             _messageTextView.setText(_message.getMessage());
         }
 
-        try {
-            _timeTextView.setText(DateUtils.formatMessageTime(_message.getCreated().getCalendar()));
-        } catch (ParseException e) {
-            Log.v(TAG, e);
+
+        if (_position == Position.FULL || _position == Position.BOTTOM) {
+            _picView.setVisibility(VISIBLE);
+            _picView.setAlertOn(!_message.getRead());
+
+            if (_profilePic == null || _profilePic.get() == null) {
+                _picView.setProfilePic(R.drawable.missing_circle);
+                String url = _message.getFrom().getThumbnail();
+                if (!misc.isEmptyOrNull(url)) {
+                    PhotoClient.get(getContext(), url, true, false);
+                }
+            } else if (_profilePic != null && _profilePic.get() != null) {
+                _picView.setProfilePic(_profilePic.get());
+            }
+
+            _timeTextView.setVisibility(VISIBLE);
+            try {
+                _timeTextView.setText(
+                        _message.getFrom().getName() + " \u2022 " +
+                                TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase());
+            } catch (Exception ex) {
+                _timeTextView.setVisibility(GONE);
+            }
+
+        } else {
+            _picView.setVisibility(GONE);
+            _timeTextView.setVisibility(GONE);
         }
 
-        _picView.setAlertOn(!_message.getRead());
-
-        _usernameTextView.setText(_message.getFrom().getName());
-
-        if (_profilePic == null || _profilePic.get() == null) {
-            _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _message.getFrom().getThumbnail();
-            if (!misc.isEmptyOrNull(url)) {
-                PhotoClient.get(getContext(), url, true, false);
-            }
-        } else if (_profilePic != null && _profilePic.get() != null) {
-            _picView.setProfilePic(_profilePic.get());
+        switch (_position) {
+            case FULL:
+                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_left_full));
+                break;
+            case TOP:
+                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_left_top));
+                break;
+            case CENTER:
+                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_left_center));
+                break;
+            case BOTTOM:
+                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_left_bottom));
+                break;
         }
     }
 

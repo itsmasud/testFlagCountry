@@ -4,20 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.fieldnation.MainActivity">
 
-<!-- TODO goes here
     <item
         android:id="@+id/messages_menu"
         android:enabled="true"
         android:orderInCategory="300"
-        android:title="M"
+        android:title="MESSAGES"
+        app:actionViewClass="com.fieldnation.ui.menu.MessagesMenuButton"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/more_menu"
         android:enabled="true"
-        android:orderInCategory="300"
-        android:title="|"
+        android:orderInCategory="400"
+        android:title="MORE"
+        app:actionViewClass="com.fieldnation.ui.menu.MoreMenuButton"
         app:showAsAction="always" />
--->
+
 
 </menu>

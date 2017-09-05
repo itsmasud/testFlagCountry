@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;

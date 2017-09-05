@@ -44,7 +44,7 @@ public class InboxMenuButton extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_inbox_action_bar, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.menu_inbox_button, this);
 
         if (isInEditMode())
             return;
