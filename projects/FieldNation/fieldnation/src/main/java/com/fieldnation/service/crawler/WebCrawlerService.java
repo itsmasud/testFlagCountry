@@ -351,6 +351,9 @@ public class WebCrawlerService extends Service {
                 }
             } else if (methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
+                if (workOrder == null || workOrder.getId() == null)
+                    return;
+
                 Log.v(TAG, "getWorkOrder " + workOrder.getId());
                 incrementPendingRequestCounter(-1);
 
