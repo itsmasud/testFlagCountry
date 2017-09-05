@@ -143,6 +143,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private void rebuild() {
         objects.clear();
 
+        if (folders == null || folders.getResults() == null) {
+            return;
+        }
+
         Tuple t;
         AttachmentFolder[] attachmentFolders = folders.getResults();
         for (AttachmentFolder attachmentFolder : attachmentFolders) {
