@@ -19,7 +19,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="This is a bundle of 10 work orders. If you accept this bundle you are accepting all 10 work orders." />
+        android:text="@string/placeholder_paragraph" />
 
     <TextView
         android:id="@+id/expires_textview"
