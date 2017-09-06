@@ -563,7 +563,6 @@ public class WorkOrderScreen extends RelativeLayout {
         } else {
             _moreMenuButton.setVisibility(VISIBLE);
         }
-
     }
 
     private void requestWorkorder() {
@@ -691,7 +690,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-
     /*-*********************************************-*/
     /*-				Main View Listeners				-*/
     /*-*********************************************-*/
@@ -712,7 +710,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private final View.OnClickListener _moreMenuButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-
             _morePopup.show();
         }
     };
@@ -768,7 +765,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onCheckOut() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
                     null, _workOrderId);
-
             doCheckOut();
         }
 
@@ -776,7 +772,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onCheckIn() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
                     null, _workOrderId);
-
             doCheckin();
         }
 
@@ -784,7 +779,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onCheckInAgain() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
                     null, _workOrderId);
-
             doCheckin();
         }
 
@@ -796,38 +790,48 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onMarkIncomplete() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE,
-                    null, _workOrderId);
-
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrderId);
             MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrderId);
         }
 
         @Override
         public void onViewPayment() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrderId);
             PaymentListActivity.startNew(App.get());
         }
 
         @Override
         public void onReportProblem() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(), _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+            ReportProblemDialog.show(
+                    App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(),
+                    _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
+                    _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
         }
 
         @Override
         public void onMyWay() {
             if (!App.get().isLocationEnabled()) {
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
-                    }
-                }, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(
+                        App.get(),
+                        getResources().getString(R.string.snackbar_location_disabled),
+                        "LOCATION SETTINGS",
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                            }
+                        },
+                        Snackbar.LENGTH_INDEFINITE);
             }
 
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
 
@@ -852,29 +856,35 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onEta() {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+            EtaDialog.show(
+                    App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override
         public void onNotInterested() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
 
             if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
-                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
+                DeclineDialog.show(
+                        App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrderId, _workOrder.getCompany().getId());
             } else {
-                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId());
+                DeclineDialog.show(
+                        App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId());
             }
         }
 
         @Override
         public void onRequest() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
             if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
-                RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+                RequestBundleDialog.show(
+                        App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
@@ -884,29 +894,34 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onAccept() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
             if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
-                RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+                RequestBundleDialog.show(
+                        App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+                EtaDialog.show(
+                        App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
         @Override
         public void onWithdraw() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrderId);
 
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrderId, 0, _workOrder.getRequests().getOpenRequest().getId());
+            WithdrawRequestDialog.show(
+                    App.get(), DIALOG_WITHDRAW, _workOrderId, 0, _workOrder.getRequests().getOpenRequest().getId());
         }
 
         @Override
         public void onReadyToGo() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrderId);
 
             try {
                 ETA eta = new ETA()
@@ -922,8 +937,8 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onConfirm() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
             try {
                 ETA eta = new ETA()
@@ -938,16 +953,16 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onEnterClosingNotes() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, null, _workOrderId);
 
             showClosingNotesDialog();
         }
 
         @Override
         public void onMarkComplete() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, null, _workOrderId);
 
             MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder.getSignatures().getResults().length > 0);
         }
@@ -1181,7 +1196,6 @@ public class WorkOrderScreen extends RelativeLayout {
     };
 
     private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
-
         @Override
         public void addShipment() {
             ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
@@ -1347,7 +1361,6 @@ public class WorkOrderScreen extends RelativeLayout {
             setLoading(true);
         }
     };
-
 
     /*-*********************************-*/
     /*-				Dialogs				-*/
@@ -1537,7 +1550,6 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onComplete(Pay pay, String explanation) {
             try {
-
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Pay Dialog";
 
