@@ -103,6 +103,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
+import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
@@ -115,7 +116,6 @@ import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
-import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
@@ -378,7 +378,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     }
 
-
     private void startAppPickerDialog() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
@@ -540,6 +539,31 @@ public class WorkOrderScreen extends RelativeLayout {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
         }
+
+        Menu menu = _morePopup.getMenu();
+        menu.clear();
+
+        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
+            menu.add(0, 0, 300, "Running Late");
+        }
+        if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
+            menu.add(0, 1, 300, "Report A Problem");
+        }
+        if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            menu.add(0, 2, 300, "Not Interested");
+        }
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
+            menu.add(0, 3, 300, "Print");
+        }
+        // TODO rate buyer
+
+        if (menu.size() == 0) {
+            _moreMenuButton.setVisibility(GONE);
+        } else {
+            _moreMenuButton.setVisibility(VISIBLE);
+        }
+
     }
 
     private void requestWorkorder() {
@@ -688,24 +712,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private final View.OnClickListener _moreMenuButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            Menu menu = _morePopup.getMenu();
-            menu.clear();
-
-            if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
-                menu.add(0, 0, 300, "Running Late");
-            }
-            if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
-                menu.add(0, 1, 300, "Report A Problem");
-            }
-            if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
-                    || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-                menu.add(0, 2, 300, "Not Interested");
-            }
-            if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
-                menu.add(0, 3, 300, "Print");
-            }
-
-            // TODO rate buyer
 
             _morePopup.show();
         }

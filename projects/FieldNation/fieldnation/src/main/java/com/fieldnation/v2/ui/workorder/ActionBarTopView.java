@@ -20,7 +20,6 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Set;
 
@@ -96,27 +95,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         //Log.v(TAG, "populateButtons");
         Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
         Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
-
-/*
-        if (false) {
-
-            // running late
-        } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
-            inflate();
-            _leftGreenButton.setVisibility(VISIBLE);
-            _leftGreenButton.setText(R.string.btn_running_late);
-            _leftGreenButton.setOnClickListener(_runningLate_onClick);
-            setVisibility(View.VISIBLE);
-
-            // report a problem
-        } else if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
-            inflate();
-            _leftGreenButton.setVisibility(VISIBLE);
-            _leftGreenButton.setText(R.string.btn_report_a_problem);
-            _leftGreenButton.setOnClickListener(_reportProblem_onClick);
-            setVisibility(View.VISIBLE);
-        }
-*/
 
         if (false) {
 
@@ -254,11 +232,10 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // withdraw
         } else if (_workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             inflate();
-/*
-            _leftGreenButton.setVisibility(VISIBLE);
-            _leftGreenButton.setOnClickListener(_withdraw_onClick);
-            _leftGreenButton.setText(R.string.btn_withdraw);
-*/
+
+            _rightGreenButton.setVisibility(VISIBLE);
+            _rightGreenButton.setOnClickListener(_withdraw_onClick);
+            _rightGreenButton.setText(R.string.btn_withdraw);
 
             setVisibility(View.VISIBLE);
 
