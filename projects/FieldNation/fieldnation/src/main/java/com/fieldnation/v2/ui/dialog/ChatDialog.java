@@ -62,7 +62,7 @@ public class ChatDialog extends FullScreenDialog {
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setTitle("Chat");
+        _toolbar.setTitle("Messages");
 
         _chatList = v.findViewById(R.id.chat_listview);
         _inputView = v.findViewById(R.id.input_view);
