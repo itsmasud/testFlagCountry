@@ -1,4 +1,4 @@
-package com.fieldnation.v2.ui.workorder;
+package com.fieldnation.v2.ui.chat;
 
 import com.fieldnation.v2.data.model.Message;
 

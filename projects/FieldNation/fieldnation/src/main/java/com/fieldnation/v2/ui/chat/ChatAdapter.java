@@ -1,4 +1,4 @@
-package com.fieldnation.v2.ui.workorder;
+package com.fieldnation.v2.ui.chat;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
