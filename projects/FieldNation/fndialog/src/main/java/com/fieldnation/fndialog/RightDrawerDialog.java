@@ -107,6 +107,11 @@ public abstract class RightDrawerDialog implements Dialog {
     }
 
     @Override
+    public boolean onBackPressed() {
+        return true;
+    }
+
+    @Override
     public String getUid() {
         return _uid;
     }

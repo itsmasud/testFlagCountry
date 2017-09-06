@@ -111,6 +111,11 @@ public abstract class SimpleDialog implements Dialog {
     }
 
     @Override
+    public boolean onBackPressed() {
+        return true;
+    }
+
+    @Override
     public String getUid() {
         return _uid;
     }

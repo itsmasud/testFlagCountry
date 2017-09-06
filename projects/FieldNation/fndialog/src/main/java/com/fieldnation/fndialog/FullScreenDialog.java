@@ -108,6 +108,11 @@ public abstract class FullScreenDialog implements Dialog {
     }
 
     @Override
+    public boolean onBackPressed() {
+        return true;
+    }
+
+    @Override
     public String getUid() {
         return _uid;
     }

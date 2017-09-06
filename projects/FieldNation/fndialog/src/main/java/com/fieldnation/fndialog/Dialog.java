@@ -100,6 +100,11 @@ public interface Dialog {
      */
     boolean isCancelable();
 
+    /**
+     * @return true if the dialog can be canceled, false if not
+     */
+    boolean onBackPressed();
+
     void setDismissListener(DismissListener listener);
 
     interface DismissListener {
