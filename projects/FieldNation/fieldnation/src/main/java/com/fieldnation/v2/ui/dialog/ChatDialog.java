@@ -98,6 +98,8 @@ public class ChatDialog extends FullScreenDialog {
         _workOrderId = params.getInt("workOrderId");
         _refreshView.startRefreshing();
         WorkordersWebApi.getMessages(App.get(), _workOrderId, true, false);
+        ProfileClient.get(App.get(), false);
+
     }
 
     @Override
