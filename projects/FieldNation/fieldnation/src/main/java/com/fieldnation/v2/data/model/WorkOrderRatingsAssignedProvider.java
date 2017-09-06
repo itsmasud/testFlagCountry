@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -104,7 +101,7 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
         if (_blocks == null)
             _blocks = new Blocks();
 
-            return _blocks;
+        return _blocks;
     }
 
     public WorkOrderRatingsAssignedProvider blocks(Blocks blocks) throws ParseException {
@@ -129,7 +126,7 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
         if (_overall == null)
             _overall = new WorkOrderRatingsAssignedProviderOverall();
 
-            return _overall;
+        return _overall;
     }
 
     public WorkOrderRatingsAssignedProvider overall(WorkOrderRatingsAssignedProviderOverall overall) throws ParseException {
@@ -154,7 +151,7 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public WorkOrderRatingsAssignedProvider user(User user) throws ParseException {
@@ -179,7 +176,7 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
         if (_workOrder == null)
             _workOrder = new WorkOrderRatingsAssignedProviderWorkOrder();
 
-            return _workOrder;
+        return _workOrder;
     }
 
     public WorkOrderRatingsAssignedProvider workOrder(WorkOrderRatingsAssignedProviderWorkOrder workOrder) throws ParseException {
@@ -294,5 +291,13 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+    private Set<ActionsEnum> _actionsSet = null;
 
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
+    }
 }

@@ -101,6 +101,7 @@ import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
@@ -556,7 +557,9 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
             menu.add(0, 3, 300, "Print");
         }
-        // TODO rate buyer
+        if (_workOrder.getRatings().getBuyer().getActionsSet().contains(WorkOrderRatingsBuyer.ActionsEnum.ADD)) {
+            menu.add(0, 4, 300, "Rate Buyer");
+        }
 
         if (menu.size() == 0) {
             _moreMenuButton.setVisibility(GONE);
