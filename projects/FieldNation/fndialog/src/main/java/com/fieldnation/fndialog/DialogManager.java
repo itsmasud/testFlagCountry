@@ -181,6 +181,11 @@ public class DialogManager extends FrameLayout implements Constants {
         Log.v(TAG, "onBackPressed");
         if (_dialogStack.size() > 0) {
             DialogHolder dh = _dialogStack.get(0);
+
+            if (!dh.dialog.onBackPressed()) {
+                return true;
+            }
+
             if (dh.dialog.isCancelable() && dh.dialog.getView().getVisibility() == VISIBLE) {
                 dh.dialog.cancel();
                 pop();

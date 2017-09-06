@@ -317,6 +317,17 @@ public class CounterOfferDialog extends FullScreenDialog {
         populateUi();
     }
 
+
+    @Override
+    public boolean onBackPressed() {
+        super.onBackPressed();
+        if (_bottomSheet.getVisibility() == View.VISIBLE) {
+            _bottomSheet_onCancel.onClick(_bottomSheetBackground);
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
