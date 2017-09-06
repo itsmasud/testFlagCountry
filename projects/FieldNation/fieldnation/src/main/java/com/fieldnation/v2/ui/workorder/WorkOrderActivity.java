@@ -215,7 +215,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     _workOrderScreen.setWorkOrder(_workOrder);
                 }
             } else if (!methodName.startsWith("get")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
 
             if (methodName.startsWith("get") || !success)
