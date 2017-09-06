@@ -308,78 +308,85 @@ public class WebCrawlerService extends Service {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onComplete " + methodName);
-            if (methodName.equals("getWorkOrderLists")) {
-                Log.v(TAG, "getWorkOrderLists");
-                SavedList[] savedList = (SavedList[]) successObject;
-                incrementPendingRequestCounter(-1);
+            try {
+                Log.v(TAG, "onComplete " + methodName);
+                if (methodName.equals("getWorkOrderLists")) {
+                    Log.v(TAG, "getWorkOrderLists");
+                    SavedList[] savedList = (SavedList[]) successObject;
+                    incrementPendingRequestCounter(-1);
 
-                for (SavedList list : savedList) {
-                    incrementPendingRequestCounter(1);
-                    incRequestCounter(1);
-                    // only run on assigned work
-                    if (list.getId().equals("workorders_assignments"))
-                        WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
-                }
-
-            } else if (methodName.equals("getWorkOrders")) {
-                WorkOrders workOrders = (WorkOrders) successObject;
-                Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
-                incrementPendingRequestCounter(-1);
-
-                if (!workOrders.getMetadata().getList().equals("workorders_assignments")) {
-                    Log.v(TAG, "!!!!!! Not assigned work !!!!!!");
-                    return;
-                }
-
-                // get the details
-                WorkOrder[] works = workOrders.getResults();
-                for (WorkOrder workOrder : works) {
-                    incrementPendingRequestCounter(1);
-                    incRequestCounter(1);
-                    WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
-                }
-
-                // request the other lists
-                ListEnvelope metadata = workOrders.getMetadata();
-                if (metadata.getPage() == 1) {
-                    for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
+                    for (SavedList list : savedList) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
-                        WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                        // only run on assigned work
+                        if (list.getId().equals("workorders_assignments"))
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
                     }
-                }
-            } else if (methodName.equals("getWorkOrder")) {
-                WorkOrder workOrder = (WorkOrder) successObject;
-                if (workOrder == null || workOrder.getId() == null)
-                    return;
 
-                Log.v(TAG, "getWorkOrder " + workOrder.getId());
-                incrementPendingRequestCounter(-1);
+                } else if (methodName.equals("getWorkOrders")) {
+                    WorkOrders workOrders = (WorkOrders) successObject;
+                    if (workOrders == null || workOrders.getMetadata() == null)
+                        return;
 
-                if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
-                    incrementPendingRequestCounter(1);
+                    Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
+                    incrementPendingRequestCounter(-1);
+
+                    if (!workOrders.getMetadata().getList().equals("workorders_assignments")) {
+                        Log.v(TAG, "!!!!!! Not assigned work !!!!!!");
+                        return;
+                    }
+
+                    // get the details
+                    WorkOrder[] works = workOrders.getResults();
+                    for (WorkOrder workOrder : works) {
+                        incrementPendingRequestCounter(1);
+                        incRequestCounter(1);
+                        WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
+                    }
+
+                    // request the other lists
+                    ListEnvelope metadata = workOrders.getMetadata();
+                    if (metadata.getPage() == 1) {
+                        for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
+                            incrementPendingRequestCounter(1);
+                            incRequestCounter(1);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                        }
+                    }
+                } else if (methodName.equals("getWorkOrder")) {
+                    WorkOrder workOrder = (WorkOrder) successObject;
+                    if (workOrder == null || workOrder.getId() == null)
+                        return;
+
+                    Log.v(TAG, "getWorkOrder " + workOrder.getId());
+                    incrementPendingRequestCounter(-1);
+
+                    if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
+                        incrementPendingRequestCounter(1);
+                        incRequestCounter(1);
+                        BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
+                    }
+
+                    // get messages for work order
                     incRequestCounter(1);
-                    BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
-                }
+                    WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, true);
 
-                // get messages for work order
-                incRequestCounter(1);
-                WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, true);
-
-                // get attachments
-                AttachmentFolders folders = workOrder.getAttachments();
-                if (folders.getResults().length > 0) {
-                    for (AttachmentFolder folder : folders.getResults()) {
-                        Attachment[] attachments = folder.getResults();
-                        if (attachments.length > 0) {
-                            for (Attachment attachment : attachments) {
-                                incRequestCounter(1);
-                                DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                    // get attachments
+                    AttachmentFolders folders = workOrder.getAttachments();
+                    if (folders.getResults().length > 0) {
+                        for (AttachmentFolder folder : folders.getResults()) {
+                            Attachment[] attachments = folder.getResults();
+                            if (attachments.length > 0) {
+                                for (Attachment attachment : attachments) {
+                                    incRequestCounter(1);
+                                    DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                }
                             }
                         }
                     }
                 }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     };
