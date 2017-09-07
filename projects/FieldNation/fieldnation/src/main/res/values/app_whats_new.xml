@@ -3,27 +3,31 @@
     <string name="added_new_feature">
 &lt;b&gt;What\'s new with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
-We\'ve started the redesign process on the work order details view by making it easier to add items with a floating action button and by moving attachments to the bottom of the view. We have also addressed a lot of the reported bugs with the Android O release on top of fixing other reported bugs.
+In an effort to move closer to the completion of the work order details redesign, we\'ve moved the
+primary action button into the toolbar for easy access and added a more menu for all secondary
+actions. From the more menu, you can now print a work order, report a problem, decline a work order,
+and rate buyer.
 &lt;br/&gt;
 &lt;br/&gt;
 
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;A floating action button to make it easier to add items to a work order&lt;/li&gt;
-&lt;li&gt;Monthly pay totals to payments screen&lt;/li&gt;
+&lt;li&gt;A more menu with secondary actions for the work order&lt;/li&gt;
+&lt;li&gt;Printing options from work order details&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;What we changed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Moved attachments out of the top tabs and to the bottom of the work order details view to get us one step closer to a complete redesign&lt;/li&gt;
+&lt;li&gt;Moved the primary action to the toolbar&lt;/li&gt;
+&lt;li&gt;Removed all tabs at the top of the work order&lt;/li&gt;
+&lt;li&gt;Moved messages to the toolbar&lt;/li&gt;
+&lt;li&gt;Updated the messages look and feel&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Crashes on Android O&lt;/li&gt;
-&lt;li&gt;Issues around dialogs and actions not working for larger work orders&lt;/li&gt;
-&lt;li&gt;Check in/out locations being off&lt;/li&gt;
-&lt;li&gt;Crash on empty work order lists&lt;/li&gt;
+&lt;li&gt;Crashes on profile photos&lt;/li&gt;
+&lt;li&gt;Crashes with work order data and offline mode&lt;/li&gt;
 &lt;/ul&gt;
     </string>
 </resources>
