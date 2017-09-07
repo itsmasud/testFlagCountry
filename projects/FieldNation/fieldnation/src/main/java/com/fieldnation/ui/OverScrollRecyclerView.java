@@ -150,7 +150,7 @@ public class OverScrollRecyclerView extends RecyclerView {
                         if (scrollAmountX < 0 || scrollAmountY < 0) {
 //                            Log.v(TAG, "OverScrollListView.overScrollBy(" + scrollAmountX + ", " + scrollAmountY + ")");
                             _onOverscrollListener.onOverScrolled(this, scrollAmountX, scrollAmountY);
-                            return true;
+                            return super.onTouchEvent(ev);
                         } else {
                             _onOverscrollListener.onOverScrollComplete(this, scrollAmountX, scrollAmountY);
                             scrollAmountX = 0;
