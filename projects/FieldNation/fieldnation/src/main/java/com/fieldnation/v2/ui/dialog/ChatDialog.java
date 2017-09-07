@@ -21,13 +21,13 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.v2.ui.chat.ChatInputView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.ui.chat.ChatAdapter;
+import com.fieldnation.v2.ui.chat.ChatInputView;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -62,12 +62,11 @@ public class ChatDialog extends FullScreenDialog {
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setTitle("Messages");
+        _toolbar.setTitle("LOADING...");
 
         _chatList = v.findViewById(R.id.chat_listview);
         _inputView = v.findViewById(R.id.input_view);
         _refreshView = v.findViewById(R.id.refresh_view);
-
         return v;
     }
 
@@ -148,7 +147,6 @@ public class ChatDialog extends FullScreenDialog {
     private final View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _refreshView.startRefreshing();
             if (misc.isEmptyOrNull(_inputView.getInputText())) {
                 ToastClient.toast(App.get(), "Please enter a message", Toast.LENGTH_SHORT);
                 return;
@@ -159,6 +157,7 @@ public class ChatDialog extends FullScreenDialog {
                 return;
             }
 
+            _refreshView.startRefreshing();
             Log.v(TAG, "_send_onClick");
 
             //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));``
@@ -256,6 +255,11 @@ public class ChatDialog extends FullScreenDialog {
                     });
 
                     _adapter.setMessages(flatList);
+                    if (flatList.size() == 0) {
+                        _toolbar.setTitle("New Message");
+                    } else {
+                        _toolbar.setTitle("Messages");
+                    }
 
                     rebuildList();
                 } else if (successObject instanceof Message) {
