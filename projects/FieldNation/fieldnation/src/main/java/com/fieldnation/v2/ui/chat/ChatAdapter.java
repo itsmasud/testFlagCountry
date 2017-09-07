@@ -38,9 +38,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
         objects.clear();
 
         if (source == null || source.size() == 0) {
+/*
             Tuple tuple = new Tuple();
             tuple.type = ChatViewHolder.TYPE_EMPTY;
             objects.add(tuple);
+*/
             return;
         }
 
@@ -131,9 +133,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
                         }
                     }
                 }
-
             }
-
         }
     }
 
