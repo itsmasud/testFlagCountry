@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.regex.Pattern;
 
 
-public class misc {
+public final class misc {
     private static final String HEXES = "0123456789ABCDEF";
     private static final NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
     private static final NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
@@ -554,8 +554,6 @@ public class misc {
         while (sec.length() < 2) {
             sec = "0" + sec;
         }
-
-        result = "";
 
         if (only_available) {
             if (!"00".equals(days)) {
