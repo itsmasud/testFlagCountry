@@ -46,6 +46,7 @@ public abstract class ToastClient extends Pigeon {
 
     private static final SecureRandom _random = new SecureRandom();
 
+
     public static void snackbar(Context context, long id, String title, int duration) {
         snackbar(context, id, title, null, null, duration);
     }

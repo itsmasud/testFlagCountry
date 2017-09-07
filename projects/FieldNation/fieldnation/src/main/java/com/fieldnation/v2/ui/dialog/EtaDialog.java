@@ -630,7 +630,7 @@ public class EtaDialog extends FullScreenDialog {
                     test = _woSchedule.getServiceWindow().getStart().getCalendar();
                     test.set(year, monthOfYear, dayOfMonth);
                     if (isValidEta(test)) {
-                        ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                        ToastClient.toast(App.get(), R.string.toast_pick_time_within_schedule, Toast.LENGTH_SHORT);
                         _etaStart = test;
                         populateUi();
                         _etaStartTimeButton.setText("");
@@ -638,12 +638,12 @@ public class EtaDialog extends FullScreenDialog {
                         test = _woSchedule.getServiceWindow().getEnd().getCalendar();
                         test.set(year, monthOfYear, dayOfMonth);
                         if (isValidEta(test)) {
-                            ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                            ToastClient.toast(App.get(), R.string.toast_pick_time_within_schedule, Toast.LENGTH_SHORT);
                             _etaStart = test;
                             populateUi();
                             _etaStartTimeButton.setText("");
                         } else {
-                            ToastClient.toast(App.get(), "Please select a date within the schedule", Toast.LENGTH_SHORT);
+                            ToastClient.toast(App.get(), R.string.toast_pick_time_within_schedule, Toast.LENGTH_SHORT);
                         }
                     }
                 } catch (Exception ex) {
@@ -671,7 +671,7 @@ public class EtaDialog extends FullScreenDialog {
                 _etaStart = test;
                 populateUi();
             } else {
-                ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_pick_time_within_schedule, Toast.LENGTH_SHORT);
                 // TODO, pop the dialog again?
             }
         }
@@ -706,7 +706,7 @@ public class EtaDialog extends FullScreenDialog {
                     _durationMilliseconds = milliseconds;
                     populateUi();
                 } else {
-                    ToastClient.toast(App.get(), "Please select a duration within the range", Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), R.string.toast_pick_duration_within_range, Toast.LENGTH_LONG);
                 }
             }
         }
@@ -747,7 +747,7 @@ public class EtaDialog extends FullScreenDialog {
             // only do eta checks if switch is on
             if (_etaSwitch.isChecked()) {
                 if (!isValidEta(_etaStart)) {
-                    ToastClient.toast(App.get(), "Please enter a valid eta.", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), R.string.toast_invalid_eta, Toast.LENGTH_SHORT);
                     return true;
                 }
 

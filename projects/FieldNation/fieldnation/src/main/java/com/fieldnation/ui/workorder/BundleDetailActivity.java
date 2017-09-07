@@ -350,11 +350,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             if (action.contains("decline") && !failed) {
-                ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             if (action.contains("delete_request") && !failed) {
-                ToastClient.toast(App.get(), "You withdrew bundle successfully.", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_bundle_withdrawn_success, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             _adapter.refreshAll();
@@ -373,16 +373,16 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
-                ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             if (methodName.contains("deleteRequest") && success) {
-                ToastClient.toast(App.get(), "You withdrew bundle successfully.", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_bundle_withdrawn_success, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             if (methodName.contains("MassAcceptWorkOrder") && success) {
                 setLoading(false);
-                ToastClient.toast(App.get(), "Bundle workorders accepted successfully.", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             if (methodName.contains("updateETA") && success) {

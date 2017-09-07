@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.FileHelper;
+import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Signature;
@@ -682,7 +683,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             @Override
             public void fail(String reason) {
                 Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
-                ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
+                ToastClient.toast(context, R.string.toast_could_not_upload_file, Toast.LENGTH_LONG);
             }
         });
     }
@@ -697,7 +698,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             @Override
             public void fail(String reason) {
                 Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
-                ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
+                ToastClient.toast(context, R.string.toast_could_not_upload_file, Toast.LENGTH_LONG);
             }
         });
     }

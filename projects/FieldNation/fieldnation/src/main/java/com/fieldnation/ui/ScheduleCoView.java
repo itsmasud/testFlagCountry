@@ -299,7 +299,7 @@ public class ScheduleCoView extends RelativeLayout {
                     _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 } else {
                     if (_startCal.after(_endCal)) {
-                        ToastClient.toast(App.get(), "Please pick a start time before the end time", Toast.LENGTH_SHORT);
+                        ToastClient.toast(App.get(), R.string.toast_pick_start_time_before_end, Toast.LENGTH_SHORT);
                     }
                     _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 }
@@ -322,7 +322,7 @@ public class ScheduleCoView extends RelativeLayout {
                 }
 
                 if (_startCal.after(_endCal)) {
-                    ToastClient.toast(App.get(), "Please pick an end time after the start time", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), R.string.toast_pick_end_time_after_start, Toast.LENGTH_SHORT);
                 }
 
                 _endIsSet = true;
