@@ -23,8 +23,8 @@
         style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
     <LinearLayout
         android:id="@+id/button_toolbar"
@@ -33,11 +33,9 @@
         android:layout_below="@+id/toolbar"
         android:background="@color/fn_primary"
         android:orientation="horizontal"
-        android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:paddingTop="8dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <Button
             android:id="@+id/notInterested_button"
