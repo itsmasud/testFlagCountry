@@ -1799,7 +1799,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
-                ToastClient.toast(App.get(), "Error: " + ((Error) failObject).getMessage(), Toast.LENGTH_LONG);
                 setLoading(false);
             }
         }
