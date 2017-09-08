@@ -53,6 +53,7 @@ public class DeclineDialog extends FullScreenDialog {
     private static final String PARAM_WORK_ORDER_ID = "workOrderId";
     private static final String PARAM_COMPANY_ID = "companyId";
     private static final String PARAM_BUNDLE_SIZE = "bundleSize";
+    private static final String PARAM_FINISH_ACTIVITY = "finishActivity";
 
 
     // Ui
@@ -74,6 +75,7 @@ public class DeclineDialog extends FullScreenDialog {
     private int _workOrderId = 0;
     private int _companyId = 0;
     private int _bundleSize = 0;
+    private boolean _finishActivity = false;
 
     public DeclineDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -147,6 +149,7 @@ public class DeclineDialog extends FullScreenDialog {
         _type = payload.getInt(PARAM_TYPE);
         _companyId = payload.getInt(PARAM_COMPANY_ID);
         _bundleSize = payload.getInt(PARAM_BUNDLE_SIZE);
+        _finishActivity = payload.getBoolean(PARAM_FINISH_ACTIVITY);
 
         super.show(payload, animate);
 
@@ -256,7 +259,9 @@ public class DeclineDialog extends FullScreenDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    AppMessagingClient.finishActivity();
+
+                    if (_finishActivity)
+                        AppMessagingClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
@@ -269,6 +274,8 @@ public class DeclineDialog extends FullScreenDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
+
+                    if (_finishActivity)
                     AppMessagingClient.finishActivity();
                 }
             } else {
@@ -285,6 +292,8 @@ public class DeclineDialog extends FullScreenDialog {
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
+
+                    if (_finishActivity)
                     AppMessagingClient.finishActivity();
                 }
             }
@@ -354,6 +363,7 @@ public class DeclineDialog extends FullScreenDialog {
         params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
         params.putInt(PARAM_COMPANY_ID, companyId);
         params.putInt(PARAM_BUNDLE_SIZE, bundleSize);
+        params.putBoolean(PARAM_FINISH_ACTIVITY, true);
 
         Controller.show(context, uid, DeclineDialog.class, params);
     }
@@ -364,12 +374,13 @@ public class DeclineDialog extends FullScreenDialog {
      * @param workOrderId
      * @param companyId
      */
-    public static void show(Context context, String uid, int workOrderId, int companyId) {
+    public static void show(Context context, String uid, int workOrderId, int companyId, boolean finishActivity) {
         Bundle params = new Bundle();
         params.putInt(PARAM_TYPE, TYPE_WORK_ORDER);
         params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
         params.putInt(PARAM_COMPANY_ID, companyId);
         params.putInt(PARAM_BUNDLE_SIZE, 0);
+        params.putBoolean(PARAM_FINISH_ACTIVITY, finishActivity);
 
         Controller.show(context, uid, DeclineDialog.class, params);
     }
