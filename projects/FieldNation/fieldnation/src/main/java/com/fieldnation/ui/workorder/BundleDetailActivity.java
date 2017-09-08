@@ -382,7 +382,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             }
             if (methodName.contains("MassAcceptWorkOrder") && success) {
                 setLoading(false);
-                ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), R.string.toast_bundle_accepted, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             if (methodName.contains("updateETA") && success) {
