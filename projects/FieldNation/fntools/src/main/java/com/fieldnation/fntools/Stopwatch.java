@@ -3,7 +3,7 @@ package com.fieldnation.fntools;
 public class Stopwatch {
     private boolean running;
     private long start_time;
-    private long pause_time;
+    private long pause_time = 0;
     private boolean paused;
 
     public Stopwatch() {
@@ -19,10 +19,8 @@ public class Stopwatch {
         } else {
             running = false;
         }
-
         paused = false;
     }
-
 
     public void start() {
         if (!running) {
@@ -33,7 +31,6 @@ public class Stopwatch {
         }
     }
 
-
     public void pause() {
         if (running) {
             pause_time = System.currentTimeMillis();
@@ -41,26 +38,27 @@ public class Stopwatch {
         }
     }
 
-
     public void unpause() {
-        if (running) {
+        if (running && paused) {
             start_time = System.currentTimeMillis() - (pause_time - start_time);
+            pause_time = 0;
             paused = false;
         }
     }
 
-
     public long getTime() {
-        return System.currentTimeMillis() - start_time;
+        if (paused) {
+            return pause_time - start_time;
+        } else {
+            return System.currentTimeMillis() - start_time;
+        }
     }
-
 
     public long finish() {
         if (running) {
             running = false;
             return getTime();
         }
-
         return 0;
     }
 
