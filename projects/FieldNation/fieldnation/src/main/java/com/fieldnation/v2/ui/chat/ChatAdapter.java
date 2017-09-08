@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.v2.data.model.Message;
@@ -24,6 +25,7 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
     private static final String TAG = "MessageAdapter";
+    private static final int MAX_MESSAGE_SIZE = 2048;
 
     private List<Message> source = null;
     private List<Tuple> objects = new LinkedList<>();
@@ -45,6 +47,33 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
 */
             return;
         }
+
+        // Split messages
+        List<Message> newList = new LinkedList<>();
+        for (Message message : source) {
+            if (message.getMessage().length() > MAX_MESSAGE_SIZE) {
+                String msg = message.getMessage();
+                while (msg.length() > MAX_MESSAGE_SIZE) {
+                    try {
+                        newList.add(copyMessage(message).message(msg.substring(0, MAX_MESSAGE_SIZE)));
+                        msg = msg.substring(MAX_MESSAGE_SIZE);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+
+                if (msg.length() > 0) {
+                    try {
+                        newList.add(copyMessage(message).message(msg));
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+            } else {
+                newList.add(message);
+            }
+        }
+        source = newList;
 
         // group by days
         List<List<Message>> dayGroup = new LinkedList<>();
@@ -137,9 +166,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
         }
     }
 
+    private Message copyMessage(Message message) {
+        try {
+            return Message.fromJson(new JsonObject(message.getJson().toString()));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
     private static class Tuple {
         public int type;
         public Object object;
+
+        public Tuple() {
+        }
+
+        public Tuple(int type, Object object) {
+            this.type = type;
+            this.object = object;
+        }
     }
 
     @Override

@@ -80,7 +80,8 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
             return;
 
         try {
-            _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
+            String message = _message.getMessage();
+            _messageTextView.setText(misc.linkifyHtml(message, Linkify.ALL));
             _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
         } catch (Exception ex) {
             _messageTextView.setText(_message.getMessage());
@@ -99,16 +100,16 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
 
         switch (_position) {
             case FULL:
-                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_right_full));
+                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_right_full));
                 break;
             case TOP:
-                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_right_top));
+                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_right_top));
                 break;
             case CENTER:
-                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_right_center));
+                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_right_center));
                 break;
             case BOTTOM:
-                _messageTextView.setBackground(getContext().getDrawable(R.drawable.chat_right_bottom));
+                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_right_bottom));
                 break;
         }
     }
