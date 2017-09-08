@@ -79,7 +79,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        _workOrderApi.sub();
+        _workOrderApi.unsub();
         super.onDetachedFromWindow();
     }
 
@@ -89,7 +89,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
     public void setWorkOrderId(int workOrderId) {
         _workOrderId = workOrderId;
-        _workOrderApi.unsub();
+        _workOrderApi.sub();
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
 
         postDelayed(new Runnable() {
