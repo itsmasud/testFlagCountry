@@ -2,8 +2,6 @@ package com.fieldnation.fntools;
 
 import android.os.Handler;
 
-import com.fieldnation.fnlog.Log;
-
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -16,10 +14,13 @@ public abstract class KeyedDispatcher<T> {
     private static final String TAG = "KeyedDispatcher";
     private Hashtable<String, Set<T>> LISTENERS = new Hashtable<>();
 
-    private static Handler _handler;
+    private static Handler _handler = null;
 
-    static {
-        _handler = new Handler(ContextProvider.get().getMainLooper());
+    private static Handler getHandler() {
+        if (_handler == null)
+            _handler = new Handler(ContextProvider.get().getMainLooper());
+
+        return _handler;
     }
 
     private Set<T> getSet(String key) {
@@ -62,24 +63,15 @@ public abstract class KeyedDispatcher<T> {
     }
 
 
-    public void dispatchAll(final Object... parameters) {
+    public void dispatchAll(Object... parameters) {
         for (Set<T> set : LISTENERS.values()) {
-            for (final T listener : set) {
-                _handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            onDispatch(listener, parameters);
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
-                    }
-                });
+            for (T listener : set) {
+                getHandler().post(new DispatchRunnable<>(this, listener, parameters));
             }
         }
     }
 
-    public void dispatch(String key, final Object... parameters) {
+    public void dispatch(String key, Object... parameters) {
         if (misc.isEmptyOrNull(key))
             return;
 
@@ -87,17 +79,25 @@ public abstract class KeyedDispatcher<T> {
             return;
 
         Set<T> set = getSet(key);
-        for (final T listener : set) {
-            _handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        onDispatch(listener, parameters);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-            });
+        for (T listener : set) {
+            getHandler().post(new DispatchRunnable<>(this, listener, parameters));
+        }
+    }
+
+    private static class DispatchRunnable<T> implements Runnable {
+        KeyedDispatcher<T> dispatcher;
+        T listener;
+        Object[] parameters;
+
+        DispatchRunnable(KeyedDispatcher<T> dispatcher, T listener, Object... parameters) {
+            this.listener = listener;
+            this.parameters = parameters;
+            this.dispatcher = dispatcher;
+        }
+
+        @Override
+        public void run() {
+            dispatcher.onDispatch(listener, parameters);
         }
     }
 
