@@ -84,7 +84,6 @@ import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
@@ -515,7 +514,7 @@ public class WorkOrderScreen extends RelativeLayout {
     }
 
     private void populateUi() {
-        misc.hideKeyboard(this);
+        //misc.hideKeyboard(this);
 
         if (_workOrder == null)
             return;
