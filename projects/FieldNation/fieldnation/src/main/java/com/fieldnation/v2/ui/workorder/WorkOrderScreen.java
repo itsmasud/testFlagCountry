@@ -746,7 +746,7 @@ public class WorkOrderScreen extends RelativeLayout {
                                 App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
                                 _workOrderId, _workOrder.getCompany().getId());
                     } else {
-                        DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId());
+                        DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId(), true);
                     }
                     break;
                 case 3: // print
@@ -874,8 +874,7 @@ public class WorkOrderScreen extends RelativeLayout {
                         App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrderId, _workOrder.getCompany().getId());
             } else {
-                DeclineDialog.show(
-                        App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId());
+                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId(), true);
             }
         }
 
