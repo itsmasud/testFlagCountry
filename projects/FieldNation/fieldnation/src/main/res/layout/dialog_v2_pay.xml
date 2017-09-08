@@ -238,7 +238,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/blended_layout"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:visibility="visible">
 
