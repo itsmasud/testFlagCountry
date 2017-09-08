@@ -1,7 +1,8 @@
 package com.fieldnation.fntools;
 
+import android.os.Handler;
+
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -14,6 +15,12 @@ import java.util.Set;
 public abstract class KeyedDispatcher<T> {
     private static final String TAG = "KeyedDispatcher";
     private Hashtable<String, Set<T>> LISTENERS = new Hashtable<>();
+
+    private static Handler _handler;
+
+    static {
+        _handler = new Handler(ContextProvider.get().getMainLooper());
+    }
 
     private Set<T> getSet(String key) {
         if (misc.isEmptyOrNull(key))
@@ -55,19 +62,24 @@ public abstract class KeyedDispatcher<T> {
     }
 
 
-    public void dispatchAll(Object... parameters) {
+    public void dispatchAll(final Object... parameters) {
         for (Set<T> set : LISTENERS.values()) {
-            for (T listener : set) {
-                try {
-                    onDispatch(listener, parameters);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
+            for (final T listener : set) {
+                _handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            onDispatch(listener, parameters);
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
+                    }
+                });
             }
         }
     }
 
-    public void dispatch(String key, Object... parameters) {
+    public void dispatch(String key, final Object... parameters) {
         if (misc.isEmptyOrNull(key))
             return;
 
@@ -75,12 +87,17 @@ public abstract class KeyedDispatcher<T> {
             return;
 
         Set<T> set = getSet(key);
-        for (T listener : set) {
-            try {
-                onDispatch(listener, parameters);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+        for (final T listener : set) {
+            _handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        onDispatch(listener, parameters);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+            });
         }
     }
 
