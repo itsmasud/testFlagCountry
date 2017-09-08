@@ -108,9 +108,9 @@ public class FilePickerScreen extends FrameLayout {
 
         if (selectedFileNumber > 0) {
             _sendMenu.setEnabled(true);
-            _sendMenu.setTitle(getResources().getString(R.string.send_num, selectedFileNumber));
+            _sendMenu.setText(getResources().getString(R.string.send_num, selectedFileNumber));
         } else {
-            _sendMenu.setTitle("");
+            _sendMenu.setText("");
             _sendMenu.setEnabled(false);
         }
     }
