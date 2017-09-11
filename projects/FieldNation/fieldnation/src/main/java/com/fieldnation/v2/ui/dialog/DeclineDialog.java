@@ -21,7 +21,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
@@ -287,7 +286,7 @@ public class DeclineDialog extends FullScreenDialog {
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
                     if (_finishActivity)
-                    AppMessagingClient.finishActivity();
+                        AppMessagingClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
