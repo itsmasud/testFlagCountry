@@ -549,8 +549,8 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             menu.add(0, 1, 300, "Report A Problem");
         }
-        if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
-                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+        if (!(_workOrder.getBundle().getId() > 0) &&  (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD))) {
             menu.add(0, 2, 300, "Not Interested");
         }
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
@@ -1537,7 +1537,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
     private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteDialog_markIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
         @Override
-        public void onMarkIncomplete(long workOrderId) {
+        public void onMarkIncomplete(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrderId);
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();

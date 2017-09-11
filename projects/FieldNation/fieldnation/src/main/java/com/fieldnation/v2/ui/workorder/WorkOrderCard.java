@@ -661,7 +661,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteWarningDialog_onMarkIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
         @Override
-        public void onMarkIncomplete(long workOrderId) {
+        public void onMarkIncomplete(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)

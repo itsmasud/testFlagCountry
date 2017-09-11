@@ -48,13 +48,13 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
     /*-         Mark Incomplete           -*/
     /*-***********************************-*/
     public interface OnMarkIncompleteListener {
-        void onMarkIncomplete(long workOrderId);
+        void onMarkIncomplete(int workOrderId);
     }
 
     private static KeyedDispatcher<OnMarkIncompleteListener> _onMarkIncompleteDispatcher = new KeyedDispatcher<OnMarkIncompleteListener>() {
         @Override
         public void onDispatch(OnMarkIncompleteListener listener, Object... parameters) {
-            listener.onMarkIncomplete((Long) parameters[0]);
+            listener.onMarkIncomplete((Integer) parameters[0]);
         }
     };
 
