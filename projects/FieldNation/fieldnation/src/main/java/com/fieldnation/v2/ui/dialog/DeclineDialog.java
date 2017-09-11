@@ -276,7 +276,7 @@ public class DeclineDialog extends FullScreenDialog {
                     onDeclined();
 
                     if (_finishActivity)
-                    AppMessagingClient.finishActivity();
+                        AppMessagingClient.finishActivity();
                 }
             } else {
                 if (_declinePosition == -1) {
@@ -285,7 +285,8 @@ public class DeclineDialog extends FullScreenDialog {
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
-                    AppMessagingClient.finishActivity();
+                    if (_finishActivity)
+                        AppMessagingClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
                         WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
@@ -294,7 +295,7 @@ public class DeclineDialog extends FullScreenDialog {
                     onDeclined();
 
                     if (_finishActivity)
-                    AppMessagingClient.finishActivity();
+                        AppMessagingClient.finishActivity();
                 }
             }
             dismiss(true);
