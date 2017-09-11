@@ -1537,7 +1537,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
     private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteDialog_markIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
         @Override
-        public void onMarkIncomplete(long workOrderId) {
+        public void onMarkIncomplete(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrderId);
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
