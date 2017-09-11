@@ -152,12 +152,6 @@ public class DeclineDialog extends FullScreenDialog {
         _bundleSize = payload.getInt(PARAM_BUNDLE_SIZE);
         _finishActivity = payload.getBoolean(PARAM_FINISH_ACTIVITY);
 
-        if (_finishActivity) {
-            Log.e(TAG, "_finishActivity is true");
-        } else {
-            Log.e(TAG, "_finishActivity is false ");
-        }
-
         super.show(payload, animate);
 
         populateUi();
