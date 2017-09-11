@@ -281,7 +281,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     private final RequestBundleDialog.OnRequestedListener _requestBundleDialog_onRequested = new RequestBundleDialog.OnRequestedListener() {
         @Override
-        public void onRequested(long workOrderId) {
+        public void onRequested(int workOrderId) {
             setLoading(true);
         }
     };

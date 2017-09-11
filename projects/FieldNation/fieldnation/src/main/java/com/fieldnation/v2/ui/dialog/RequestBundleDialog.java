@@ -279,13 +279,13 @@ public class RequestBundleDialog extends SimpleDialog {
     /*-         Requested Listener           -*/
     /*-**************************************-*/
     public interface OnRequestedListener {
-        void onRequested(long workOrderId);
+        void onRequested(int workOrderId);
     }
 
     private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
         @Override
         public void onDispatch(OnRequestedListener listener, Object... parameters) {
-            listener.onRequested((Long) parameters[0]);
+            listener.onRequested((Integer) parameters[0]);
         }
     };
 
@@ -306,13 +306,13 @@ public class RequestBundleDialog extends SimpleDialog {
     /*-         Canceled Listener           -*/
     /*-*************************************-*/
     public interface OnCanceledListener {
-        void onCanceled(long workOrderId);
+        void onCanceled(int workOrderId);
     }
 
     private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
         @Override
         public void onDispatch(OnCanceledListener listener, Object... parameters) {
-            listener.onCanceled((Long) parameters[0]);
+            listener.onCanceled((Integer) parameters[0]);
         }
     };
 
