@@ -19,12 +19,16 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -259,6 +263,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
             }
 
             for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
+                                .action("start")
+                                .value(1)
+                                .build());
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_selectedFolder.getId());

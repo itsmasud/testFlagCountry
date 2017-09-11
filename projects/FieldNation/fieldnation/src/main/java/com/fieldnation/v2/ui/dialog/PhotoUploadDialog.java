@@ -21,7 +21,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -260,6 +263,14 @@ public class PhotoUploadDialog extends SimpleDialog {
             }
 
             if (_task != null) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
+                                .action("start")
+                                .value(1)
+                                .build());
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
@@ -272,6 +283,16 @@ public class PhotoUploadDialog extends SimpleDialog {
             }
 
             if (_slot != null) {
+                Log.v(TAG, getUid() + " slot attached");
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
+                                .action("start")
+                                .value(1)
+                                .build());
+
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
