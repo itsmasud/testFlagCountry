@@ -15,10 +15,14 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.model.Attachment;
@@ -34,7 +38,7 @@ import java.util.List;
  */
 
 public class AttachedFoldersDialog extends FullScreenDialog {
-    private static final String TAG = "SlotDialog";
+    private static final String TAG = "AttachedFoldersDialog";
 
     // Dialog Tags
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
@@ -177,6 +181,15 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                 }
                 return;
             }
+
+            Tracker.event(App.get(),
+                    new SimpleEvent.Builder()
+                            .tag(AnswersWrapper.TAG)
+                            .category("AttachmentUpload")
+                            .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
+                            .action("start")
+                            .value(1)
+                            .build());
 
             for (GetFileDialog.UriIntent fui : fileResult) {
                 try {

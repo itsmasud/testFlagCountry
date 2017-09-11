@@ -12,7 +12,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -237,6 +240,13 @@ public class ReceiverActivity extends AuthSimpleActivity {
             // if file list == 1, then start upload and redirect to work order details
             if (_sharedFiles.length == 1) {
                 startWorkOrderDetails();
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("ReceiverActivity - single")
+                                .action("start")
+                                .build());
 
                 try {
                     Attachment attachment = new Attachment();
@@ -272,6 +282,13 @@ public class ReceiverActivity extends AuthSimpleActivity {
 //                        _selectedUploadSlot.getMaxFiles() - _selectedUploadSlot.getUploadedDocuments().length), Toast.LENGTH_LONG);
 //                return;
 //            }
+            Tracker.event(App.get(),
+                    new SimpleEvent.Builder()
+                            .tag(AnswersWrapper.TAG)
+                            .category("AttachmentUpload")
+                            .label("ReceiverActivity - multiple")
+                            .action("start")
+                            .build());
 
             for (SharedFile file : sharedFiles) {
 
