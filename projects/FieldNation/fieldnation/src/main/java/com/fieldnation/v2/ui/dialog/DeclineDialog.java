@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
@@ -151,6 +152,12 @@ public class DeclineDialog extends FullScreenDialog {
         _bundleSize = payload.getInt(PARAM_BUNDLE_SIZE);
         _finishActivity = payload.getBoolean(PARAM_FINISH_ACTIVITY);
 
+        if (_finishActivity) {
+            Log.e(TAG, "_finishActivity is true");
+        } else {
+            Log.e(TAG, "_finishActivity is false ");
+        }
+
         super.show(payload, animate);
 
         populateUi();
@@ -276,7 +283,7 @@ public class DeclineDialog extends FullScreenDialog {
                     onDeclined();
 
                     if (_finishActivity)
-                    AppMessagingClient.finishActivity();
+                        AppMessagingClient.finishActivity();
                 }
             } else {
                 if (_declinePosition == -1) {
@@ -285,6 +292,7 @@ public class DeclineDialog extends FullScreenDialog {
                     else
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
+                    if (_finishActivity)
                     AppMessagingClient.finishActivity();
                 } else {
                     if (_bundleSize == 0) // not a bundle
@@ -294,7 +302,7 @@ public class DeclineDialog extends FullScreenDialog {
                     onDeclined();
 
                     if (_finishActivity)
-                    AppMessagingClient.finishActivity();
+                        AppMessagingClient.finishActivity();
                 }
             }
             dismiss(true);
