@@ -269,7 +269,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
                                 .category("AttachmentUpload")
                                 .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
                                 .action("start")
-                                .value(1)
                                 .build());
                 Attachment attachment = new Attachment();
                 try {

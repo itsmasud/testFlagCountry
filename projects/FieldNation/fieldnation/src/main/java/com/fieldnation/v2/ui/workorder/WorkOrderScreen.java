@@ -1392,7 +1392,6 @@ public class WorkOrderScreen extends RelativeLayout {
                             .category("AttachmentUpload")
                             .label("WorkOrderScreen - multiple")
                             .action("start")
-                            .value(1)
                             .build());
 
             for (GetFileDialog.UriIntent fui : fileResult) {

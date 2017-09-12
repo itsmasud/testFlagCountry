@@ -188,7 +188,6 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                             .category("AttachmentUpload")
                             .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
                             .action("start")
-                            .value(1)
                             .build());
 
             for (GetFileDialog.UriIntent fui : fileResult) {

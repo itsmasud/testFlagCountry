@@ -32,7 +32,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -46,7 +45,7 @@ import java.io.File;
  * @author shoaib.ahmed
  */
 public class PhotoUploadDialog extends SimpleDialog {
-    private static final String TAG = UniqueTag.makeTag("PhotoUploadDialog");
+    private static final String TAG = "PhotoUploadDialog";
 
     // State
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
@@ -269,7 +268,6 @@ public class PhotoUploadDialog extends SimpleDialog {
                                 .category("AttachmentUpload")
                                 .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                 .action("start")
-                                .value(1)
                                 .build());
                 try {
                     Attachment attachment = new Attachment();
@@ -290,7 +288,6 @@ public class PhotoUploadDialog extends SimpleDialog {
                                 .category("AttachmentUpload")
                                 .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
                                 .action("start")
-                                .value(1)
                                 .build());
 
                 try {
