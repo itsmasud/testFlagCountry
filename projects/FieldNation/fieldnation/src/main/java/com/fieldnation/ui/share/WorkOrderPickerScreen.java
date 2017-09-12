@@ -10,7 +10,6 @@ import android.widget.FrameLayout;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.search.SearchResultScreen;
 
 /**
  * Created by Michael on 9/27/2016.
@@ -32,7 +31,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
 
     // UI
     private Toolbar _toolbar;
-    private SearchResultScreen _workOrderScreen;
+    private PickerResultScreen _workOrderScreen;
 
     // Data
     private Listener _listener;
@@ -88,7 +87,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
         _listener = listener;
     }
 
-    private final SearchResultScreen.OnClickListener _searchResultScreen_listener = new SearchResultScreen.OnClickListener() {
+    private final PickerResultScreen.OnClickListener _searchResultScreen_listener = new PickerResultScreen.OnClickListener() {
         @Override
         public void onWorkOrderClicked(WorkOrder workOrder) {
             if (_listener != null)
