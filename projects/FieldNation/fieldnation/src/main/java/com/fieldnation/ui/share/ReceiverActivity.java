@@ -282,15 +282,14 @@ public class ReceiverActivity extends AuthSimpleActivity {
 //                        _selectedUploadSlot.getMaxFiles() - _selectedUploadSlot.getUploadedDocuments().length), Toast.LENGTH_LONG);
 //                return;
 //            }
-            Tracker.event(App.get(),
-                    new SimpleEvent.Builder()
-                            .tag(AnswersWrapper.TAG)
-                            .category("AttachmentUpload")
-                            .label("ReceiverActivity - multiple")
-                            .action("start")
-                            .build());
-
             for (SharedFile file : sharedFiles) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("ReceiverActivity - multiple")
+                                .action("start")
+                                .build());
 
                 try {
                     Attachment attachment = new Attachment();

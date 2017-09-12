@@ -31,6 +31,7 @@ import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.GetFilePackage;
 import com.fieldnation.v2.ui.GetFilePackageAdapter;
@@ -269,6 +270,14 @@ public class GetFileDialog extends SimpleDialog {
                 }
 
                 Log.v(TAG, "Dispatch _onFileDispatcher");
+                for (UriIntent ui : fileUris) {
+                    if (ui.uri != null) {
+                        FileCacheClient.cacheFileUpload(App.get(), "", ui.uri);
+                    } else if (ui.intent != null && ui.intent.getData() != null) {
+                        FileCacheClient.cacheFileUpload(App.get(), "", ui.intent.getData());
+                    }
+                }
+
                 _onFileDispatcher.dispatch(getUid(), fileUris);
                 dismiss(false);
             } catch (Exception ex) {

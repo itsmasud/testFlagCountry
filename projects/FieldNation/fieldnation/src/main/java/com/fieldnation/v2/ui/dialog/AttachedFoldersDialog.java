@@ -182,15 +182,15 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                 return;
             }
 
-            Tracker.event(App.get(),
-                    new SimpleEvent.Builder()
-                            .tag(AnswersWrapper.TAG)
-                            .category("AttachmentUpload")
-                            .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
-                            .action("start")
-                            .build());
-
             for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
+                                .action("start")
+                                .build());
+
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentFolder.getId());

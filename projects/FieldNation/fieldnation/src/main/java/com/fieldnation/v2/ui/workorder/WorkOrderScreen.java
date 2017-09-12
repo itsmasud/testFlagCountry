@@ -1386,15 +1386,15 @@ public class WorkOrderScreen extends RelativeLayout {
                 return;
             }
 
-            Tracker.event(App.get(),
-                    new SimpleEvent.Builder()
-                            .tag(AnswersWrapper.TAG)
-                            .category("AttachmentUpload")
-                            .label("WorkOrderScreen - multiple")
-                            .action("start")
-                            .build());
-
             for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("WorkOrderScreen - multiple")
+                                .action("start")
+                                .build());
+
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
