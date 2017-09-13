@@ -60,7 +60,7 @@ public class RequestBundleDialog extends SimpleDialog {
     private int _type = TYPE_ACCEPT;
     private long _bundleId = 0;
     private int _bundleSize = 0;
-    private long _workOrderId = 0;
+    private int _workOrderId = 0;
 
     private int _currentPosition = 1;
     private long _expiringDurationSeconds = -1;
@@ -110,7 +110,7 @@ public class RequestBundleDialog extends SimpleDialog {
         _type = payload.getInt(PARAM_TYPE);
         _bundleId = payload.getLong(PARAM_BUNDLE_ID);
         _bundleSize = payload.getInt(PARAM_BUNDLE_SIZE);
-        _workOrderId = payload.getLong(PARAM_WORK_ORDER_ID);
+        _workOrderId = payload.getInt(PARAM_WORK_ORDER_ID);
 
         super.show(payload, animate);
 
@@ -266,10 +266,10 @@ public class RequestBundleDialog extends SimpleDialog {
      * @param workOrderId An id of one of the work orders in the bundle.
      * @param type        One of {@link #TYPE_ACCEPT} or {@link #TYPE_REQUEST}
      */
-    public static void show(Context context, String uid, long bundleId, int bundleSize, long workOrderId, int type) {
+    public static void show(Context context, String uid, long bundleId, int bundleSize, int workOrderId, int type) {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_BUNDLE_ID, bundleId);
-        bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        bundle.putInt(PARAM_WORK_ORDER_ID, workOrderId);
         bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
         bundle.putInt(PARAM_TYPE, type);
         Controller.show(context, uid, RequestBundleDialog.class, bundle);

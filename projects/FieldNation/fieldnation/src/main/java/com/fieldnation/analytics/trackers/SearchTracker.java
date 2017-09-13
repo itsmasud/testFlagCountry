@@ -75,7 +75,7 @@ public class SearchTracker {
         TrackerBase.show(context, SCREEN, null);
     }
 
-    public static void onSearch(Context context, Item item, long workOrderId) {
+    public static void onSearch(Context context, Item item, int workOrderId) {
         TrackerBase.unstructuredEvent(context, item,
                 new EventContext[]{
                         new SpSearchContext.Builder()
