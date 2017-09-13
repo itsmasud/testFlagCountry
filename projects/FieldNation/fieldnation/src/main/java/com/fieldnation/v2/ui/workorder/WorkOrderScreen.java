@@ -175,6 +175,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
     // UI
+    private WorkOrderHeaderView _headerView;
     private Toolbar _toolbar;
     private Button _toolbarActionButton;
     private Button _testButton;
@@ -246,6 +247,9 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
+
+        _headerView = findViewById(R.id.header_view);
+        _renderers.add(_headerView);
 
         _topBar = findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -549,7 +553,7 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             menu.add(0, 1, 300, "Report A Problem");
         }
-        if (!(_workOrder.getBundle().getId() > 0) &&  (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+        if (!(_workOrder.getBundle().getId() > 0) && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
                 || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD))) {
             menu.add(0, 2, 300, "Not Interested");
         }
