@@ -117,7 +117,7 @@ public class SearchEditText extends RelativeLayout {
                 try {
                     SearchTracker.onSearch(App.get(),
                             SearchTracker.Item.KEYBOARD,
-                            Long.parseLong(_searchTermEditText.getText().toString()));
+                            Integer.parseInt(_searchTermEditText.getText().toString()));
                 } catch (Exception ex) {
                 }
                 doWorkOrderLookup();
@@ -148,7 +148,7 @@ public class SearchEditText extends RelativeLayout {
             try {
                 SearchTracker.onSearch(App.get(),
                         SearchTracker.Item.SEARCH_BAR,
-                        Long.parseLong(_searchTermEditText.getText().toString()));
+                        Integer.parseInt(_searchTermEditText.getText().toString()));
             } catch (Exception ex) {
             }
             doWorkOrderLookup();
