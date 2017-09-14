@@ -32,11 +32,14 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -549,7 +552,7 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             menu.add(0, 1, 300, "Report A Problem");
         }
-        if (!(_workOrder.getBundle().getId() > 0) &&  (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+        if (!(_workOrder.getBundle().getId() > 0) && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
                 || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD))) {
             menu.add(0, 2, 300, "Not Interested");
         }
@@ -1376,7 +1379,7 @@ public class WorkOrderScreen extends RelativeLayout {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), "uid", _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), null, _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
                 }
@@ -1384,6 +1387,14 @@ public class WorkOrderScreen extends RelativeLayout {
             }
 
             for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("WorkOrderScreen - multiple")
+                                .action("start")
+                                .build());
+
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());

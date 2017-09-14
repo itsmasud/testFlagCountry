@@ -21,7 +21,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -29,7 +32,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -43,7 +45,7 @@ import java.io.File;
  * @author shoaib.ahmed
  */
 public class PhotoUploadDialog extends SimpleDialog {
-    private static final String TAG = UniqueTag.makeTag("PhotoUploadDialog");
+    private static final String TAG = "PhotoUploadDialog";
 
     // State
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
@@ -260,6 +262,13 @@ public class PhotoUploadDialog extends SimpleDialog {
             }
 
             if (_task != null) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
+                                .action("start")
+                                .build());
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
@@ -272,6 +281,15 @@ public class PhotoUploadDialog extends SimpleDialog {
             }
 
             if (_slot != null) {
+                Log.v(TAG, getUid() + " slot attached");
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
+                                .action("start")
+                                .build());
+
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));

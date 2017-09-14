@@ -16,10 +16,12 @@ public class Log {
     }
 
     public static void v(final String tag, final Throwable th) {
+        logException(th);
         println(android.util.Log.VERBOSE, tag, th.getMessage() + "\n" + android.util.Log.getStackTraceString(th));
     }
 
     public static void v(final String tag, final String msg, final Throwable tr) {
+        logException(tr);
         println(android.util.Log.VERBOSE, tag, msg + '\n' + android.util.Log.getStackTraceString(tr));
     }
 
@@ -28,10 +30,12 @@ public class Log {
     }
 
     public static void d(final String tag, final Throwable th) {
+        logException(th);
         println(android.util.Log.DEBUG, tag, th.getMessage() + "\n" + android.util.Log.getStackTraceString(th));
     }
 
     public static void d(final String tag, final String msg, final Throwable th) {
+        logException(th);
         println(android.util.Log.DEBUG, tag, msg + "\n" + android.util.Log.getStackTraceString(th));
     }
 
@@ -40,10 +44,12 @@ public class Log {
     }
 
     public static void w(final String tag, final Throwable th) {
+        logException(th);
         println(android.util.Log.WARN, tag, th.getMessage() + "\n" + android.util.Log.getStackTraceString(th));
     }
 
     public static void w(final String tag, final String msg, final Throwable th) {
+        logException(th);
         println(android.util.Log.WARN, tag, msg + "\n" + android.util.Log.getStackTraceString(th));
     }
 
@@ -52,10 +58,12 @@ public class Log {
     }
 
     public static void e(final String tag, final Throwable th) {
+        logException(th);
         println(android.util.Log.ERROR, tag, th.getMessage() + "\n" + android.util.Log.getStackTraceString(th));
     }
 
     public static void e(final String tag, final String msg, final Throwable th) {
+        logException(th);
         println(android.util.Log.ERROR, tag, msg + "\n" + android.util.Log.getStackTraceString(th));
     }
 
@@ -64,10 +72,12 @@ public class Log {
     }
 
     public static void i(final String tag, final Throwable th) {
+        logException(th);
         println(android.util.Log.INFO, tag, th.getMessage() + "\n" + android.util.Log.getStackTraceString(th));
     }
 
     public static void i(final String tag, final String msg, final Throwable th) {
+        logException(th);
         println(android.util.Log.INFO, tag, msg + "\n" + android.util.Log.getStackTraceString(th));
     }
 
