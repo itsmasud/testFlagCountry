@@ -18,8 +18,10 @@ import com.fieldnation.fntools.Stopwatch;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Michael Carver on 2/26/2015.
@@ -36,6 +38,9 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private byte[] _data;
     private File _file;
     private boolean _expires;
+
+    private static final Object WRITE_PAUSE = new Object();
+    private static final Set<Long> WRITING = new HashSet<>();
 
     StoredObject(Cursor cursor) {
         updateFromDatabase(cursor);
@@ -155,9 +160,53 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return "[StoredObject id:" + _id + ", profileId:" + _profileId + ", name:" + _objName + ", key:" + _objKey + "]";
     }
 
-    /*-*****************************************-*/
-    /*-             Database interface          -*/
-    /*-*****************************************-*/
+    /*-*********************************************-*/
+    /*-             Database interface              -*/
+    /*-*********************************************-*/
+    private static void addWriting(long id) {
+        Log.v(TAG, "addWriting " + id);
+        //Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
+        synchronized (TAG) {
+            WRITING.add(id);
+        }
+    }
+
+    private static boolean isWriting(long id) {
+        Log.v(TAG, "isWriting " + id);
+        //Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
+        synchronized (TAG) {
+            return WRITING.contains(id);
+        }
+    }
+
+    private static void removeWriting(long id) {
+        Log.v(TAG, "removeWriting " + id);
+        //Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
+
+        synchronized (TAG) {
+            WRITING.remove(id);
+        }
+        synchronized (WRITE_PAUSE) {
+            WRITE_PAUSE.notifyAll();
+        }
+    }
+
+    private static void waitWriting(long id) {
+        Log.v(TAG, "waitWriting " + id);
+        //Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
+        Stopwatch stopwatch = new Stopwatch(true);
+        while (isWriting(id)) {
+            synchronized (WRITE_PAUSE) {
+                try {
+                    WRITE_PAUSE.wait(1000);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+        }
+        Log.v(TAG, "waitWriting " + id + " time: " + stopwatch.finish());
+    }
+
 
     /**
      * Gets an object based on the global id
@@ -166,8 +215,23 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object. Null if there was an error.
      */
     public static StoredObject get(Context context, long id) {
+        return get(context, id, true);
+    }
+
+
+    /**
+     * Gets an object based on the global id
+     *
+     * @param id the global id of the object
+     * @return the object. Null if there was an error.
+     */
+    public static StoredObject get(Context context, long id, boolean allowWaiting) {
         //Log.v(TAG, "get(" + id + ")");
         StoredObject obj = null;
+
+        if (allowWaiting)
+            waitWriting(id);
+
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getReadableDatabase();
@@ -188,7 +252,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
         return obj;
     }
-
 
     public static StoredObject get(Context context, long profileId, String objectTypeName, long objectKey) {
         return get(context, profileId, objectTypeName, objectKey + "");
@@ -226,6 +289,13 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     if (cursor != null) cursor.close();
                 }
             }
+            if (isWriting(obj._id)) {
+                Log.v(TAG, "get redo, still writing...");
+                waitWriting(obj._id);
+
+                return get(context, profileId, objectTypeName, objectKey);
+            }
+
             return obj;
         } catch (Exception ex) {
             Log.logException(ex);
@@ -257,12 +327,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
         boolean success = false;
         synchronized (TAG) {
+            addWriting(obj._id);
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
             success = db.update(ObjectStoreSqlHelper.TABLE_NAME, v, Column.ID + "=" + obj._id, null) > 0;
         }
         if (success) {
-            StoredObject result = get(context, obj._id);
+            StoredObject result = get(context, obj._id, false);
+            removeWriting(obj._id);
             return result;
         } else {
             return null;
@@ -371,6 +443,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, InputStream inputStream, String filename, boolean expires) {
+        long id = -1;
         Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", InputStream, " + filename + ", " + expires + ")");
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(context, profileId, objectTypeName, objectKey);
@@ -386,12 +459,23 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.IS_FILE.getName(), true);
         v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
 
-        long id = -1;
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
             id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+            if (id != -1)
+                addWriting(id);
         }
+
+        // TODO debugging remove
+/*
+        try {
+            Thread.sleep(10000);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+*/
+
         if (id != -1) {
             // Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
@@ -410,18 +494,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
 
             if (!copySuccess) {
-                // Log.v(TAG, "put2, copy failed");
+                Log.v(TAG, "put2, copy failed");
                 delete(context, id);
                 dest.delete();
+                removeWriting(id);
             } else {
-                // Log.v(TAG, "put2, copy success");
-                result = get(context, id);
+                Log.v(TAG, "put2, copy success");
+                result = get(context, id, false);
                 result.setFile(dest);
                 result = result.save(context);
+                removeWriting(id);
                 return result;
             }
         }
-
         return null;
     }
 
@@ -458,7 +543,18 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
             id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+            if (id != -1)
+                addWriting(id);
         }
+
+        // TODO debugging remove
+//        try {
+//            Thread.sleep(10000);
+//        } catch (Exception ex) {
+//            Log.v(TAG, ex);
+//        }
+
+
         if (id != -1) {
 //            Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
@@ -488,18 +584,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
 
             if (!copySuccess) {
-//                Log.v(TAG, "put2, copy failed");
+                Log.v(TAG, "put2, copy failed");
                 delete(context, id);
                 dest.delete();
+                removeWriting(id);
             } else {
-//                Log.v(TAG, "put2, copy success");
-                result = get(context, id);
+                Log.v(TAG, "put2, copy success");
+                result = get(context, id, false);
                 result.setFile(dest);
                 result = result.save(context);
+                removeWriting(id);
                 return result;
             }
         }
-
         return null;
     }
 
@@ -540,9 +637,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
             id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+            addWriting(id);
         }
         if (id != -1) {
-            result = get(context, id);
+            result = get(context, id, false);
+            removeWriting(id);
             return result;
         }
 
