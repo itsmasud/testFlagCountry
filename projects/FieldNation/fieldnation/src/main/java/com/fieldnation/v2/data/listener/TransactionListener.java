@@ -4,6 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -74,6 +77,14 @@ public class TransactionListener extends WebTransactionListener {
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
             }
+
+            Tracker.event(App.get(),
+                    new SimpleEvent.Builder()
+                            .tag(AnswersWrapper.TAG)
+                            .category(params.apiFunction)
+                            .action("START")
+                            .build());
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -143,6 +154,13 @@ public class TransactionListener extends WebTransactionListener {
                     UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
                 }
 
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category(params.apiFunction)
+                                .action("COMPLETE")
+                                .build());
+
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
                     StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
@@ -181,6 +199,13 @@ public class TransactionListener extends WebTransactionListener {
                     UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
                 }
 
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category(params.apiFunction)
+                                .action("FAIL")
+                                .build());
+
 /*
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
@@ -200,8 +225,21 @@ public class TransactionListener extends WebTransactionListener {
             return Result.DELETE;
         } else if (result == Result.RETRY) {
             //Log.v(TAG, "onComplete - RETRY");
-            if (transaction.isTracked()) {
-                UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category(params.apiFunction)
+                                .action("RETRY")
+                                .build());
+
+                if (transaction.isTracked()) {
+                    UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             return Result.RETRY;
         }
