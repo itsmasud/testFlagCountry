@@ -164,11 +164,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     /*-             Database interface              -*/
     /*-*********************************************-*/
     private static void threadSleep() {
-//        try {
-//            Thread.sleep(30000);
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
+        try {
+            Thread.sleep(30000);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     private static void addWriting(long id) {
