@@ -472,13 +472,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 */
 
             // TODO debugging remove
-/*
-        try {
-            Thread.sleep(10000);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-*/
+            try {
+                Thread.sleep(10000);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
 
             if (id != -1) {
                 // Log.v(TAG, "put2, copy file, " + id);
@@ -552,11 +550,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 //                addWriting(id);
 
             // TODO debugging remove
-//        try {
-//            Thread.sleep(10000);
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
+            try {
+                Thread.sleep(10000);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
 
 
             if (id != -1) {
