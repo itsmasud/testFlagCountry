@@ -323,8 +323,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             Cursor cursor = db.query(
                     WebTransactionSqlHelper.TABLE_NAME,
                     WebTransactionSqlHelper.getColumnNames(),
-                    Column.KEY + " = ?",
-                    new String[]{key},
+                    Column.KEY + " = ? AND " + Column.STATE + " = ?",
+                    new String[]{key, State.IDLE.ordinal() + ""},
                     null, null, null, "1");
             try {
                 //logCursor(cursor);
