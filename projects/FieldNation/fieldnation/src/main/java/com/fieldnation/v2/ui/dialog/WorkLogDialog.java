@@ -17,6 +17,7 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -26,6 +27,9 @@ import java.util.Calendar;
 
 public class WorkLogDialog extends SimpleDialog {
     private static final String TAG = "WorkLogDialog";
+
+    // State
+    private static final String STATE_DEVICE = "WorkLogDialog:STATE_DEVICE";
 
     // UI
     private Button _startButton;
@@ -105,6 +109,9 @@ public class WorkLogDialog extends SimpleDialog {
         _startCalendar.setTimeInMillis(savedState.getLong("startTime"));
         _endCalendar.setTimeInMillis(savedState.getLong("endTime"));
 
+        if (savedState.containsKey(STATE_DEVICE))
+            _devicesEditText.setText(savedState.getString(STATE_DEVICE));
+
         super.onRestoreDialogState(savedState);
 
         populateUi();
@@ -118,6 +125,9 @@ public class WorkLogDialog extends SimpleDialog {
         outState.putBoolean("endIsSet", _endIsSet);
         outState.putLong("startTime", _startCalendar.getTimeInMillis());
         outState.putLong("endTime", _endCalendar.getTimeInMillis());
+        if (!misc.isEmptyOrNull(_devicesEditText.getText().toString()))
+            outState.putString(STATE_DEVICE, _devicesEditText.getText().toString());
+
     }
 
     private void populateUi() {

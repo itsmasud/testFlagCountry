@@ -156,8 +156,10 @@ public class PayDialog extends FullScreenDialog {
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         if (savedState != null) {
-            if (savedState.containsKey(STATE_MODE))
+            if (savedState.containsKey(STATE_MODE)) {
                 _mode = savedState.getInt(STATE_MODE);
+                setMode(_mode);
+            }
 
             if (savedState.containsKey(STATE_SHOW_EXPLANATION))
                 _showExplanation = savedState.getBoolean(STATE_SHOW_EXPLANATION);
