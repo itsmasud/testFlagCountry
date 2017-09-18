@@ -26,10 +26,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "WorkSummaryView";
 
     // UI
-    private TextView _projectNameTextView;
     private TextView _workorderIdTextView;
     private TextView _customDisplayFieldsTextView;
-    private TextView _worktypeTextView;
 
     private TextView _bundleWarningTextView;
 
@@ -71,10 +69,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _projectNameTextView = findViewById(R.id.projectname_textview);
         _workorderIdTextView = findViewById(R.id.workorderid_textview);
         _customDisplayFieldsTextView = findViewById(R.id.customdisplayfields_textview);
-        _worktypeTextView = findViewById(R.id.worktype_textview);
 
         _descriptionContainer = findViewById(R.id.description_container);
 
@@ -118,8 +114,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private void refresh() {
         setVisibility(View.VISIBLE);
 
-        _projectNameTextView.setText(_workOrder.getTitle());
-
         _workorderIdTextView.setText("Work Order Id: " + _workOrder.getId());
 
         StringBuilder sb = new StringBuilder();
@@ -138,12 +132,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             }
         }
         _customDisplayFieldsTextView.setText(sb.toString().trim());
-
-        if (!misc.isEmptyOrNull(_workOrder.getTypeOfWork().getName()))
-            _worktypeTextView.setText(_workOrder.getTypeOfWork().getName().toUpperCase());
-        else
-            _worktypeTextView.setText("");
-
 
         if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);

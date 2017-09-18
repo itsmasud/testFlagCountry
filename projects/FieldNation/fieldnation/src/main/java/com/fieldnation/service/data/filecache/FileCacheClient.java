@@ -71,7 +71,7 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
     }
 
     private static void cacheFileEnd(Context context, String tag, Uri uri, boolean success) {
-        Log.v(STAG, "cacheFileStart");
+        Log.v(STAG, "cacheFileEnd");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
         bundle.putString(PARAM_TAG, tag);

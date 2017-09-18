@@ -178,6 +178,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
     // UI
+    private WorkOrderHeaderView _headerView;
     private Toolbar _toolbar;
     private Button _toolbarActionButton;
     private Button _testButton;
@@ -249,6 +250,9 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
+
+        _headerView = findViewById(R.id.header_view);
+        _renderers.add(_headerView);
 
         _topBar = findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);

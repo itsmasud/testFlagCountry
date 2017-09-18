@@ -33,16 +33,41 @@
                     android:text="TEST BUTTON"
                     android:visibility="gone" />
 
-                <!-- Summary -->
+                <com.fieldnation.v2.ui.workorder.WorkOrderHeaderView
+                    android:id="@+id/header_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- Overview -->
+                <TextView
+                    android:id="@+id/overview_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Overview"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
                 <com.fieldnation.ui.workorder.detail.WorkSummaryView
                     android:id="@+id/summary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.fieldnation.ui.workorder.detail.CompanySummaryView
-                    android:id="@+id/companySummary_view"
+                <!-- Details -->
+                <TextView
+                    android:id="@+id/details_textview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Details"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
                     android:id="@+id/schedule_view"
@@ -54,46 +79,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.fieldnation.ui.workorder.detail.ContactListView
-                    android:id="@+id/contactList_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <com.fieldnation.ui.workorder.detail.TimeLogListView
-                    android:id="@+id/timelogged_view"
+                <!-- Payment -->
+                <TextView
+                    android:id="@+id/payment_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.ui.workorder.detail.TaskListView
-                    android:id="@+id/scope_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.ui.workorder.detail.CustomFieldListView
-                    android:id="@+id/customfields_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.ui.workorder.detail.ShipmentListView
-                    android:id="@+id/shipment_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.ui.workorder.detail.ClosingNotesView
-                    android:id="@+id/closingnotes_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.ui.SignatureListView
-                    android:id="@+id/signature_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Payment"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <com.fieldnation.ui.workorder.detail.PaymentView
                     android:id="@+id/payment_view"
@@ -103,6 +100,12 @@
 
                 <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
                     android:id="@+id/counterOfferSummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <com.fieldnation.ui.workorder.detail.TimeLogListView
+                    android:id="@+id/timelogged_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
@@ -123,6 +126,87 @@
                     android:id="@+id/expected_pay_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+
+                <!-- Tasks to be completed -->
+                <TextView
+                    android:id="@+id/tasks_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Tasks to be completed"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.workorder.detail.TaskListView
+                    android:id="@+id/scope_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <com.fieldnation.ui.workorder.detail.CustomFieldListView
+                    android:id="@+id/customfields_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <com.fieldnation.ui.workorder.detail.ClosingNotesView
+                    android:id="@+id/closingnotes_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+
+                <!-- Buyer information -->
+                <TextView
+                    android:id="@+id/buyerInformation_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Buyer information"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.workorder.detail.CompanySummaryView
+                    android:id="@+id/companySummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.fieldnation.ui.workorder.detail.ContactListView
+                    android:id="@+id/contactList_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <!-- Additional information -->
+                <TextView
+                    android:id="@+id/additionalInformation_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/additional_information"
+                    android:textColor="@color/fn_light_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.SignatureListView
+                    android:id="@+id/signature_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+
+                <com.fieldnation.ui.workorder.detail.ShipmentListView
+                    android:id="@+id/shipment_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
 
                 <com.fieldnation.v2.ui.workorder.AttachmentSummaryView
                     android:id="@+id/attachment_summary_view"

@@ -22,16 +22,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp">
-
-            <TextView
-                android:id="@+id/projectname_textview"
-                style="@style/Text_Title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Name of project goes here" />
-
+            android:paddingRight="16dp">
 
             <TextView
                 android:id="@+id/workorderid_textview"
@@ -45,15 +36,6 @@
                 style="@style/Text_Body_1_Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/worktype_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:text="Type of Work" />
 
             <TextView
                 android:id="@+id/bundlewarning_textview"
@@ -129,16 +111,6 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/confidential_textview"
-            style="@style/TextViewLink"
-            android:layout_width="match_parent"
-            android:layout_height="32dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="@string/view_confidential_information"
-            android:textSize="14sp" />
-
-        <TextView
             android:id="@+id/policies_textview"
             style="@style/TextViewLink"
             android:layout_width="match_parent"
@@ -146,6 +118,16 @@
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="@string/view_company_policies_and_procedures"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/confidential_textview"
+            style="@style/TextViewLink"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/view_confidential_information"
             android:textSize="14sp" />
 
     </LinearLayout>
