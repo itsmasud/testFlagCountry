@@ -8,7 +8,6 @@ import android.support.v4.view.ViewPager;
 
 import com.fieldnation.R;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael Carver on 1/30/2015.
@@ -36,6 +35,7 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
 
         _viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         _viewPager.setOnPageChangeListener(_pageChangeListener);
+        _tabListView.setViewPager(_viewPager);
     }
 
     @Override
