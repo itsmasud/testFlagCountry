@@ -12,12 +12,13 @@ import com.fieldnation.R;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.UnresolvedProblemsDialog;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
  * Created by mc on 5/24/17.
  */
 
-public class ProblemSummaryView extends RelativeLayout {
+public class ProblemSummaryView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "ProblemSummaryView";
 
     // Ui
@@ -55,6 +56,7 @@ public class ProblemSummaryView extends RelativeLayout {
         populateUi();
     }
 
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();

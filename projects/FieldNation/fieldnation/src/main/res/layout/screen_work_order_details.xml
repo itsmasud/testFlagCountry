@@ -38,6 +38,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+
+                <com.fieldnation.ui.workorder.detail.ProblemSummaryView
+                    android:id="@+id/problemsummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
                 <!-- Overview -->
                 <TextView
                     android:id="@+id/overview_textview"
@@ -45,7 +51,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
                     android:text="Overview"
                     android:textColor="@color/fn_light_text"
                     android:textSize="14sp"
