@@ -114,6 +114,7 @@ public class ExpenseDialog extends FullScreenDialog {
         if (savedState != null) {
             if (savedState.containsKey(STATE_CATEGORY_SELECTION)) {
                 _itemSelectedPosition = savedState.getInt(STATE_CATEGORY_SELECTION);
+                _categorySpinner.setSelection(_itemSelectedPosition);
             }
         }
         populateUi();

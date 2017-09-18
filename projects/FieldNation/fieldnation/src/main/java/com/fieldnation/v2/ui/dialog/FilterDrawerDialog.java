@@ -37,6 +37,11 @@ import java.util.List;
 public class FilterDrawerDialog extends RightDrawerDialog {
     private static final String TAG = "FilterDrawerDialog";
 
+    // State
+    private static final String STATE_LOCATION_POSITION = "STATE_LOCATION_POSITION";
+    private static final String STATE_DISTANCE_POSITION = "STATE_DISTANCE_POSITION";
+    private static final String STATE_LOCATION_TEXT = "STATE_LOCATION_TEXT";
+
     private static final Double[] DISTANCES = new Double[]{
             10.0, 20.0, 40.0, 60.0, 100.0, 150.0, 200.0, 300.0, 500.0
     };
@@ -85,7 +90,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getView().getContext(), R.array.search_location, R.layout.view_spinner_item_dark);
         adapter.setDropDownViewResource(R.layout.view_dropdown_item_dark);
         _locationSpinner.setAdapter(adapter);
-        _locationSpinner.setSelection(1);
+//        _locationSpinner.setSelection(1);
 
         adapter = HintArrayAdapter.createFromResources(getView().getContext(), R.array.search_distances, R.layout.view_spinner_item_dark);
         adapter.setDropDownViewResource(R.layout.view_dropdown_item_dark);
@@ -103,6 +108,28 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         }
 
         misc.hideKeyboard(getView());
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+        if (savedState.containsKey(STATE_LOCATION_POSITION))
+            _locationSpinner.setSelection(savedState.getInt(STATE_LOCATION_POSITION));
+        else  _locationSpinner.setSelection(1);
+        if (savedState.containsKey(STATE_DISTANCE_POSITION))
+            _distanceSpinner.setSelection(savedState.getInt(STATE_DISTANCE_POSITION));
+        if (savedState.containsKey(STATE_LOCATION_TEXT))
+            _otherLocationEditText.setText(savedState.getString(STATE_LOCATION_TEXT));
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        super.onSaveDialogState(outState);
+        outState.putInt(STATE_LOCATION_POSITION, _locationSpinner.getSelectedItemPosition());
+        outState.putInt(STATE_DISTANCE_POSITION, _distanceSpinner.getSelectedItemPosition());
+
+        if (!misc.isEmptyOrNull(_otherLocationEditText.getText().toString()))
+        outState.putString(STATE_LOCATION_TEXT, _otherLocationEditText.getText().toString());
     }
 
     @Override
