@@ -2,7 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
     android:background="@color/fn_clickable_bg">
+
+    <View
+        android:id="@+id/upper_divider"
+        style="@style/DividerFull" />
 
     <TextView
         style="@style/Text_Subhead"
@@ -12,7 +17,6 @@
         android:layout_centerVertical="true"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:layout_toLeftOf="@+id/count_textview"
         android:text="Unresolved Problems" />
 
@@ -22,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_below="@+id/upper_divider"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
