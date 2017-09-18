@@ -36,6 +36,10 @@ import java.util.Calendar;
 public class CustomFieldDialog extends SimpleDialog {
     private static final String TAG = "CustomFieldDialog";
 
+    // State
+    private static final String STATE_TEXT = "STATE_TEXT";
+    private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
+
     // UI
     private TextView _titleTextView;
     private EditText _textEditText;
@@ -54,6 +58,7 @@ public class CustomFieldDialog extends SimpleDialog {
     private Calendar _pickerCal;
     private Calendar _expirationDate;
     private int _itemSelectedPosition = -1;
+    private String _text;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -88,6 +93,26 @@ public class CustomFieldDialog extends SimpleDialog {
         _okButton.setOnClickListener(_ok_onClick);
         _okButton.setEnabled(false);
         _cancelButton.setOnClickListener(_cancel_onClick);
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+        if (savedState.containsKey(STATE_TEXT))
+            _text = savedState.getString(STATE_TEXT);
+
+        if (savedState.containsKey(STATE_SPINNER_POSITION))
+            _itemSelectedPosition = savedState.getInt(STATE_SPINNER_POSITION);
+
+        populateUi();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        super.onSaveDialogState(outState);
+        if (!misc.isEmptyOrNull(_textEditText.getText().toString()))
+            outState.putString(STATE_TEXT, _textEditText.getText().toString());
+        outState.putInt(STATE_SPINNER_POSITION, _itemSelectedPosition);
     }
 
     @Override
@@ -223,11 +248,15 @@ public class CustomFieldDialog extends SimpleDialog {
                             }
                         }
                     }
-                    if (_itemSelectedPosition != -1)
+                    if (_itemSelectedPosition != -1) {
                         _spinner.setSelection(_itemSelectedPosition);
+                    }
                 }
                 break;
         }
+
+        if (!misc.isEmptyOrNull(_text))
+            _textEditText.setText(_text);
 
         _pickerCal = Calendar.getInstance();
         _pickerCal.set(Calendar.SECOND, 0);

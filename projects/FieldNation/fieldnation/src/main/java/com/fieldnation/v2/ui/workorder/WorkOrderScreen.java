@@ -71,6 +71,7 @@ import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
 import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
+import com.fieldnation.ui.workorder.detail.ProblemSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
@@ -184,6 +185,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private Button _testButton;
     private NestedScrollView _scrollView;
     private ActionBarTopView _topBar;
+    private ProblemSummaryView _problemSummaryView;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
@@ -261,6 +263,10 @@ public class WorkOrderScreen extends RelativeLayout {
         _sumView = findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
+
+        _problemSummaryView = findViewById(R.id.problemsummary_view);
+        _renderers.add(_problemSummaryView);
+
 
         _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);

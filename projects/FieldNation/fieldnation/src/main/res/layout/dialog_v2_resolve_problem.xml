@@ -18,6 +18,7 @@
         android:text="Title" />
 
     <View
+        android:id="@+id/title_divider"
         style="@style/DividerFull"
         android:layout_below="@id/title_textview" />
 
@@ -26,7 +27,7 @@
         style="@style/Text_Body_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title_textview"
+        android:layout_below="@+id/title_divider"
         android:background="@color/fn_clickable_bg"
         android:padding="16dp"
         android:text="Comments" />
