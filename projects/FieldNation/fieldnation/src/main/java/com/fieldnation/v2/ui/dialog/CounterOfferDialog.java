@@ -940,7 +940,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("request")) {
+            if (successObject != null && methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
                     Expense[] exp = new Expense[_expenses.size()];

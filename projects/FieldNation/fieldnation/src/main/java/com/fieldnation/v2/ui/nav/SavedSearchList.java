@@ -203,7 +203,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("getWorkOrderLists")) {
+            if (successObject != null && methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
                 _list = savedList;
                 populateUi();

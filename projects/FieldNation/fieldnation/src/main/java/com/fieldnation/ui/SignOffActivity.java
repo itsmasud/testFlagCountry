@@ -307,7 +307,7 @@ public class SignOffActivity extends AuthSimpleActivity {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (success && successObject instanceof WorkOrder) {
+            if (success && successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (workOrder.getId() == _workOrderId) {
                     _workOrder = workOrder;

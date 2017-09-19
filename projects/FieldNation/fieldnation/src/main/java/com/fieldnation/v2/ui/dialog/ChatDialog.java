@@ -189,7 +189,7 @@ public class ChatDialog extends FullScreenDialog {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             try {
-                if (successObject instanceof Messages) {
+                if (successObject != null && successObject instanceof Messages) {
                     Messages messages = (Messages) successObject;
                     Error error = (Error) failObject;
                     if (!success || error != null)
