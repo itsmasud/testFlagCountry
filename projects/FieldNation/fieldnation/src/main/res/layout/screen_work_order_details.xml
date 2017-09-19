@@ -42,19 +42,13 @@
                 <com.fieldnation.ui.workorder.detail.ProblemSummaryView
                     android:id="@+id/problemsummary_view"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content" />
 
                 <!-- Overview -->
                 <TextView
                     android:id="@+id/overview_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:text="Overview"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    style="@style/WoDV2.Header"
+                    android:text="Overview" />
 
                 <com.fieldnation.ui.workorder.detail.WorkSummaryView
                     android:id="@+id/summary_view"
@@ -62,17 +56,12 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Details -->
-                <TextView
-                    android:id="@+id/details_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Details"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                <!-- Commented out until we redesign the schedule views
+                                <TextView
+                                    android:id="@+id/details_textview"
+                                    style="@style/WoDV2.Header"
+                                    android:text="Details" />
+                -->
 
                 <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
                     android:id="@+id/schedule_view"
@@ -87,15 +76,8 @@
                 <!-- Payment -->
                 <TextView
                     android:id="@+id/payment_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Payment"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    style="@style/WoDV2.Header"
+                    android:text="Payment" />
 
                 <com.fieldnation.ui.workorder.detail.PaymentView
                     android:id="@+id/payment_view"
@@ -136,15 +118,8 @@
                 <!-- Tasks to be completed -->
                 <TextView
                     android:id="@+id/tasks_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Tasks to be completed"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    style="@style/WoDV2.Header"
+                    android:text="Tasks to be completed" />
 
                 <com.fieldnation.ui.workorder.detail.TaskListView
                     android:id="@+id/scope_view"
@@ -168,15 +143,8 @@
                 <!-- Buyer information -->
                 <TextView
                     android:id="@+id/buyerInformation_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Buyer information"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    style="@style/WoDV2.Header"
+                    android:text="Buyer information" />
 
                 <com.fieldnation.ui.workorder.detail.CompanySummaryView
                     android:id="@+id/companySummary_view"
@@ -191,15 +159,8 @@
                 <!-- Additional information -->
                 <TextView
                     android:id="@+id/additionalInformation_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/additional_information"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
+                    style="@style/WoDV2.Header"
+                    android:text="@string/additional_information" />
 
                 <com.fieldnation.ui.SignatureListView
                     android:id="@+id/signature_view"

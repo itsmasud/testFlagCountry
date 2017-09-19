@@ -5,12 +5,8 @@
     android:orientation="vertical">
 
     <TextView
-        style="@style/Text_Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:text="SHIPMENTS" />
+        style="@style/WoDV2.Header"
+        android:text="Shipments" />
 
     <LinearLayout
         android:id="@+id/shipments_linearlayout"
