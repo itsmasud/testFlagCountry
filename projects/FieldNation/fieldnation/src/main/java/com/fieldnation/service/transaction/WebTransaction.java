@@ -378,7 +378,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     obj = new WebTransaction(cursor);
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
         }
         return obj;
@@ -399,7 +399,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     Log.v(TAG, trans._id + " " + trans._key + " " + trans._state);
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
         }
     }
@@ -428,7 +428,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     obj = new WebTransaction(cursor);
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
 
             if (obj != null) {
@@ -529,7 +529,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     return cursor.getInt(0);
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
         }
         return 0;
@@ -546,7 +546,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     return cursor.getInt(0);
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
         }
         return 0;
@@ -563,7 +563,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     return cursor.getInt(0);
                 }
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
         }
         return 0;
