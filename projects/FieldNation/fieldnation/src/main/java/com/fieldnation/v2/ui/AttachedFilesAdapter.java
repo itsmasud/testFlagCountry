@@ -70,10 +70,12 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private static class FailedUploadTuple {
         int folderId;
         String name;
+        WebTransaction transaction;
 
-        public FailedUploadTuple(int folderId, String name) {
+        public FailedUploadTuple(int folderId, String name, WebTransaction webTransaction) {
             this.folderId = folderId;
             this.name = name;
+            this.transaction = webTransaction;
         }
     }
 
@@ -87,7 +89,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
                 JsonObject methodParams = new JsonObject(params.methodParams);
 
-failedUploads.add(new FailedUploadTuple(methodParams.getInt("folderId"), methodParams.getString("name")));
+                failedUploads.add(new FailedUploadTuple(
+                        methodParams.getInt("folderId"),
+                        methodParams.getString("file"),
+                        webTransaction));
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);
