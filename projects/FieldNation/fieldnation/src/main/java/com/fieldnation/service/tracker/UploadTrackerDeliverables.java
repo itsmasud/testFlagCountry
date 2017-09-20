@@ -82,7 +82,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
     }
 
     public boolean isViable() {
-        return _uploadQueued > 0 || _uploadRunning > 0 || _uploadFailed > 0 || _uploadSuccess > 0;
+        return _uploadQueued > 0 || _uploadRunning > 0;
     }
 
     private void populateNotification(Context context) {
