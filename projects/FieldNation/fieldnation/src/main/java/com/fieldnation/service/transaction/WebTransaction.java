@@ -10,6 +10,9 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
@@ -25,30 +28,53 @@ import java.util.List;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
-    private final long _id;
+    @Json
+    private long _id;
+    @Json
     private String _listenerClassName;
+    @Json
     private byte[] _listenerParams;
-    private final boolean _useAuth;
-    private final boolean _isSync;
+    @Json
+    private boolean _useAuth;
+    @Json
+    private boolean _isSync;
+    @Json
     private State _state;
+    @Json
     private Priority _priority;
+    @Json
     private String _requestString;
+    @Json
     private String _key;
+    @Json
     private long _queueTime;
+    @Json
     private boolean _wifiRequired;
+    @Json
     private boolean _track;
+    @Json
     private TrackerEnum _trackType;
+    @Json
     private String _timingKey;
 
+    @Json
     private int _notifId = -1;
 
+    @Json
     private byte[] _notifStartArray;
+    @Json
     private NotificationDefinition _notifStart;
+    @Json
     private byte[] _notifSuccessArray;
+    @Json
     private NotificationDefinition _notifSuccess;
+    @Json
     private byte[] _notifFailedArray;
+    @Json
     private NotificationDefinition _notifFailed;
+    @Json
     private byte[] _notifRetryArray;
+    @Json
     private NotificationDefinition _notifRetry;
 
     public enum State {
@@ -58,9 +84,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
+    public WebTransaction() {
+    }
+
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
-        _listenerClassName = cursor.getString(Column.LSITENER.getIndex());
+        _listenerClassName = cursor.getString(Column.LISTENER.getIndex());
         _listenerParams = cursor.getBlob(Column.LISTENER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
@@ -480,7 +509,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static WebTransaction put(WebTransaction obj) {
 //        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
-        v.put(Column.LSITENER.getName(), obj._listenerClassName);
+        v.put(Column.LISTENER.getName(), obj._listenerClassName);
         v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
 
@@ -611,6 +640,27 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
         return 0;
+    }
+
+    /*-*****************************-*/
+    /*-             Json            -*/
+    /*-*****************************-*/
+    public static WebTransaction fromJson(JsonObject obj) {
+        try {
+            return Unserializer.unserializeObject(WebTransaction.class, obj);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
+    public JsonObject toJson() {
+        try {
+            return Serializer.serializeObject(this);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
     }
 
     /*-*********************************************-*/

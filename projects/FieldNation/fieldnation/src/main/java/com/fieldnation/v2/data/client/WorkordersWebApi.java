@@ -250,7 +250,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+                    .path("/api/rest/v3/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
@@ -261,6 +261,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("folderId", folderId);
             methodParams.put("attachment", attachment.getJson());
             methodParams.put("file", Uri.fromFile(file));
+            methodParams.put("zombie", true);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
@@ -306,7 +307,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+                    .path("/api/rest/v3/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);
 
@@ -317,6 +318,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("folderId", folderId);
             methodParams.put("attachment", attachment.getJson());
             methodParams.put("storedObjectId", storedObject.getId());
+            methodParams.put("zombie", true);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
@@ -352,7 +354,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+                    .path("/api/rest/v3/workorders/" + workOrderId + "/attachments/" + folderId)
                     .urlParams("?async=" + async)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
@@ -365,6 +367,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("async", async);
             methodParams.put("attachment", attachment.getJson());
             methodParams.put("file", Uri.fromFile(file));
+            methodParams.put("allowZombie", true);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")

@@ -267,7 +267,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _problemSummaryView = findViewById(R.id.problemsummary_view);
         _renderers.add(_problemSummaryView);
 
-
         _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
 

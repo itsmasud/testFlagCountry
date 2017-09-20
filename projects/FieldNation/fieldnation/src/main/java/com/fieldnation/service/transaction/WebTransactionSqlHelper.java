@@ -23,7 +23,7 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        LSITENER(1, "listener", "text"),
+        LISTENER(1, "listener", "text"),
         LISTENER_PARAMS(2, "listener_params", "blob"),
         USE_AUTH(3, "use_auth", "integer not null"),
         IS_SYNC(4, "is_sync", "integer not null"),

@@ -20,6 +20,7 @@ import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.UUID;
 
 /**
  * Created by mc on 1/27/17.
@@ -205,6 +206,23 @@ public class TransactionListener extends WebTransactionListener {
                                 .category(params.apiFunction)
                                 .action("FAIL")
                                 .build());
+
+                try {
+                    Log.v(TAG, "Saving zombie transaction");
+                    JsonObject methodParams = new JsonObject(params.methodParams);
+                    if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                        StoredObject obj = StoredObject.put(
+                                context,
+                                App.getProfileId(),
+                                methodParams.getInt("workOrderId") + "_ZOMBIE",
+                                UUID.randomUUID().toString(),
+                                transaction.toJson().toByteArray(),
+                                false);
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
 
 /*
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
