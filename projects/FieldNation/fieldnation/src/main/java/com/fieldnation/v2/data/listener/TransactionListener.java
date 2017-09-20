@@ -130,7 +130,7 @@ public class TransactionListener extends WebTransactionListener {
             //Log.v(TAG, "onComplete - CONTINUE");
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
-
+                Log.v(TAG, "onComplete " + params.apiFunction + (transaction.getKey() != null ? transaction.getKey() : ""));
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("params", params);
 

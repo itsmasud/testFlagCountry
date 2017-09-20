@@ -72,6 +72,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     }
 
     private void init() {
+        Log.v(TAG, "init");
         LayoutInflater.from(getContext()).inflate(R.layout.screen_search_result, this);
 
         if (isInEditMode())
@@ -96,28 +97,33 @@ public class ConfirmResultScreen extends RelativeLayout {
 
     @Override
     protected void onAttachedToWindow() {
+        Log.v(TAG, "onAttachedToWindow");
         super.onAttachedToWindow();
         FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
     public void onStart() {
+        Log.v(TAG, "onStart");
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_gps_listener)
                 .priority(SimpleGps.Priority.HIGHEST)
                 .start(App.get());
-    }
-
-    public void onResume() {
         _workOrdersApi.sub();
     }
 
+    public void onResume() {
+        Log.v(TAG, "onResume");
+    }
+
     public void onPause() {
-        _workOrdersApi.unsub();
+        Log.v(TAG, "onPause");
     }
 
     public void onStop() {
+        Log.v(TAG, "onStop");
         if (_simpleGps != null && _simpleGps.isRunning())
             _simpleGps.stop();
+        _workOrdersApi.unsub();
     }
 
     @Override
@@ -157,12 +163,15 @@ public class ConfirmResultScreen extends RelativeLayout {
     }
 
     private void getPage(int page) {
+        Log.v(TAG, "getPage");
         if (_workOrdersOptions == null)
             return;
 
         if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
             _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
             _workOrdersOptions.setPerPage(25);
+
+            Log.v(TAG, "getPage.getWorkOrders");
 
             // this is locked down so that we don't have multiple pages
             WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
@@ -175,11 +184,14 @@ public class ConfirmResultScreen extends RelativeLayout {
     }
 
     public void startSearch(SavedList savedList) {
+        Log.v(TAG, "startSearch");
         startSearch(savedList, new GetWorkOrdersOptions());
     }
 
     public void startSearch(SavedList savedList, GetWorkOrdersOptions workOrdersOptions) {
+        Log.v(TAG, "startSearch");
         if (savedList == null) {
+            Log.v(TAG, "startSearch savedList null");
             return;
         }
 
@@ -262,6 +274,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     private final WoPagingAdapter _adapter = new WoPagingAdapter() {
         @Override
         public void requestPage(int page, boolean allowCache) {
+            Log.v(TAG, "adapter.requestPage");
             getPage(page);
         }
 
