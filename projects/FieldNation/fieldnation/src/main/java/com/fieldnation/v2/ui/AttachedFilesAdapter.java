@@ -4,7 +4,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
@@ -57,6 +60,37 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     notifyItemChanged(i);
                     return;
                 }
+            }
+        }
+    }
+
+    /*-*********+***********************-*/
+    /*-         Failed Uploads          -*/
+    /*-*********************************-*/
+    private static class FailedUploadTuple {
+        int folderId;
+        String name;
+
+        public FailedUploadTuple(int folderId, String name) {
+            this.folderId = folderId;
+            this.name = name;
+        }
+    }
+
+    private List<FailedUploadTuple> failedUploads = new LinkedList<>();
+
+    public void setFailedUploads(List<WebTransaction> webTransactions) {
+        failedUploads.clear();
+        for (WebTransaction webTransaction : webTransactions) {
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+                JsonObject methodParams = new JsonObject(params.methodParams);
+
+failedUploads.add(new FailedUploadTuple(methodParams.getInt("folderId"), methodParams.getString("name")));
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     }
