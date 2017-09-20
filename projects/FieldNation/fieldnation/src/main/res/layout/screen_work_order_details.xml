@@ -119,7 +119,7 @@
                 <TextView
                     android:id="@+id/tasks_textview"
                     style="@style/WoDV2.Header"
-                    android:text="Tasks to be completed" />
+                    android:text="Tasks to be Completed" />
 
                 <com.fieldnation.ui.workorder.detail.TaskListView
                     android:id="@+id/scope_view"
@@ -144,7 +144,7 @@
                 <TextView
                     android:id="@+id/buyerInformation_textview"
                     style="@style/WoDV2.Header"
-                    android:text="Buyer information" />
+                    android:text="Buyer Information" />
 
                 <com.fieldnation.ui.workorder.detail.CompanySummaryView
                     android:id="@+id/companySummary_view"
@@ -157,10 +157,12 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Additional information -->
+<!--
                 <TextView
                     android:id="@+id/additionalInformation_textview"
                     style="@style/WoDV2.Header"
                     android:text="@string/additional_information" />
+-->
 
                 <com.fieldnation.ui.SignatureListView
                     android:id="@+id/signature_view"
