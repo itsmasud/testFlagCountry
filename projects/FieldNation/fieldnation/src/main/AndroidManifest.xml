@@ -55,16 +55,6 @@
         android:logo="@drawable/ic_launcher"
         android:theme="@style/AppTheme">
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
-        </provider>
-
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"
@@ -204,7 +194,6 @@
             android:exported="false"
             android:label="@string/activity_signature_info_title"
             android:process=":frontside" />
-
         <activity
             android:name=".ui.share.ReceiverActivity"
             android:exported="true"
@@ -220,15 +209,14 @@
             </intent-filter>
 
         </activity>
-
         <activity
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
             android:process=":frontside" />
-
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
+            android:process=":frontside"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
@@ -236,7 +224,6 @@
             android:name=".service.GpsTrackingService"
             android:exported="false"
             android:process=":frontside" />
-
         <service
             android:name=".service.auth.AuthService"
             android:exported="true"
@@ -261,13 +248,10 @@
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
         </service>
-        <!--topics-->
         <service
             android:name=".fnpigeon.TopicService"
             android:exported="false"
             android:process=":frontside" />
-
-        <!--web/data-->
         <service
             android:name=".service.AnalyticsPassThroughService"
             android:exported="false"
@@ -288,7 +272,6 @@
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
             android:process=":frontside" />
-
         <service
             android:name=".gcm.MyGcmListenerService"
             android:exported="false"
@@ -297,7 +280,6 @@
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
-
         <service
             android:name=".gcm.MyInstanceIDListenerService"
             android:exported="false"
@@ -306,13 +288,10 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-
-
         <service
             android:name=".gcm.RegistrationIntentService"
             android:exported="false"
             android:process=":frontside" />
-
         <service
             android:name=".service.tracker.UploadTrackerService"
             android:exported="false"
@@ -324,11 +303,20 @@
             android:exported="false"
             android:process=":frontside"
             android:syncable="true" />
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:process=":frontside">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
 
         <receiver
             android:name=".service.crawler.AlarmBroadcastReceiver"
             android:process=":frontside" />
-
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
@@ -339,7 +327,6 @@
                 <category android:name="gcm.play.android.samples.com.gcmquickstart" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

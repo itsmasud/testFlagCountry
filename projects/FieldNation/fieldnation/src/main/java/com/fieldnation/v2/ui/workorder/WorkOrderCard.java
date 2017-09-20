@@ -718,7 +718,7 @@ public class WorkOrderCard extends RelativeLayout {
         public void onCheckIn(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
-            if (_workOrder.getId() == workOrderId)
+            if (_workOrder != null && _workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
         }
     };
@@ -744,7 +744,7 @@ public class WorkOrderCard extends RelativeLayout {
         public void onCheckOut(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
-            if (_workOrder.getId() == workOrderId)
+            if (_workOrder != null && _workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
         }
     };
@@ -958,7 +958,7 @@ public class WorkOrderCard extends RelativeLayout {
         public void onWithdraw(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
-            if (_workOrder.getId() == workOrderId)
+            if (_workOrder != null && _workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
         }
     };
