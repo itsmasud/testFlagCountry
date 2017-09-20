@@ -431,7 +431,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 }
             } else if (methodName.equals("deleteAttachment")) {
                 WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
-            } else if (methodName.equals("getAttachments")) {
+            } else if (successObject != null && methodName.equals("getAttachments")) {
                 folders = (AttachmentFolders) successObject;
                 adapter.setAttachments(folders);
             }

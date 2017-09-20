@@ -2,6 +2,7 @@ package com.fieldnation.v2.data.client;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -11,8 +12,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -23,6 +24,9 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.KeyValue;
 import com.fieldnation.v2.data.model.UpdateModel;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by dmgen from swagger.
@@ -239,7 +243,7 @@ public abstract class SystemWebApi extends Pigeon {
                 break;
             }
             case "complete": {
-                new AsyncParser(this, bundle);
+                BgParser.parse(this, bundle);
                 break;
             }
         }
@@ -262,32 +266,99 @@ public abstract class SystemWebApi extends Pigeon {
     public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
     }
 
-    private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
-        private static final String TAG = "SystemWebApi.AsyncParser";
+    private static class BgParser {
+        private static final Object SYNC_LOCK = new Object();
+        private static List<Bundle> BUNDLES = new LinkedList<>();
+        private static List<SystemWebApi> APIS = new LinkedList<>();
+        private static ThreadManager _manager;
+        private static Handler _handler = null;
+        private static final long IDLE_TIMEOUT = 30000;
 
-        private SystemWebApi systemWebApi;
-        private TransactionParams transactionParams;
-        private boolean success;
-        private byte[] data;
+        private static ThreadManager getManager() {
+            synchronized (SYNC_LOCK) {
+                if (_manager == null) {
+                    _manager = new ThreadManager();
+                    _manager.addThread(new Parser(_manager));
+                    startActivityMonitor();
+                }
+            }
+            return _manager;
+        }
 
-        private Object successObject;
-        private Object failObject;
+        private static Handler getHandler() {
+            synchronized (SYNC_LOCK) {
+                if (_handler == null)
+                    _handler = new Handler(App.get().getMainLooper());
+            }
+            return _handler;
+        }
 
-        public AsyncParser(SystemWebApi systemWebApi, Bundle bundle) {
-            this.systemWebApi = systemWebApi;
-            transactionParams = bundle.getParcelable("params");
-            success = bundle.getBoolean("success");
-            data = bundle.getByteArray("data");
+        private static void startActivityMonitor() {
+            getHandler().postDelayed(_activityChecker_runnable, IDLE_TIMEOUT);
+        }
 
-            executeEx();
+        private static final Runnable _activityChecker_runnable = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (SYNC_LOCK) {
+                    if (APIS.size() > 0) {
+                        startActivityMonitor();
+                        return;
+                    }
+                }
+                stop();
+            }
+        };
+
+        private static void stop() {
+            if (_manager != null)
+                _manager.shutdown();
+            _manager = null;
+            synchronized (SYNC_LOCK) {
+                _handler = null;
+            }
+        }
+
+        public static void parse(SystemWebApi systemWebApi, Bundle bundle) {
+            synchronized (SYNC_LOCK) {
+                APIS.add(systemWebApi);
+                BUNDLES.add(bundle);
+            }
+
+            getManager().wakeUp();
+        }
+
+        private static class Parser extends ThreadManager.ManagedThread {
+            public Parser(ThreadManager manager) {
+                super(manager);
+                setName("SystemWebApi/Parser");
+                start();
         }
 
         @Override
-        protected Object doInBackground(Object... params) {
-            Log.v(TAG, "Start doInBackground");
+            public boolean doWork() {
+                SystemWebApi webApi = null;
+                Bundle bundle = null;
+                synchronized (SYNC_LOCK) {
+                    if (APIS.size() > 0) {
+                        webApi = APIS.remove(0);
+                        bundle = BUNDLES.remove(0);
+                    }
+                }
+
+                if (webApi == null || bundle == null)
+                    return false;
+
+                Object successObject = null;
+                Object failObject = null;
+
+                TransactionParams transactionParams = bundle.getParcelable("params");
+                boolean success = bundle.getBoolean("success");
+                byte[] data = bundle.getByteArray("data");
+
             Stopwatch watch = new Stopwatch(true);
             try {
-                if (success) {
+                if (data != null && success) {
                     switch (transactionParams.apiFunction) {
                         case "systemUpdateModel":
                             successObject = UpdateModel.fromJson(new JsonObject(data));
@@ -299,7 +370,7 @@ public abstract class SystemWebApi extends Pigeon {
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                             break;
                     }
-                } else {
+                } else if (data != null) {
                     switch (transactionParams.apiFunction) {
                         case "getBanners":
                         case "systemUpdateModel":
@@ -314,20 +385,41 @@ public abstract class SystemWebApi extends Pigeon {
                 Log.v(TAG, ex);
             } finally {
                 Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
-            }
-            return null;
         }
 
-        @Override
-        protected void onPostExecute(Object o) {
             try {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                systemWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
+                    getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+
+                return true;
+            }
+        }
+    }
+
+    private static class Deliverator implements Runnable {
+        private SystemWebApi systemWebApi;
+        private TransactionParams transactionParams;
+        private Object successObject;
+        private boolean success;
+        private Object failObject;
+
+        public Deliverator(SystemWebApi systemWebApi, TransactionParams transactionParams,
+                           Object successObject, boolean success, Object failObject) {
+            this.systemWebApi = systemWebApi;
+            this.transactionParams = transactionParams;
+            this.successObject = successObject;
+            this.success = success;
+            this.failObject = failObject;
+        }
+
+        @Override
+        public void run() {
+            systemWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
         }
     }
 }

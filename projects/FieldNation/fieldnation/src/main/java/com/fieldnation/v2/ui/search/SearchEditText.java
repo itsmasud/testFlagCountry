@@ -196,10 +196,10 @@ public class SearchEditText extends RelativeLayout {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("getWorkOrder")) {
+            if (successObject != null && methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _progressBar.setVisibility(GONE);
-                if (workOrder == null || !success)
+                if (!success)
                     return;
 
                 if (_lastLookup != null && _listener != null

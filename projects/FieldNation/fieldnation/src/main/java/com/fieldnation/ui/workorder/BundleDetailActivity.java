@@ -389,7 +389,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 setLoading(false);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
-
         }
     };
 

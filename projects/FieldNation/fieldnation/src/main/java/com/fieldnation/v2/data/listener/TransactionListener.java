@@ -185,11 +185,15 @@ public class TransactionListener extends WebTransactionListener {
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("params", params);
 
-                if (httpResult.isFile()) {
-                    File file = httpResult.getFile();
-                    bundle.putByteArray("data", StreamUtils.readAllFromStream(new FileInputStream(file), (int) file.length(), 1000));
+                if (httpResult != null) {
+                    if (httpResult.isFile()) {
+                        File file = httpResult.getFile();
+                        bundle.putByteArray("data", StreamUtils.readAllFromStream(new FileInputStream(file), (int) file.length(), 1000));
+                    } else {
+                        bundle.putByteArray("data", httpResult.getByteArray());
+                    }
                 } else {
-                    bundle.putByteArray("data", httpResult.getByteArray());
+                    bundle.putByteArray("data", (byte[]) null);
                 }
                 bundle.putBoolean("success", false);
                 bundle.putString("type", "complete");

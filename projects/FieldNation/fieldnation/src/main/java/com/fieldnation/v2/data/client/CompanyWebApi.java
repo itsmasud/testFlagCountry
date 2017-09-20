@@ -2,6 +2,7 @@ package com.fieldnation.v2.data.client;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -14,8 +15,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -33,6 +34,9 @@ import com.fieldnation.v2.data.model.FundTransaction;
 import com.fieldnation.v2.data.model.SavedCreditCards;
 import com.fieldnation.v2.data.model.Tag;
 import com.fieldnation.v2.data.model.Tags;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by dmgen from swagger.
@@ -851,7 +855,7 @@ public abstract class CompanyWebApi extends Pigeon {
                 break;
             }
             case "complete": {
-                new AsyncParser(this, bundle);
+                BgParser.parse(this, bundle);
                 break;
             }
         }
@@ -874,32 +878,99 @@ public abstract class CompanyWebApi extends Pigeon {
     public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
     }
 
-    private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
-        private static final String TAG = "CompanyWebApi.AsyncParser";
+    private static class BgParser {
+        private static final Object SYNC_LOCK = new Object();
+        private static List<Bundle> BUNDLES = new LinkedList<>();
+        private static List<CompanyWebApi> APIS = new LinkedList<>();
+        private static ThreadManager _manager;
+        private static Handler _handler = null;
+        private static final long IDLE_TIMEOUT = 30000;
 
-        private CompanyWebApi companyWebApi;
-        private TransactionParams transactionParams;
-        private boolean success;
-        private byte[] data;
+        private static ThreadManager getManager() {
+            synchronized (SYNC_LOCK) {
+                if (_manager == null) {
+                    _manager = new ThreadManager();
+                    _manager.addThread(new Parser(_manager));
+                    startActivityMonitor();
+                }
+            }
+            return _manager;
+        }
 
-        private Object successObject;
-        private Object failObject;
+        private static Handler getHandler() {
+            synchronized (SYNC_LOCK) {
+                if (_handler == null)
+                    _handler = new Handler(App.get().getMainLooper());
+            }
+            return _handler;
+        }
 
-        public AsyncParser(CompanyWebApi companyWebApi, Bundle bundle) {
-            this.companyWebApi = companyWebApi;
-            transactionParams = bundle.getParcelable("params");
-            success = bundle.getBoolean("success");
-            data = bundle.getByteArray("data");
+        private static void startActivityMonitor() {
+            getHandler().postDelayed(_activityChecker_runnable, IDLE_TIMEOUT);
+        }
 
-            executeEx();
+        private static final Runnable _activityChecker_runnable = new Runnable() {
+            @Override
+            public void run() {
+                synchronized (SYNC_LOCK) {
+                    if (APIS.size() > 0) {
+                        startActivityMonitor();
+                        return;
+                    }
+                }
+                stop();
+            }
+        };
+
+        private static void stop() {
+            if (_manager != null)
+                _manager.shutdown();
+            _manager = null;
+            synchronized (SYNC_LOCK) {
+                _handler = null;
+            }
+        }
+
+        public static void parse(CompanyWebApi companyWebApi, Bundle bundle) {
+            synchronized (SYNC_LOCK) {
+                APIS.add(companyWebApi);
+                BUNDLES.add(bundle);
+            }
+
+            getManager().wakeUp();
+        }
+
+        private static class Parser extends ThreadManager.ManagedThread {
+            public Parser(ThreadManager manager) {
+                super(manager);
+                setName("CompanyWebApi/Parser");
+                start();
         }
 
         @Override
-        protected Object doInBackground(Object... params) {
-            Log.v(TAG, "Start doInBackground");
+            public boolean doWork() {
+                CompanyWebApi webApi = null;
+                Bundle bundle = null;
+                synchronized (SYNC_LOCK) {
+                    if (APIS.size() > 0) {
+                        webApi = APIS.remove(0);
+                        bundle = BUNDLES.remove(0);
+                    }
+                }
+
+                if (webApi == null || bundle == null)
+                    return false;
+
+                Object successObject = null;
+                Object failObject = null;
+
+                TransactionParams transactionParams = bundle.getParcelable("params");
+                boolean success = bundle.getBoolean("success");
+                byte[] data = bundle.getByteArray("data");
+
             Stopwatch watch = new Stopwatch(true);
             try {
-                if (success) {
+                if (data != null && success) {
                     switch (transactionParams.apiFunction) {
                         case "addTag":
                             successObject = Tag.fromJson(new JsonObject(data));
@@ -942,7 +1013,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                             break;
                     }
-                } else {
+                } else if (data != null) {
                     switch (transactionParams.apiFunction) {
                         case "addTag":
                         case "getClients":
@@ -971,19 +1042,40 @@ public abstract class CompanyWebApi extends Pigeon {
             } finally {
                 Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
             }
-            return null;
-        }
 
-        @Override
-        protected void onPostExecute(Object o) {
             try {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                companyWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
+                    getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+
+                return true;
+            }
+        }
+    }
+
+    private static class Deliverator implements Runnable {
+        private CompanyWebApi companyWebApi;
+        private TransactionParams transactionParams;
+        private Object successObject;
+        private boolean success;
+        private Object failObject;
+
+        public Deliverator(CompanyWebApi companyWebApi, TransactionParams transactionParams,
+                           Object successObject, boolean success, Object failObject) {
+            this.companyWebApi = companyWebApi;
+            this.transactionParams = transactionParams;
+            this.successObject = successObject;
+            this.success = success;
+            this.failObject = failObject;
+        }
+
+        @Override
+        public void run() {
+            companyWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
         }
     }
 }

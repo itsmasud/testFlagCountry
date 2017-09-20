@@ -228,8 +228,8 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             //Log.v(TAG, "onWorkordersWebApi: " + methodName);
-            if (methodName.equals("getWorkOrders")) {
-                if (!success || successObject == null) {
+            if (successObject != null && methodName.equals("getWorkOrders")) {
+                if (!success) {
                     _refreshView.refreshComplete();
                     return;
                 }
