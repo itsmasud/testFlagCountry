@@ -9635,7 +9635,6 @@ public abstract class WorkordersWebApi extends Pigeon {
             getManager().wakeUp();
         }
 
-
         private static class Parser extends ThreadManager.ManagedThread {
             public Parser(ThreadManager manager) {
                 super(manager);
