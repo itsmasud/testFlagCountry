@@ -10,9 +10,6 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
-import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
@@ -28,54 +25,35 @@ import java.util.List;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
-    @Json
     private long _id;
-    @Json
     private String _listenerClassName;
-    @Json
     private byte[] _listenerParams;
-    @Json
     private boolean _useAuth;
-    @Json
     private boolean _isSync;
-    @Json
     private State _state;
-    @Json
     private Priority _priority;
-    @Json
     private String _requestString;
-    @Json
     private String _key;
-    @Json
     private long _queueTime;
-    @Json
     private boolean _wifiRequired;
-    @Json
     private boolean _track;
-    @Json
     private TrackerEnum _trackType;
-    @Json
     private String _timingKey;
+    private boolean _zombie = false;
 
-    @Json
     private int _notifId = -1;
 
-    @Json
-    private byte[] _notifStartArray;
-    @Json
     private NotificationDefinition _notifStart;
-    @Json
-    private byte[] _notifSuccessArray;
-    @Json
+    private byte[] _notifStartArray;
+
     private NotificationDefinition _notifSuccess;
-    @Json
-    private byte[] _notifFailedArray;
-    @Json
+    private byte[] _notifSuccessArray;
+
     private NotificationDefinition _notifFailed;
-    @Json
-    private byte[] _notifRetryArray;
-    @Json
+    private byte[] _notifFailedArray;
+
     private NotificationDefinition _notifRetry;
+    private byte[] _notifRetryArray;
 
     public enum State {
         BUILDING, IDLE, WORKING
@@ -105,6 +83,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _track = cursor.getInt(Column.TRACK.getIndex()) == 1;
         _trackType = TrackerEnum.values()[cursor.getInt(Column.TRACK_TYPE.getIndex())];
         _timingKey = cursor.getString(Column.TIMING_KEY.getIndex());
+        _zombie = cursor.getInt(Column.ZOMBIE.getIndex()) == 1;
 
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
 
@@ -132,6 +111,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _track = bundle.getBoolean(PARAM_TRACK);
         _trackType = TrackerEnum.values()[bundle.getInt(PARAM_TRACK_ENUM)];
         _timingKey = bundle.getString(PARAM_TIMING_KEY);
+        _zombie = bundle.getBoolean(PARAM_ZOMBIE);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);
         _notifStartArray = bundle.getByteArray(PARAM_NOTIFICATION_START);
@@ -168,6 +148,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         if (_timingKey != null)
             bundle.putString(PARAM_TIMING_KEY, _timingKey);
+
+        bundle.putBoolean(PARAM_ZOMBIE, _zombie);
 
         bundle.putInt(PARAM_NOTIFICATION_ID, _notifId);
         if (_notifStartArray != null)
@@ -282,6 +264,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public String getTimingKey() {
         return _timingKey;
+    }
+
+    public boolean isZombie() {
+        return _zombie;
+    }
+
+    public void setZombie(boolean zombie) {
+        _zombie = zombie;
     }
 
     public int getNotificationId() {
@@ -423,6 +413,34 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
+    public static List<WebTransaction> getZombies() {
+        List<WebTransaction> zombies = new LinkedList<>();
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.ZOMBIE + "=1",
+                            null, null, null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        WebTransaction trans = new WebTransaction(cursor);
+                        zombies.add(trans);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return zombies;
+    }
+
     public static void list() {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -466,6 +484,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             Column.STATE + "=?"
                                     + " AND priority >= " + minPriority.ordinal()
                                     + " AND queue_time < " + System.currentTimeMillis()
+                                    + " AND zombie = 0 "
                                     + (allowSync ? "" : " AND is_sync = 0")
                                     + (allowAuth ? "" : " AND use_auth = 0")
                                     + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),
@@ -530,6 +549,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.TRACK.getName(), obj._track ? 1 : 0);
         v.put(Column.TRACK_TYPE.getName(), obj._trackType.ordinal());
         v.put(Column.TIMING_KEY.getName(), obj._timingKey);
+        v.put(Column.ZOMBIE.getName(), obj._zombie);
 
         v.put(Column.NOTIF_ID.getName(), obj._notifId);
         v.put(Column.NOTIF_FAILED.getName(), obj._notifFailedArray);
@@ -586,7 +606,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             try {
                 Cursor cursor = null;
                 try {
-                    cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
+                    cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE zombie = 0", null);
                     if (cursor.moveToNext()) {
                         return cursor.getInt(0);
                     }
@@ -642,27 +662,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return 0;
     }
 
-    /*-*****************************-*/
-    /*-             Json            -*/
-    /*-*****************************-*/
-    public static WebTransaction fromJson(JsonObject obj) {
-        try {
-            return Unserializer.unserializeObject(WebTransaction.class, obj);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-        return null;
-    }
-
-    public JsonObject toJson() {
-        try {
-            return Serializer.serializeObject(this);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-        return null;
-    }
-
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
@@ -701,6 +700,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putBoolean(PARAM_WIFI_REQUIRED, false);
             params.putBoolean(PARAM_TRACK, false);
             params.putInt(PARAM_TRACK_ENUM, 0);
+            params.putBoolean(PARAM_ZOMBIE, false);
             params.putInt(PARAM_NOTIFICATION_ID, -1);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
@@ -765,6 +765,11 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder timingKey(String timingKey) throws ParseException {
             params.putString(PARAM_TIMING_KEY, timingKey);
+            return this;
+        }
+
+        public Builder zombie(boolean zombie) {
+            params.putBoolean(PARAM_ZOMBIE, zombie);
             return this;
         }
 

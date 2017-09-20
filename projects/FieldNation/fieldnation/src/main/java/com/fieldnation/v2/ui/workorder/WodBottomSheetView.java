@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -13,6 +14,7 @@ import com.fieldnation.R;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.PayIncreases;
@@ -22,7 +24,8 @@ import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Signatures;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+
+import java.util.List;
 
 public class WodBottomSheetView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "WodBottomSheetView";
@@ -290,6 +293,10 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         @Override
         public void onClick(View v) {
             misc.hideKeyboard(v);
+            List<WebTransaction> zombies = WebTransaction.getZombies();
+            for (WebTransaction zombie : zombies) {
+                Log.v(TAG, new String(zombie.getListenerParams()));
+            }
             animateIn();
         }
     };

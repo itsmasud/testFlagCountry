@@ -261,7 +261,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("folderId", folderId);
             methodParams.put("attachment", attachment.getJson());
             methodParams.put("file", Uri.fromFile(file));
-            methodParams.put("zombie", true);
+            methodParams.put("allowZombie", true);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
@@ -318,7 +318,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("folderId", folderId);
             methodParams.put("attachment", attachment.getJson());
             methodParams.put("storedObjectId", storedObject.getId());
-            methodParams.put("zombie", true);
+            methodParams.put("allowZombie", true);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
