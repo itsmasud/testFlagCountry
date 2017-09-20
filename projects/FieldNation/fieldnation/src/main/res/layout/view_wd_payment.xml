@@ -4,14 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        style="@style/Text_Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:text="PAYMENT" />
-
     <ViewStub
         android:id="@+id/requestNewPayTile_viewstub"
         android:layout_width="match_parent"

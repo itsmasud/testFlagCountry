@@ -11,22 +11,6 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
-
-            <TextView
-                style="@style/Text_Subhead"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="@string/company_information" />
-        </LinearLayout>
-
-        <LinearLayout
             style="@style/Tile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -205,6 +189,6 @@
     <View
         style="@style/DividerFull"
         android:layout_width="match_parent"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="16dp" />
 
 </LinearLayout>
