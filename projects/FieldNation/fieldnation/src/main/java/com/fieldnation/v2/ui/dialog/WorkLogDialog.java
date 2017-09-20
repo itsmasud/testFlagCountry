@@ -50,6 +50,7 @@ public class WorkLogDialog extends SimpleDialog {
     private Calendar _endCalendar;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
+    private String _deviceNumber;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -110,7 +111,7 @@ public class WorkLogDialog extends SimpleDialog {
         _endCalendar.setTimeInMillis(savedState.getLong("endTime"));
 
         if (savedState.containsKey(STATE_DEVICE))
-            _devicesEditText.setText(savedState.getString(STATE_DEVICE));
+            _deviceNumber = savedState.getString(STATE_DEVICE);
 
         super.onRestoreDialogState(savedState);
 
@@ -163,8 +164,9 @@ public class WorkLogDialog extends SimpleDialog {
         }
 
         try {
-            if (_timeLog.getDevices() != null)
+            if (_timeLog.getDevices() != null && misc.isEmptyOrNull(_deviceNumber))
                 _devicesEditText.setText(_timeLog.getDevices().toString());
+            else _devicesEditText.setText(_deviceNumber);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

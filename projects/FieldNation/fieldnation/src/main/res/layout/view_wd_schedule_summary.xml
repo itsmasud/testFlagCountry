@@ -6,13 +6,8 @@
 
     <TextView
         android:id="@+id/title_textview"
-        style="@style/Text_Subhead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:text="@string/schedule_caps" />
+        style="@style/WoDV2.Header"
+        android:text="Schedule" />
 
     <TextView
         android:id="@+id/type1_textview"

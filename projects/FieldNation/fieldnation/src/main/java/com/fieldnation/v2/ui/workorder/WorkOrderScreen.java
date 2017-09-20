@@ -762,7 +762,7 @@ public class WorkOrderScreen extends RelativeLayout {
                     }
                     break;
                 case 3: // print
-                    String url = "https://mono-mobile.fndev.net/marketplace/wo_print.php?workorder_id=" + _workOrderId;
+                    String url = "https://" + getContext().getString(R.string.web_fn_hostname) + "/marketplace/wo_print.php?workorder_id=" + _workOrderId;
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     ActivityClient.startActivity(intent);
                     break;
