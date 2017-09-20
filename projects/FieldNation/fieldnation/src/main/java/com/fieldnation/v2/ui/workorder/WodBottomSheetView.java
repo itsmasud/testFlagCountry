@@ -293,10 +293,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         @Override
         public void onClick(View v) {
             misc.hideKeyboard(v);
-            List<WebTransaction> zombies = WebTransaction.getZombies();
-            for (WebTransaction zombie : zombies) {
-                Log.v(TAG, new String(zombie.getListenerParams()));
-            }
             animateIn();
         }
     };
