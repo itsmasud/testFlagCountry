@@ -62,6 +62,7 @@ class WebTransactionDispatcher {
     }
 
     public static WebTransactionListener.Result complete(Context context, String listenerName, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+        Log.v(TAG, "complete");
         Stopwatch stopwatch = new Stopwatch(true);
         try {
             try {
@@ -82,6 +83,7 @@ class WebTransactionDispatcher {
     }
 
     public static void progress(Context context, String listenerName, WebTransaction transaction, long pos, long size, long time) {
+        Log.v(TAG, "progress");
         Stopwatch stopwatch = new Stopwatch(true);
         try {
             Class<?> clazz = context.getClassLoader().loadClass(listenerName);

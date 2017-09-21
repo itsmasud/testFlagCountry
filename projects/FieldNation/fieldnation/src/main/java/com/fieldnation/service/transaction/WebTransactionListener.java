@@ -28,7 +28,7 @@ import javax.net.ssl.SSLProtocolException;
 public abstract class WebTransactionListener {
     private static final String TAG = "WebTransactionListener";
 
-    public enum Result {RETRY, CONTINUE, DELETE}
+    public enum Result {RETRY, CONTINUE, DELETE, ZOMBIE}
 
     protected void preOnQueued(Context context, WebTransaction transaction) {
         onQueued(context, transaction);

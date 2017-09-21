@@ -36,7 +36,7 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         TRACK(11, "track", "integer not null"),
         TRACK_TYPE(12, "track_type", "integer not null"),
         TIMING_KEY(13, "timing_key", "text"),
-        ZOMBIE(14, "zombie", "integer not null", true),
+        WAS_ZOMBIE(14, "was_zombie", "integer not null", true),
         NOTIF_ID(15, "notif_id", "integer"),
         NOTIF_START(16, "notif_start", "integer"),
         NOTIF_SUCCESS(17, "notif_success", "integer"),

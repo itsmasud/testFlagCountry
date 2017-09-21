@@ -19,7 +19,7 @@ interface WebTransactionConstants {
     String PARAM_TRACK = "isTracked";
     String PARAM_TRACK_ENUM = "trackEnum";
     String PARAM_TIMING_KEY = "timingKey";
-    String PARAM_ZOMBIE = "zombie";
+    String PARAM_ZOMBIE = "wasZombie";
 
     String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";
     String PARAM_NOTIFICATION_START = "PARAM_NOTIFICATION_START";

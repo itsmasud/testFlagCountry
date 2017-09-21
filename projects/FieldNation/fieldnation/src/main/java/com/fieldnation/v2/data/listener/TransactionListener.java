@@ -215,9 +215,7 @@ public class TransactionListener extends WebTransactionListener {
 
                     JsonObject methodParams = new JsonObject(params.methodParams);
                     if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
-                        transaction.setZombie(true);
-                        transaction.save();
-                        return Result.RETRY;
+                        return Result.ZOMBIE;
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
@@ -31,6 +32,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -119,21 +121,35 @@ public class AttachedFilesDialog extends FullScreenDialog {
     public void show(Bundle payload, boolean animate) {
         Log.v(TAG, "show");
         super.show(payload, animate);
-        folders = payload.getParcelable("folders");
         _workOrderId = payload.getInt("workOrderId");
-        adapter = new AttachedFilesAdapter();
+        WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+
+        AppMessagingClient.setLoading(true);
+    }
+
+    private void populateUi() {
+        if (_list == null)
+            return;
+
+        if (folders == null)
+            return;
+
+        if (adapter == null) {
+            adapter = new AttachedFilesAdapter();
+            adapter.setListener(_attachmentFolder_listener);
+            _list.setAdapter(adapter);
+        }
+
         adapter.setAttachments(folders);
-        adapter.setListener(_attachmentFolder_listener);
-        _list.setAdapter(adapter);
+        adapter.setFailedUploads(WebTransaction.getZombies());
+
+        AppMessagingClient.setLoading(false);
     }
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         Log.v(TAG, "onRestoreDialogState");
-        if (savedState.containsKey("folders")) {
-            folders = savedState.getParcelable("folders");
-            adapter.setAttachments(folders);
-        }
+
         if (savedState.containsKey("selectedFolder"))
             _selectedFolder = savedState.getParcelable("selectedFolder");
         if (savedState.containsKey("selectedAttachment"))
@@ -163,7 +179,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     @Override
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
-        outState.putParcelable("folders", folders);
+
         if (_selectedFolder != null)
             outState.putParcelable("selectedFolder", _selectedFolder);
         if (_selectedAttachment != null)
@@ -231,6 +247,19 @@ public class AttachedFilesDialog extends FullScreenDialog {
             } else {
                 ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
             }
+        }
+
+        @Override
+        public void onFailedClick(WebTransaction webTransaction) {
+            // TODO probably want a dialog or something here
+            webTransaction.requeue(0);
+            populateUi();
+        }
+
+        @Override
+        public void onFailedLongClick(WebTransaction webTransaction) {
+            WebTransaction.delete(webTransaction.getId());
+            populateUi();
         }
     };
 
@@ -359,10 +388,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
                 int folderId = obj.getInt("attachment.folder_id");
-                adapter.uploadStart(folderId, name);
+                adapter.uploadStart(transactionParams);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            populateUi();
         }
 
         @Override
@@ -375,10 +405,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
                 int folderId = obj.getInt("attachment.folder_id");
-                adapter.uploadProgress(folderId, name, 0);
+                adapter.uploadProgress(transactionParams, 0);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            populateUi();
         }
 
         @Override
@@ -391,10 +422,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
                 int folderId = obj.getInt("attachment.folder_id");
-                adapter.uploadProgress(folderId, name, -1);
+                adapter.uploadProgress(transactionParams, -1);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            populateUi();
         }
 
         @Override
@@ -410,21 +442,23 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
                 Double percent = pos * 1.0 / size;
                 Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
-                adapter.uploadProgress(folderId, name, (int) (pos * 100 / size));
+                adapter.uploadProgress(transactionParams, (int) (pos * 100 / size));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            populateUi();
         }
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
+
             if (methodName.equals("addAttachment")) {
                 try {
                     JsonObject obj = new JsonObject(transactionParams.methodParams);
                     String name = obj.getString("attachment.file.name");
                     int folderId = obj.getInt("attachment.folder_id");
-                    adapter.uploadStop(folderId, name);
+                    adapter.uploadStop(transactionParams);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -433,15 +467,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
             } else if (successObject != null && methodName.equals("getAttachments")) {
                 folders = (AttachmentFolders) successObject;
-                adapter.setAttachments(folders);
+                populateUi();
             }
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, AttachmentFolders folders) {
+    public static void show(Context context, String uid, int workOrderId) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
-        params.putParcelable("folders", folders);
 
         Controller.show(context, uid, AttachedFilesDialog.class, params);
     }

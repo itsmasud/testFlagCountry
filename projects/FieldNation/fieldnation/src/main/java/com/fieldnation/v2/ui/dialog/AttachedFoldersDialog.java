@@ -201,7 +201,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             }
             _currentFolder = null;
             dismiss(true);
-            AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
+            AttachedFilesDialog.show(App.get(), null, _workOrderId);
         }
     };
 
@@ -209,7 +209,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         @Override
         public void onOk() {
             dismiss(false);
-            AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
+            AttachedFilesDialog.show(App.get(), null, _workOrderId);
         }
     };
 }

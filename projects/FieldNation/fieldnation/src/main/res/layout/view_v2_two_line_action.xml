@@ -38,6 +38,7 @@
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/alert"
         android:max="100"
         android:min="0"
         android:visibility="gone" />
@@ -52,6 +53,18 @@
         android:text="@string/icon_x"
         android:textColor="@color/fn_dark_text"
         android:textSize="16sp" />
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:padding="16dp"
+        android:text="@string/icon_notifications"
+        android:textColor="@color/fn_brandcolor"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <View
         style="@style/DividerFull"
