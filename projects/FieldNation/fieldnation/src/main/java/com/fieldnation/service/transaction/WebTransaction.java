@@ -62,9 +62,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    public WebTransaction() {
-    }
-
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
         _listenerClassName = cursor.getString(Column.LISTENER.getIndex());
