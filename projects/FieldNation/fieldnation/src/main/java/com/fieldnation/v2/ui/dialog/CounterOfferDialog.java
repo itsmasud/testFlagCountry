@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.PopupMenu;
@@ -36,6 +37,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
+import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.RefreshView;
@@ -139,6 +141,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private long _expiresMilliSeconds = -1;
     private String _expiresTitle = null;
     private String _reason = null;
+    private ForLoopRunnable _expenseRunnables = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -350,6 +353,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             _schedule = savedState.getParcelable("_schedule");
 
         if (savedState.containsKey("_expenses")) {
+            _expenses.clear();
             Parcelable[] parcels = savedState.getParcelableArray("_expenses");
             for (Parcelable parcel : parcels) {
                 _expenses.add((Expense) parcel);
@@ -438,17 +442,23 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         // expenses
         if (_expensesList != null && _expenses.size() > 0) {
+            if (_expenseRunnables != null)
+                _expenseRunnables.cancel();
             _expenseLayout.setVisibility(View.VISIBLE);
             _expensesList.removeAllViews();
 
-            for (int i = 0; i < _expenses.size(); i++) {
-                ListItemTwoVertView v = new ListItemTwoVertView(getContext());
-                v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
-                v.setActionString(getContext().getString(R.string.icon_overflow));
-                v.setOnActionClickedListener(_expense_onClick);
-                v.setTag(i);
-                _expensesList.addView(v);
-            }
+            _expenseRunnables = new ForLoopRunnable(_expenses.size(), new Handler()) {
+                @Override
+                public void next(int i) throws Exception {
+                    ListItemTwoVertView v = new ListItemTwoVertView(getContext());
+                    v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
+                    v.setActionString(getContext().getString(R.string.icon_overflow));
+                    v.setOnActionClickedListener(_expense_onClick);
+                    v.setTag(i);
+                    _expensesList.addView(v);
+                }
+            };
+            getView().postDelayed(_expenseRunnables, 100);
         } else {
             _expenseLayout.setVisibility(View.GONE);
         }

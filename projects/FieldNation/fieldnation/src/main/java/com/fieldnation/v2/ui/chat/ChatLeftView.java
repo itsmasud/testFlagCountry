@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.ProfilePicView;
@@ -123,7 +124,7 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
             try {
                 _timeTextView.setText(
                         _message.getFrom().getName() + " \u2022 " +
-                                TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase());
+                                TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone());
             } catch (Exception ex) {
                 _timeTextView.setVisibility(GONE);
             }
