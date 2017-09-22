@@ -122,7 +122,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         Log.v(TAG, "show");
         super.show(payload, animate);
         _workOrderId = payload.getInt("workOrderId");
-        WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
 
         AppMessagingClient.setLoading(true);
     }
