@@ -111,7 +111,7 @@ public class TimeLogRowView extends RelativeLayout {
                 date += " - ----";
             }
 
-            _timeTextView.setText(date);
+            _timeTextView.setText(date + DateUtils.getDeviceTimezone());
 
             if (_timeLog.getHours() != null) {
                 _hoursTextView.setVisibility(VISIBLE);

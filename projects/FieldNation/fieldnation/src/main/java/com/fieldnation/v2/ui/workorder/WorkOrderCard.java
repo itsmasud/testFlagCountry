@@ -23,6 +23,7 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.gmaps.Position;
@@ -280,7 +281,7 @@ public class WorkOrderCard extends RelativeLayout {
         } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             try {
                 Calendar cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()) + DateUtils.getDeviceTimezone());
                 _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -295,7 +296,7 @@ public class WorkOrderCard extends RelativeLayout {
                 Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
                 Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                 _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
-                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime())+ DateUtils.getDeviceTimezone());
 
 
                 if (scal.get(Calendar.MONTH) != ecal.get(Calendar.MONTH)) {
@@ -319,7 +320,7 @@ public class WorkOrderCard extends RelativeLayout {
                 Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                 _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
                 _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
-                _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+                _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime())+ DateUtils.getDeviceTimezone());
                 _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
                 _hyphenTextView.setVisibility(VISIBLE);
                 _time2TextView.setVisibility(VISIBLE);

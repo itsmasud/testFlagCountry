@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Message;
 
@@ -90,7 +91,7 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
         if (_position == Position.FULL || _position == Position.BOTTOM) {
             _timeTextView.setVisibility(VISIBLE);
             try {
-                _timeTextView.setText(TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase());
+                _timeTextView.setText(TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone());
             } catch (Exception ex) {
                 _timeTextView.setVisibility(GONE);
             }
