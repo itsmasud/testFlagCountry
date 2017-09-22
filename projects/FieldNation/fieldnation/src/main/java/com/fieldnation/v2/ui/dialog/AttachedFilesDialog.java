@@ -58,6 +58,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
     private static final String DIALOG_UPLOAD_SLOTS = TAG + ".attachmentFolderDialog";
     private static final String DIALOG_YES_NO = TAG + ".yesNoDialog";
+    private static final String DIALOG_YES_NO_FAILED = TAG + ".yesNoDialogFailed";
 
     // Ui
     private Toolbar _toolbar;
@@ -73,6 +74,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private int _workOrderId;
     private AttachmentFolder _selectedFolder = null;
     private Attachment _selectedAttachment = null;
+    private long _selectedTransactionId;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -104,6 +106,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
     }
 
     @Override
@@ -154,7 +157,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
             _selectedFolder = savedState.getParcelable("selectedFolder");
         if (savedState.containsKey("selectedAttachment"))
             _selectedAttachment = savedState.getParcelable("selectedAttachment");
-
+        if (savedState.containsKey("selectedTransactionId"))
+            _selectedTransactionId = savedState.getLong("selectedTransactionId");
 
         super.onRestoreDialogState(savedState);
     }
@@ -172,6 +176,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     public void onStop() {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
 
         super.onStop();
     }
@@ -184,6 +189,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
             outState.putParcelable("selectedFolder", _selectedFolder);
         if (_selectedAttachment != null)
             outState.putParcelable("selectedAttachment", _selectedAttachment);
+        if (_selectedTransactionId != 0)
+            outState.putLong("selectedTransactionId", _selectedTransactionId);
 
         super.onSaveDialogState(outState);
     }
@@ -251,14 +258,18 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onFailedClick(WebTransaction webTransaction) {
-            // TODO probably want a dialog or something here
+            // TODO use PhotoUploadDIalog once it's been refactored.
             webTransaction.requeue(0);
             populateUi();
         }
 
         @Override
         public void onFailedLongClick(WebTransaction webTransaction) {
-            WebTransaction.delete(webTransaction.getId());
+            _selectedTransactionId = webTransaction.getId();
+            TwoButtonDialog.show(App.get(), DIALOG_YES_NO_FAILED,
+                    "Cancel Upload", "Are you sure you want to cancel this upload?",
+                    getView().getResources().getString(R.string.btn_yes),
+                    getView().getResources().getString(R.string.btn_no), true, null);
             populateUi();
         }
     };
@@ -315,6 +326,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _selectedAttachment.getFolderId(),
                     _selectedAttachment.getId(), App.get().getSpUiContext());
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimaryFailed = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            WebTransaction.delete(_selectedTransactionId);
+            populateUi();
         }
     };
 
