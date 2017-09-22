@@ -39,6 +39,7 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
@@ -330,6 +331,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     _httpBuilder.put("multipart.files.file.filename", _newFileName);
                     _webTransaction.setRequest(_httpBuilder.toString());
                     _webTransaction.requeue(0);
+                    WebTransactionSystem.getInstance();
 
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
