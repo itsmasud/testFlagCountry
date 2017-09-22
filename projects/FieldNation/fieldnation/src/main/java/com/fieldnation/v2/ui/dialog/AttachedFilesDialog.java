@@ -107,6 +107,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
+        PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoDialog_onUpload);
     }
 
     @Override
@@ -177,6 +178,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
+        PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoDialog_onUpload);
 
         super.onStop();
     }
@@ -258,8 +260,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onFailedClick(WebTransaction webTransaction) {
-            // TODO use PhotoUploadDIalog once it's been refactored.
-            webTransaction.requeue(0);
+            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, webTransaction.getId());
             populateUi();
         }
 
@@ -333,6 +334,13 @@ public class AttachedFilesDialog extends FullScreenDialog {
         @Override
         public void onPrimary(Parcelable extraData) {
             WebTransaction.delete(_selectedTransactionId);
+            populateUi();
+        }
+    };
+
+    private final PhotoUploadDialog.OnOkListener _photoDialog_onUpload = new PhotoUploadDialog.OnOkListener() {
+        @Override
+        public void onOk() {
             populateUi();
         }
     };
