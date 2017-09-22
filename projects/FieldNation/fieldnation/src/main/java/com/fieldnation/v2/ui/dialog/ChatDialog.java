@@ -122,7 +122,7 @@ public class ChatDialog extends FullScreenDialog {
 
         if (!_isMarkedRead) {
             _isMarkedRead = true;
-// TODO                WorkorderClient.actionMarkMessagesRead(App.get(), _workorder.getWorkorderId());
+
             ProfileClient.get(App.get());
         }
     }

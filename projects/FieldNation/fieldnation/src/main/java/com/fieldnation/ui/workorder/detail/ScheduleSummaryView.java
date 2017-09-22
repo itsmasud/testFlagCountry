@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Schedule;
@@ -127,7 +128,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 sdf.setDateFormatSymbols(symbols);
 
                 _type1TextView.setText(R.string.exactly_on);
-                _date1TextView.setText(sdf.format(sCal.getTime()));
+                _date1TextView.setText(sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone());
                 _type2TextView.setVisibility(GONE);
                 _date2TextView.setVisibility(GONE);
 
@@ -151,7 +152,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 _type2TextView.setVisibility(VISIBLE);
                 _date2TextView.setVisibility(VISIBLE);
                 _date2TextView.setText(getContext().getString(R.string.schedule_business_hours_format2,
-                        sdf1.format(sCal.getTime()), sdf1.format(eCal.getTime())));
+                        sdf1.format(sCal.getTime()), sdf1.format(eCal.getTime()), DateUtils.getDeviceTimezone()));
 
             } else if (schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
                 Calendar sCal = schedule.getServiceWindow().getStart().getCalendar();
@@ -163,7 +164,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 _date1TextView.setText(
                         getContext().getString(R.string.schedule_open_range_format,
                                 sdf.format(sCal.getTime()),
-                                sdf.format(eCal.getTime())));
+                                DateUtils.getDeviceTimezone(),
+                                sdf.format(eCal.getTime()),
+                                DateUtils.getDeviceTimezone()));
 
                 _type2TextView.setVisibility(GONE);
                 _date2TextView.setVisibility(GONE);
@@ -174,7 +177,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 sdf.setDateFormatSymbols(symbols);
 
                 _type1TextView.setText(R.string.exactly_on);
-                _date1TextView.setText(sdf.format(sCal.getTime()));
+                _date1TextView.setText(sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone());
                 _type2TextView.setVisibility(GONE);
                 _date2TextView.setVisibility(GONE);
             }

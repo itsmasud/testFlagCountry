@@ -541,7 +541,8 @@ public class EtaDialog extends FullScreenDialog {
 
                 dateTimeString += App.get().getString(R.string.schedule_business_hours_format3,
                         sdf1.format(sCal.getTime()),
-                        sdf1.format(eCal.getTime()));
+                        sdf1.format(eCal.getTime()),
+                        DateUtils.getDeviceTimezone());
 
                 return dateTimeString;
 
@@ -554,7 +555,8 @@ public class EtaDialog extends FullScreenDialog {
 
                 dateTimeString = App.get().getString(R.string.schedule_open_range_format2,
                         sdf.format(sCal.getTime()),
-                        sdf.format(eCal.getTime()));
+                        sdf.format(eCal.getTime()),
+                        DateUtils.getDeviceTimezone());
 
                 return dateTimeString;
 
@@ -563,7 +565,7 @@ public class EtaDialog extends FullScreenDialog {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
-                dateTimeString = sdf.format(sCal.getTime());
+                dateTimeString = sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone();
 
                 return dateTimeString;
             }

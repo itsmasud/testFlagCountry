@@ -39,7 +39,7 @@ public class DateUtils {
 
         // same day, show time
         if (now - past.getTimeInMillis() < 86400000) {
-            return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(past.getTime()).toUpperCase();
+            return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(past.getTime()).toUpperCase() + DateUtils.getDeviceTimezone();
         }
         // yesterday show yesterda
         else if (now - past.getTimeInMillis() < 172800000) {
@@ -622,5 +622,10 @@ public class DateUtils {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
+    }
+
+    public static String getDeviceTimezone() {
+        TimeZone timeZone = TimeZone.getDefault();
+        return " (" + timeZone.getDisplayName(false, TimeZone.SHORT) + ")";
     }
 }
