@@ -296,7 +296,7 @@ public class WorkOrderCard extends RelativeLayout {
                 Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
                 Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                 _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
-                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime())+ DateUtils.getDeviceTimezone());
+                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()) + DateUtils.getDeviceTimezone());
 
 
                 if (scal.get(Calendar.MONTH) != ecal.get(Calendar.MONTH)) {
@@ -320,7 +320,7 @@ public class WorkOrderCard extends RelativeLayout {
                 Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                 _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
                 _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
-                _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime())+ DateUtils.getDeviceTimezone());
+                _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()) + DateUtils.getDeviceTimezone());
                 _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
                 _hyphenTextView.setVisibility(VISIBLE);
                 _time2TextView.setVisibility(VISIBLE);

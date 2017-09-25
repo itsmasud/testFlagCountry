@@ -1562,10 +1562,6 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onMarkIncomplete(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrderId);
-
-            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-            uiContext.page += " - Mark Incomplete Dialog";
-            WorkordersWebApi.incompleteWorkOrder(App.get(), _workOrderId, uiContext);
             setLoading(true);
         }
     };
