@@ -9635,7 +9635,6 @@ public abstract class WorkordersWebApi extends Pigeon {
             getManager().wakeUp();
         }
 
-
         private static class Parser extends ThreadManager.ManagedThread {
             public Parser(ThreadManager manager) {
                 super(manager);
@@ -9666,7 +9665,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
                 Stopwatch watch = new Stopwatch(true);
                 try {
-                    if (success) {
+                    if (data != null && success) {
                         switch (transactionParams.apiFunction) {
                             case "getRequests":
                                 successObject = Requests.fromJson(new JsonObject(data));
@@ -9892,7 +9891,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                 Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                                 break;
                         }
-                    } else {
+                    } else if (data != null) {
                         switch (transactionParams.apiFunction) {
                             case "acceptSwapRequest":
                             case "acknowledgeDelay":

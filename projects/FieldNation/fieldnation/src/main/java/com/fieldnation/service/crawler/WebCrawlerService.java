@@ -310,7 +310,7 @@ public class WebCrawlerService extends Service {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             try {
                 Log.v(TAG, "onComplete " + methodName);
-                if (methodName.equals("getWorkOrderLists")) {
+                if (successObject != null && methodName.equals("getWorkOrderLists")) {
                     Log.v(TAG, "getWorkOrderLists");
                     SavedList[] savedList = (SavedList[]) successObject;
                     incrementPendingRequestCounter(-1);
@@ -323,9 +323,9 @@ public class WebCrawlerService extends Service {
                             WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
                     }
 
-                } else if (methodName.equals("getWorkOrders")) {
+                } else if (successObject != null && methodName.equals("getWorkOrders")) {
                     WorkOrders workOrders = (WorkOrders) successObject;
-                    if (workOrders == null || workOrders.getMetadata() == null)
+                    if (workOrders.getMetadata() == null)
                         return;
 
                     Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
@@ -353,9 +353,9 @@ public class WebCrawlerService extends Service {
                             WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
                         }
                     }
-                } else if (methodName.equals("getWorkOrder")) {
+                } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
-                    if (workOrder == null || workOrder.getId() == null)
+                    if (workOrder.getId() == null)
                         return;
 
                     Log.v(TAG, "getWorkOrder " + workOrder.getId());

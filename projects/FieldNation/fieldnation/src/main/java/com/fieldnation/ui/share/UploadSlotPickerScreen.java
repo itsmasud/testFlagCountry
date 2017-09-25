@@ -153,7 +153,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject instanceof WorkOrder) {
+            if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (!success) {
                     _refreshView.refreshComplete();
