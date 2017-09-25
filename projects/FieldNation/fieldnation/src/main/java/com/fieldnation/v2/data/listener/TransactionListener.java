@@ -1,6 +1,8 @@
 package com.fieldnation.v2.data.listener;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.fieldnation.App;
@@ -17,6 +19,7 @@ import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -199,10 +202,6 @@ public class TransactionListener extends WebTransactionListener {
 
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.TEMP);
 
-                if (transaction.isTracked()) {
-                    UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
-                }
-
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
                                 .tag(AnswersWrapper.TAG)
@@ -211,9 +210,18 @@ public class TransactionListener extends WebTransactionListener {
                                 .build());
 
                 try {
-                    Log.v(TAG, "Saving zombie transaction");
-
                     JsonObject methodParams = new JsonObject(params.methodParams);
+                    if (transaction.isTracked()) {
+                        if (methodParams.has("workOrderId")) {
+                            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), methodParams.getInt("workOrderId"));
+                            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
+                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
+                        } else {
+                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
+                        }
+                    }
+
+                    Log.v(TAG, "Saving zombie transaction");
                     if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
                         return Result.ZOMBIE;
                     }
