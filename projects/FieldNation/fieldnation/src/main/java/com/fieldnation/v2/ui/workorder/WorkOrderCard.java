@@ -76,7 +76,6 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_CHECK_IN_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
-    private static final String DIALOG_DECLINE = TAG + ".declineDialog";
     private static final String DIALOG_WITHDRAW_REQUEST = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteWarningDialog";
@@ -153,7 +152,6 @@ public class WorkOrderCard extends RelativeLayout {
         if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(GONE);
 
-        DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -170,7 +168,6 @@ public class WorkOrderCard extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -817,17 +814,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
-            DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getId(), _workOrder.getCompany().getId(), false);
-        }
-    };
-
-    private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
-        @Override
-        public void onDeclined(int workOrderId) {
-            if (_onActionListener != null) _onActionListener.onAction();
-
-            if (_workOrder.getId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, workOrderId);
+            DeclineDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getCompany().getId(), false);
         }
     };
 

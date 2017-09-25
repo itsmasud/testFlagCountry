@@ -19,6 +19,7 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
@@ -298,6 +299,16 @@ public class DeclineDialog extends FullScreenDialog {
                         AppMessagingClient.finishActivity();
                 }
             }
+            
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(),
+                    App.get().analActionTitle,
+                    WorkOrderTracker.ActionButton.NOT_INTERESTED,
+                    WorkOrderTracker.Action.NOT_INTERESTED,
+                    _workOrderId);
+
+            AppMessagingClient.setLoading(true);
+
             dismiss(true);
             return true;
         }
