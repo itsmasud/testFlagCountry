@@ -9,19 +9,21 @@
         android:id="@+id/upper_divider"
         style="@style/DividerFull" />
 
+    <!--pre visit-->
     <TextView
+        android:id="@+id/previsit_textview"
         style="@style/Text_Subhead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_alignBaseline="@+id/previsit_count_textview"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_toLeftOf="@+id/count_textview"
-        android:text="Unresolved Problems" />
+        android:layout_toLeftOf="@+id/previsit_count_textview"
+        android:text="Pre Visit" />
 
     <TextView
-        android:id="@+id/count_textview"
+        android:id="@+id/previsit_count_textview"
         style="@style/Text_Body_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -30,17 +32,133 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/red_round_rect"
+        android:background="@drawable/round_rect_red"
         android:gravity="center"
         android:paddingBottom="2dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:paddingTop="2dp"
-        android:text="3"
+        android:text="2/3"
         android:textColor="@color/fn_white_text" />
 
     <View
+        android:id="@+id/previsit_divider"
         style="@style/DividerFull"
-        android:layout_below="@+id/count_textview" />
+        android:layout_below="@+id/previsit_count_textview" />
+
+
+    <!--on site -->
+    <TextView
+        android:id="@+id/onsite_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/previsit_divider"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/onsite_count_textview"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/onsite_count_textview"
+        android:text="On Site" />
+
+    <TextView
+        android:id="@+id/onsite_count_textview"
+        style="@style/Text_Body_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/previsit_divider"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/round_rect_red"
+        android:gravity="center"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:text="2/3"
+        android:textColor="@color/fn_white_text" />
+
+    <View
+        android:id="@+id/onsite_divider"
+        style="@style/DividerFull"
+        android:layout_below="@+id/onsite_count_textview" />
+
+    <!--post site -->
+    <TextView
+        android:id="@+id/postvisit_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/postvisit_divider"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/postvisit_count_textview"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/postvisit_count_textview"
+        android:text="Post Visit" />
+
+    <TextView
+        android:id="@+id/postvisit_count_textview"
+        style="@style/Text_Body_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/onsite_divider"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/round_rect_red"
+        android:gravity="center"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:text="2/3"
+        android:textColor="@color/fn_white_text" />
+
+    <View
+        android:id="@+id/postvisit_divider"
+        style="@style/DividerFull"
+        android:layout_below="@+id/postvisit_count_textview" />
+
+    <!--fields to enter -->
+    <TextView
+        android:id="@+id/fte_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/postvisit_divider"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/fte_count_textview"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/fte_count_textview"
+        android:text="Fields to Enter" />
+
+    <TextView
+        android:id="@+id/fte_count_textview"
+        style="@style/Text_Body_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/postvisit_divider"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/round_rect_red"
+        android:gravity="center"
+        android:paddingBottom="2dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="2dp"
+        android:text="2/3"
+        android:textColor="@color/fn_white_text" />
+
+    <View
+        android:id="@+id/fte_divider"
+        style="@style/DividerFull"
+        android:layout_below="@+id/fte_count_textview" />
 
 </RelativeLayout>
