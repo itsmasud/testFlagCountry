@@ -320,6 +320,14 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             if (_mode == MODE_RETRY) {
                 try {
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("AttachmentRetry")
+                                    .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
+                                    .action("start")
+                                    .build());
+
                     Attachment attachment = Attachment.fromJson(_methodParams.getJsonObject("attachment"));
                     attachment.notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
