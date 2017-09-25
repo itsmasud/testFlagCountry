@@ -1,27 +1,22 @@
 package com.fieldnation.fnjson;
 
-import android.app.Application;
-import android.test.ApplicationTestCase;
+import android.support.test.filters.SmallTest;
+import android.support.test.runner.AndroidJUnit4;
 
 import com.fieldnation.fnjson.annotations.Json;
 
-import java.text.ParseException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
-/**
- * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
- */
-public class ApplicationTest extends ApplicationTestCase<Application> {
-    public ApplicationTest() {
-        super(Application.class);
-    }
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
 
-        enum_test();
-        displayTest();
-    }
+@RunWith(AndroidJUnit4.class)
+@SmallTest
+public class EnumTest {
+
 
     private enum TestEnum {
         @Json(name = "ord1")ORD1("ord1"),
@@ -55,17 +50,22 @@ public class ApplicationTest extends ApplicationTestCase<Application> {
 
     private static final String EnumJson = "{te:ord3}";
 
+    @Test
     public void enum_test() throws Exception {
         EnumTestClass instance = Unserializer.unserializeObject(EnumTestClass.class, new JsonObject(EnumJson));
 
-        assertEquals(instance.te, TestEnum.ORD3);
-
+        assertThat(instance.te, is(equalTo(TestEnum.ORD3)));
         System.out.print(Serializer.serializeObject(instance).display());
     }
 
-    public void displayTest() throws ParseException {
-        JsonObject obj = new JsonObject();
-        obj.put("this.is.a.test", "works!");
-        System.out.println(obj.display());
+    @Test
+    public void displayTest() {
+        try {
+            JsonObject obj = new JsonObject();
+            obj.put("this.is.a.test", "works!");
+            System.out.println(obj.display());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }

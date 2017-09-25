@@ -202,7 +202,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     _workOrder = workOrder;
 
                     if (_showAttachments && !_attachmentsShown) {
-                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId());
                         _showAttachments = false;
                         _attachmentsShown = true;
                     }

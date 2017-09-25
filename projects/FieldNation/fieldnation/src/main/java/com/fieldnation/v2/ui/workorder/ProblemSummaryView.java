@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -12,7 +12,6 @@ import com.fieldnation.R;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.UnresolvedProblemsDialog;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
  * Created by mc on 5/24/17.
@@ -43,7 +42,7 @@ public class ProblemSummaryView extends RelativeLayout implements WorkOrderRende
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_problem_summary, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_v2_wod_alert_summary, this);
 
         if (isInEditMode())
             return;

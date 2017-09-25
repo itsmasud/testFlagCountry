@@ -33,7 +33,7 @@ public class ThreadManager {
         for (int i = 0; i < _threads.size(); i++) {
             ManagedThread thread = _threads.get(i);
             try {
-                thread.join(100);
+                thread.join();
             } catch (InterruptedException e) {
                 Log.v(TAG, e);
             }

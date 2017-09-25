@@ -676,6 +676,49 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
+    public static List<String> objectTypes(Context context, long profileId) {
+        Log.v(TAG, "list(" + profileId + ")");
+        List<StoredObject> list = new LinkedList<>();
+
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            ObjectStoreSqlHelper.getColumnNames(),
+                            Column.PROFILE_ID + "=?",
+                            new String[]{profileId + ""},
+                            null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        list.add(new StoredObject(cursor));
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+
+        Set<String> set = new HashSet<>();
+        for (StoredObject obj : list) {
+            if (isWriting(obj._id)) {
+                obj = get(context, obj._id);
+            }
+            set.add(obj.getObjName());
+        }
+
+        for (String str : set) {
+            Log.v(TAG, str);
+        }
+
+        return new LinkedList<>(set);
+    }
+
     public static List<StoredObject> list(Context context, long profileId, String objectTypeName) {
         Log.v(TAG, "list(" + profileId + ", " + objectTypeName + ")");
         List<StoredObject> list = new LinkedList<>();

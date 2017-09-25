@@ -210,17 +210,17 @@ public class TransactionListener extends WebTransactionListener {
                                 .action("FAIL")
                                 .build());
 
-/*
-                String method = new JsonObject(transaction.getRequestString()).getString("method");
-                if (method.equals("GET")) {
-                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
-                    if (httpResult.isFile()) {
-                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
-                    } else {
-                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray(), true);
+                try {
+                    Log.v(TAG, "Saving zombie transaction");
+
+                    JsonObject methodParams = new JsonObject(params.methodParams);
+                    if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                        return Result.ZOMBIE;
                     }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
                 }
-*/
+
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 // TODO error!

@@ -25,6 +25,8 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
@@ -90,14 +92,25 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+
+        _workOrdersApi.sub();
     }
 
     @Override
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "show");
         super.show(params, animate);
-        _folders = params.getParcelable("folders");
         _workOrderId = params.getInt("workOrderId");
+        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_list == null)
+            return;
+
+        if (_folders == null)
+            return;
 
         _adapter.setAttachments(_folders);
     }
@@ -114,6 +127,13 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         if (_currentFolder != null)
             outState.putParcelable("currentFolder", _currentFolder);
         super.onSaveDialogState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        _workOrdersApi.unsub();
+
+        super.onPause();
     }
 
     @Override
@@ -157,14 +177,6 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, AttachmentFolders folders) {
-        Bundle params = new Bundle();
-        params.putInt("workOrderId", workOrderId);
-        params.putParcelable("folders", folders);
-
-        Controller.show(context, uid, AttachedFoldersDialog.class, params);
-    }
-
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
         public void onFile(List<GetFileDialog.UriIntent> fileResult) {
@@ -201,7 +213,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             }
             _currentFolder = null;
             dismiss(true);
-            AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
+            AttachedFilesDialog.show(App.get(), null, _workOrderId);
         }
     };
 
@@ -209,7 +221,30 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         @Override
         public void onOk() {
             dismiss(false);
-            AttachedFilesDialog.show(App.get(), null, _workOrderId, _folders);
+            AttachedFilesDialog.show(App.get(), null, _workOrderId);
         }
     };
+
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.toLowerCase().contains("attachment");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject != null && methodName.equals("getAttachments")) {
+                _folders = (AttachmentFolders) successObject;
+                populateUi();
+            }
+        }
+    };
+
+    public static void show(Context context, String uid, int workOrderId) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+
+        Controller.show(context, uid, AttachedFoldersDialog.class, params);
+    }
+
 }

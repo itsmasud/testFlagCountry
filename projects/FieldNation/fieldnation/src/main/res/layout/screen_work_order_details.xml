@@ -39,7 +39,12 @@
                     android:layout_height="wrap_content" />
 
 
-                <com.fieldnation.ui.workorder.detail.ProblemSummaryView
+                <com.fieldnation.v2.ui.workorder.FailedUploadsView
+                    android:id="@+id/failedUploads_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.fieldnation.v2.ui.workorder.ProblemSummaryView
                     android:id="@+id/problemsummary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -157,12 +162,12 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Additional information -->
-<!--
-                <TextView
-                    android:id="@+id/additionalInformation_textview"
-                    style="@style/WoDV2.Header"
-                    android:text="@string/additional_information" />
--->
+                <!--
+                                <TextView
+                                    android:id="@+id/additionalInformation_textview"
+                                    style="@style/WoDV2.Header"
+                                    android:text="@string/additional_information" />
+                -->
 
                 <com.fieldnation.ui.SignatureListView
                     android:id="@+id/signature_view"

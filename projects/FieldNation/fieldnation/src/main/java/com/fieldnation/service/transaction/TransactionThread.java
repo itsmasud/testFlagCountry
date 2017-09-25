@@ -281,6 +281,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
 
                 break;
+            case ZOMBIE:
+                generateNotification(notifId, notifFailed);
+                trans.setZombie();
+                trans.save();
+                break;
         }
         return true;
     }

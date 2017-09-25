@@ -16,14 +16,14 @@ import java.util.List;
 public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 6; // last update: 2-20-2017 PA-592
+    private static final int TABLE_VER = 7; // last update: 9-20-2017 MAR-525
     public static final String TABLE_NAME = "transactions";
 
     private static WebTransactionSqlHelper _instance = null;
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        LSITENER(1, "listener", "text"),
+        LISTENER(1, "listener", "text"),
         LISTENER_PARAMS(2, "listener_params", "blob"),
         USE_AUTH(3, "use_auth", "integer not null"),
         IS_SYNC(4, "is_sync", "integer not null"),
@@ -36,11 +36,12 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         TRACK(11, "track", "integer not null"),
         TRACK_TYPE(12, "track_type", "integer not null"),
         TIMING_KEY(13, "timing_key", "text"),
-        NOTIF_ID(14, "notif_id", "integer"),
-        NOTIF_START(15, "notif_start", "integer"),
-        NOTIF_SUCCESS(16, "notif_success", "integer"),
-        NOTIF_FAILED(17, "notif_failed", "integer"),
-        NOTIF_RETRY(18, "notif_retry", "integer"),;
+        WAS_ZOMBIE(14, "was_zombie", "integer not null", true),
+        NOTIF_ID(15, "notif_id", "integer"),
+        NOTIF_START(16, "notif_start", "integer"),
+        NOTIF_SUCCESS(17, "notif_success", "integer"),
+        NOTIF_FAILED(18, "notif_failed", "integer"),
+        NOTIF_RETRY(19, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;
