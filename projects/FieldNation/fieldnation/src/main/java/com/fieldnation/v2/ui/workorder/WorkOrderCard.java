@@ -74,7 +74,6 @@ public class WorkOrderCard extends RelativeLayout {
 
     // Dialog UIDs
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
-    private static final String DIALOG_MARK_INCOMPLETE_WARNING = TAG + ".markIncompleteWarningDialog";
     private static final String DIALOG_CHECK_IN_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_DECLINE = TAG + ".declineDialog";
@@ -160,7 +159,6 @@ public class WorkOrderCard extends RelativeLayout {
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.addOnEtaListener(DIALOG_ETA, _etaDialog_onEta);
-        MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING, _markIncompleteWarningDialog_onMarkIncomplete);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.addOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
@@ -178,7 +176,6 @@ public class WorkOrderCard extends RelativeLayout {
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.removeOnEtaListener(DIALOG_ETA, _etaDialog_onEta);
-        MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING, _markIncompleteWarningDialog_onMarkIncomplete);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.removeOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
@@ -192,6 +189,7 @@ public class WorkOrderCard extends RelativeLayout {
         _workOrder = workOrder;
         _location = location;
         _savedSearchTitle = savedSearchTitle;
+        App.get().analActionTitle = _savedSearchTitle + " Saved Search";
 
         populateUi();
     }
@@ -657,17 +655,6 @@ public class WorkOrderCard extends RelativeLayout {
                     WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrder.getId());
 
             MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrder.getId());
-        }
-    };
-
-    private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteWarningDialog_onMarkIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
-        @Override
-        public void onMarkIncomplete(int workOrderId) {
-            if (_onActionListener != null) _onActionListener.onAction();
-
-            if (_workOrder.getId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
-                        WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getId());
         }
     };
 

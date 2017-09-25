@@ -102,6 +102,7 @@ public class App extends Application {
 
     // UI context hack
     private SpUIContext _spUiContext = new SpUIContext();
+    public String analActionTitle = null;
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;

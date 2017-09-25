@@ -153,7 +153,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
-    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
@@ -450,7 +449,6 @@ public class WorkOrderScreen extends RelativeLayout {
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
-        MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
@@ -499,7 +497,6 @@ public class WorkOrderScreen extends RelativeLayout {
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
-        MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
@@ -809,7 +806,8 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onMarkIncomplete() {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrderId);
-            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrderId);
+            App.get().analActionTitle = null;
+            MarkIncompleteWarningDialog.show(App.get(), null, _workOrderId);
         }
 
         @Override
@@ -1555,14 +1553,6 @@ public class WorkOrderScreen extends RelativeLayout {
             if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                 RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
             }
-        }
-    };
-
-    private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteDialog_markIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
-        @Override
-        public void onMarkIncomplete(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrderId);
-            setLoading(true);
         }
     };
 
