@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -133,7 +134,8 @@ public class BundleEtaCardView extends RelativeLayout {
 
                 dateTimeString += App.get().getString(R.string.schedule_business_hours_format3,
                         sdf1.format(sCal.getTime()),
-                        sdf1.format(eCal.getTime()));
+                        sdf1.format(eCal.getTime()),
+                        DateUtils.getDeviceTimezone());
 
                 return dateTimeString;
 
@@ -146,7 +148,8 @@ public class BundleEtaCardView extends RelativeLayout {
 
                 dateTimeString = App.get().getString(R.string.schedule_open_range_format2,
                         sdf.format(sCal.getTime()),
-                        sdf.format(eCal.getTime()));
+                        sdf.format(eCal.getTime()),
+                        DateUtils.getDeviceTimezone());
 
                 return dateTimeString;
 
@@ -155,7 +158,7 @@ public class BundleEtaCardView extends RelativeLayout {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
-                dateTimeString = sdf.format(sCal.getTime());
+                dateTimeString = sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone();
 
                 return dateTimeString;
             }

@@ -6,8 +6,10 @@ import android.os.Parcelable;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 
@@ -27,11 +29,20 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
         if (extraData != null && extraData instanceof Bundle) {
             Integer workOrderId = ((Bundle) extraData).getInt("workOrderId");
 
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(),
+                    App.get().analActionTitle,
+                    WorkOrderTracker.ActionButton.MARK_INCOMPLETE,
+                    WorkOrderTracker.Action.MARK_INCOMPLETE,
+                    workOrderId);
+
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Mark Incomplete Warning";
 
             WorkordersWebApi.incompleteWorkOrder(App.get(), workOrderId, uiContext);
             _onMarkIncompleteDispatcher.dispatch(getUid(), workOrderId);
+
+            AppMessagingClient.setLoading(true);
         }
         return true;
     }

@@ -1,7 +1,6 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
@@ -234,52 +233,53 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param attachment  Folder
      * @param file        File
      */
-    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, EventContext uiContext) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("addAttachmentByWorkOrderAndFolder")
-                .label(workOrderId + "")
-                .category("workorder")
-                .addContext(uiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
-                .property("folder_id")
-                .value(folderId)
-                .build()
-        );
-
-        try {
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment.getJson(), "application/json")
-                    .multipartFile("file", file.getName(), Uri.fromFile(file));
-
-            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(file.getName()));
-
-            JsonObject methodParams = new JsonObject();
-            methodParams.put("workOrderId", workOrderId);
-            methodParams.put("folderId", folderId);
-            methodParams.put("attachment", attachment.getJson());
-            methodParams.put("file", Uri.fromFile(file));
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "addAttachment", methodParams))
-                    .useAuth(true)
-                    .request(builder)
-                    .setTrack(true)
-                    .setTrackType(TrackerEnum.DELIVERABLES)
-                    .build();
-
-            WebTransactionSystem.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
+//    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, EventContext uiContext) {
+//        Tracker.event(context, new SimpleEvent.Builder()
+//                .action("addAttachmentByWorkOrderAndFolder")
+//                .label(workOrderId + "")
+//                .category("workorder")
+//                .addContext(uiContext)
+//                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+//                .property("folder_id")
+//                .value(folderId)
+//                .build()
+//        );
+//
+//        try {
+//            HttpJsonBuilder builder = new HttpJsonBuilder()
+//                    .protocol("https")
+//                    .method("POST")
+//                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+//                    .multipartField("attachment", attachment.getJson(), "application/json")
+//                    .multipartFile("file", file.getName(), Uri.fromFile(file));
+//
+//            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(file.getName()));
+//
+//            JsonObject methodParams = new JsonObject();
+//            methodParams.put("workOrderId", workOrderId);
+//            methodParams.put("folderId", folderId);
+//            methodParams.put("attachment", attachment.getJson());
+//            methodParams.put("file", Uri.fromFile(file));
+//            methodParams.put("allowZombie", true);
+//
+//            WebTransaction transaction = new WebTransaction.Builder()
+//                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
+//                    .priority(Priority.HIGH)
+//                    .listener(TransactionListener.class)
+//                    .listenerParams(
+//                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+//                                    WorkordersWebApi.class, "addAttachment", methodParams))
+//                    .useAuth(true)
+//                    .request(builder)
+//                    .setTrack(true)
+//                    .setTrackType(TrackerEnum.DELIVERABLES)
+//                    .build();
+//
+//            WebTransactionSystem.queueTransaction(context, transaction);
+//        } catch (Exception ex) {
+//            Log.v(TAG, ex);
+//        }
+//    }
 
     /**
      * Swagger operationId: addAttachmentByWorkOrderAndFolder
@@ -317,6 +317,8 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("folderId", folderId);
             methodParams.put("attachment", attachment.getJson());
             methodParams.put("storedObjectId", storedObject.getId());
+            methodParams.put("allowZombie", true);
+            methodParams.put("timestamp", System.currentTimeMillis());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
@@ -347,43 +349,44 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param file        File
      * @param async       Async (Optional)
      */
-    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, Boolean async) {
-        try {
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .urlParams("?async=" + async)
-                    .multipartField("attachment", attachment.getJson(), "application/json")
-                    .multipartFile("file", file.getName(), Uri.fromFile(file));
-
-            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(file.getName()));
-
-            JsonObject methodParams = new JsonObject();
-            methodParams.put("workOrderId", workOrderId);
-            methodParams.put("folderId", folderId);
-            methodParams.put("async", async);
-            methodParams.put("attachment", attachment.getJson());
-            methodParams.put("file", Uri.fromFile(file));
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "addAttachment", methodParams))
-                    .useAuth(true)
-                    .setTrack(true)
-                    .setTrackType(TrackerEnum.DELIVERABLES)
-                    .request(builder)
-                    .build();
-
-            WebTransactionSystem.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
+//    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, Boolean async) {
+//        try {
+//            HttpJsonBuilder builder = new HttpJsonBuilder()
+//                    .protocol("https")
+//                    .method("POST")
+//                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+//                    .urlParams("?async=" + async)
+//                    .multipartField("attachment", attachment.getJson(), "application/json")
+//                    .multipartFile("file", file.getName(), Uri.fromFile(file));
+//
+//            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(file.getName()));
+//
+//            JsonObject methodParams = new JsonObject();
+//            methodParams.put("workOrderId", workOrderId);
+//            methodParams.put("folderId", folderId);
+//            methodParams.put("async", async);
+//            methodParams.put("attachment", attachment.getJson());
+//            methodParams.put("file", Uri.fromFile(file));
+//            methodParams.put("allowZombie", true);
+//
+//            WebTransaction transaction = new WebTransaction.Builder()
+//                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
+//                    .priority(Priority.HIGH)
+//                    .listener(TransactionListener.class)
+//                    .listenerParams(
+//                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+//                                    WorkordersWebApi.class, "addAttachment", methodParams))
+//                    .useAuth(true)
+//                    .setTrack(true)
+//                    .setTrackType(TrackerEnum.DELIVERABLES)
+//                    .request(builder)
+//                    .build();
+//
+//            WebTransactionSystem.queueTransaction(context, transaction);
+//        } catch (Exception ex) {
+//            Log.v(TAG, ex);
+//        }
+//    }
 
     /**
      * Swagger operationId: addBonusByWorkOrderAndBonus

@@ -25,11 +25,11 @@ import java.util.List;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
-    private final long _id;
+    private long _id;
     private String _listenerClassName;
     private byte[] _listenerParams;
-    private final boolean _useAuth;
-    private final boolean _isSync;
+    private boolean _useAuth;
+    private boolean _isSync;
     private State _state;
     private Priority _priority;
     private String _requestString;
@@ -39,20 +39,24 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private boolean _track;
     private TrackerEnum _trackType;
     private String _timingKey;
+    private boolean _wasZombie = false;
 
     private int _notifId = -1;
 
-    private byte[] _notifStartArray;
     private NotificationDefinition _notifStart;
-    private byte[] _notifSuccessArray;
+    private byte[] _notifStartArray;
+
     private NotificationDefinition _notifSuccess;
-    private byte[] _notifFailedArray;
+    private byte[] _notifSuccessArray;
+
     private NotificationDefinition _notifFailed;
-    private byte[] _notifRetryArray;
+    private byte[] _notifFailedArray;
+
     private NotificationDefinition _notifRetry;
+    private byte[] _notifRetryArray;
 
     public enum State {
-        BUILDING, IDLE, WORKING
+        BUILDING, IDLE, WORKING, ZOMBIE
     }
 
     /*-*****************************-*/
@@ -60,7 +64,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************-*/
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
-        _listenerClassName = cursor.getString(Column.LSITENER.getIndex());
+        _listenerClassName = cursor.getString(Column.LISTENER.getIndex());
         _listenerParams = cursor.getBlob(Column.LISTENER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
@@ -76,6 +80,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _track = cursor.getInt(Column.TRACK.getIndex()) == 1;
         _trackType = TrackerEnum.values()[cursor.getInt(Column.TRACK_TYPE.getIndex())];
         _timingKey = cursor.getString(Column.TIMING_KEY.getIndex());
+        _wasZombie = cursor.getInt(Column.WAS_ZOMBIE.getIndex()) == 1;
 
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
 
@@ -103,6 +108,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _track = bundle.getBoolean(PARAM_TRACK);
         _trackType = TrackerEnum.values()[bundle.getInt(PARAM_TRACK_ENUM)];
         _timingKey = bundle.getString(PARAM_TIMING_KEY);
+        _wasZombie = bundle.getBoolean(PARAM_ZOMBIE);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);
         _notifStartArray = bundle.getByteArray(PARAM_NOTIFICATION_START);
@@ -139,6 +145,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         if (_timingKey != null)
             bundle.putString(PARAM_TIMING_KEY, _timingKey);
+
+        bundle.putBoolean(PARAM_ZOMBIE, _wasZombie);
 
         bundle.putInt(PARAM_NOTIFICATION_ID, _notifId);
         if (_notifStartArray != null)
@@ -255,6 +263,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return _timingKey;
     }
 
+    public boolean isZombie() {
+        return getState() == State.ZOMBIE;
+    }
+
+    public boolean wasZombie() {
+        return _wasZombie;
+    }
+
     public int getNotificationId() {
         return _notifId;
     }
@@ -303,6 +319,11 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         setState(State.IDLE);
         setQueueTime(System.currentTimeMillis() + retryTime);
         save();
+    }
+
+    public void setZombie() {
+        setState(State.ZOMBIE);
+        _wasZombie = true;
     }
 
     public WebTransaction save() {
@@ -394,6 +415,34 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
+    public static List<WebTransaction> getZombies() {
+        List<WebTransaction> zombies = new LinkedList<>();
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.WAS_ZOMBIE + "=1",
+                            null, null, null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        WebTransaction trans = new WebTransaction(cursor);
+                        zombies.add(trans);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return zombies;
+    }
+
     public static void list() {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -437,6 +486,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             Column.STATE + "=?"
                                     + " AND priority >= " + minPriority.ordinal()
                                     + " AND queue_time < " + System.currentTimeMillis()
+                                    + " AND state <> " + State.ZOMBIE.ordinal()
                                     + (allowSync ? "" : " AND is_sync = 0")
                                     + (allowAuth ? "" : " AND use_auth = 0")
                                     + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),
@@ -480,7 +530,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static WebTransaction put(WebTransaction obj) {
 //        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
-        v.put(Column.LSITENER.getName(), obj._listenerClassName);
+        v.put(Column.LISTENER.getName(), obj._listenerClassName);
         v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
 
@@ -501,6 +551,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.TRACK.getName(), obj._track ? 1 : 0);
         v.put(Column.TRACK_TYPE.getName(), obj._trackType.ordinal());
         v.put(Column.TIMING_KEY.getName(), obj._timingKey);
+        v.put(Column.WAS_ZOMBIE.getName(), obj._wasZombie ? 1 : 0);
 
         v.put(Column.NOTIF_ID.getName(), obj._notifId);
         v.put(Column.NOTIF_FAILED.getName(), obj._notifFailedArray);
@@ -557,7 +608,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             try {
                 Cursor cursor = null;
                 try {
-                    cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
+                    cursor = db.rawQuery(
+                            "SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME
+                                    + " WHERE " + Column.STATE + " <> " + State.ZOMBIE.ordinal(), null);
                     if (cursor.moveToNext()) {
                         return cursor.getInt(0);
                     }
@@ -578,7 +631,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             try {
                 Cursor cursor = null;
                 try {
-                    cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE wifi_req = 1", null);
+                    cursor = db.rawQuery(
+                            "SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME
+                                    + " WHERE wifi_req = 1", null);
                     if (cursor.moveToNext()) {
                         return cursor.getInt(0);
                     }
@@ -599,7 +654,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             try {
                 Cursor cursor = null;
                 try {
-                    cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE track = 1", null);
+                    cursor = db.rawQuery(
+                            "SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME
+                                    + " WHERE track = 1", null);
                     if (cursor.moveToNext()) {
                         return cursor.getInt(0);
                     }
@@ -651,6 +708,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putBoolean(PARAM_WIFI_REQUIRED, false);
             params.putBoolean(PARAM_TRACK, false);
             params.putInt(PARAM_TRACK_ENUM, 0);
+            params.putBoolean(PARAM_ZOMBIE, false);
             params.putInt(PARAM_NOTIFICATION_ID, -1);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
@@ -715,6 +773,11 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder timingKey(String timingKey) throws ParseException {
             params.putString(PARAM_TIMING_KEY, timingKey);
+            return this;
+        }
+
+        public Builder zombie(boolean zombie) {
+            params.putBoolean(PARAM_ZOMBIE, zombie);
             return this;
         }
 

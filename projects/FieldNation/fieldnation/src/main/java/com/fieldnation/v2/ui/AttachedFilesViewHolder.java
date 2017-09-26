@@ -12,6 +12,7 @@ public class AttachedFilesViewHolder extends RecyclerView.ViewHolder {
     public static final int TYPE_ATTACHMENT = 1;
     public static final int TYPE_ADD_VIEW = 2;
     public static final int TYPE_UPLOAD = 3;
+    public static final int TYPE_FAILED = 4;
 
     public int type;
 

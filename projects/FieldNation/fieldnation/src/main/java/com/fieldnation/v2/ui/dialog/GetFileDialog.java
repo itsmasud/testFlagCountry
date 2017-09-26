@@ -144,7 +144,8 @@ public class GetFileDialog extends SimpleDialog {
             ResolveInfo info = infos.get(i);
 
             try {
-                if (!_packages.contains(info.activityInfo.packageName + "." + info.activityInfo.name)) {
+                if (!_packages.contains(info.activityInfo.packageName + "." + info.activityInfo.name)
+                        && info.activityInfo.exported) {
                     GetFilePackage data = new GetFilePackage();
 
                     data.postfix = appIntent.getPostfix();

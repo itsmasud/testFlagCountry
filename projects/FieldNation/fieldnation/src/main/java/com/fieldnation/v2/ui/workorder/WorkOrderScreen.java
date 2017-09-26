@@ -70,7 +70,6 @@ import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
 import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
-import com.fieldnation.ui.workorder.detail.ProblemSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
@@ -154,7 +153,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
-    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
@@ -185,6 +183,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private Button _testButton;
     private NestedScrollView _scrollView;
     private ActionBarTopView _topBar;
+    private FailedUploadsView _failedUploads;
     private ProblemSummaryView _problemSummaryView;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
@@ -265,9 +264,11 @@ public class WorkOrderScreen extends RelativeLayout {
         _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
 
+        _failedUploads = findViewById(R.id.failedUploads_view);
+        _renderers.add(_failedUploads);
+
         _problemSummaryView = findViewById(R.id.problemsummary_view);
         _renderers.add(_problemSummaryView);
-
 
         _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
@@ -452,7 +453,6 @@ public class WorkOrderScreen extends RelativeLayout {
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
-        MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
@@ -501,7 +501,6 @@ public class WorkOrderScreen extends RelativeLayout {
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
-        MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
@@ -811,7 +810,8 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onMarkIncomplete() {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrderId);
-            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrderId);
+            App.get().analActionTitle = null;
+            MarkIncompleteWarningDialog.show(App.get(), null, _workOrderId);
         }
 
         @Override
@@ -1560,18 +1560,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteDialog_markIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
-        @Override
-        public void onMarkIncomplete(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrderId);
-
-            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-            uiContext.page += " - Mark Incomplete Dialog";
-            WorkordersWebApi.incompleteWorkOrder(App.get(), _workOrderId, uiContext);
-            setLoading(true);
-        }
-    };
-
     private final PayDialog.OnCompleteListener _payDialog_onComplete = new PayDialog.OnCompleteListener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
@@ -1756,7 +1744,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addAttachment() {
-            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _workOrderId, _workOrder.getAttachments());
+            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _workOrderId);
         }
     };
 

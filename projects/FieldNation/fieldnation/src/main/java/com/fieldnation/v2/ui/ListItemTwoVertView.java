@@ -22,6 +22,7 @@ public class ListItemTwoVertView extends RelativeLayout {
     private TextView _keyTextView;
     private TextView _valueTextView;
     private TextView _actionTextView;
+    private TextView _alertTextView;
     private ProgressBar _progressBar;
 
     // Data
@@ -29,6 +30,7 @@ public class ListItemTwoVertView extends RelativeLayout {
     private String _value;
     private String _action;
     private boolean _actionVisible = true;
+    private boolean _alertVisible = false;
     private boolean _progressVisible = false;
     private int _progress = -1;
 
@@ -60,6 +62,7 @@ public class ListItemTwoVertView extends RelativeLayout {
         _valueTextView = findViewById(R.id.value);
         _actionTextView = findViewById(R.id.action);
         _actionTextView.setOnClickListener(_action_onClick);
+        _alertTextView = findViewById(R.id.alert);
         _progressBar = findViewById(R.id.progressBar);
 
         populateUi();
@@ -72,6 +75,12 @@ public class ListItemTwoVertView extends RelativeLayout {
 
     public void setActionString(String action) {
         _action = action;
+
+        populateUi();
+    }
+
+    public void setAlertVisible(boolean visible) {
+        _alertVisible = visible;
 
         populateUi();
     }
@@ -135,6 +144,13 @@ public class ListItemTwoVertView extends RelativeLayout {
         } else {
             _progressBar.setVisibility(GONE);
         }
+
+        if (_alertVisible) {
+            _alertTextView.setVisibility(VISIBLE);
+        } else {
+            _alertTextView.setVisibility(GONE);
+        }
+
     }
 
     private final View.OnClickListener _action_onClick = new OnClickListener() {

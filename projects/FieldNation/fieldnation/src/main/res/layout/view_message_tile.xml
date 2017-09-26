@@ -24,7 +24,6 @@
         android:layout_toRightOf="@+id/pic_view"
         android:ellipsize="end"
         android:maxLines="1"
-        android:singleLine="true"
         android:text="@string/placeholder_phrase" />
 
     <TextView
@@ -35,7 +34,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:text="@string/placeholder_word"
         android:textColor="@color/fn_brandcolor"
         android:textStyle="bold" />
@@ -48,7 +47,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:singleLine="true"
+        android:maxLines="1"
         android:text="@string/placeholder_word" />
 
     <TextView

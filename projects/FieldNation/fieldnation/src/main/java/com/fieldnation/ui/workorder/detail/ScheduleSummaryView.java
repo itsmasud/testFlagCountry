@@ -163,7 +163,6 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 _type1TextView.setText(R.string.between);
                 _date1TextView.setText(
                         getContext().getString(R.string.schedule_open_range_format,
-                                sdf.format(sCal.getTime()),
                                 DateUtils.getDeviceTimezone(),
                                 sdf.format(eCal.getTime()),
                                 DateUtils.getDeviceTimezone()));

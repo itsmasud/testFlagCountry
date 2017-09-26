@@ -5,14 +5,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -26,15 +28,20 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.client.AttachmentHelper;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
@@ -44,23 +51,27 @@ import java.io.File;
 /**
  * @author shoaib.ahmed
  */
-public class PhotoUploadDialog extends SimpleDialog {
+public class PhotoUploadDialog extends FullScreenDialog {
     private static final String TAG = "PhotoUploadDialog";
 
     // State
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
     private static final String STATE_FILE_EXTENSION = "STATE_FILE_EXTENSION";
     private static final String STATE_DESCRIPTION = "STATE_DESCRIPTION";
-    private static final String STATE_PHOTO = "STATE_PHOTO";
     private static final String STATE_HIDE_PHOTO = "STATE_HIDE_PHOTO";
     private static final String STATE_CACHED_URI = "STATE_CACHED_URI";
 
+    // Mode
+    private static final int MODE_NORMAL = 0;
+    private static final int MODE_RETRY = 1;
+
     // UI
+    private Toolbar _toolbar;
+    private ActionMenuItemView _finishMenu;
+
     private ImageView _imageView;
     private EditText _fileNameEditText;
     private EditText _descriptionEditText;
-    private Button _okButton;
-    private Button _cancelButton;
     private ProgressBar _progressBar;
 
     // Data user entered
@@ -78,6 +89,11 @@ public class PhotoUploadDialog extends SimpleDialog {
     private AttachmentFolder _slot;
     private Uri _sourceUri;
     private Uri _cachedUri = null;
+    private int _mode = MODE_NORMAL;
+    private WebTransaction _webTransaction;
+    private TransactionParams _transactionParams;
+    private JsonObject _methodParams;
+    private JsonObject _httpBuilder;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -90,11 +106,16 @@ public class PhotoUploadDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_photo_upload, container, false);
 
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.inflateMenu(R.menu.dialog);
+
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu.setText(R.string.btn_submit);
+
         _imageView = v.findViewById(R.id.photo_imageview);
         _fileNameEditText = v.findViewById(R.id.filename_edittext);
         _descriptionEditText = v.findViewById(R.id.description_edittext);
-        _okButton = v.findViewById(R.id.ok_button);
-        _cancelButton = v.findViewById(R.id.cancel_button);
         _progressBar = v.findViewById(R.id.progressBar);
 
         return v;
@@ -103,13 +124,14 @@ public class PhotoUploadDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
         _imageView.setOnClickListener(_photoImageView_onClick);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
         _fileNameEditText.addTextChangedListener(_fileName_textWatcher);
         _descriptionEditText.setOnEditorActionListener(_onEditor);
         _descriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
-        _okButton.setOnClickListener(_okButton_onClick);
-        _cancelButton.setOnClickListener(_cancel_onClick);
     }
 
     @Override
@@ -123,20 +145,45 @@ public class PhotoUploadDialog extends SimpleDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
-        _originalFileName = payload.getString("fileName");
-        _workOrderId = payload.getInt("workOrderId");
-        if (_originalFileName.contains(".")) {
-            _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
-        }
 
-        if (payload.containsKey("task"))
-            _task = payload.getParcelable("task");
-        if (payload.containsKey("slot"))
-            _slot = payload.getParcelable("slot");
+        if (payload.containsKey("webTransactionId")) {
+            try {
+                _mode = MODE_RETRY;
+                _webTransaction = WebTransaction.get(payload.getLong("webTransactionId"));
+                _transactionParams = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
+                _methodParams = new JsonObject(_transactionParams.methodParams);
+                _httpBuilder = new JsonObject(_webTransaction.getRequestString());
 
-        if (payload.containsKey("uri")) {
-            _sourceUri = payload.getParcelable("uri");
-            FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
+                _originalFileName = _methodParams.getString("attachment.file.name");
+                _description = _methodParams.getString("attachment.notes");
+                _workOrderId = _methodParams.getInt("workOrderId");
+                if (_originalFileName.contains(".")) {
+                    _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
+                }
+
+                _sourceUri = _cachedUri = StoredObject.get(App.get(), _methodParams.getLong("storedObjectId")).getUri();
+                setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
+                populateUi();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else {
+            _mode = MODE_NORMAL;
+            _originalFileName = payload.getString("fileName");
+            _workOrderId = payload.getInt("workOrderId");
+            if (_originalFileName.contains(".")) {
+                _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
+            }
+
+            if (payload.containsKey("task"))
+                _task = payload.getParcelable("task");
+            if (payload.containsKey("slot"))
+                _slot = payload.getParcelable("slot");
+
+            if (payload.containsKey("uri")) {
+                _sourceUri = payload.getParcelable("uri");
+                FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
+            }
         }
     }
 
@@ -149,9 +196,6 @@ public class PhotoUploadDialog extends SimpleDialog {
 
             if (savedState.containsKey(STATE_DESCRIPTION))
                 _description = savedState.getString(STATE_DESCRIPTION);
-
-            if (savedState.containsKey(STATE_PHOTO))
-                _bitmap = savedState.getParcelable(STATE_PHOTO);
 
             if (savedState.containsKey(STATE_FILE_EXTENSION))
                 _extension = savedState.getString(STATE_FILE_EXTENSION);
@@ -215,6 +259,12 @@ public class PhotoUploadDialog extends SimpleDialog {
 
         _descriptionEditText.setText(misc.isEmptyOrNull(_description) ? "" : _description);
         _fileNameEditText.setText(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
+        _toolbar.setTitle(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
+
+        if (_mode == MODE_NORMAL)
+            _finishMenu.setText("SUBMIT");
+        else if (_mode == MODE_RETRY)
+            _finishMenu.setText("RETRY");
     }
 
     @Override
@@ -235,72 +285,109 @@ public class PhotoUploadDialog extends SimpleDialog {
                 _descriptionEditText.requestFocus();
                 handled = true;
             } else if (actionId == EditorInfo.IME_ACTION_DONE) {
-                _okButton_onClick.onClick(v);
+                _menu_onClick.onMenuItemClick(null);
             }
 
             return handled;
         }
     };
 
-    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            dismiss(true);
+        }
+    };
+
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
             Log.v(TAG, "_okButton_onClick");
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
                 ToastClient.toast(App.get(), R.string.dialog_insert_file_name, Toast.LENGTH_LONG);
-                return;
+                return false;
             }
 
             if (!FileUtils.isValidFileName(_newFileName)) {
                 ToastClient.toast(App.get(), R.string.dialog_invalid_file_name, Toast.LENGTH_LONG);
-                return;
+                return false;
             }
 
             if (!misc.isEmptyOrNull(_extension) && !_newFileName.endsWith(_extension)) {
                 _newFileName += _extension;
             }
 
-            if (_task != null) {
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category("AttachmentUpload")
-                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
-                                .action("start")
-                                .build());
+            if (_mode == MODE_RETRY) {
                 try {
-                    Attachment attachment = new Attachment();
-                    attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("AttachmentRetry")
+                                    .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
+                                    .action("start")
+                                    .build());
 
-                    // TODO: API cant take notes with the attachment
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
-                } catch (Exception e) {
-                    Log.v(TAG, e);
+                    Attachment attachment = Attachment.fromJson(_methodParams.getJsonObject("attachment"));
+                    attachment.notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
+
+                    _methodParams.put("attachment", attachment.getJson());
+                    _transactionParams.methodParams = _methodParams.toString();
+                    _webTransaction.setListenerParams(_transactionParams.toJson().toByteArray());
+
+                    _httpBuilder.put("multipart.fields.attachment.value", attachment.getJson());
+                    _httpBuilder.put("multipart.files.file.filename", _newFileName);
+                    _webTransaction.setRequest(_httpBuilder.toString());
+                    _webTransaction.requeue(0);
+                    WebTransactionSystem.getInstance();
+
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
                 }
-            }
 
-            if (_slot != null) {
-                Log.v(TAG, getUid() + " slot attached");
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category("AttachmentUpload")
-                                .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
-                                .action("start")
-                                .build());
+            } else if (_mode == MODE_NORMAL) {
+                if (_task != null) {
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("AttachmentUpload")
+                                    .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
+                                    .action("start")
+                                    .build());
+                    try {
+                        Attachment attachment = new Attachment();
+                        attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                try {
-                    Attachment attachment = new Attachment();
-                    attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
+                        // TODO: API cant take notes with the attachment
+                        AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    } catch (Exception e) {
+                        Log.v(TAG, e);
+                    }
+                }
 
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
-                } catch (Exception e) {
-                    Log.v(TAG, e);
+                if (_slot != null) {
+                    Log.v(TAG, getUid() + " slot attached");
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("AttachmentUpload")
+                                    .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
+                                    .action("start")
+                                    .build());
+
+                    try {
+                        Attachment attachment = new Attachment();
+                        attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
+
+                        AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                    } catch (Exception e) {
+                        Log.v(TAG, e);
+                    }
                 }
             }
             _onOkDispatcher.dispatch(getUid());
             dismiss(true);
+            return true;
         }
     };
 
@@ -320,11 +407,10 @@ public class PhotoUploadDialog extends SimpleDialog {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             _newFileName = _fileNameEditText.getText().toString().trim();
-
             if (misc.isEmptyOrNull(_newFileName)) {
-                _okButton.setEnabled(false);
+                _finishMenu.setEnabled(false);
             } else {
-                _okButton.setEnabled(true);
+                _finishMenu.setEnabled(true);
             }
         }
 
@@ -409,6 +495,13 @@ public class PhotoUploadDialog extends SimpleDialog {
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("slot", slot);
+
+        Controller.show(context, uid, PhotoUploadDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, long webTransactionId) {
+        Bundle params = new Bundle();
+        params.putLong("webTransactionId", webTransactionId);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
