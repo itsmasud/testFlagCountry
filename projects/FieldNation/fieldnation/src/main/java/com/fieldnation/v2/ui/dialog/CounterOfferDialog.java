@@ -233,6 +233,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         _scheduleView.setOnRenderListener(_schedule_onRender);
         _scheduleView.setOnClickListener(_schedule_onClick);
+        _scheduleTypeView.setOnClickListener(_schedule_onClick);
         _scheduleMenu.setOnClickListener(_scheduleMenu_onClick);
         _schedulePopUp = new PopupMenu(getContext(), _scheduleMenu);
         _schedulePopUp.inflate(R.menu.edit_delete);
@@ -745,6 +746,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            _expenseMenuClickedView = null;
             ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, false);
             getView().postDelayed(new Runnable() {
                 @Override
@@ -784,7 +786,6 @@ public class CounterOfferDialog extends FullScreenDialog {
             PopupMenu menu = new PopupMenu(getContext(), actionView);
             menu.inflate(R.menu.edit_delete);
             menu.setOnMenuItemClickListener(_expenseMenu_onClick);
-            menu.setOnDismissListener(_expensesMenu_onDismess);
             menu.show();
         }
     };
@@ -801,13 +802,6 @@ public class CounterOfferDialog extends FullScreenDialog {
                 populateUi();
             }
             return true;
-        }
-    };
-
-    private final PopupMenu.OnDismissListener _expensesMenu_onDismess = new PopupMenu.OnDismissListener() {
-        @Override
-        public void onDismiss(PopupMenu menu) {
-            _expenseMenuClickedView = null;
         }
     };
 
