@@ -163,7 +163,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
                 Calendar cal = schedule.getServiceWindow().getStart().getCalendar();
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
-                time = DateUtils.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                time = DateUtils.formatTime(cal, false) + DateUtils.getDeviceTimezone();
 
                 return "Exactly on " + dayDate + " @ " + time;
 
@@ -185,12 +185,12 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
                 // same day
                 if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
-                    time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                    time = DateUtils.formatTime(cal2, false) + DateUtils.getDeviceTimezone();
                     msg += time;
 
                 } else {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + DateUtils.formatDateLong(cal2);
-                    time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                    time = DateUtils.formatTime(cal2, false) + DateUtils.getDeviceTimezone();
                     msg += dayDate + " @ " + time;
                 }
 

@@ -712,7 +712,7 @@
     <string name="schedule_business_hours_format1">%1$s - %2$s</string>
     <string name="schedule_business_hours_format2">%1$s - %2$s%3$s each day</string>
     <string name="schedule_business_hours_format3"> (%1$s - %2$s) %3$s</string>
-    <string name="schedule_open_range_format">%1$s%2$s\n%3$s%4$s</string>
+    <string name="schedule_open_range_format">%1$s\n%2$s%3$s</string>
     <string name="schedule_open_range_format2">%1$s\ - %2$s%3$s</string>
     <string name="schedule_current">Current Schedule</string>
     <string name="schedule_original">Original Schedule</string>

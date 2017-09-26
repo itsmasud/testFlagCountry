@@ -26,6 +26,7 @@ import com.fieldnation.v2.data.model.Message;
 
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by mc on 8/30/17.
@@ -33,7 +34,7 @@ import java.text.SimpleDateFormat;
 
 public class ChatLeftView extends RelativeLayout implements ChatRenderer {
     private static final String TAG = "ChatLeftView";
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a");
+    private final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.getDefault());
 
     // Ui
     private TextView _messageTextView;
@@ -79,6 +80,7 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
         super.onDetachedFromWindow();
     }
 
+    @Override
     public void setMessage(Message message) {
         _message = message;
         populateUi();
