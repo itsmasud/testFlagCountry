@@ -20,6 +20,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Message;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Created by mc on 8/30/17.
@@ -27,7 +28,7 @@ import java.text.SimpleDateFormat;
 
 public class ChatRightView extends RelativeLayout implements ChatRenderer {
     private static final String TAG = "ChatRightView";
-    private static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a");
+    private  final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.getDefault());
 
     // Ui
     private TextView _messageTextView;
@@ -63,11 +64,13 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
         _timeTextView = findViewById(R.id.time_textview);
     }
 
+    @Override
     public void setMessage(Message message) {
         _message = message;
         populateUi();
     }
 
+    @Override
     public void setPosition(Position position) {
         _position = position;
         populateUi();

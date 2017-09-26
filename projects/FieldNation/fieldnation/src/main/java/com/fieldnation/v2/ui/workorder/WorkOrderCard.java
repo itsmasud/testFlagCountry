@@ -267,7 +267,7 @@ public class WorkOrderCard extends RelativeLayout {
             // estimated
             try {
                 Calendar cal = _workOrder.getEta().getStart().getCalendar();
-                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()) + DateUtils.getDeviceTimezone());
                 _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);

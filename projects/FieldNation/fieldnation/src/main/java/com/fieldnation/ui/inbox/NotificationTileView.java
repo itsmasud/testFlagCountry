@@ -30,7 +30,6 @@ public class NotificationTileView extends RelativeLayout {
     private TextView _timeTextView;
     private TextView _workorderTextView;
     private TextView _messageBodyTextView;
-    private View _overlayView;
 
     // Data
     private Notification _notification;
@@ -66,8 +65,7 @@ public class NotificationTileView extends RelativeLayout {
         _workorderTextView = findViewById(R.id.workorder_textview);
         _messageBodyTextView = findViewById(R.id.messagebody_textview);
 
-        _overlayView = findViewById(R.id.click_overlay);
-        _overlayView.setOnClickListener(_this_onClick);
+        setOnClickListener(_this_onClick);
 
         populateUi();
     }
