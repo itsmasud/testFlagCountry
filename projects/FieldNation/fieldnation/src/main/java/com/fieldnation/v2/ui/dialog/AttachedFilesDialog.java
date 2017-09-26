@@ -335,6 +335,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             WebTransaction.delete(_selectedTransactionId);
             populateUi();
+            // Todo, this is to force the WoD to update after the transaction is deleted
+            WorkordersWebApi.getWorkOrder(App.get(),_workOrderId,false,false);
         }
     };
 

@@ -85,7 +85,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
                 this.folderId = methodParams.getInt("folderId");
                 this.name = methodParams.getString("attachment.file.name");
-                this.notes = methodParams.getString("attachment.notes");
+                this.notes = methodParams.has("attachment.notes") ? methodParams.getString("attachment.notes") : "";
                 this.timestamp = methodParams.getLong("timestamp");
             } catch (Exception ex) {
                 Log.v(TAG, ex);
