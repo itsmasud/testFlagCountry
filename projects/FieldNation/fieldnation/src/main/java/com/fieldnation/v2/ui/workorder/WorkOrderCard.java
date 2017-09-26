@@ -186,8 +186,6 @@ public class WorkOrderCard extends RelativeLayout {
         _workOrder = workOrder;
         _location = location;
         _savedSearchTitle = savedSearchTitle;
-        App.get().analActionTitle = _savedSearchTitle + " Saved Search";
-
         populateUi();
     }
 
@@ -651,6 +649,8 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
                     WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrder.getId());
 
+            App.get().analActionTitle = _savedSearchTitle + " Saved Search";
+
             MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrder.getId());
         }
     };
@@ -814,6 +814,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
+            App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             DeclineDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getCompany().getId(), false);
         }
     };
