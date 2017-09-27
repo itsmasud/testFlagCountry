@@ -71,7 +71,7 @@ public class SignatureCardView extends RelativeLayout {
         _nameTextView.setText(_sig.getName());
         try {
             _dateTextView.setText("Signed by " + _sig.getName()
-                    + " on " + DateUtils.formatDateLong(_sig.getCreated().getCalendar()) + DateUtils.getDeviceTimezone());
+                    + " on " + DateUtils.formatDateLong(_sig.getCreated().getCalendar()));
             _dateTextView.setVisibility(VISIBLE);
         } catch (Exception ex) {
             Log.v(TAG, ex);
