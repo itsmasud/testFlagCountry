@@ -392,8 +392,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             }
             case AttachedFilesViewHolder.TYPE_FAILED: {
                 ListItemTwoVertView view = new ListItemTwoVertView(parent.getContext());
-                view.setOnClickListener(_failed_onClick);
-                view.setOnLongClickListener(_failed_onLongClick);
                 view.setActionVisible(false);
                 view.setProgressVisible(false);
                 view.setAlertVisible(true);
@@ -451,10 +449,14 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 if (ft.ut == null) {
                     view.setActionVisible(false);
                     view.setProgressVisible(false);
+                    view.setOnClickListener(_failed_onClick);
+                    view.setOnLongClickListener(_failed_onLongClick);
                 } else {
                     view.setActionVisible(false);
                     view.setProgressVisible(true);
                     view.setProgress(ft.ut.progress);
+                    view.setOnClickListener(null);
+                    view.setOnLongClickListener(null);
                 }
 
                 break;
