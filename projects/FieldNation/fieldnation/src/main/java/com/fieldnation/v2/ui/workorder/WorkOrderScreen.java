@@ -64,7 +64,6 @@ import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.ContactListView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
-import com.fieldnation.ui.workorder.detail.CustomFieldListView;
 import com.fieldnation.ui.workorder.detail.CustomFieldRowView;
 import com.fieldnation.ui.workorder.detail.DiscountListLayout;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
@@ -74,6 +73,7 @@ import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
+import com.fieldnation.ui.workorder.detail.TaskWidgetView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -192,8 +192,9 @@ public class WorkOrderScreen extends RelativeLayout {
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
-    private TaskListView _taskList;
-    private CustomFieldListView _customFields;
+    private TaskWidgetView _taskWidget;
+    //    private TaskListView _taskList;
+//    private CustomFieldListView _customFields;
     private ShipmentListView _shipments;
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
@@ -312,9 +313,12 @@ public class WorkOrderScreen extends RelativeLayout {
         _shipments.setListener(_shipments_listener);
         _renderers.add(_shipments);
 
-        _taskList = findViewById(R.id.scope_view);
-        _taskList.setTaskListViewListener(_taskListView_listener);
-        _renderers.add(_taskList);
+        _taskWidget = findViewById(R.id.taskwidget_view);
+        _renderers.add(_taskWidget);
+
+//        _taskList = findViewById(R.id.scope_view);
+//        _taskList.setTaskListViewListener(_taskListView_listener);
+//        _renderers.add(_taskList);
 
         _timeLogged = findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
@@ -324,9 +328,9 @@ public class WorkOrderScreen extends RelativeLayout {
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
-        _customFields = findViewById(R.id.customfields_view);
-        _customFields.setListener(_customFields_listener);
-        _renderers.add(_customFields);
+//        _customFields = findViewById(R.id.customfields_view);
+//        _customFields.setListener(_customFields_listener);
+//        _renderers.add(_customFields);
 
         _signatureView = findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);

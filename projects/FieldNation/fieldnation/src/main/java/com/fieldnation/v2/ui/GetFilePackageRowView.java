@@ -50,7 +50,7 @@ public class GetFilePackageRowView extends RelativeLayout {
     public void setInfo(GetFilePackage pack) {
         _pack = pack;
         _name.setText(pack.appName);
-        _icon.setBackgroundDrawable(pack.icon);
+        _icon.setImageDrawable(pack.icon);
     }
 
     public void setListener(OnClickListener listener) {

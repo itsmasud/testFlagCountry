@@ -138,16 +138,16 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
 
         switch (_position) {
             case FULL:
-                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_left_full));
+                _messageTextView.setBackgroundResource(R.drawable.chat_left_full);
                 break;
             case TOP:
-                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_left_top));
+                _messageTextView.setBackgroundResource(R.drawable.chat_left_top);
                 break;
             case CENTER:
-                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_left_center));
+                _messageTextView.setBackgroundResource(R.drawable.chat_left_center);
                 break;
             case BOTTOM:
-                _messageTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.chat_left_bottom));
+                _messageTextView.setBackgroundResource(R.drawable.chat_left_bottom);
                 break;
         }
     }
