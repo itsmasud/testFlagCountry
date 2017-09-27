@@ -48,7 +48,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_BUNDLE_ID = "BundleDetailActivity:bundle_id";
 
     // Dialog tags
-    private static final String UID_DIALOG_DECLINE = TAG + ".DeclineDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String UID_DIALOG_BUNDLE_ETA = TAG + ".BundleEtaDialog";
     private static final String UID_DIALOG_REQUEST_BUNDLE = TAG + ".RequestBundleDialog";
@@ -136,7 +135,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         BundleEtaDialog.addOnCancelListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onCancel);
         RequestBundleDialog.addOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
-        DeclineDialog.addOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         _bundlesApi.sub();
 
@@ -158,7 +156,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         BundleEtaDialog.removeOnCancelListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onCancel);
         RequestBundleDialog.removeOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
-        DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         super.onPause();
     }
@@ -254,7 +251,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onClick(View v) {
             if (_adapter.getItemCount() > 0 && _adapter.getObject(0) != null) {
-                DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
+                App.get().analActionTitle = null;
+                DeclineDialog.show(App.get(), null,
                         _adapter.getItemCount(),
                         ((WorkOrder) _adapter.getObject(0)).getId(),
                         ((WorkOrder) _adapter.getObject(0)).getCompany().getId());
@@ -282,13 +280,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private final RequestBundleDialog.OnRequestedListener _requestBundleDialog_onRequested = new RequestBundleDialog.OnRequestedListener() {
         @Override
         public void onRequested(int workOrderId) {
-            setLoading(true);
-        }
-    };
-
-    private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
-        @Override
-        public void onDeclined(int workOrderId) {
             setLoading(true);
         }
     };

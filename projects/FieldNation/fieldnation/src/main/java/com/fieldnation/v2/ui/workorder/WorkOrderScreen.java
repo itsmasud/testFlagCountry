@@ -148,7 +148,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
-    private static final String DIALOG_DECLINE = TAG + ".declineDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
@@ -436,7 +435,6 @@ public class WorkOrderScreen extends RelativeLayout {
         CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
-        DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
@@ -484,7 +482,6 @@ public class WorkOrderScreen extends RelativeLayout {
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
-        DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
@@ -754,10 +751,10 @@ public class WorkOrderScreen extends RelativeLayout {
 
                     if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                         DeclineDialog.show(
-                                App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
+                                App.get(), null, _workOrder.getBundle().getMetadata().getTotal(),
                                 _workOrderId, _workOrder.getCompany().getId());
                     } else {
-                        DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId(), true);
+                        DeclineDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany().getId(), true);
                     }
                     break;
                 case 3: // print
@@ -883,10 +880,10 @@ public class WorkOrderScreen extends RelativeLayout {
 
             if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 DeclineDialog.show(
-                        App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
+                        App.get(), null, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrderId, _workOrder.getCompany().getId());
             } else {
-                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrderId, _workOrder.getCompany().getId(), true);
+                DeclineDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany().getId(), true);
             }
         }
 
@@ -1446,13 +1443,6 @@ public class WorkOrderScreen extends RelativeLayout {
                 Log.v(TAG, ex);
             }
             setLoading(true);
-        }
-    };
-
-    private final DeclineDialog.OnDeclinedListener _declineDialog_onDecline = new DeclineDialog.OnDeclinedListener() {
-        @Override
-        public void onDeclined(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrderId);
         }
     };
 
