@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.model.CustomField;
@@ -97,10 +96,7 @@ public class CustomFieldRowView extends RelativeLayout {
         if (misc.isEmptyOrNull(_customField.getValue())) {
             _customFieldNameTextView.setText(_customField.getName().trim());
         } else {
-            _customFieldNameTextView.setText((_customField.getName() + "\n"
-                    + ((_customField.getType().equals(CustomField.TypeEnum.DATE)
-                    || _customField.getType().equals(CustomField.TypeEnum.TIME)
-                    || _customField.getType().equals(CustomField.TypeEnum.DATE_TIME)) ? _customField.getValue().trim() + DateUtils.getDeviceTimezone() : _customField.getValue()).trim()));
+            _customFieldNameTextView.setText((_customField.getName() + "\n" + _customField.getValue()).trim());
         }
 
         if (misc.isEmptyOrNull(_customField.getTip())) {

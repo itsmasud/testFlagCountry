@@ -130,6 +130,8 @@
     <color name="fn_gray_dark">#FF333333</color>
     <color name="fn_gray_light">#FF555555</color>
 
+    <color name="fn_green">#FF37946E</color>
+
     <color name="fn_clickable_text">#FF2196F3</color>
     <color name="fn_clickable_text_50">#802196F3</color>
     <color name="fn_dark_button_text">#FF444444</color>
