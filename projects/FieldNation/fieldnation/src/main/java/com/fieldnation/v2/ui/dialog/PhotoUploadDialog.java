@@ -139,7 +139,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".webm":
             case ".8svx":
             case ".midi":
-
                 return R.string.icon_file_generic;
 
             // code
@@ -242,11 +241,12 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
-        _imageView.setOnClickListener(_photoImageView_onClick);
+        _imageView.setOnClickListener(_preview_onClick);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
         _fileNameEditText.addTextChangedListener(_fileName_textWatcher);
         _descriptionEditText.setOnEditorActionListener(_onEditor);
         _descriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
+        _noPreviewLayout.setOnClickListener(_preview_onClick);
     }
 
     @Override
@@ -553,13 +553,14 @@ public class PhotoUploadDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _preview_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent;
             if (_cachedUri != null) {
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(App.getUriFromFile(new File(_cachedUri.getPath())), "image/*");
+                File f = new File(_cachedUri.getPath());
+                intent.setDataAndType(App.getUriFromFile(f), FileUtils.getMimeTypeFromFile(f));
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             } else {
                 intent = new Intent(Intent.ACTION_VIEW, _sourceUri);
