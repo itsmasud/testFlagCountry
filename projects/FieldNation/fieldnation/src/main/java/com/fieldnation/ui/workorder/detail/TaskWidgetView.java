@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
@@ -54,7 +53,7 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_problem_summary, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_task_widget, this);
 
         if (isInEditMode())
             return;
@@ -125,9 +124,9 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
 
                 // published
                 if (_workOrder.getStatus().getId() == 2) {
-                    _previsitCountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
-                    _onsiteCountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
-                    _postvisitCountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
+                    _previsitCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
+                    _onsiteCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
+                    _postvisitCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
 
                     _previsitCountTextView.setText(String.valueOf(preTotal));
                     _onsiteCountTextView.setText(String.valueOf(onsTotal));
@@ -135,21 +134,18 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
                 }
                 // assigned
                 else if (_workOrder.getStatus().getId() == 3) {
-                    _previsitCountTextView.setBackgroundDrawable(preTotal > preComplete ? getContext().getResources().getDrawable(R.drawable.round_rect_red)
-                            : getContext().getResources().getDrawable(R.drawable.round_rect_green));
-                    _onsiteCountTextView.setBackgroundDrawable(onsTotal > onsComplete ? getContext().getResources().getDrawable(R.drawable.round_rect_red)
-                            : getContext().getResources().getDrawable(R.drawable.round_rect_green));
-                    _postvisitCountTextView.setBackgroundDrawable(postTotal > postComplete ? getContext().getResources().getDrawable(R.drawable.round_rect_red)
-                            : getContext().getResources().getDrawable(R.drawable.round_rect_green));
+                    _previsitCountTextView.setBackgroundResource(preTotal > preComplete ? R.drawable.round_rect_red : R.drawable.round_rect_green);
+                    _onsiteCountTextView.setBackgroundResource(onsTotal > onsComplete ? R.drawable.round_rect_red : R.drawable.round_rect_green);
+                    _postvisitCountTextView.setBackgroundResource(postTotal > postComplete ? R.drawable.round_rect_red : R.drawable.round_rect_green);
 
                     _previsitCountTextView.setText(preComplete + "/" + preTotal);
                     _onsiteCountTextView.setText(onsComplete + "/" + onsTotal);
                     _postvisitCountTextView.setText(postComplete + "/" + postTotal);
 
                 } else {
-                    _previsitCountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
-                    _onsiteCountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
-                    _postvisitCountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
+                    _previsitCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
+                    _onsiteCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
+                    _postvisitCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
 
                     _previsitCountTextView.setText(preComplete + "/" + preTotal);
                     _onsiteCountTextView.setText(onsComplete + "/" + onsTotal);
@@ -193,16 +189,15 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
             public void finish(int count) throws Exception {
 
                 if (_workOrder.getStatus().getId() == 2) {
-                    _ftecountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
+                    _ftecountTextView.setBackgroundResource(R.drawable.round_rect_gray);
                     _ftecountTextView.setText(String.valueOf(fteTotal));
 
                 } else if (_workOrder.getStatus().getId() == 3) {
-                    _ftecountTextView.setBackgroundDrawable(fteTotal > fteComplete ? getContext().getResources().getDrawable(R.drawable.round_rect_red)
-                            : getContext().getResources().getDrawable(R.drawable.round_rect_gray));
+                    _ftecountTextView.setBackgroundResource(fteTotal > fteComplete ? R.drawable.round_rect_red : R.drawable.round_rect_gray);
                     _ftecountTextView.setText(fteComplete + "/" + fteTotal);
 
                 } else {
-                    _ftecountTextView.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.round_rect_gray));
+                    _ftecountTextView.setBackgroundResource(R.drawable.round_rect_gray);
                     _postvisitCountTextView.setText(fteComplete + "/" + fteTotal);
                 }
 
