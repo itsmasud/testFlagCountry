@@ -16,6 +16,7 @@ import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
@@ -165,7 +166,7 @@ public class TransactionListener extends WebTransactionListener {
                                 .build());
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
-                if (method.equals("GET")) {
+                if (method.equals("GET") && !misc.isEmptyOrNull(transaction.getKey())) {
                     StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
                     if (httpResult.isFile()) {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
