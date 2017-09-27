@@ -16,6 +16,7 @@ import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
@@ -165,7 +166,7 @@ public class TransactionListener extends WebTransactionListener {
                                 .build());
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
-                if (method.equals("GET")) {
+                if (method.equals("GET") && !misc.isEmptyOrNull(transaction.getKey())) {
                     StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
                     if (httpResult.isFile()) {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
@@ -202,13 +203,6 @@ public class TransactionListener extends WebTransactionListener {
 
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.TEMP);
 
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category(params.apiFunction)
-                                .action("FAIL")
-                                .build());
-
                 try {
                     JsonObject methodParams = new JsonObject(params.methodParams);
                     if (transaction.isTracked()) {
@@ -223,8 +217,23 @@ public class TransactionListener extends WebTransactionListener {
 
                     Log.v(TAG, "Saving zombie transaction");
                     if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                        Tracker.event(App.get(),
+                                new SimpleEvent.Builder()
+                                        .tag(AnswersWrapper.TAG)
+                                        .category(params.apiFunction)
+                                        .action("ZOMBIE")
+                                        .build());
+
                         return Result.ZOMBIE;
                     }
+
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category(params.apiFunction)
+                                    .action("FAIL")
+                                    .build());
+
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -240,6 +249,31 @@ public class TransactionListener extends WebTransactionListener {
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
 
+                JsonObject methodParams = new JsonObject(params.methodParams);
+
+                Log.v(TAG, "Saving zombie transaction");
+                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                    if (transaction.isTracked()) {
+                        if (methodParams.has("workOrderId")) {
+                            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), methodParams.getInt("workOrderId"));
+                            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
+                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
+                        } else {
+                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
+                        }
+                    }
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category(params.apiFunction)
+                                    .action("ZOMBIE")
+                                    .build());
+
+                    return Result.ZOMBIE;
+                } else if (transaction.isTracked()) {
+                    UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
+                }
+
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
                                 .tag(AnswersWrapper.TAG)
@@ -247,9 +281,6 @@ public class TransactionListener extends WebTransactionListener {
                                 .action("RETRY")
                                 .build());
 
-                if (transaction.isTracked()) {
-                    UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
-                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

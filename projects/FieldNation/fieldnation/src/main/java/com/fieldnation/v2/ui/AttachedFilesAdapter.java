@@ -85,7 +85,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
                 this.folderId = methodParams.getInt("folderId");
                 this.name = methodParams.getString("attachment.file.name");
-                this.notes = methodParams.getString("attachment.notes");
+                this.notes = methodParams.has("attachment.notes") ? methodParams.getString("attachment.notes") : "";
                 this.timestamp = methodParams.getLong("timestamp");
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -140,7 +140,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 JsonObject methodParams = new JsonObject(transactionParams.methodParams);
                 this.folderId = methodParams.getInt("folderId");
                 this.name = methodParams.getString("attachment.file.name");
-                this.notes = methodParams.getString("attachment.notes");
+                this.notes = methodParams.has("attachment.notes") ? methodParams.getString("attachment.notes") : "";
                 this.timestamp = methodParams.getLong("timestamp");
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -244,6 +244,24 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         notifyDataSetChanged();
     }
 
+    private boolean hasFt(int folderId) {
+        for (FailedUploadTuple ft : failedUploads) {
+            if (ft.folderId == folderId)
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean hasUt(int folderId) {
+        for (UploadTuple ut : uploads) {
+            if (ut.folderId == folderId)
+                return true;
+        }
+
+        return false;
+    }
+
     private void rebuild() {
         objects.clear();
 
@@ -255,6 +273,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         AttachmentFolder[] attachmentFolders = folders.getResults();
         for (AttachmentFolder attachmentFolder : attachmentFolders) {
             if (attachmentFolder.getResults().length > 0
+                    || hasFt(attachmentFolder.getId())
+                    || hasUt(attachmentFolder.getId())
                     || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
                     || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
                     || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
@@ -282,7 +302,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     for (FailedUploadTuple ft : failedUploads) {
                         if (ft.name.equals(ut.name))
                             match = true;
-
                     }
 
                     if (match)

@@ -155,7 +155,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _httpBuilder = new JsonObject(_webTransaction.getRequestString());
 
                 _originalFileName = _methodParams.getString("attachment.file.name");
-                _description = _methodParams.getString("attachment.notes");
+                _description = _methodParams.has("attachment.notes") ? _methodParams.getString("attachment.notes") : "";
                 _workOrderId = _methodParams.getInt("workOrderId");
                 if (_originalFileName.contains(".")) {
                     _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
