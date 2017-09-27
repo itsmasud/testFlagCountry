@@ -139,7 +139,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".webm":
             case ".8svx":
             case ".midi":
-                return R.string.icon_file_generic;
+                return R.string.icon_file_audio;
 
             // code
             case ".php":
@@ -151,7 +151,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".java":
             case ".html":
             case ".js":
-                return R.string.icon_file_generic;
+                return R.string.icon_file_code;
 
             // spreadsheet
             case ".xls":
@@ -169,7 +169,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".xlthtml":
             case ".xltm":
             case ".xltx":
-                return R.string.icon_file_generic;
+                return R.string.icon_file_spreadsheet;
 
             // text
             case ".txt":
@@ -177,7 +177,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".doc":
             case ".docx":
             case ".rtf":
-                return R.string.icon_file_generic;
+                return R.string.icon_file_text;
 
             // video
             case ".264":
@@ -192,7 +192,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".mov":
             case ".mp4":
             case ".mpeg":
-                return R.string.icon_file_generic;
+                return R.string.icon_file_video;
 
             // zip
             case ".zip":
@@ -200,7 +200,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             case ".7z":
             case ".arc":
             case ".jar":
-                return R.string.icon_file_png;
+                return R.string.icon_file_zip;
 
             default:
                 return R.string.icon_doc_generic;
