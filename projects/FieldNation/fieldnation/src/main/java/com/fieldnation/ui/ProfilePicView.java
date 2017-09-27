@@ -94,12 +94,13 @@ public class ProfilePicView extends RelativeLayout {
     }
 
     public void setProfilePic(int res) {
-        _profileImageView.setBackgroundDrawable(null);
+        _profileImageView.setImageResource(0);
         _profileImageView.setBackgroundResource(res);
     }
 
     public void setProfilePic(Drawable drawable) {
-        _profileImageView.setBackgroundDrawable(drawable);
+        _profileImageView.setImageDrawable(drawable);
+
     }
 
     public void setProfilePic(Bitmap bitmap) {
