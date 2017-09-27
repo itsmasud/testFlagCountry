@@ -29,10 +29,13 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
     private static final String TAG = "TaskWidgetView";
 
     // Ui
+
+
     private TextView _previsitCountTextView;
     private TextView _onsiteCountTextView;
     private TextView _postvisitCountTextView;
-    private TextView _ftecountTextView;
+    private TextView _fteTextView;
+    private TextView _fteCountTextView;
 
     // Data
     private WorkOrder _workOrder;
@@ -61,12 +64,13 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
         _previsitCountTextView = findViewById(R.id.previsit_count_textview);
         _onsiteCountTextView = findViewById(R.id.onsite_count_textview);
         _postvisitCountTextView = findViewById(R.id.postvisit_count_textview);
-        _ftecountTextView = findViewById(R.id.fte_count_textview);
+        _fteTextView = findViewById(R.id.fte_textview);
+        _fteCountTextView = findViewById(R.id.fte_count_textview);
 
         _previsitCountTextView.setOnClickListener(_previsit_onClick);
         _onsiteCountTextView.setOnClickListener(_onsite_onClick);
         _postvisitCountTextView.setOnClickListener(_postvisit_onClick);
-        _ftecountTextView.setOnClickListener(_fte_onClick);
+        _fteCountTextView.setOnClickListener(_fte_onClick);
         setVisibility(GONE);
 
         populateUi();
@@ -82,8 +86,13 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
         if (_workOrder == null)
             return;
 
+        if (_workOrder.getTasks().getResults().length == 0)
+            return;
+
         if (_previsitCountTextView == null)
             return;
+
+        setVisibility(VISIBLE);
 
         final List<Task> tasks = Arrays.asList(_workOrder.getTasks().getResults());
 
@@ -159,6 +168,15 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
 
 
 // custom fields
+        if (_workOrder.getCustomFields().getResults().length == 0) {
+            _fteTextView.setVisibility(GONE);
+            _fteCountTextView.setVisibility(GONE);
+            return;
+        } else {
+            _fteTextView.setVisibility(VISIBLE);
+            _fteCountTextView.setVisibility(VISIBLE);
+        }
+
         CustomFieldCategory providerCustomField = null;
         for (CustomFieldCategory category : _workOrder.getCustomFields().getResults()) {
             if (category.getRole().equals("assigned_provider")) {
@@ -168,7 +186,6 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
         }
 
         final List<CustomField> customFields = Arrays.asList(providerCustomField.getResults());
-
 
         ForLoopRunnable r2 = new ForLoopRunnable(customFields.size(), new Handler()) {
 
@@ -189,15 +206,15 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
             public void finish(int count) throws Exception {
 
                 if (_workOrder.getStatus().getId() == 2) {
-                    _ftecountTextView.setBackgroundResource(R.drawable.round_rect_gray);
-                    _ftecountTextView.setText(String.valueOf(fteTotal));
+                    _fteCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
+                    _fteCountTextView.setText(String.valueOf(fteTotal));
 
                 } else if (_workOrder.getStatus().getId() == 3) {
-                    _ftecountTextView.setBackgroundResource(fteTotal > fteComplete ? R.drawable.round_rect_red : R.drawable.round_rect_gray);
-                    _ftecountTextView.setText(fteComplete + "/" + fteTotal);
+                    _fteCountTextView.setBackgroundResource(fteTotal > fteComplete ? R.drawable.round_rect_red : R.drawable.round_rect_gray);
+                    _fteCountTextView.setText(fteComplete + "/" + fteTotal);
 
                 } else {
-                    _ftecountTextView.setBackgroundResource(R.drawable.round_rect_gray);
+                    _fteCountTextView.setBackgroundResource(R.drawable.round_rect_gray);
                     _postvisitCountTextView.setText(fteComplete + "/" + fteTotal);
                 }
 
@@ -205,7 +222,6 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
         };
         postDelayed(r2, new Random().nextInt(100));
 
-        setVisibility(VISIBLE);
     }
 
     private final OnClickListener _previsit_onClick = new OnClickListener() {

@@ -104,7 +104,6 @@ public class ProfilePicView extends RelativeLayout {
     }
 
     public void setProfilePic(Bitmap bitmap) {
-        Log.e(TAG, "inside setProfilePic");
         setProfilePic(new BitmapDrawable(App.get().getResources(), bitmap));
     }
 }
