@@ -532,6 +532,9 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_workOrder == null)
             return;
 
+        if (_morePopup == null)
+            return;
+
         _toolbar.setTitle("WO " + _workOrderId);
 
         _activityResultListener.sub();
