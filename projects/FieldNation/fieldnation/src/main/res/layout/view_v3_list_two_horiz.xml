@@ -6,36 +6,33 @@
     android:orientation="vertical"
     android:paddingTop="16dp">
 
-    <TableRow
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="10">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/key"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="10dp"
-            android:layout_weight="6"
-            android:minWidth="100dp"
             android:text="Key"
             android:textColor="@color/fn_dark_text"
             android:textSize="16sp" />
 
         <TextView
             android:id="@+id/value"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="24dp"
-            android:layout_weight="4"
+            android:layout_toRightOf="@+id/key"
             android:gravity="right"
             android:text="Value"
             android:textColor="@color/fn_dark_text_50"
             android:textSize="16sp" />
-    </TableRow>
+    </RelativeLayout>
 
     <View
         style="@style/DividerFull"

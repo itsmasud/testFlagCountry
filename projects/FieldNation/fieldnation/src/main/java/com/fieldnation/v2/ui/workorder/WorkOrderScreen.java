@@ -184,6 +184,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private ActionBarTopView _topBar;
     private FailedUploadsView _failedUploads;
     private ProblemSummaryView _problemSummaryView;
+    private BuyerCustomFieldView _buyerCustomFieldView;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
@@ -268,6 +269,9 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _problemSummaryView = findViewById(R.id.problemsummary_view);
         _renderers.add(_problemSummaryView);
+
+        _buyerCustomFieldView = findViewById(R.id.buyerCustomField_view);
+        _renderers.add(_buyerCustomFieldView);
 
         _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
