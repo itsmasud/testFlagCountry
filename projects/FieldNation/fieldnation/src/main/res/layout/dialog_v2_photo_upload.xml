@@ -29,12 +29,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
                 android:layout_below="@+id/title_textview"
-                android:layout_marginBottom="8dp"
-                android:background="@color/fn_primary_bg"
+                android:background="@color/fn_light_text_25"
                 android:indeterminate="true"
                 android:paddingBottom="130dp"
                 android:paddingTop="130dp"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/photo_imageview"
@@ -42,11 +41,38 @@
                 android:layout_height="300dp"
                 android:layout_alignParentLeft="true"
                 android:layout_below="@+id/title_textview"
-                android:layout_marginBottom="8dp"
-                android:background="@color/fn_primary_bg"
+                android:background="@color/fn_light_text_25"
                 android:scaleType="centerCrop"
                 android:visibility="invisible" />
 
+            <RelativeLayout
+                android:id="@+id/previewUnavailable_view"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:background="@color/fn_light_text_25">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/icon_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/icon_doc_generic"
+                        android:textSize="48sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Preview unavailable" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/filename_textInputLayout"
@@ -55,7 +81,8 @@
                 android:layout_below="@+id/photo_imageview"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp">
 
                 <EditText
                     android:id="@+id/filename_edittext"
