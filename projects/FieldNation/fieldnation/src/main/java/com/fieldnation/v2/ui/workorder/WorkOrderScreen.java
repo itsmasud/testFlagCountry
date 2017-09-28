@@ -61,7 +61,6 @@ import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.ContactListView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
-import com.fieldnation.ui.workorder.detail.CustomFieldRowView;
 import com.fieldnation.ui.workorder.detail.DiscountListLayout;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
@@ -80,7 +79,6 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
-import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
@@ -143,7 +141,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
@@ -190,7 +187,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private TimeLogListView _timeLogged;
     private TaskWidgetView _taskWidget;
     //    private TaskListView _taskList;
-//    private CustomFieldListView _customFields;
     private ShipmentListView _shipments;
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
@@ -324,10 +320,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
-//        _customFields = findViewById(R.id.customfields_view);
-//        _customFields.setListener(_customFields_listener);
-//        _renderers.add(_customFields);
-
         _signatureView = findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
@@ -419,7 +411,6 @@ public class WorkOrderScreen extends RelativeLayout {
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
@@ -466,7 +457,6 @@ public class WorkOrderScreen extends RelativeLayout {
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
@@ -1046,7 +1036,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onCustomField(Task task) {
-            CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, task.getCustomField());
+            CustomFieldDialog.show(App.get(), null, _workOrderId, task.getCustomField());
         }
 
         @Override
@@ -1184,13 +1174,6 @@ public class WorkOrderScreen extends RelativeLayout {
             }
             setLoading(true);
 
-        }
-    };
-
-    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
-        @Override
-        public void onClick(CustomFieldRowView view, CustomField field) {
-            CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, field);
         }
     };
 
@@ -1412,24 +1395,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            setLoading(true);
-        }
-    };
-
-    private final CustomFieldDialog.OnOkListener _customfieldDialog_onOk = new CustomFieldDialog.OnOkListener() {
-        @Override
-        public void onOk(CustomField field, String value) {
-            try {
-                CustomField cf = new CustomField();
-                cf.setValue(value);
-
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Custom Field Dialog";
-
-                WorkordersWebApi.updateCustomField(App.get(), _workOrderId, field.getId(), cf, uiContext);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
             setLoading(true);
         }
     };

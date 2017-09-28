@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
@@ -15,6 +16,7 @@ import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Arrays;
@@ -245,8 +247,7 @@ public class TaskWidgetView extends RelativeLayout implements WorkOrderRenderer 
     private final OnClickListener _fte_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            CustomFieldsDialog.show(App.get(), null, _workOrder.getId());
         }
     };
-
-
 }

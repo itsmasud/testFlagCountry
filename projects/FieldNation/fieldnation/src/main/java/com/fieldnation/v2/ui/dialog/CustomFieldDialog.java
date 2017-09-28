@@ -15,17 +15,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CustomField;
 
 import java.util.Calendar;
@@ -54,6 +57,7 @@ public class CustomFieldDialog extends SimpleDialog {
     private TimePickerDialog _timePicker;
 
     // Data
+    private int _workOrderId;
     private CustomField _customField;
     private Calendar _pickerCal;
     private Calendar _expirationDate;
@@ -120,6 +124,7 @@ public class CustomFieldDialog extends SimpleDialog {
         super.show(payload, animate);
 
         _customField = payload.getParcelable("customField");
+        _workOrderId = payload.getInt("workOrderId");
 
         populateUi();
     }
@@ -323,17 +328,34 @@ public class CustomFieldDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+
+            String value = "";
             if (_customField.getType() == null) {
-                _onOkDispatcher.dispatch(getUid(), _customField, _textEditText.getText().toString());
-                return;
+                value = _textEditText.getText().toString();
+            } else {
+                switch (_customField.getType()) {
+                    case PREDEFINED: {
+                        value = (String) _spinner.getAdapter().getItem(_itemSelectedPosition);
+                        break;
+                    }
+                    default: {
+                        value = _textEditText.getText().toString();
+                    }
+                }
             }
 
-            switch (_customField.getType()) {
-                case PREDEFINED:
-                    _onOkDispatcher.dispatch(getUid(), _customField, _spinner.getAdapter().getItem(_itemSelectedPosition));
-                    break;
-                default:
-                    _onOkDispatcher.dispatch(getUid(), _customField, _textEditText.getText().toString());
+            try {
+                AppMessagingClient.setLoading(true);
+
+                CustomField cf = new CustomField();
+                cf.setValue(value);
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Custom Field Dialog";
+
+                WorkordersWebApi.updateCustomField(App.get(), _workOrderId, _customField.getId(), cf, uiContext);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     };
@@ -378,36 +400,11 @@ public class CustomFieldDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, CustomField customField) {
+    public static void show(Context context, String uid, int workOrderId, CustomField customField) {
         Bundle params = new Bundle();
         params.putParcelable("customField", customField);
+        params.putInt("workOrderId", workOrderId);
 
         Controller.show(context, uid, CustomFieldDialog.class, params);
-    }
-
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
-    public interface OnOkListener {
-        void onOk(CustomField field, String value);
-    }
-
-    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
-        @Override
-        public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((CustomField) parameters[0], (String) parameters[1]);
-        }
-    };
-
-    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.add(uid, onOkListener);
-    }
-
-    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.remove(uid, onOkListener);
-    }
-
-    public static void removeAllOnOkListener(String uid) {
-        _onOkDispatcher.removeAll(uid);
     }
 }
