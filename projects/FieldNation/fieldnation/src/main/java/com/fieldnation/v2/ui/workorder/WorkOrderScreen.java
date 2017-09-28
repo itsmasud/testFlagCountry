@@ -601,13 +601,6 @@ public class WorkOrderScreen extends RelativeLayout {
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
-    private final CheckInOutDialog.OnCancelListener _checkInOutDialog_onCancel = new CheckInOutDialog.OnCancelListener() {
-        @Override
-        public void onCancel() {
-            setLoading(false);
-        }
-    };
-
     /*-*********************************************-*/
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
