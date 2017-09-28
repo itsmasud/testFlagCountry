@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
@@ -104,7 +101,6 @@ import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
-import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
@@ -396,22 +392,7 @@ public class WorkOrderScreen extends RelativeLayout {
     }
 
     private void startAppPickerDialog() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
-
-        if (App.get().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
-        } else {
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
-        }
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
     public void onStart() {

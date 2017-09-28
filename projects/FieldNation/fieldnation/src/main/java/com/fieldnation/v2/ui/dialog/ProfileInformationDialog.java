@@ -1,12 +1,9 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +24,6 @@ import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.v2.ui.GetFileIntent;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -272,19 +268,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
-
-            if (App.get().getPackageManager().hasSystemFeature(
-                    PackageManager.FEATURE_CAMERA)) {
-                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-                GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
-            } else {
-                GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
-            }
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE);
         }
     };
 

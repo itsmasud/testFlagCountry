@@ -197,7 +197,28 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, GetFileIntent[] intents) {
+    public static void show(Context context, String uid) {
+        Intent intent = new Intent();
+        intent.setType("*/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
+
+        if (App.get().getPackageManager().hasSystemFeature(
+                PackageManager.FEATURE_CAMERA)) {
+            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
+            GetFileDialog.show(App.get(), uid, new GetFileIntent[]{intent1, intent2});
+        } else {
+            GetFileDialog.show(App.get(), uid, new GetFileIntent[]{intent1});
+        }
+    }
+
+    private static void show(Context context, String uid, GetFileIntent[] intents) {
         Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelableArray("intents", intents);

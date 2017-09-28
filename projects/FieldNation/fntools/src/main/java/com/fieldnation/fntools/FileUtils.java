@@ -229,34 +229,41 @@ public class FileUtils {
 
 
     public static String getFileNameFromUri(Context context, final Uri uri) {
+        if (uri != null) {
+            Log.v(TAG, "Crashlytics 1476 catch: " + uri.toString());
+        }
         String fileName = "";
 
-        if (uri.getScheme().compareTo("content") == 0) {
-            //                Log.v(TAG, "For gallery app, google photos");
-            final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-            if (cursor == null) {
-            } else if (cursor.moveToFirst()) {
-                String[] columnNames = new String[]{MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA};
+        try {
+            if (uri.getScheme().compareTo("content") == 0) {
+                //                Log.v(TAG, "For gallery app, google photos");
+                final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+                if (cursor == null) {
+                } else if (cursor.moveToFirst()) {
+                    String[] columnNames = new String[]{MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA};
 
-                for (String columnName : columnNames) {
-                    int nameIndex = -1;
-                    try {
-                        nameIndex = cursor.getColumnIndexOrThrow(columnName);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
+                    for (String columnName : columnNames) {
+                        int nameIndex = -1;
+                        try {
+                            nameIndex = cursor.getColumnIndexOrThrow(columnName);
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
 
-                    if (nameIndex != -1) {
-                        String value = cursor.getString(nameIndex);
-                        if (value != null) {
-                            fileName = Uri.parse(value).getLastPathSegment();
-                            break;
+                        if (nameIndex != -1) {
+                            String value = cursor.getString(nameIndex);
+                            if (value != null) {
+                                fileName = Uri.parse(value).getLastPathSegment();
+                                break;
+                            }
                         }
                     }
                 }
+            } else if (uri.getScheme().compareTo("file") == 0) {
+                fileName = new File(uri.getPath()).getName();
             }
-        } else if (uri.getScheme().compareTo("file") == 0) {
-            fileName = new File(uri.getPath()).getName();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
 
         return fileName;
