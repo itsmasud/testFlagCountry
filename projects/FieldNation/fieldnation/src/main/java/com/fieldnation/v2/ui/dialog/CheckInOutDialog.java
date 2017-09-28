@@ -20,8 +20,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
@@ -407,11 +409,16 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                     SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                     uiContext.page += "- Check In Dialog";
+
+                    AppMessagingClient.setLoading(true);
+
                     WorkordersWebApi.addTimeLog(App.get(), _workOrderId, new TimeLog().in(cio), uiContext);
 
                     GpsTrackingService.stop(App.get());
 
-                    _onCheckInDispatcher.dispatch(getUid(), _workOrderId);
+                    WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
+                            WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN,
+                            _workOrderId);
 
                 } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                     boolean callMade = false;
@@ -436,6 +443,9 @@ public class CheckInOutDialog extends FullScreenDialog {
                             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                             uiContext.page += " - Check Out Dialog";
                             Log.e(TAG, "check out: " + timeLog.getJson());
+
+                            AppMessagingClient.setLoading(true);
+
                             WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
@@ -446,7 +456,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                         Log.v(TAG, "break!");
                     }
 
-                    _onCheckOutDispatcher.dispatch(getUid(), _workOrderId);
+                    WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
+                            WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, _workOrderId);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -520,58 +531,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     public static void dismiss(Context context) {
         Controller.dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
-    }
-
-    /*-****************************-*/
-    /*-         Check In           -*/
-    /*-****************************-*/
-    public interface OnCheckInListener {
-        void onCheckIn(int workOrderId);
-    }
-
-    private static KeyedDispatcher<OnCheckInListener> _onCheckInDispatcher = new KeyedDispatcher<OnCheckInListener>() {
-        @Override
-        public void onDispatch(OnCheckInListener listener, Object... parameters) {
-            listener.onCheckIn((Integer) parameters[0]);
-        }
-    };
-
-    public static void addOnCheckInListener(String uid, OnCheckInListener onCheckInListener) {
-        _onCheckInDispatcher.add(uid, onCheckInListener);
-    }
-
-    public static void removeOnCheckInListener(String uid, OnCheckInListener onCheckInListener) {
-        _onCheckInDispatcher.remove(uid, onCheckInListener);
-    }
-
-    public static void removeAllOnCheckInListener(String uid) {
-        _onCheckInDispatcher.removeAll(uid);
-    }
-
-    /*-*****************************-*/
-    /*-         Check Out           -*/
-    /*-*****************************-*/
-    public interface OnCheckOutListener {
-        void onCheckOut(int workOrderId);
-    }
-
-    private static KeyedDispatcher<OnCheckOutListener> _onCheckOutDispatcher = new KeyedDispatcher<OnCheckOutListener>() {
-        @Override
-        public void onDispatch(OnCheckOutListener listener, Object... parameters) {
-            listener.onCheckOut((Integer) parameters[0]);
-        }
-    };
-
-    public static void addOnCheckOutListener(String uid, OnCheckOutListener onCheckOutListener) {
-        _onCheckOutDispatcher.add(uid, onCheckOutListener);
-    }
-
-    public static void removeOnCheckOutListener(String uid, OnCheckOutListener onCheckOutListener) {
-        _onCheckOutDispatcher.remove(uid, onCheckOutListener);
-    }
-
-    public static void removeAllOnCheckOutListener(String uid) {
-        _onCheckOutDispatcher.removeAll(uid);
     }
 
     /*-**************************-*/
