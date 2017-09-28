@@ -169,6 +169,10 @@ public class GetFileDialog extends SimpleDialog {
         public void onClick(GetFilePackageRowView row, Intent intent) {
             Log.v(TAG, "AppPickerRowView.OnClickListener _app_onClick");
 
+            if (intent != null && intent.getComponent() != null) {
+                Log.v(TAG, intent.getComponent().toString());
+            }
+
             if (intent.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + intent.toString());
                 ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
