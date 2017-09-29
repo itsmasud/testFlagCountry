@@ -69,7 +69,6 @@ import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
-import com.fieldnation.ui.workorder.detail.TaskWidgetView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -185,7 +184,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
-    private TaskWidgetView _taskWidget;
+    private TaskSummaryView _taskWidget;
     //    private TaskListView _taskList;
     private ShipmentListView _shipments;
     private SignatureListView _signatureView;

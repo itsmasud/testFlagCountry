@@ -99,7 +99,9 @@ public class CustomFieldsDialog extends FullScreenDialog {
     private final CustomFieldsAdapter _adapter = new CustomFieldsAdapter() {
         @Override
         public void onCustomFieldClicked(CustomField customField) {
-            CustomFieldDialog.show(App.get(), null, _workOrderId, customField);
+            if (customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT)) {
+                CustomFieldDialog.show(App.get(), null, _workOrderId, customField);
+            }
         }
     };
 
