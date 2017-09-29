@@ -1,9 +1,16 @@
 package com.fieldnation.v2.ui;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.fieldnation.App;
+import com.fieldnation.R;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
@@ -78,6 +85,7 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 CustomField customField = (CustomField) dataHolders.get(position).object;
                 view.setOnClickListener(_customField_onClick);
+                view.setOnLongClickListener(_customField_onLongClick);
                 view.set(
                         (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED) ? "* " : "")
                                 + customField.getName(),
@@ -103,6 +111,18 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
         @Override
         public void onClick(View view) {
             onCustomFieldClicked((CustomField) view.getTag());
+        }
+    };
+
+    private final View.OnLongClickListener _customField_onLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View view) {
+            CustomField customField = (CustomField) view.getTag();
+            ClipboardManager clipboard = (ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(customField.getName(), customField.getValue());
+            clipboard.setPrimaryClip(clip);
+            ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
+            return true;
         }
     };
 
