@@ -87,6 +87,9 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
     private void populateUi() {
         if (_list == null) return;
+
+        if (_customFields == null) return;
+
         _adapter.setCustomFields(_customFields);
     }
 
