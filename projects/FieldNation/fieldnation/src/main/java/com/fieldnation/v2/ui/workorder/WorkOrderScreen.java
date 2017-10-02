@@ -141,7 +141,6 @@ public class WorkOrderScreen extends RelativeLayout {
     // Dialog tags
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
-    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
@@ -418,9 +417,6 @@ public class WorkOrderScreen extends RelativeLayout {
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
 
-        CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
-        CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
-        CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
@@ -462,9 +458,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
     public void onStop() {
         Log.v(TAG, "onStop");
-        CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
-        CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
-        CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
@@ -584,24 +577,10 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-				Check In Process				-*/
     /*-*********************************************-*/
     private void doCheckin() {
-        CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrderId,
+        App.get().analActionTitle = null;
+        CheckInOutDialog.show(App.get(), null, _workOrderId,
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
-
-    private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
-        @Override
-        public void onCheckIn(int workOrderId) {
-            setLoading(false);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
-        }
-    };
-
-    private final CheckInOutDialog.OnCancelListener _checkInOutDialog_onCancel = new CheckInOutDialog.OnCancelListener() {
-        @Override
-        public void onCancel() {
-            setLoading(false);
-        }
-    };
 
     /*-*********************************************-*/
     /*-				Check Out Process				-*/
@@ -615,22 +594,16 @@ public class WorkOrderScreen extends RelativeLayout {
             _deviceCount = pay.getBase().getUnits().intValue();
         }
 
+        App.get().analActionTitle = null;
+
         if (_deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrderId,
+            CheckInOutDialog.show(App.get(), null, _workOrderId,
                     _workOrder.getTimeLogs(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrderId,
+            CheckInOutDialog.show(App.get(), null, _workOrderId,
                     _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
-
-    private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
-        @Override
-        public void onCheckOut(int workOrderId) {
-            setLoading(false);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
-        }
-    };
 
     /*-*********************************-*/
     /*-				Events				-*/
