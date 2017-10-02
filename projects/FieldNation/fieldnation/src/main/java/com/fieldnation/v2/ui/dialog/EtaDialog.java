@@ -26,8 +26,10 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -780,8 +782,11 @@ public class EtaDialog extends FullScreenDialog {
             try {
                 switch (_dialogType) {
                     case PARAM_DIALOG_TYPE_REQUEST: {
-                        _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
-                        _refreshView.startRefreshing();
+                        WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
+                                WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST,
+                                _workOrderId);
+
+                        AppMessagingClient.setLoading(true);
 
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
@@ -805,8 +810,11 @@ public class EtaDialog extends FullScreenDialog {
                     }
 
                     case PARAM_DIALOG_TYPE_ACCEPT: {
-                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
-                        _refreshView.startRefreshing();
+                        WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
+                                WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK,
+                                _workOrderId);
+
+                        AppMessagingClient.setLoading(true);
 
                         Assignee assignee = new Assignee();
                         assignee.setUser(new User().id((int) App.getProfileId()));
@@ -819,8 +827,11 @@ public class EtaDialog extends FullScreenDialog {
                     }
                     case PARAM_DIALOG_TYPE_ADD:  // add eta
                     case PARAM_DIALOG_TYPE_EDIT: {
-                        _onEtaDispatcher.dispatch(getUid(), _workOrderId);
-                        _refreshView.startRefreshing();
+                        WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
+                                WorkOrderTracker.ActionButton.ETA, WorkOrderTracker.Action.ETA, _workOrderId);
+
+                        AppMessagingClient.setLoading(true);
+
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
@@ -912,110 +923,6 @@ public class EtaDialog extends FullScreenDialog {
         params.putParcelable("eta", eta);
         params.putString("dialogType", dialogType);
         Controller.show(context, uid, EtaDialog.class, params);
-    }
-
-    /*-*****************************-*/
-    /*-         Requested           -*/
-    /*-*****************************-*/
-    public interface OnRequestedListener {
-        void onRequested(int workOrderId);
-    }
-
-    private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
-        @Override
-        public void onDispatch(OnRequestedListener listener, Object... parameters) {
-            listener.onRequested((int) parameters[0]);
-        }
-    };
-
-    public static void addOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
-        _onRequestedDispatcher.add(uid, onRequestedListener);
-    }
-
-    public static void removeOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
-        _onRequestedDispatcher.remove(uid, onRequestedListener);
-    }
-
-    public static void removeAllOnRequestedListener(String uid) {
-        _onRequestedDispatcher.removeAll(uid);
-    }
-
-    /*-****************************-*/
-    /*-         Accepted           -*/
-    /*-****************************-*/
-    public interface OnAcceptedListener {
-        void onAccepted(int workOrderId);
-    }
-
-    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
-        @Override
-        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
-            listener.onAccepted((int) parameters[0]);
-        }
-    };
-
-    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
-        _onAcceptedDispatcher.add(uid, onAcceptedListener);
-    }
-
-    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
-        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
-    }
-
-    public static void removeAllOnAcceptedListener(String uid) {
-        _onAcceptedDispatcher.removeAll(uid);
-    }
-
-    /*-*****************************-*/
-    /*-         Confirmed           -*/
-    /*-*****************************-*/
-    public interface OnConfirmedListener {
-        void onConfirmed(int workOrderId);
-    }
-
-    private static KeyedDispatcher<OnConfirmedListener> _onConfirmedDispatcher = new KeyedDispatcher<OnConfirmedListener>() {
-        @Override
-        public void onDispatch(OnConfirmedListener listener, Object... parameters) {
-            listener.onConfirmed((int) parameters[0]);
-        }
-    };
-
-    public static void addOnConfirmedListener(String uid, OnConfirmedListener onConfirmedListener) {
-        _onConfirmedDispatcher.add(uid, onConfirmedListener);
-    }
-
-    public static void removeOnConfirmedListener(String uid, OnConfirmedListener onConfirmedListener) {
-        _onConfirmedDispatcher.remove(uid, onConfirmedListener);
-    }
-
-    public static void removeAllOnConfirmedListener(String uid) {
-        _onConfirmedDispatcher.removeAll(uid);
-    }
-
-    /*-***********************-*/
-    /*-         Eta           -*/
-    /*-***********************-*/
-    public interface OnEtaListener {
-        void onEta(int workOrderId);
-    }
-
-    private static KeyedDispatcher<OnEtaListener> _onEtaDispatcher = new KeyedDispatcher<OnEtaListener>() {
-        @Override
-        public void onDispatch(OnEtaListener listener, Object... parameters) {
-            listener.onEta((int) parameters[0]);
-        }
-    };
-
-    public static void addOnEtaListener(String uid, OnEtaListener onEtaListener) {
-        _onEtaDispatcher.add(uid, onEtaListener);
-    }
-
-    public static void removeOnEtaListener(String uid, OnEtaListener onEtaListener) {
-        _onEtaDispatcher.remove(uid, onEtaListener);
-    }
-
-    public static void removeAllOnEtaListener(String uid) {
-        _onEtaDispatcher.removeAll(uid);
     }
 
     /*-****************************-*/

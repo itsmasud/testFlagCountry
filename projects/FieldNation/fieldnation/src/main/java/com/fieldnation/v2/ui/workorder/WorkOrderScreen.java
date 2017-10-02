@@ -145,7 +145,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
-    private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
@@ -425,9 +424,6 @@ public class WorkOrderScreen extends RelativeLayout {
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
-        EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
@@ -472,9 +468,6 @@ public class WorkOrderScreen extends RelativeLayout {
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
-        EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
@@ -860,8 +853,8 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onEta() {
-            EtaDialog.show(
-                    App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+            App.get().analActionTitle = null;
+            EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
@@ -890,7 +883,8 @@ public class WorkOrderScreen extends RelativeLayout {
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+                App.get().analActionTitle = null;
+                EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
@@ -906,8 +900,8 @@ public class WorkOrderScreen extends RelativeLayout {
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(
-                        App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+                App.get().analActionTitle = null;
+                EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
@@ -1044,7 +1038,8 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onSetEta(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+            App.get().analActionTitle = null;
+            EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
@@ -1455,27 +1450,6 @@ public class WorkOrderScreen extends RelativeLayout {
                 Log.v(TAG, ex);
             }
             setLoading(true);
-        }
-    };
-
-    private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
-        @Override
-        public void onRequested(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
-        }
-    };
-
-    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
-        @Override
-        public void onAccepted(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
-        }
-    };
-
-    private final EtaDialog.OnConfirmedListener _etaDialog_onConfirmed = new EtaDialog.OnConfirmedListener() {
-        @Override
-        public void onConfirmed(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
         }
     };
 
