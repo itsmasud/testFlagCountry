@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
@@ -104,7 +101,6 @@ import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
-import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
@@ -148,7 +144,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
-    private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
@@ -183,6 +178,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private ActionBarTopView _topBar;
     private FailedUploadsView _failedUploads;
     private ProblemSummaryView _problemSummaryView;
+    private BuyerCustomFieldView _buyerCustomFieldView;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
@@ -267,6 +263,9 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _problemSummaryView = findViewById(R.id.problemsummary_view);
         _renderers.add(_problemSummaryView);
+
+        _buyerCustomFieldView = findViewById(R.id.buyerCustomField_view);
+        _renderers.add(_buyerCustomFieldView);
 
         _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
@@ -395,22 +394,7 @@ public class WorkOrderScreen extends RelativeLayout {
     }
 
     private void startAppPickerDialog() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
-
-        if (App.get().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
-        } else {
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
-        }
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
     public void onStart() {
@@ -436,9 +420,6 @@ public class WorkOrderScreen extends RelativeLayout {
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
-        EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
@@ -480,9 +461,6 @@ public class WorkOrderScreen extends RelativeLayout {
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
-        EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
@@ -523,6 +501,9 @@ public class WorkOrderScreen extends RelativeLayout {
         //misc.hideKeyboard(this);
 
         if (_workOrder == null)
+            return;
+
+        if (_morePopup == null)
             return;
 
         _toolbar.setTitle("WO " + _workOrderId);
@@ -845,8 +826,8 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onEta() {
-            EtaDialog.show(
-                    App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+            App.get().analActionTitle = null;
+            EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
@@ -875,7 +856,8 @@ public class WorkOrderScreen extends RelativeLayout {
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+                App.get().analActionTitle = null;
+                EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
@@ -891,8 +873,8 @@ public class WorkOrderScreen extends RelativeLayout {
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(
-                        App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+                App.get().analActionTitle = null;
+                EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
@@ -1029,7 +1011,8 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onSetEta(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrderId, _workOrder.getSchedule(),
+            App.get().analActionTitle = null;
+            EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
@@ -1440,27 +1423,6 @@ public class WorkOrderScreen extends RelativeLayout {
                 Log.v(TAG, ex);
             }
             setLoading(true);
-        }
-    };
-
-    private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
-        @Override
-        public void onRequested(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
-        }
-    };
-
-    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
-        @Override
-        public void onAccepted(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
-        }
-    };
-
-    private final EtaDialog.OnConfirmedListener _etaDialog_onConfirmed = new EtaDialog.OnConfirmedListener() {
-        @Override
-        public void onConfirmed(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
         }
     };
 

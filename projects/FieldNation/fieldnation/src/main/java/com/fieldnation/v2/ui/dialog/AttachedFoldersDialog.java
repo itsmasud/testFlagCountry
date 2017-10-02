@@ -1,11 +1,7 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +27,6 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.ui.AttachedFoldersAdapter;
-import com.fieldnation.v2.ui.GetFileIntent;
 
 import java.util.List;
 
@@ -152,22 +147,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     };
 
     private void startAppPickerDialog() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
-
-        if (getContext().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(getContext(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
-        } else {
-            GetFileDialog.show(getContext(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
-        }
+        GetFileDialog.show(getContext(), DIALOG_GET_FILE);
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {

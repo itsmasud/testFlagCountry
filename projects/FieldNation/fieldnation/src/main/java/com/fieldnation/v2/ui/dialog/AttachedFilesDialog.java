@@ -2,13 +2,10 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -41,7 +38,6 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.ui.AttachedFilesAdapter;
-import com.fieldnation.v2.ui.GetFileIntent;
 
 import java.io.File;
 import java.util.List;
@@ -199,21 +195,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Utils
     private void startAppPickerDialog() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("*/*");
-        intent.addCategory(Intent.CATEGORY_OPENABLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-        }
-        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
-
-        if (App.get().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
-        } else {
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
-        }
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
     private boolean checkMedia() {
@@ -336,7 +318,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             WebTransaction.delete(_selectedTransactionId);
             populateUi();
             // Todo, this is to force the WoD to update after the transaction is deleted
-            WorkordersWebApi.getWorkOrder(App.get(),_workOrderId,false,false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 
