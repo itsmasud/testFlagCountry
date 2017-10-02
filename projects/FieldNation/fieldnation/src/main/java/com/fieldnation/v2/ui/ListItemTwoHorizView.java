@@ -57,6 +57,14 @@ public class ListItemTwoHorizView extends RelativeLayout {
         populateUi();
     }
 
+    public String getValue() {
+        return _value;
+    }
+
+    public String getKey() {
+        return _key;
+    }
+
     private void populateUi() {
         if (_valueTextView == null || _keyTextView == null)
             return;

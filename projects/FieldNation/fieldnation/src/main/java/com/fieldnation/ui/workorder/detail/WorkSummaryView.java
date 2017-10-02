@@ -17,8 +17,6 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -26,9 +24,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "WorkSummaryView";
 
     // UI
-    private TextView _workorderIdTextView;
-    private TextView _customDisplayFieldsTextView;
-
     private TextView _bundleWarningTextView;
 
     private LinearLayout _descriptionContainer;
@@ -66,9 +61,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         if (isInEditMode())
             return;
-
-        _workorderIdTextView = findViewById(R.id.workorderid_textview);
-        _customDisplayFieldsTextView = findViewById(R.id.customdisplayfields_textview);
 
         _descriptionContainer = findViewById(R.id.description_container);
 
@@ -109,25 +101,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
     private void refresh() {
         setVisibility(View.VISIBLE);
-
-        _workorderIdTextView.setText("Work Order Id: " + _workOrder.getId());
-
-        StringBuilder sb = new StringBuilder();
-        if (_workOrder.getCustomFields().getResults().length > 0) {
-            // we have fields, find the buyer fields
-            CustomFieldCategory[] categories = _workOrder.getCustomFields().getResults();
-            for (CustomFieldCategory category : categories) {
-                if (category.getRole() != null && category.getRole().equals("buyer")) {
-                    if (category.getResults().length > 0) {
-                        CustomField[] fields = category.getResults();
-                        for (CustomField field : fields) {
-                            sb.append(field.getName() + ": " + field.getValue() + "\n");
-                        }
-                    }
-                }
-            }
-        }
-        _customDisplayFieldsTextView.setText(sb.toString().trim());
 
         if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);

@@ -48,6 +48,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <com.fieldnation.v2.ui.workorder.BuyerCustomFieldView
+                    android:id="@+id/buyerCustomField_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" />
+
                 <!-- Overview -->
                 <TextView
                     android:id="@+id/overview_textview"
@@ -131,16 +137,16 @@
                     android:layout_height="wrap_content" />
 
                 <!--<com.fieldnation.ui.workorder.detail.TaskListView-->
-                    <!--android:id="@+id/scope_view"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:visibility="gone" />-->
+                <!--android:id="@+id/scope_view"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:visibility="gone" />-->
 
                 <!--<com.fieldnation.ui.workorder.detail.CustomFieldListView-->
-                    <!--android:id="@+id/customfields_view"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:visibility="gone" />-->
+                <!--android:id="@+id/customfields_view"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:visibility="gone" />-->
 
                 <com.fieldnation.ui.workorder.detail.ClosingNotesView
                     android:id="@+id/closingnotes_view"
