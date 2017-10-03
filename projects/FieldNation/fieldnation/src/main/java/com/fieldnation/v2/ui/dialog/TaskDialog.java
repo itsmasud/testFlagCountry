@@ -32,9 +32,9 @@ public class TaskDialog extends FullScreenDialog {
     // State
 
     // Params
-    private static final String PARAM_TYPE = "type";
     private static final String PARAM_WORK_ORDER_ID = "workOrderId";
-    private static final String PARAM_DIALOG_TITLE = "finishActivity";
+    private static final String PARAM_DIALOG_TITLE = "dialogTitle";
+    private static final String PARAM_GROUP_ID = "groupId";
 
     // Ui
     private Toolbar _toolbar;
@@ -42,6 +42,7 @@ public class TaskDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId = 0;
+    private String _groupId = null;
     private String _dialogTitle;
     private List<Task> tasks = new LinkedList<>();
 
@@ -89,6 +90,7 @@ public class TaskDialog extends FullScreenDialog {
     public void show(Bundle payload, boolean animate) {
         _workOrderId = payload.getInt(PARAM_WORK_ORDER_ID);
         _dialogTitle = payload.getString(PARAM_DIALOG_TITLE);
+        _groupId = payload.getString(PARAM_GROUP_ID);
 
         super.show(payload, animate);
 
@@ -137,18 +139,19 @@ public class TaskDialog extends FullScreenDialog {
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             Log.e(TAG, "processTransaction");
 //            return methodName.equals("getTasks");
-            return methodName.equals("getWorkOrder");
+            // TODO remove updateWorkOrder from here and also onComplete
+            return methodName.equals("getWorkOrder")|| methodName.equals("updateTask");
         }
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.e(TAG, "onComplete");
-            if (successObject != null && methodName.equals("getWorkOrder")) {
+            if (successObject != null && (methodName.equals("getWorkOrder") || methodName.equals("updateTask") )) {
                 WorkOrder workOrder = (WorkOrder) successObject;
 
                 if (success) {
                     Log.e(TAG, "success");
-                    _taskList.setWorkOrder(workOrder);
+                    _taskList.setData(workOrder, _groupId);
 //                    dismiss(true);
 
 //                    _refreshView.refreshComplete();
@@ -164,9 +167,10 @@ public class TaskDialog extends FullScreenDialog {
      * @param workOrderId
      * @param dialogTitle
      */
-    public static void show(Context context, String uid, int workOrderId, String dialogTitle) {
+    public static void show(Context context, String uid, int workOrderId, String groupId, String dialogTitle) {
         Bundle params = new Bundle();
         params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putString(PARAM_GROUP_ID, groupId);
         params.putString(PARAM_DIALOG_TITLE, dialogTitle);
 
         Controller.show(context, uid, TaskDialog.class, params);

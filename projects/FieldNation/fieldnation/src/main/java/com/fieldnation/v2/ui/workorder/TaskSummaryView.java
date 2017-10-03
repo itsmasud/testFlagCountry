@@ -13,10 +13,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
-import com.fieldnation.v2.data.model.Local;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
 import com.fieldnation.v2.ui.dialog.TaskDialog;
 
@@ -200,7 +198,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             Log.e(TAG, "_task_onClick");
             Group group = (Group) v.getTag();
             // TODO call the dialog with the group ID here
-            TaskDialog.show(App.get(), null, _workOrder.getId(), group.name);
+            TaskDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
 
         }
     };

@@ -1,7 +1,6 @@
 package com.fieldnation.v2.ui.workorder;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -13,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -68,7 +66,6 @@ import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
-import com.fieldnation.ui.workorder.detail.TaskListView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -103,7 +100,6 @@ import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
-import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
@@ -184,7 +180,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
-    //    private TaskListView _taskList;
     private ShipmentListView _shipments;
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
@@ -308,10 +303,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
-
-//        _taskList = findViewById(R.id.scope_view);
-//        _taskList.setTaskListViewListener(_taskListView_listener);
-//        _renderers.add(_taskList);
 
         _timeLogged = findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
@@ -480,7 +471,7 @@ public class WorkOrderScreen extends RelativeLayout {
     }
 
     public void setWorkOrder(WorkOrder workOrder) {
-        //Log.v(TAG, "setWorkOrder");
+        Log.v(TAG, "setData");
         _workOrder = workOrder;
         _workOrderId = workOrder.getId();
         populateUi();

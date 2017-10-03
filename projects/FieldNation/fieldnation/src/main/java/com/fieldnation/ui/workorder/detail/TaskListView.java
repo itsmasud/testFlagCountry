@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -22,6 +23,7 @@ public class TaskListView extends RelativeLayout {
     private static final String TAG = "TaskListView";
 
     // UI
+    private LinearLayout _preVisistLayout;
     private TextView _preVisistTextView;
     private LinearLayout _preVisistList;
     private LinearLayout _onSiteLayout;
@@ -30,6 +32,7 @@ public class TaskListView extends RelativeLayout {
     private LinearLayout _postVisitList;
 
     // Data
+    String _groupId = null;
     private List<Task> _tasks;
     private WorkOrder _workOrder;
 
@@ -54,6 +57,7 @@ public class TaskListView extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _preVisistLayout = findViewById(R.id.preVisit_layout);
         _preVisistTextView = findViewById(R.id.previsit_textview);
         _preVisistList = findViewById(R.id.previsit_list);
         _onSiteLayout = findViewById(R.id.onSite_layout);
@@ -62,8 +66,11 @@ public class TaskListView extends RelativeLayout {
         _postVisitList = findViewById(R.id.postvisit_list);
     }
 
-    public void setWorkOrder(WorkOrder workOrder) {
+    public void setData(WorkOrder workOrder, String groupId) {
+        Log.e(TAG, "setData");
+        Log.e(TAG, "groupId: " + groupId);
         _workOrder = workOrder;
+        _groupId = groupId;
 
         if (workOrder.getTasks().getResults().length > 0)
             _tasks = Arrays.asList(workOrder.getTasks().getResults());
@@ -84,6 +91,21 @@ public class TaskListView extends RelativeLayout {
         } else {
             setVisibility(View.VISIBLE);
         }
+
+        if ("prep".equals(_groupId)) {
+            _preVisistLayout.setVisibility(VISIBLE);
+            _onSiteLayout.setVisibility(GONE);
+            _postVisitLayout.setVisibility(GONE);
+        } else if ("onsite".equals(_groupId)) {
+            _preVisistLayout.setVisibility(GONE);
+            _onSiteLayout.setVisibility(VISIBLE);
+            _postVisitLayout.setVisibility(GONE);
+        } else if ("post".equals(_groupId)) {
+            _preVisistLayout.setVisibility(GONE);
+            _onSiteLayout.setVisibility(GONE);
+            _postVisitLayout.setVisibility(VISIBLE);
+        }
+
 
         boolean nocategories = _tasks.get(0).getGroup() == null || "any".equals(_tasks.get(0).getGroup().getId());
 
@@ -125,7 +147,7 @@ public class TaskListView extends RelativeLayout {
                     Task task = _tasks.get(i);
                     TaskRowView row = null;
 
-                    if ("prep".equals(task.getGroup().getId())) {
+                    if ("prep".equals(task.getGroup().getId()) && _groupId.equals(task.getGroup().getId())) {
                         if (pre < _preVisistList.getChildCount()) {
                             row = (TaskRowView) _preVisistList.getChildAt(pre);
                         } else {
@@ -134,7 +156,10 @@ public class TaskListView extends RelativeLayout {
                             _preVisistTextView.setVisibility(View.VISIBLE);
                         }
                         pre++;
-                    } else if ("onsite".equals(task.getGroup().getId())) {
+                        row.setData(_workOrder, task);
+                    }
+
+                    if ("onsite".equals(task.getGroup().getId()) && _groupId.equals(task.getGroup().getId())) {
                         if (ons < _onSiteList.getChildCount()) {
                             row = (TaskRowView) _onSiteList.getChildAt(ons);
                         } else {
@@ -143,7 +168,10 @@ public class TaskListView extends RelativeLayout {
                             _onSiteLayout.setVisibility(View.VISIBLE);
                         }
                         ons++;
-                    } else if ("post".equals(task.getGroup().getId())) {
+                        row.setData(_workOrder, task);
+                    }
+
+                    if ("post".equals(task.getGroup().getId()) && _groupId.equals(task.getGroup().getId())) {
                         if (post < _postVisitList.getChildCount()) {
                             row = (TaskRowView) _postVisitList.getChildAt(post);
                         } else {
@@ -152,12 +180,7 @@ public class TaskListView extends RelativeLayout {
                             _postVisitLayout.setVisibility(View.VISIBLE);
                         }
                         post++;
-                    }
-
-                    if (row != null) {
                         row.setData(_workOrder, task);
-                    } else {
-                        // TODO this should never happen!
                     }
                 }
 
@@ -166,6 +189,7 @@ public class TaskListView extends RelativeLayout {
                     if (_preVisistList.getChildCount() > pre) {
                         _preVisistList.removeViews(pre, pre - _preVisistList.getChildCount());
                     }
+
                     if (_onSiteList.getChildCount() > ons) {
                         _onSiteList.removeViews(ons, ons - _onSiteList.getChildCount());
                     }
@@ -176,5 +200,7 @@ public class TaskListView extends RelativeLayout {
             };
             postDelayed(r, new Random().nextInt(1000));
         }
+
+
     }
 }
