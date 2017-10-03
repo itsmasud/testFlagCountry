@@ -9,12 +9,16 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
+import com.fieldnation.v2.data.model.Local;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
+import com.fieldnation.v2.ui.dialog.TaskDialog;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -93,12 +97,6 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         setVisibility(VISIBLE);
 
-        int preTotal = 0;
-        int preComplete = 0;
-        int onsTotal = 0;
-        int onsComplete = 0;
-        int postTotal = 0;
-        int postComplete = 0;
         boolean editable = false;
 
         List<Group> groups = new LinkedList<>();
@@ -199,14 +197,18 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     private final OnClickListener _task_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.e(TAG, "_task_onClick");
             Group group = (Group) v.getTag();
             // TODO call the dialog with the group ID here
+            TaskDialog.show(App.get(), null, _workOrder.getId(), group.name);
+
         }
     };
 
     private final OnClickListener _fte_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.e(TAG, "_fte_onClick");
             CustomFieldsDialog.show(App.get(), null, _workOrder.getId());
         }
     };

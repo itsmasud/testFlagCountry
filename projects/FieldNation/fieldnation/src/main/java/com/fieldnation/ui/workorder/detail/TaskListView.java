@@ -15,13 +15,12 @@ import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
+public class TaskListView extends RelativeLayout {
     private static final String TAG = "TaskListView";
 
     // UI
@@ -70,7 +69,6 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
         _listener = l;
     }
 
-    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
 
