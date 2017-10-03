@@ -61,7 +61,6 @@ import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.ContactListView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
-import com.fieldnation.ui.workorder.detail.CustomFieldRowView;
 import com.fieldnation.ui.workorder.detail.DiscountListLayout;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
@@ -70,7 +69,6 @@ import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
-import com.fieldnation.ui.workorder.detail.TaskWidgetView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -80,7 +78,6 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
-import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
@@ -142,7 +139,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
@@ -187,9 +183,8 @@ public class WorkOrderScreen extends RelativeLayout {
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
-    private TaskWidgetView _taskWidget;
+    private TaskSummaryView _taskWidget;
     //    private TaskListView _taskList;
-//    private CustomFieldListView _customFields;
     private ShipmentListView _shipments;
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
@@ -326,10 +321,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
-//        _customFields = findViewById(R.id.customfields_view);
-//        _customFields.setListener(_customFields_listener);
-//        _renderers.add(_customFields);
-
         _signatureView = findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
@@ -418,7 +409,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _workOrderApi.sub();
 
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
@@ -459,7 +449,6 @@ public class WorkOrderScreen extends RelativeLayout {
     public void onStop() {
         Log.v(TAG, "onStop");
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
@@ -1018,7 +1007,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void onCustomField(Task task) {
-            CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, task.getCustomField());
+            CustomFieldDialog.show(App.get(), null, _workOrderId, task.getCustomField());
         }
 
         @Override
@@ -1156,13 +1145,6 @@ public class WorkOrderScreen extends RelativeLayout {
             }
             setLoading(true);
 
-        }
-    };
-
-    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
-        @Override
-        public void onClick(CustomFieldRowView view, CustomField field) {
-            CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, field);
         }
     };
 
@@ -1384,24 +1366,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            setLoading(true);
-        }
-    };
-
-    private final CustomFieldDialog.OnOkListener _customfieldDialog_onOk = new CustomFieldDialog.OnOkListener() {
-        @Override
-        public void onOk(CustomField field, String value) {
-            try {
-                CustomField cf = new CustomField();
-                cf.setValue(value);
-
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Custom Field Dialog";
-
-                WorkordersWebApi.updateCustomField(App.get(), _workOrderId, field.getId(), cf, uiContext);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
             setLoading(true);
         }
     };

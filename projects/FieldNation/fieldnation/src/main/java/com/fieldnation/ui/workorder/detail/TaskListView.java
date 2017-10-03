@@ -60,9 +60,9 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
 
         _preVisistTextView = findViewById(R.id.previsit_textview);
         _preVisistList = findViewById(R.id.previsit_list);
-        _onSiteLayout = findViewById(R.id.onsite_layout);
+        _onSiteLayout = findViewById(R.id.onSite_layout);
         _onSiteList = findViewById(R.id.onsite_list);
-        _postVisitLayout = findViewById(R.id.postvisit_layout);
+        _postVisitLayout = findViewById(R.id.postVisit_layout);
         _postVisitList = findViewById(R.id.postvisit_list);
     }
 

@@ -131,7 +131,7 @@
                     style="@style/WoDV2.Header"
                     android:text="Tasks to be Completed" />
 
-                <com.fieldnation.ui.workorder.detail.TaskWidgetView
+                <com.fieldnation.v2.ui.workorder.TaskSummaryView
                     android:id="@+id/taskwidget_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
