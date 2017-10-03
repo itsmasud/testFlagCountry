@@ -47,9 +47,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
     private ProgressBar _loadingProgress;
     private TextView _loadingTextView;
 
-    // Services
-    private FileCacheClient _fileCacheClient;
-
     // Data
     private WorkOrder _selectedWorkOrder;
     private AttachmentFolder _selectedUploadSlot;
@@ -112,9 +109,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
+        _fileCacheClient.sub();
         _workOrderPicker.onStart();
     }
 
@@ -141,7 +136,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
+        _fileCacheClient.unsub();
         _workOrderPicker.onStop();
         super.onStop();
     }
@@ -310,14 +305,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
         finish();
     }
 
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
+    private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onConnected() {
-            _fileCacheClient.subFileCache();
-        }
-
-        @Override
-        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
+        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
             _remainingCacheItems--;
 
             _loadingProgress.setProgress(_sharedFiles.length - _remainingCacheItems);
