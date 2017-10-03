@@ -112,6 +112,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         super.onResume();
 
         _workOrdersApi.sub();
+        _appClient.subNetworkState();
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
@@ -165,6 +166,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         Log.v(TAG, "onPause");
         if (_docClient != null) _docClient.disconnect(App.get());
         _workOrdersApi.unsub();
+        _appClient.unsubNetworkState();
 
         super.onPause();
     }
@@ -382,6 +384,19 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
     };
 
+    private final AppMessagingClient _appClient = new AppMessagingClient() {
+        @Override
+        public void onNetworkDisconnected() {
+            adapter.uploadClear();
+            populateUi();
+        }
+
+        @Override
+        public void onNetworkConnected() {
+            WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+        }
+    };
+
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
@@ -453,7 +468,13 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
                 Double percent = pos * 1.0 / size;
                 Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
-                adapter.uploadProgress(transactionParams, (int) (pos * 100 / size));
+
+                if (pos == size) {
+                    adapter.uploadStop(transactionParams);
+                    populateUi();
+                } else {
+                    adapter.uploadProgress(transactionParams, (int) (pos * 100 / size));
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

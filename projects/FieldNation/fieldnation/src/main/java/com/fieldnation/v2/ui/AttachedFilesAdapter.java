@@ -153,6 +153,12 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
     private List<UploadTuple> uploads = new LinkedList<>();
 
+    public void uploadClear() {
+        uploads.clear();
+        rebuild();
+        notifyDataSetChanged();
+    }
+
     public void uploadStart(TransactionParams transactionParams) {
         Log.v(TAG, "uploadStart");
 
