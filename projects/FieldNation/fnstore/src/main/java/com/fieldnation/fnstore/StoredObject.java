@@ -913,7 +913,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     public static boolean delete(Context context, StoredObject obj) {
         Log.v(TAG, "delete(" + obj + ")");
-        Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
         if (obj != null && obj._file != null && obj._isFile) {
             obj._file.delete();
         }
