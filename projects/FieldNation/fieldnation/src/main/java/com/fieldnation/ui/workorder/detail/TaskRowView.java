@@ -1,6 +1,10 @@
 package com.fieldnation.ui.workorder.detail;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,19 +12,37 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
+import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
+import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.dialog.GetFileDialog;
+import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
+import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TaskRowView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("TaskRowView");
@@ -33,7 +55,6 @@ public class TaskRowView extends RelativeLayout {
     // Data
     private WorkOrder _workOrder;
     private Task _task;
-    private Listener _listener = null;
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -63,7 +84,7 @@ public class TaskRowView extends RelativeLayout {
         _descriptionTextView = findViewById(R.id.description_textview);
         _progressBar = findViewById(R.id.progress_view);
 
-        setOnClickListener(_checkbox_onClick);
+        setOnClickListener(_click_listener);
 
         populateUi();
     }
@@ -73,10 +94,6 @@ public class TaskRowView extends RelativeLayout {
         _workOrderApi.unsub();
 
         super.onDetachedFromWindow();
-    }
-
-    public void setOnTaskClickListener(Listener listener) {
-        _listener = listener;
     }
 
     public void setData(WorkOrder workOrder, Task task) {
@@ -187,6 +204,54 @@ public class TaskRowView extends RelativeLayout {
         }
     }
 
+    /*-*********************************************-*/
+    /*-				Closing notes Process			-*/
+    /*-*********************************************-*/
+
+    private void showClosingNotesDialog() {
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
+            ClosingNotesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getClosingNotes());
+    }
+
+    /*-*********************************************-*/
+    /*-				Check In Process				-*/
+    /*-*********************************************-*/
+    private void doCheckin() {
+        App.get().analActionTitle = null;
+        CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+    }
+
+    /*-*********************************************-*/
+    /*-				Check Out Process				-*/
+    /*-*********************************************-*/
+    private void doCheckOut() {
+//        setLoading(true);
+        int deviceCount = -1;
+
+        Pay pay = _workOrder.getPay();
+        if (pay.getType() == Pay.TypeEnum.DEVICE
+                && pay.getBase().getUnits() != null) {
+            deviceCount = pay.getBase().getUnits().intValue();
+        }
+
+        App.get().analActionTitle = null;
+
+        if (deviceCount > -1) {
+            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+        } else {
+            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+        }
+    }
+
+    private void startAppPickerDialog() {
+        GetFileDialog.show(App.get(), null);
+    }
+
+
+
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
@@ -197,16 +262,16 @@ public class TaskRowView extends RelativeLayout {
         _workOrderApi.sub();
     }
 
-    private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            updateCheckBox();
-
-            if (_listener != null) {
-                _listener.onTaskClick(_task);
-            }
-        }
-    };
+//    private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            updateCheckBox();
+//
+//            if (_listener != null) {
+//                _listener.onTaskClick(_task);
+//            }
+//        }
+//    };
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
@@ -299,7 +364,158 @@ public class TaskRowView extends RelativeLayout {
         }
     };
 
-    public interface Listener {
-        void onTaskClick(Task task);
-    }
+
+
+
+
+
+    private final View.OnClickListener _click_listener =new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            WorkOrderTracker.onTaskEvent(App.get(), _task.getType(), _workOrder.getId());
+
+            updateCheckBox();
+
+            switch (_task.getType().getId()) {
+
+                case 1:
+                    App.get().analActionTitle = null;
+                    EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
+                            _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
+                    break;
+                case 2:
+                    showClosingNotesDialog();
+                    break;
+                case 3: // check in
+                    // TODO
+                    doCheckin();
+
+                    break;
+                case 4: // check out
+                    doCheckOut();
+                    break;
+                case 5: // upload file
+                    startAppPickerDialog();
+                    break;
+                case 6: // upload picture
+                    startAppPickerDialog();
+                    break;
+                case 7: // custom field
+                    CustomFieldDialog.show(App.get(), null, _workOrder.getId(), _task.getCustomField());
+                    break;
+                case 8: // phone
+                    if (_task.getStatus() != null && !_task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                        try {
+                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
+
+                    try {
+                        if (_task.getPhone() != null) {
+                            // Todo, need to figure out if there is a phone number here
+//                    Spannable test = new SpannableString(task.getPhoneNumber());
+//                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
+//                    if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                        builder.setMessage(R.string.dialog_no_number_message);
+//                        builder.setTitle(R.string.dialog_no_number_title);
+//                        builder.setPositiveButton(R.string.btn_ok, null);
+//                        builder.show();
+//
+//                    } else {
+//                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+//                        String phNum = "tel:" + task.getPhoneNumber();
+//                        callIntent.setData(Uri.parse(phNum));
+//                        startActivity(callIntent);
+//                        setLoading(true);
+//                    }
+
+                            if (!TextUtils.isEmpty(_task.getPhone()) && android.util.Patterns.PHONE.matcher(_task.getPhone()).matches()) {
+                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                String phNum = "tel:" + _task.getPhone();
+                                callIntent.setData(Uri.parse(phNum));
+                                ActivityClient.startActivity(callIntent);
+//                                setLoading(true);
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                                builder.setMessage(R.string.dialog_no_number_message);
+                                builder.setTitle(R.string.dialog_no_number_title);
+                                builder.setPositiveButton(R.string.btn_ok, null);
+                                builder.show();
+                            }
+
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setMessage(R.string.dialog_no_number_message);
+                            builder.setTitle(R.string.dialog_no_number_title);
+                            builder.setPositiveButton(R.string.btn_ok, null);
+                            builder.show();
+                        }
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                    break;
+                case 9: // email
+                    String email = _task.getEmail();
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:" + email));
+                    ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
+
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+//                    setLoading(true);
+                    break;
+                case 10: // unique task
+                    if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                        return;
+
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+//                    setLoading(true);
+                    break;
+                case 11:
+                    SignOffActivity.startSignOff(App.get(), _workOrder.getId(), _task.getId());
+//                    setLoading(true);
+                    break;
+                case 12:
+                    List<Shipment> shipments = new LinkedList();
+                    for (Shipment shipment : _workOrder.getShipments().getResults()) {
+                        if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
+                            shipments.add(shipment);
+                    }
+
+                    if (shipments.size() == 0) {
+                        ShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
+                                _workOrder.getAttachments(), getContext().getString(R.string.dialog_task_shipment_title), null, _task);
+                    } else {
+                        TaskShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
+                                _workOrder.getShipments(), getContext().getString(R.string.dialog_task_shipment_title), _task);
+                    }
+                    break;
+                case 13:
+                    Attachment doc = _task.getAttachment();
+                    if (doc.getId() != null) {
+                        Log.v(TAG, "docid: " + doc.getId());
+                        if (_task.getStatus() != null && !_task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                            try {
+                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                            } catch (Exception ex) {
+                                Log.v(TAG, ex);
+                            }
+                        }
+                        DocumentClient.downloadDocument(App.get(), doc.getId(),
+                                doc.getFile().getLink(), doc.getFile().getName(), false);
+                    }
+                    break;
+            }
+        }
+    };
+
 }
