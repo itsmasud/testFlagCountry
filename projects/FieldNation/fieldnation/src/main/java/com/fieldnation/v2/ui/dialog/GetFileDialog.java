@@ -298,9 +298,9 @@ public class GetFileDialog extends SimpleDialog {
                 Log.v(TAG, "Dispatch _onFileDispatcher");
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
-                        FileCacheClient.cacheFileUpload(App.get(), "", ui.uri);
+                        FileCacheClient.cacheFileUpload(App.get(), ui.uri.toString(), ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
-                        FileCacheClient.cacheFileUpload(App.get(), "", ui.intent.getData());
+                        FileCacheClient.cacheFileUpload(App.get(), ui.intent.getData().toString(), ui.intent.getData());
                     }
                 }
 

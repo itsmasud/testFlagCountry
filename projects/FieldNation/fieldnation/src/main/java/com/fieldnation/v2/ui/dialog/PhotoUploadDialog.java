@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -61,6 +62,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private static final String STATE_DESCRIPTION = "STATE_DESCRIPTION";
     private static final String STATE_HIDE_PHOTO = "STATE_HIDE_PHOTO";
     private static final String STATE_CACHED_URI = "STATE_CACHED_URI";
+    private static final String STATE_SOURCE_URI = "STATE_SOURCE_URI";
 
     // Mode
     private static final int MODE_NORMAL = 0;
@@ -247,6 +249,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _descriptionEditText.setOnEditorActionListener(_onEditor);
         _descriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
         _noPreviewLayout.setOnClickListener(_preview_onClick);
+        _progressBar.setOnClickListener(_preview_onClick);
     }
 
     @Override
@@ -278,7 +281,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
                 _sourceUri = _cachedUri = StoredObject.get(App.get(), _methodParams.getLong("storedObjectId")).getUri();
                 setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
-                populateUi();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -297,9 +299,11 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             if (payload.containsKey("uri")) {
                 _sourceUri = payload.getParcelable("uri");
+                Log.v(TAG, "uri: " + _sourceUri);
                 FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
             }
         }
+        populateUi();
     }
 
     @Override
@@ -318,9 +322,11 @@ public class PhotoUploadDialog extends FullScreenDialog {
             if (savedState.containsKey(STATE_HIDE_PHOTO))
                 _hideImageView = savedState.getBoolean(STATE_HIDE_PHOTO);
 
-            if (savedState.containsKey(STATE_CACHED_URI)) {
+            if (savedState.containsKey(STATE_CACHED_URI))
                 _cachedUri = savedState.getParcelable(STATE_CACHED_URI);
-            }
+
+            if (savedState.containsKey(STATE_SOURCE_URI))
+                _sourceUri = savedState.getParcelable(STATE_SOURCE_URI);
         }
     }
 
@@ -340,6 +346,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         if (_cachedUri != null)
             outState.putParcelable(STATE_CACHED_URI, _cachedUri);
+
+        if (_sourceUri != null)
+            outState.putParcelable(STATE_SOURCE_URI, _sourceUri);
     }
 
     @Override
@@ -556,15 +565,16 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private final View.OnClickListener _preview_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent;
-            if (_cachedUri != null) {
-                intent = new Intent(Intent.ACTION_VIEW);
-                File f = new File(_cachedUri.getPath());
-                intent.setDataAndType(App.getUriFromFile(f), FileUtils.getMimeTypeFromFile(f));
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW, _sourceUri);
+            if (_cachedUri == null) {
+                ToastClient.toast(App.get(), "Can't show preview yet.", Toast.LENGTH_SHORT);
+                return;
             }
+
+            Intent intent;
+            intent = new Intent(Intent.ACTION_VIEW);
+            File f = new File(_cachedUri.getPath());
+            intent.setDataAndType(App.getUriFromFile(f), MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1)));
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             try {
@@ -573,6 +583,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+                ToastClient.toast(App.get(), "Could not find an app to open this file", Toast.LENGTH_SHORT);
             }
         }
     };
@@ -585,6 +596,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         @Override
         public void onFileCacheEnd(String tag, Uri uri, boolean success) {
+            Log.v(TAG, "onFileCacheEnd tag: " + tag);
+            Log.v(TAG, "onFileCacheEnd uri: " + uri);
             if (!tag.equals(_sourceUri.toString())) {
                 Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
                 return;

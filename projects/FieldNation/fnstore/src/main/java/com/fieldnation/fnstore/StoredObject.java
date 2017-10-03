@@ -12,6 +12,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.ObjectStoreSqlHelper.Column;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 
@@ -912,6 +913,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     public static boolean delete(Context context, StoredObject obj) {
         Log.v(TAG, "delete(" + obj + ")");
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
         if (obj != null && obj._file != null && obj._isFile) {
             obj._file.delete();
         }
