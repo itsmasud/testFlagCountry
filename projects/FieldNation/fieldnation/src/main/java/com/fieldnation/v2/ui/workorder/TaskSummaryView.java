@@ -71,7 +71,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         public Group(String id, String name) {
             this.id = id;
-            this.name = name;
+            this.name = id.equals("prep") ? "Pre Visit" : id.equals("onsite") ? "On Site" : id.equals("post") ? "Post Visit" : "";
         }
     }
 
@@ -93,21 +93,15 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         setVisibility(VISIBLE);
 
-        int preTotal = 0;
-        int preComplete = 0;
-        int onsTotal = 0;
-        int onsComplete = 0;
-        int postTotal = 0;
-        int postComplete = 0;
-        boolean editable = false;
+//        boolean editable = false;
 
         List<Group> groups = new LinkedList<>();
 
         Task[] tasks = _workOrder.getTasks().getResults();
         for (Task task : tasks) {
-            editable = editable
-                    || task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-                    || task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE);
+//            editable = editable
+//                    || task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
+//                    || task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE);
 
             Group group = null;
             for (Group gr : groups) {
@@ -131,12 +125,16 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             TaskSummaryRow view = new TaskSummaryRow(getContext());
             view.setTitle(group.name);
             view.setTag(group);
-            if (!editable) {
-                view.setCount(group.total + "");
+            if (_workOrder.getStatus().getId() == 2) {
+                view.setCount(String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
-            } else {
+            } else if (_workOrder.getStatus().getId() == 3) {
                 view.setCount(group.completed + "/" + group.total);
                 view.setCountBg(group.total == group.completed ? R.drawable.round_rect_green : R.drawable.round_rect_red);
+                view.setOnClickListener(_task_onClick);
+            } else {
+                view.setCount(group.completed + "/" + group.total);
+                view.setCountBg(R.drawable.round_rect_gray);
                 view.setOnClickListener(_task_onClick);
             }
 
@@ -155,7 +153,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         int fteComplete = 0;
         int fteRequired = 0;
         int fteRequiredComplete = 0;
-        editable = false;
+//        editable = false;
 
         for (CustomFieldCategory category : _workOrder.getCustomFields().getResults()) {
             if (category.getRole().equals("buyer"))
@@ -164,7 +162,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             CustomField[] customFields = category.getResults();
             for (CustomField customField : customFields) {
 
-                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
+//                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
 
                 if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED))
                     fteRequired++;
@@ -180,19 +178,21 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         }
 
         _customFieldsView.setTitle("Fields To Enter");
-        if (!editable) {
-            _customFieldsView.setCountBg(R.drawable.round_rect_gray);
-            _customFieldsView.setCount(fteTotal + "");
-            _customFieldsView.setOnClickListener(null);
-        } else {
-            _customFieldsView.setOnClickListener(_fte_onClick);
-            if (fteComplete == fteTotal) {
-                _customFieldsView.setCount(String.valueOf(fteTotal));
-            } else {
-                _customFieldsView.setCount(fteComplete + "/" + fteTotal);
-            }
 
+        if (_workOrder.getStatus().getId() == 2) {
+            _customFieldsView.setCountBg(R.drawable.round_rect_gray);
+            _customFieldsView.setCount(String.valueOf(fteTotal));
+            _customFieldsView.setOnClickListener(null);
+
+        } else if (_workOrder.getStatus().getId() == 3) {
+            _customFieldsView.setOnClickListener(_fte_onClick);
+            _customFieldsView.setCount(fteRequiredComplete + "/" + fteRequired);
             _customFieldsView.setCountBg(fteRequired == fteRequiredComplete ? R.drawable.round_rect_green : R.drawable.round_rect_red);
+        } else {
+            _customFieldsView.setCountBg(R.drawable.round_rect_gray);
+            _customFieldsView.setCount(fteComplete + "/" + fteRequiredComplete);
+            _customFieldsView.setOnClickListener(null);
+
         }
     }
 
