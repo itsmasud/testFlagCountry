@@ -27,6 +27,9 @@ public class File implements Parcelable {
     @Json(name = "description")
     private String _description;
 
+    @Json(name = "hash")
+    private String _hash;
+
     @Json(name = "icon")
     private String _icon;
 
@@ -84,6 +87,28 @@ public class File implements Parcelable {
     public File description(String description) throws ParseException {
         _description = description;
         SOURCE.put("description", description);
+        return this;
+    }
+
+    public void setHash(String hash) throws ParseException {
+        _hash = hash;
+        SOURCE.put("hash", hash);
+    }
+
+    public String getHash() {
+        try {
+            if (_hash == null && SOURCE.has("hash") && SOURCE.get("hash") != null)
+                _hash = SOURCE.getString("hash");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _hash;
+    }
+
+    public File hash(String hash) throws ParseException {
+        _hash = hash;
+        SOURCE.put("hash", hash);
         return this;
     }
 

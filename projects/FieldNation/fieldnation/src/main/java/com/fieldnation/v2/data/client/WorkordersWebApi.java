@@ -319,6 +319,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("storedObjectId", storedObject.getId());
             methodParams.put("allowZombie", true);
             methodParams.put("timestamp", System.currentTimeMillis());
+            methodParams.put("fileHash", storedObject.getHashHex());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")

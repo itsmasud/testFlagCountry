@@ -14,6 +14,10 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -827,6 +831,38 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         public Builder request(HttpJsonBuilder builder) {
             params.putByteArray(PARAM_REQUEST, builder.build().toByteArray());
             return this;
+        }
+    }
+
+    public static void cleanZombies(AttachmentFolders attachmentFolders){
+        try {
+            List<WebTransaction> zombies = WebTransaction.getZombies();
+            for (WebTransaction zombie : zombies) {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(zombie.getListenerParams()));
+                JsonObject methodParams = new JsonObject(params.methodParams);
+                int folderId = methodParams.getInt("folderId");
+                String fileHash = methodParams.getString("fileHash").toLowerCase();
+
+                boolean kill = false;
+                for (AttachmentFolder folder : attachmentFolders.getResults()) {
+                    if (folderId == folder.getId()) {
+                        for (Attachment attachment : folder.getResults()) {
+                            if (attachment.getFile() != null
+                                    && attachment.getFile().getHash() != null
+                                    && fileHash.equals(attachment.getFile().getHash().toLowerCase())) {
+                                kill = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (kill) break;
+                }
+
+                if (kill)
+                    WebTransaction.delete(zombie.getId());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
     }
 }

@@ -27,7 +27,7 @@ public class ObjectStoreSqlHelper extends SQLiteOpenHelper {
         IS_FILE(5, "is_file", "integer not null"),
         EXPIRES(6, "expires", "integer not null"),
         DATA(7, "data", "blob"),
-        HASH(8, "data", "blob");
+        HASH(8, "hash", "blob");
 
         private final int _index;
         private final String _name;
