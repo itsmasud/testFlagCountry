@@ -120,7 +120,7 @@ public class MultipartUtility {
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
 
-        writer.append(LINE_FEED);
+        //writer.append(LINE_FEED); this was adding data to the files
         writer.flush();
     }
 
@@ -155,7 +155,7 @@ public class MultipartUtility {
 
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
-        writer.append(LINE_FEED);
+        //writer.append(LINE_FEED); this was adding data to the files
         writer.flush();
 
     }
@@ -173,7 +173,7 @@ public class MultipartUtility {
         outputStream.write(filedata);
         outputStream.flush();
 
-        writer.append(LINE_FEED);
+        //writer.append(LINE_FEED); this was adding data to the files
         writer.flush();
     }
 

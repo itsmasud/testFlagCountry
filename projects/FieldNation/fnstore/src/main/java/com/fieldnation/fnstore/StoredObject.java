@@ -14,10 +14,12 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.security.MessageDigest;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,6 +40,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private byte[] _data;
     private File _file;
     private boolean _expires;
+    private byte[] _hash;
 
     private static final Object WRITE_PAUSE = new Object();
     private static final Set<Long> WRITING = new HashSet<>();
@@ -61,6 +64,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 _data = cursor.getBlob(Column.DATA.getIndex());
             }
         }
+        _hash = cursor.getBlob(Column.HASH.getIndex());
     }
 
     public StoredObject(Bundle bundle) {
@@ -75,6 +79,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             _file = (File) bundle.getSerializable(PARAM_FILE);
         else
             _data = bundle.getByteArray(PARAM_DATA);
+        _hash = bundle.getByteArray(PARAM_HASH);
     }
 
     public Bundle toBundle() {
@@ -91,6 +96,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         else if (_data != null)
             bundle.putByteArray(PARAM_DATA, _data);
 
+        bundle.putByteArray(PARAM_HASH, _hash);
         return bundle;
     }
 
@@ -122,6 +128,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return Uri.fromFile(_file);
     }
 
+    public byte[] getHash() {
+        return _hash;
+    }
+
+    public String getHashHex() {
+        return misc.getHex(_hash);
+    }
+
     public long size() {
         if (_file != null)
             return _file.length();
@@ -132,9 +146,10 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return -1;
     }
 
-    public void setFile(File file) {
+    public void setFile(File file, byte[] hash) {
         _isFile = true;
         _file = file;
+        _hash = hash;
     }
 
     public byte[] getData() {
@@ -144,6 +159,15 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public void setData(byte[] data) {
         _isFile = false;
         _data = data;
+
+        try {
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            sha1.update(data);
+            _hash = sha1.digest();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
     }
 
     public boolean expires() {
@@ -337,6 +361,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
         v.put(Column.IS_FILE.getName(), obj._isFile);
         v.put(Column.EXPIRES.getName(), obj._expires);
+        v.put(Column.HASH.getName(), obj._hash);
         if (obj._isFile) {
             v.put(Column.DATA.getName(), obj._file.getAbsolutePath().getBytes());
         } else {
@@ -387,73 +412,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
         return null;
     }
-
-//    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, File file, String filename) {
-//        return put(context, profileId, objectTypeName, objectKey + "", file, filename, true);
-//    }
-//
-//    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, File file, String filename, boolean expires) {
-//        return put(context, profileId, objectTypeName, objectKey + "", file, filename, expires);
-//    }
-//
-//    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, File file, String filename) {
-//        return put(context, profileId, objectTypeName, objectKey, file, filename, true);
-//    }
-//
-//    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, File file, String filename, boolean expires) {
-//        Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", " + file + ", " + filename + ", " + expires + ")");
-//        // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
-//        StoredObject result = get(context, profileId, objectTypeName, objectKey);
-//        if (result != null) {
-//            delete(context, result);
-//        }
-//
-//        ContentValues v = new ContentValues();
-//        v.put(Column.PROFILE_ID.getName(), profileId);
-//        v.put(Column.OBJ_NAME.getName(), objectTypeName);
-//        v.put(Column.OBJ_KEY.getName(), objectKey);
-//        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
-//        v.put(Column.IS_FILE.getName(), true);
-//        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
-//
-//        long id = -1;
-//        synchronized (TAG) {
-//            ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
-//            SQLiteDatabase db = helper.getWritableDatabase();
-//            id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
-//        }
-//        if (id != -1) {
-//            // Log.v(TAG, "put2, copy file, " + id);
-//            // copy the file to the file store
-//            String appFileStore = getStoragePath(context) + "/FileStore";
-//            new File(appFileStore).mkdirs();
-//            File dest = new File(appFileStore + "/" + id + "_" + filename);
-//
-//            if (dest.exists())
-//                dest.delete();
-//
-//            boolean copySuccess = false;
-//            try {
-//                copySuccess = FileUtils.copyFile(file, dest);
-//            } catch (Exception ex) {
-//                Log.v(TAG, ex);
-//            }
-//
-//            if (!copySuccess) {
-//                // Log.v(TAG, "put2, copy failed");
-//                delete(context, id);
-//                dest.delete();
-//            } else {
-//                // Log.v(TAG, "put2, copy success");
-//                result = get(context, id);
-//                result.setFile(dest);
-//                result = result.save(context);
-//                return result;
-//            }
-//        }
-//
-//        return null;
-//    }
 
     public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, InputStream inputStream, String filename) {
         return put(context, profileId, objectTypeName, objectKey + "", inputStream, filename, true);
@@ -508,14 +466,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             if (dest.exists())
                 dest.delete();
 
-            boolean copySuccess = false;
+            byte[] hash = null;
             try {
-                copySuccess = FileUtils.writeStream(inputStream, dest);
+                hash = FileUtils.writeStream(inputStream, dest);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
 
-            if (!copySuccess) {
+            if (hash == null) {
                 Log.v(TAG, "put2, copy failed");
                 delete(context, id);
                 dest.delete();
@@ -523,7 +481,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             } else {
                 Log.v(TAG, "put2, copy success");
                 result = get(context, id, false);
-                result.setFile(dest);
+                result.setFile(dest, hash);
                 result = result.save(context);
                 removeWriting(id);
                 return result;
@@ -585,12 +543,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             if (dest.exists())
                 dest.delete();
 
-            boolean copySuccess = false;
+            byte[] hash = null;
             FileOutputStream fout = null;
             try {
                 fout = new FileOutputStream(dest);
+                try {
+                    MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+                    sha1.reset();
+                    sha1.update(data, 0, data.length);
+                    hash = sha1.digest();
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
                 fout.write(data);
-                copySuccess = true;
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             } finally {
@@ -603,7 +568,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 }
             }
 
-            if (!copySuccess) {
+            if (hash == null) {
                 Log.v(TAG, "put2, copy failed");
                 delete(context, id);
                 dest.delete();
@@ -611,7 +576,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             } else {
                 Log.v(TAG, "put2, copy success");
                 result = get(context, id, false);
-                result.setFile(dest);
+                result.setFile(dest, hash);
                 result = result.save(context);
                 removeWriting(id);
                 return result;
@@ -651,6 +616,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         v.put(Column.IS_FILE.getName(), false);
         v.put(Column.DATA.getName(), data);
         v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
+
+        try {
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            sha1.update(data, 0, data.length);
+            v.put(Column.HASH.getName(), sha1.digest());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
 
         long id = -1;
         synchronized (TAG) {

@@ -14,7 +14,7 @@ public class ObjectStoreSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "ObjectStoreSqlHelper";
     // Note: increment this value every time the structure of the database is
     // changed.
-    private static final int TABLE_VER = 2;
+    private static final int TABLE_VER = 3;
     public static final String TABLE_NAME = "object_store";
     private static ObjectStoreSqlHelper _instance = null;
 
@@ -26,7 +26,8 @@ public class ObjectStoreSqlHelper extends SQLiteOpenHelper {
         OBJ_NAME(4, "obj_name", "text not null", true),
         IS_FILE(5, "is_file", "integer not null"),
         EXPIRES(6, "expires", "integer not null"),
-        DATA(7, "data", "blob");
+        DATA(7, "data", "blob"),
+        HASH(8, "data", "blob");
 
         private final int _index;
         private final String _name;
