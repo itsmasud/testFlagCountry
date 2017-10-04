@@ -67,8 +67,6 @@ public class TaskListView extends RelativeLayout {
     }
 
     public void setData(WorkOrder workOrder, String groupId) {
-        Log.e(TAG, "setData");
-        Log.e(TAG, "groupId: " + groupId);
         _workOrder = workOrder;
         _groupId = groupId;
 
