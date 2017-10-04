@@ -71,7 +71,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         public Group(String id, String name) {
             this.id = id;
-            this.name = id.equals("prep") ? "Pre Visit" : id.equals("onsite") ? "On Site" : id.equals("post") ? "Post Visit" : "";
+            this.name = misc.capitalizeWords(name);
         }
     }
 
@@ -93,15 +93,10 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         setVisibility(VISIBLE);
 
-//        boolean editable = false;
-
         List<Group> groups = new LinkedList<>();
 
         Task[] tasks = _workOrder.getTasks().getResults();
         for (Task task : tasks) {
-//            editable = editable
-//                    || task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-//                    || task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE);
 
             Group group = null;
             for (Group gr : groups) {
