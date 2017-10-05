@@ -7,10 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -23,16 +21,14 @@ public class TaskListView extends RelativeLayout {
     private static final String TAG = "TaskListView";
 
     // UI
-    private LinearLayout _preVisistLayout;
-    private TextView _preVisistTextView;
-    private LinearLayout _preVisistList;
-    private LinearLayout _onSiteLayout;
-    private LinearLayout _onSiteList;
-    private LinearLayout _postVisitLayout;
-    private LinearLayout _postVisitList;
+    private RelativeLayout _incompleteLayout;
+    private RelativeLayout _completeLayout;
+    private LinearLayout _incompleteList;
+    private LinearLayout _completeList;
+
 
     // Data
-    String _groupId = null;
+    private String _groupId = null;
     private List<Task> _tasks;
     private WorkOrder _workOrder;
 
@@ -57,13 +53,12 @@ public class TaskListView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _preVisistLayout = findViewById(R.id.preVisit_layout);
-        _preVisistTextView = findViewById(R.id.previsit_textview);
-        _preVisistList = findViewById(R.id.previsit_list);
-        _onSiteLayout = findViewById(R.id.onSite_layout);
-        _onSiteList = findViewById(R.id.onsite_list);
-        _postVisitLayout = findViewById(R.id.postVisit_layout);
-        _postVisitList = findViewById(R.id.postvisit_list);
+        _incompleteLayout = findViewById(R.id.incomplete_layout);
+        _incompleteList = findViewById(R.id.incomplete_list);
+        _completeLayout = findViewById(R.id.complete_layout);
+        _completeLayout.setVisibility(View.GONE);
+        _completeList = findViewById(R.id.complete_list);
+
     }
 
     public void setData(WorkOrder workOrder, String groupId) {
@@ -75,7 +70,6 @@ public class TaskListView extends RelativeLayout {
 
         populateUi();
     }
-
 
     private void populateUi() {
         if (_tasks == null)
@@ -90,115 +84,50 @@ public class TaskListView extends RelativeLayout {
             setVisibility(View.VISIBLE);
         }
 
-        if ("prep".equals(_groupId)) {
-            _preVisistLayout.setVisibility(VISIBLE);
-            _onSiteLayout.setVisibility(GONE);
-            _postVisitLayout.setVisibility(GONE);
-        } else if ("onsite".equals(_groupId)) {
-            _preVisistLayout.setVisibility(GONE);
-            _onSiteLayout.setVisibility(VISIBLE);
-            _postVisitLayout.setVisibility(GONE);
-        } else if ("post".equals(_groupId)) {
-            _preVisistLayout.setVisibility(GONE);
-            _onSiteLayout.setVisibility(GONE);
-            _postVisitLayout.setVisibility(VISIBLE);
-        }
+        _incompleteList.removeAllViews();
+        _completeList.removeAllViews();
 
+        ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
 
-        boolean nocategories = _tasks.get(0).getGroup() == null || "any".equals(_tasks.get(0).getGroup().getId());
+            @Override
+            public void next(int i) throws Exception {
+                if (_groupId.equals(_tasks.get(i).getGroup().getId())) {
 
-        if (nocategories) {
-            _onSiteList.removeAllViews();
-            _postVisitList.removeAllViews();
-            _preVisistTextView.setVisibility(View.GONE);
-            _onSiteLayout.setVisibility(View.GONE);
-            _postVisitLayout.setVisibility(View.GONE);
-
-            if (_preVisistList.getChildCount() > _tasks.size()) {
-                _preVisistList.removeViews(_tasks.size() - 1, _preVisistList.getChildCount() - _tasks.size());
+                    final Task task = _tasks.get(i);
+                    TaskRowView v = null;
+                    if (task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                        if (i < _completeList.getChildCount()) {
+                            v = (TaskRowView) _completeList.getChildAt(i);
+                        } else {
+                            v = new TaskRowView(getContext());
+                            _completeList.addView(v);
+                        }
+                    } else {
+                        if (i < _incompleteList.getChildCount()) {
+                            v = (TaskRowView) _incompleteList.getChildAt(i);
+                        } else {
+                            v = new TaskRowView(getContext());
+                            _incompleteList.addView(v);
+                        }
+                    }
+                    v.setData(_workOrder, task);
+                }
             }
 
-            ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
-                @Override
-                public void next(int i) throws Exception {
-                    TaskRowView row = null;
-                    if (i < _preVisistList.getChildCount()) {
-                        row = (TaskRowView) _preVisistList.getChildAt(i);
-                    } else {
-                        row = new TaskRowView(getContext());
-                        _preVisistList.addView(row);
-                    }
+            @Override
+            public void finish(int count) throws Exception {
+                super.finish(count);
 
-                    Task task = _tasks.get(i);
-                    row.setData(_workOrder, task);
-                }
-            };
-            postDelayed(r, new Random().nextInt(1000));
-        } else {
-            ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
-                private int pre = 0;
-                private int ons = 0;
-                private int post = 0;
+                if (_completeList.getChildCount() == 0)
+                    _completeLayout.setVisibility(GONE);
+                else _completeLayout.setVisibility(VISIBLE);
 
-                @Override
-                public void next(int i) throws Exception {
-                    Task task = _tasks.get(i);
-                    TaskRowView row = null;
-
-                    if ("prep".equals(task.getGroup().getId()) && _groupId.equals(task.getGroup().getId())) {
-                        if (pre < _preVisistList.getChildCount()) {
-                            row = (TaskRowView) _preVisistList.getChildAt(pre);
-                        } else {
-                            row = new TaskRowView(getContext());
-                            _preVisistList.addView(row);
-                            _preVisistTextView.setVisibility(View.VISIBLE);
-                        }
-                        pre++;
-                        row.setData(_workOrder, task);
-                    }
-
-                    if ("onsite".equals(task.getGroup().getId()) && _groupId.equals(task.getGroup().getId())) {
-                        if (ons < _onSiteList.getChildCount()) {
-                            row = (TaskRowView) _onSiteList.getChildAt(ons);
-                        } else {
-                            row = new TaskRowView(getContext());
-                            _onSiteList.addView(row);
-                            _onSiteLayout.setVisibility(View.VISIBLE);
-                        }
-                        ons++;
-                        row.setData(_workOrder, task);
-                    }
-
-                    if ("post".equals(task.getGroup().getId()) && _groupId.equals(task.getGroup().getId())) {
-                        if (post < _postVisitList.getChildCount()) {
-                            row = (TaskRowView) _postVisitList.getChildAt(post);
-                        } else {
-                            row = new TaskRowView(getContext());
-                            _postVisitList.addView(row);
-                            _postVisitLayout.setVisibility(View.VISIBLE);
-                        }
-                        post++;
-                        row.setData(_workOrder, task);
-                    }
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    if (_preVisistList.getChildCount() > pre) {
-                        _preVisistList.removeViews(pre, pre - _preVisistList.getChildCount());
-                    }
-
-                    if (_onSiteList.getChildCount() > ons) {
-                        _onSiteList.removeViews(ons, ons - _onSiteList.getChildCount());
-                    }
-                    if (_postVisitList.getChildCount() > post) {
-                        _postVisitList.removeViews(post, post - _postVisitList.getChildCount());
-                    }
-                }
-            };
-            postDelayed(r, new Random().nextInt(1000));
-        }
-
-
+                if (_incompleteList.getChildCount() == 0)
+                    _incompleteLayout.setVisibility(GONE);
+                else _incompleteLayout.setVisibility(VISIBLE);
+            }
+        };
+        _incompleteList.postDelayed(r, new Random().nextInt(1000));
+        _completeList.postDelayed(r, new Random().nextInt(1000));
     }
 }

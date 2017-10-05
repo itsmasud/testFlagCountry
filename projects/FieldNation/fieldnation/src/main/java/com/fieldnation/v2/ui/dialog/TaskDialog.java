@@ -16,11 +16,7 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.workorder.detail.TaskListView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by Shoaib on 09/27/17.
@@ -44,7 +40,6 @@ public class TaskDialog extends FullScreenDialog {
     private int _workOrderId = 0;
     private String _groupId = null;
     private String _dialogTitle;
-    private List<Task> tasks = new LinkedList<>();
 
     public TaskDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -140,13 +135,13 @@ public class TaskDialog extends FullScreenDialog {
             Log.e(TAG, "processTransaction");
 //            return methodName.equals("getTasks");
             // TODO remove updateWorkOrder from here and also onComplete
-            return methodName.equals("getWorkOrder")|| methodName.equals("updateTask");
+            return methodName.equals("getWorkOrder") || methodName.equals("updateTask");
         }
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.e(TAG, "onComplete");
-            if (successObject != null && (methodName.equals("getWorkOrder") || methodName.equals("updateTask") )) {
+            if (successObject != null && (methodName.equals("getWorkOrder") || methodName.equals("updateTask"))) {
                 WorkOrder workOrder = (WorkOrder) successObject;
 
                 if (success) {
