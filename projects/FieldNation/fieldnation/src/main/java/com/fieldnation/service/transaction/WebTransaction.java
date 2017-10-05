@@ -14,9 +14,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.text.ParseException;
@@ -834,7 +831,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
     }
 
-    public static void cleanZombies(AttachmentFolders attachmentFolders){
+    public static void cleanZombies(AttachmentFolders attachmentFolders) {
+        // TODO disabled for now. I don't have a good solution for this
+/*
         try {
             List<WebTransaction> zombies = WebTransaction.getZombies();
             for (WebTransaction zombie : zombies) {
@@ -864,5 +863,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+*/
     }
 }
