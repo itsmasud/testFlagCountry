@@ -201,6 +201,7 @@
 
     <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
     <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
+    <string name="fields_to_enter">Fields to Enter</string>
 
     <string name="dialog_withdraw_title">Withdraw Request?</string>
     <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
