@@ -10,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -62,7 +63,11 @@ public class GetFileDialog extends SimpleDialog {
     private Set<String> _packages = new HashSet<>();
     private Uri _sourceUri;
     private Intent _cameraIntent = null;
+
     private boolean _isCancelable = true;
+    private Hashtable<String, UriIntent> caching = new Hashtable<>();
+    private List<UriIntent> cached = new LinkedList<>();
+    private Hashtable<String, Long> progress = new Hashtable<>();
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -120,6 +125,51 @@ public class GetFileDialog extends SimpleDialog {
             _sourceUri = savedState.getParcelable("_sourceUri");
         if (savedState.containsKey("_cameraIntent"))
             _cameraIntent = savedState.getParcelable("_cameraIntent");
+
+        if (savedState.containsKey("cached")) {
+            Parcelable[] parcelables = savedState.getParcelableArray("cached");
+            for (Parcelable parcelable : parcelables) {
+                cached.add((UriIntent) parcelable);
+            }
+        }
+
+        if (savedState.containsKey("progress")) {
+            Bundle bundle = savedState.getBundle("progress");
+
+            Set<String> keys = bundle.keySet();
+            for (String key : keys) {
+                progress.put(key, bundle.getLong(key));
+            }
+        }
+
+        if (savedState.containsKey("caching")) {
+            Bundle bundle = savedState.getBundle("caching");
+
+            Set<String> keys = bundle.keySet();
+            for (String key : keys) {
+                caching.put(key, (UriIntent) bundle.getParcelable(key));
+            }
+        }
+        _isCancelable = savedState.getBoolean("_isCancelable");
+
+        if (!_isCancelable) {
+            _items.setVisibility(View.GONE);
+            _loadingLayout.setVisibility(View.VISIBLE);
+            _loadingProgress.setIndeterminate(false);
+
+            long sum = 0;
+            for (Long val : progress.values()) {
+                sum += val;
+            }
+
+            _loadingBytesTextView.setVisibility(View.VISIBLE);
+            _loadingBytesTextView.setText(sum + " bytes copied...");
+            _loadingProgress.setProgress(cached.size());
+            _loadingTextView.setText(
+                    getContext().getString(R.string.preparing_files_num,
+                            cached.size(),
+                            cached.size() + caching.size()));
+        }
     }
 
     @Override
@@ -129,6 +179,29 @@ public class GetFileDialog extends SimpleDialog {
             outState.putParcelable("_sourceUri", _sourceUri);
         if (_cameraIntent != null)
             outState.putParcelable("_cameraIntent", _cameraIntent);
+        if (cached.size() > 0) {
+            outState.putParcelableArray("cached", cached.toArray(new Parcelable[cached.size()]));
+        }
+        if (progress.size() > 0) {
+            Bundle bundle = new Bundle();
+
+            Set<String> keys = progress.keySet();
+            for (String key : keys) {
+                bundle.putLong(key, progress.get(key));
+            }
+            outState.putBundle("progress", bundle);
+        }
+
+        if (caching.size() > 0) {
+            Bundle bundle = new Bundle();
+            Set<String> keys = caching.keySet();
+            for (String key : keys) {
+                bundle.putParcelable(key, caching.get(key));
+            }
+            outState.putBundle("caching", bundle);
+        }
+
+        outState.putBoolean("_isCancelable", _isCancelable);
     }
 
     @Override
@@ -345,10 +418,7 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    private Hashtable<String, UriIntent> caching = new Hashtable<>();
-    private List<UriIntent> cached = new LinkedList<>();
-
-    public static class UriIntent {
+    public static class UriIntent implements Parcelable {
         public Uri uri = null;
         public Intent intent = null;
 
@@ -359,10 +429,40 @@ public class GetFileDialog extends SimpleDialog {
         private UriIntent(Intent intent) {
             this.intent = intent;
         }
+
+        public static final Parcelable.Creator<UriIntent> CREATOR = new Parcelable.Creator<UriIntent>() {
+            @Override
+            public UriIntent createFromParcel(Parcel source) {
+                Parcelable p = source.readParcelable(Parcelable.class.getClassLoader());
+                if (p instanceof Uri)
+                    return new UriIntent((Uri) p);
+                else if (p instanceof Intent)
+                    return new UriIntent((Intent) p);
+
+                return null;
+            }
+
+            @Override
+            public UriIntent[] newArray(int size) {
+                return new UriIntent[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            if (uri != null)
+                dest.writeParcelable(uri, flags);
+            else if (intent != null)
+                dest.writeParcelable(intent, flags);
+        }
     }
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
-        private Hashtable<String, Long> progress = new Hashtable<>();
 
         @Override
         public void onFileCacheProgress(String tag, long size) {
