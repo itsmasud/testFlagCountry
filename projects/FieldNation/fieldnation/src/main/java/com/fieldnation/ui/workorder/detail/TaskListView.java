@@ -8,8 +8,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -28,8 +32,8 @@ public class TaskListView extends RelativeLayout {
 
 
     // Data
+    private int _workOrderId = 0;
     private String _groupId = null;
-    private List<Task> _tasks;
     private WorkOrder _workOrder;
 
     public TaskListView(Context context) {
@@ -48,6 +52,7 @@ public class TaskListView extends RelativeLayout {
     }
 
     private void init() {
+        Log.e(TAG, "init");
         LayoutInflater.from(getContext()).inflate(R.layout.view_wd_task_list, this);
 
         if (isInEditMode())
@@ -58,42 +63,46 @@ public class TaskListView extends RelativeLayout {
         _completeLayout = findViewById(R.id.complete_layout);
         _completeLayout.setVisibility(View.GONE);
         _completeList = findViewById(R.id.complete_list);
-
+        setVisibility(GONE);
     }
 
-    public void setData(WorkOrder workOrder, String groupId) {
-        _workOrder = workOrder;
+    @Override
+    protected void onDetachedFromWindow() {
+        _workOrderApi.unsub();
+        super.onDetachedFromWindow();
+    }
+
+    public void setData(int workOrderId, String groupId) {
+        _workOrderId = workOrderId;
         _groupId = groupId;
 
-        if (workOrder.getTasks().getResults().length > 0)
-            _tasks = Arrays.asList(workOrder.getTasks().getResults());
+        if (_workOrderId != 0)
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
 
-        populateUi();
+        _workOrderApi.sub();
     }
 
     private void populateUi() {
-        if (_tasks == null)
+        if (_workOrder == null)
             return;
 
+        if (_workOrder.getTasks().getResults().length == 0)
+            return;
+
+        final List<Task> tasks = Arrays.asList(_workOrder.getTasks().getResults());
         setVisibility(View.VISIBLE);
 
-        if (_tasks.size() == 0) {
-            setVisibility(View.GONE);
-            return;
-        } else {
-            setVisibility(View.VISIBLE);
-        }
 
         _incompleteList.removeAllViews();
         _completeList.removeAllViews();
 
-        ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
+        ForLoopRunnable r = new ForLoopRunnable(tasks.size(), new Handler()) {
 
             @Override
             public void next(int i) throws Exception {
-                if (_groupId.equals(_tasks.get(i).getGroup().getId())) {
+                if (_groupId.equals(tasks.get(i).getGroup().getId())) {
 
-                    final Task task = _tasks.get(i);
+                    final Task task = tasks.get(i);
                     TaskRowView v = null;
                     if (task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                         if (i < _completeList.getChildCount()) {
@@ -130,4 +139,30 @@ public class TaskListView extends RelativeLayout {
         _incompleteList.postDelayed(r, new Random().nextInt(1000));
         _completeList.postDelayed(r, new Random().nextInt(1000));
     }
+
+
+    /*-*********************************-*/
+    /*-             Events              -*/
+    /*-*********************************-*/
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+//            return methodName.equals("getTasks");
+            return methodName.equals("getWorkOrder") || methodName.equals("updateTask");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject != null && (methodName.equals("getWorkOrder") || methodName.equals("updateTask"))) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (success) {
+                    _workOrder = workOrder;
+                    populateUi();
+
+//                    _refreshView.refreshComplete();
+                }
+            }
+        }
+    };
+
 }

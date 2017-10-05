@@ -66,13 +66,11 @@ public class TaskDialog extends FullScreenDialog {
     @Override
     public void onResume() {
         super.onResume();
-        _workOrdersApi.sub();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        _workOrdersApi.unsub();
     }
 
     @Override
@@ -85,19 +83,13 @@ public class TaskDialog extends FullScreenDialog {
         _workOrderId = payload.getInt(PARAM_WORK_ORDER_ID);
         _dialogTitle = payload.getString(PARAM_DIALOG_TITLE);
         _groupId = payload.getString(PARAM_GROUP_ID);
-
         super.show(payload, animate);
-
-        if (_workOrderId != 0) {
-//            WorkordersWebApi.getTasks(App.get(), _workOrderId, false, false);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
-        }
-
         populateUi();
     }
 
     private void populateUi() {
         _toolbar.setTitle(_dialogTitle);
+        _taskList.setData(_workOrderId, _groupId);
 
     }
 
@@ -124,33 +116,6 @@ public class TaskDialog extends FullScreenDialog {
         public void onClick(View view) {
             cancel();
             dismiss(true);
-        }
-    };
-
-
-    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
-        @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            Log.e(TAG, "processTransaction");
-//            return methodName.equals("getTasks");
-            // TODO remove updateWorkOrder from here and also onComplete
-            return methodName.equals("getWorkOrder") || methodName.equals("updateTask");
-        }
-
-        @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            Log.e(TAG, "onComplete");
-            if (successObject != null && (methodName.equals("getWorkOrder") || methodName.equals("updateTask"))) {
-                WorkOrder workOrder = (WorkOrder) successObject;
-
-                if (success) {
-                    Log.e(TAG, "success");
-                    _taskList.setData(workOrder, _groupId);
-//                    dismiss(true);
-
-//                    _refreshView.refreshComplete();
-                }
-            }
         }
     };
 
