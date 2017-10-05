@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -39,6 +41,7 @@ import com.fieldnation.v2.ui.GetFilePackageRowView;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,11 +52,17 @@ public class GetFileDialog extends SimpleDialog {
     // Ui
     private ListView _items;
 
+    private View _loadingLayout;
+    private ProgressBar _loadingProgress;
+    private TextView _loadingTextView;
+    private TextView _loadingBytesTextView;
+
     // Data
     private List<GetFilePackage> _activityList = new LinkedList<>();
     private Set<String> _packages = new HashSet<>();
     private Uri _sourceUri;
     private Intent _cameraIntent = null;
+    private boolean _isCancelable = true;
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -67,6 +76,11 @@ public class GetFileDialog extends SimpleDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_get_file, container, false);
         _items = v.findViewById(R.id.apps_listview);
+        _loadingLayout = v.findViewById(R.id.loading_layout);
+        _loadingTextView = v.findViewById(R.id.loading_title);
+        _loadingProgress = v.findViewById(R.id.loading_progress);
+        _loadingBytesTextView = v.findViewById(R.id.loadingBytes_textview);
+
         return v;
     }
 
@@ -77,6 +91,7 @@ public class GetFileDialog extends SimpleDialog {
         _items.setAdapter(new GetFilePackageAdapter(_activityList, _app_onClick));
         _permissionsListener.sub();
         _activityResultListener.sub();
+        _fileCacheClient.sub();
     }
 
     @Override
@@ -127,6 +142,7 @@ public class GetFileDialog extends SimpleDialog {
         Log.v(TAG, "onStop");
         _permissionsListener.unsub();
         _activityResultListener.unsub();
+        _fileCacheClient.unsub();
         super.onStop();
     }
 
@@ -230,6 +246,11 @@ public class GetFileDialog extends SimpleDialog {
         Controller.show(context, uid, GetFileDialog.class, params);
     }
 
+    @Override
+    public boolean isCancelable() {
+        return _isCancelable;
+    }
+
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
@@ -295,17 +316,27 @@ public class GetFileDialog extends SimpleDialog {
                     }
                 }
 
-                Log.v(TAG, "Dispatch _onFileDispatcher");
+                Log.v(TAG, "Starting caching");
+
+
+                _isCancelable = false;
+                _loadingLayout.setVisibility(View.VISIBLE);
+                _items.setVisibility(View.GONE);
+                _loadingProgress.setIndeterminate(false);
+                _loadingProgress.setMax(fileUris.size());
+                _loadingProgress.setProgress(0);
+                _loadingBytesTextView.setVisibility(View.GONE);
+                _loadingTextView.setText(getContext().getString(R.string.preparing_files_num, 1, fileUris.size()));
+
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
+                        caching.put(ui.uri.toString(), ui);
                         FileCacheClient.cacheFileUpload(App.get(), ui.uri.toString(), ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
+                        caching.put(ui.intent.getData().toString(), ui);
                         FileCacheClient.cacheFileUpload(App.get(), ui.intent.getData().toString(), ui.intent.getData());
                     }
                 }
-
-                _onFileDispatcher.dispatch(getUid(), fileUris);
-                dismiss(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 Log.logException(ex);
@@ -313,6 +344,9 @@ public class GetFileDialog extends SimpleDialog {
             return true;
         }
     };
+
+    private Hashtable<String, UriIntent> caching = new Hashtable<>();
+    private List<UriIntent> cached = new LinkedList<>();
 
     public static class UriIntent {
         public Uri uri = null;
@@ -326,6 +360,43 @@ public class GetFileDialog extends SimpleDialog {
             this.intent = intent;
         }
     }
+
+    private final FileCacheClient _fileCacheClient = new FileCacheClient() {
+        private Hashtable<String, Long> progress = new Hashtable<>();
+
+        @Override
+        public void onFileCacheProgress(String tag, long size) {
+            progress.put(tag, size);
+
+            long sum = 0;
+            for (Long val : progress.values()) {
+                sum += val;
+            }
+
+            _loadingBytesTextView.setVisibility(View.VISIBLE);
+            _loadingBytesTextView.setText(sum + " bytes copied...");
+        }
+
+        @Override
+        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+            if (caching.containsKey(tag)) {
+                cached.add(caching.remove(tag));
+
+                _loadingProgress.setProgress(cached.size());
+                _loadingTextView.setText(
+                        getContext().getString(R.string.preparing_files_num,
+                                cached.size(),
+                                cached.size() + caching.size()));
+
+
+                if (caching.size() == 0 && cached.size() > 0) {
+                    _isCancelable = true;
+                    _onFileDispatcher.dispatch(getUid(), cached);
+                    dismiss(false);
+                }
+            }
+        }
+    };
 
     /*-***********************************/
     /*-         File Listener           -*/

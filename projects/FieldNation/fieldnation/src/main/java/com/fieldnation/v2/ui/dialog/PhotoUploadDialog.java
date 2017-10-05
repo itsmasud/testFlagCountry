@@ -279,7 +279,14 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
                 }
 
-                _sourceUri = _cachedUri = StoredObject.get(App.get(), _methodParams.getLong("storedObjectId")).getUri();
+                StoredObject so = StoredObject.get(App.get(), _methodParams.getLong("storedObjectId"));
+                _sourceUri = _cachedUri = so.getUri();
+                _cacheSize = so.size();
+
+                if (_cacheSize > 100000000) {
+                    ToastClient.toast(App.get(), "File is over 100mb limit. Cannot upload.", Toast.LENGTH_SHORT);
+                }
+
                 setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
