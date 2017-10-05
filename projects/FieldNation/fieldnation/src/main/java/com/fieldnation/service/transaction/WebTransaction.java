@@ -14,6 +14,9 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.text.ParseException;

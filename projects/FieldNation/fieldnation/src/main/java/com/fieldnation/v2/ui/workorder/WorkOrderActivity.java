@@ -268,7 +268,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static Intent makeIntentShow(Context context, int workOrderId) {
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(/*Intent.FLAG_ACTIVITY_CLEAR_TOP |*/ Intent.FLAG_ACTIVITY_NEW_TASK);
+        //intent.addFlags(/*Intent.FLAG_ACTIVITY_CLEAR_TOP |*/ Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         return intent;
     }

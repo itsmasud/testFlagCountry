@@ -30,6 +30,7 @@ public class ThreadManager {
 
         wakeUp();
 
+/*
         for (int i = 0; i < _threads.size(); i++) {
             ManagedThread thread = _threads.get(i);
             try {
@@ -41,6 +42,7 @@ public class ThreadManager {
             if (thread.isAlive())
                 thread.interrupt();
         }
+*/
 
         Log.v(TAG, "shutdown end");
     }
