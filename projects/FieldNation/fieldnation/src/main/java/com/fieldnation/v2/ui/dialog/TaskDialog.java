@@ -73,7 +73,6 @@ public class TaskDialog extends FullScreenDialog {
     public void onStop() {
         super.onStop();
         _workOrdersApi.unsub();
-
     }
 
     @Override
@@ -160,6 +159,7 @@ public class TaskDialog extends FullScreenDialog {
      * @param context
      * @param uid
      * @param workOrderId
+     * @param groupId
      * @param dialogTitle
      */
     public static void show(Context context, String uid, int workOrderId, String groupId, String dialogTitle) {

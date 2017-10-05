@@ -364,11 +364,6 @@ public class TaskRowView extends RelativeLayout {
         }
     };
 
-
-
-
-
-
     private final View.OnClickListener _click_listener =new View.OnClickListener(){
         @Override
         public void onClick(View view) {
@@ -387,9 +382,7 @@ public class TaskRowView extends RelativeLayout {
                     showClosingNotesDialog();
                     break;
                 case 3: // check in
-                    // TODO
                     doCheckin();
-
                     break;
                 case 4: // check out
                     doCheckOut();
@@ -413,24 +406,6 @@ public class TaskRowView extends RelativeLayout {
 
                     try {
                         if (_task.getPhone() != null) {
-                            // Todo, need to figure out if there is a phone number here
-//                    Spannable test = new SpannableString(task.getPhoneNumber());
-//                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
-//                    if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                        builder.setMessage(R.string.dialog_no_number_message);
-//                        builder.setTitle(R.string.dialog_no_number_title);
-//                        builder.setPositiveButton(R.string.btn_ok, null);
-//                        builder.show();
-//
-//                    } else {
-//                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
-//                        String phNum = "tel:" + task.getPhoneNumber();
-//                        callIntent.setData(Uri.parse(phNum));
-//                        startActivity(callIntent);
-//                        setLoading(true);
-//                    }
-
                             if (!TextUtils.isEmpty(_task.getPhone()) && android.util.Patterns.PHONE.matcher(_task.getPhone()).matches()) {
                                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
                                 String phNum = "tel:" + _task.getPhone();
