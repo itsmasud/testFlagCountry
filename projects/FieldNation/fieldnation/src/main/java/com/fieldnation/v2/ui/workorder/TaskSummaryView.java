@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
@@ -73,7 +72,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         public Group(String id, String name) {
             this.id = id;
-            this.name = name;
+            this.name = misc.capitalizeWords(name);
         }
     }
 
@@ -95,15 +94,10 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         setVisibility(VISIBLE);
 
-        boolean editable = false;
-
         List<Group> groups = new LinkedList<>();
 
         Task[] tasks = _workOrder.getTasks().getResults();
         for (Task task : tasks) {
-            editable = editable
-                    || task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-                    || task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE);
 
             Group group = null;
             for (Group gr : groups) {
@@ -127,12 +121,16 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             TaskSummaryRow view = new TaskSummaryRow(getContext());
             view.setTitle(group.name);
             view.setTag(group);
-            if (!editable) {
-                view.setCount(group.total + "");
+            if (_workOrder.getStatus().getId() == 2) {
+                view.setCount(String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
-            } else {
+            } else if (_workOrder.getStatus().getId() == 3) {
                 view.setCount(group.completed + "/" + group.total);
                 view.setCountBg(group.total == group.completed ? R.drawable.round_rect_green : R.drawable.round_rect_red);
+                view.setOnClickListener(_task_onClick);
+            } else {
+                view.setCount(group.completed + "/" + group.total);
+                view.setCountBg(R.drawable.round_rect_gray);
                 view.setOnClickListener(_task_onClick);
             }
 
@@ -151,7 +149,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         int fteComplete = 0;
         int fteRequired = 0;
         int fteRequiredComplete = 0;
-        editable = false;
+//        editable = false;
 
         for (CustomFieldCategory category : _workOrder.getCustomFields().getResults()) {
             if (category.getRole().equals("buyer"))
@@ -160,7 +158,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             CustomField[] customFields = category.getResults();
             for (CustomField customField : customFields) {
 
-                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
+//                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
 
                 if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED))
                     fteRequired++;
@@ -176,26 +174,27 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         }
 
         _customFieldsView.setTitle("Fields To Enter");
-        if (!editable) {
-            _customFieldsView.setCountBg(R.drawable.round_rect_gray);
-            _customFieldsView.setCount(fteTotal + "");
-            _customFieldsView.setOnClickListener(null);
-        } else {
-            _customFieldsView.setOnClickListener(_fte_onClick);
-            if (fteComplete == fteTotal) {
-                _customFieldsView.setCount(String.valueOf(fteTotal));
-            } else {
-                _customFieldsView.setCount(fteComplete + "/" + fteTotal);
-            }
 
+        if (_workOrder.getStatus().getId() == 2) {
+            _customFieldsView.setCountBg(R.drawable.round_rect_gray);
+            _customFieldsView.setCount(String.valueOf(fteTotal));
+            _customFieldsView.setOnClickListener(null);
+
+        } else if (_workOrder.getStatus().getId() == 3) {
+            _customFieldsView.setOnClickListener(_fte_onClick);
+            _customFieldsView.setCount(fteRequiredComplete + "/" + fteRequired);
             _customFieldsView.setCountBg(fteRequired == fteRequiredComplete ? R.drawable.round_rect_green : R.drawable.round_rect_red);
+        } else {
+            _customFieldsView.setCountBg(R.drawable.round_rect_gray);
+            _customFieldsView.setCount(fteComplete + "/" + fteRequiredComplete);
+            _customFieldsView.setOnClickListener(null);
+
         }
     }
 
     private final OnClickListener _task_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.e(TAG, "_task_onClick");
             Group group = (Group) v.getTag();
             // TODO call the dialog with the group ID here
             TaskDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
@@ -206,7 +205,6 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     private final OnClickListener _fte_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.e(TAG, "_fte_onClick");
             CustomFieldsDialog.show(App.get(), null, _workOrder.getId());
         }
     };

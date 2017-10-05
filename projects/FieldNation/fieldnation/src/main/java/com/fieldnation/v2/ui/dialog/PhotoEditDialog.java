@@ -41,9 +41,6 @@ public class PhotoEditDialog extends FullScreenDialog {
     private UCropView _uCropView;
     private ProgressBar _progressBar;
 
-    // Clients
-    private FileCacheClient _fileCacheClient;
-
     // Supplied Data
     private Uri _sourceUri;
     private Uri _cachedUri;
@@ -81,8 +78,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     @Override
     public void onResume() {
         super.onResume();
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
+        _fileCacheClient.sub();
         populateUi();
     }
 
@@ -113,7 +109,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
-        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
+        _fileCacheClient.unsub();
         super.onPause();
     }
 
@@ -192,14 +188,9 @@ public class PhotoEditDialog extends FullScreenDialog {
         super.cancel();
     }
 
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
+    private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onConnected() {
-            _fileCacheClient.subFileCache();
-        }
-
-        @Override
-        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
+        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
 
             if (!tag.equals(_sourceUri.toString())) {
                 Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
