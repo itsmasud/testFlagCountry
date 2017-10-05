@@ -172,7 +172,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             }
         }
 
-        _customFieldsView.setTitle("Fields To Enter");
+        _customFieldsView.setTitle(getResources().getString(R.string.fields_to_enter));
 
         if (_workOrder.getStatus().getId() == 2) {
             _customFieldsView.setCountBg(R.drawable.round_rect_gray);
@@ -185,7 +185,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             _customFieldsView.setCountBg(fteRequired == fteRequiredComplete ? R.drawable.round_rect_green : R.drawable.round_rect_red);
         } else {
             _customFieldsView.setCountBg(R.drawable.round_rect_gray);
-            _customFieldsView.setCount(fteComplete + "/" + fteRequiredComplete);
+            _customFieldsView.setCount(fteRequiredComplete + "/" + fteRequired);
             _customFieldsView.setOnClickListener(null);
 
         }
