@@ -1,6 +1,5 @@
 package com.fieldnation.service.data.filecache;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -32,19 +31,18 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_PROGRESS);
     }
 
-    public static void cacheFileUpload(Context context, final String tag, Uri uri) {
+    public static void cacheFileUpload(final String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                Uri uri = (Uri) params[1];
+                Uri uri = (Uri) params[0];
 
                 cacheFileStart(tag, uri);
                 StoredObject upFile = null;
 
                 try {
-                    if ((upFile = StoredObject.get(context, App.getProfileId(), "CacheFile", uri.toString())) != null) {
+                    if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
                         cacheFileEnd(tag, upFile.getUri(), upFile.size(), true);
                         return null;
                     }
@@ -53,9 +51,9 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                 }
 
                 try {
-                    upFile = StoredObject.put(context, App.getProfileId(), "CacheFile", uri.toString(),
+                    upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
                             new InputStreamMonitor(
-                                    context.getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
+                                    App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
                                 long last = 0;
 
                                 @Override
@@ -76,7 +74,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                 }
                 return null;
             }
-        }.executeEx(context, uri);
+        }.executeEx(uri);
     }
 
     private static void cacheFileStart(String tag, Uri uri) {

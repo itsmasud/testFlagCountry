@@ -163,8 +163,9 @@ public class GetFileDialog extends SimpleDialog {
             }
 
             _loadingBytesTextView.setVisibility(View.VISIBLE);
-            _loadingBytesTextView.setText(sum + " bytes copied...");
+            _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
             _loadingProgress.setProgress(cached.size());
+            _loadingProgress.setMax(cached.size() + caching.size());
             _loadingTextView.setText(
                     getContext().getString(R.string.preparing_files_num,
                             cached.size(),
@@ -404,10 +405,10 @@ public class GetFileDialog extends SimpleDialog {
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
                         caching.put(ui.uri.toString(), ui);
-                        FileCacheClient.cacheFileUpload(App.get(), ui.uri.toString(), ui.uri);
+                        FileCacheClient.cacheFileUpload(ui.uri.toString(), ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
                         caching.put(ui.intent.getData().toString(), ui);
-                        FileCacheClient.cacheFileUpload(App.get(), ui.intent.getData().toString(), ui.intent.getData());
+                        FileCacheClient.cacheFileUpload(ui.intent.getData().toString(), ui.intent.getData());
                     }
                 }
             } catch (Exception ex) {
@@ -474,7 +475,7 @@ public class GetFileDialog extends SimpleDialog {
             }
 
             _loadingBytesTextView.setVisibility(View.VISIBLE);
-            _loadingBytesTextView.setText(sum + " bytes copied...");
+            _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
         }
 
         @Override
@@ -483,11 +484,21 @@ public class GetFileDialog extends SimpleDialog {
                 cached.add(caching.remove(tag));
 
                 _loadingProgress.setProgress(cached.size());
+                _loadingProgress.setMax(cached.size() + caching.size());
                 _loadingTextView.setText(
                         getContext().getString(R.string.preparing_files_num,
                                 cached.size(),
                                 cached.size() + caching.size()));
 
+                progress.put(tag, size);
+
+                long sum = 0;
+                for (Long val : progress.values()) {
+                    sum += val;
+                }
+
+                _loadingBytesTextView.setVisibility(View.VISIBLE);
+                _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
 
                 if (caching.size() == 0 && cached.size() > 0) {
                     _isCancelable = true;

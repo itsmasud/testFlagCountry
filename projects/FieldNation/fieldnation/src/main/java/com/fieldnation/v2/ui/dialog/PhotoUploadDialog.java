@@ -307,7 +307,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             if (payload.containsKey("uri")) {
                 _sourceUri = payload.getParcelable("uri");
                 Log.v(TAG, "uri: " + _sourceUri);
-                FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_sourceUri.toString(), _sourceUri);
             }
         }
         populateUi();
