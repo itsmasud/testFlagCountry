@@ -1,158 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp">
+    android:layout_marginBottom="16dp"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        style="@style/WoDV2.Header"
+        android:text="Location" />
+
+    <!-- Todo, need to group these things -->
+    <View style="@style/DividerFull" />
+
+    <TextView
+        android:id="@+id/noLocation_textview"
+        style="@style/Text_Body_1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:background="@color/fn_clickable_bg"
+        android:padding="16dp"
+        android:text="@string/no_location_work_is_done_remotely"
+        android:visibility="gone" />
+
+    <View style="@style/DividerFull" />
+
+    <RelativeLayout
+        android:id="@+id/map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/fn_light_text"
+            android:scaleType="centerCrop"
+            android:src="@drawable/no_map" />
+
+        <ProgressBar
+            android:id="@+id/loading_progress"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="75dp"
+            android:indeterminate="true" />
+
+        <LinearLayout
+            android:id="@+id/noMap_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/gpsError1_textview"
+                style="@style/Text_Subhead"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/map_not_available"
+                android:textColor="@color/fn_white_text" />
+
+            <TextView
+                android:id="@+id/gpsError2_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                android:text="@string/check_your_gps_settings"
+                android:textColor="@color/fn_white_text" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/address_layout"
+        style="@style/Tile.Material"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp">
 
         <TextView
-            style="@style/WoDV2.Header"
-            android:text="Location" />
-
-        <TextView
-            android:id="@+id/noLocation_textview"
+            android:id="@+id/siteTitle_textview"
             style="@style/Text_Body_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_horizontal"
-            android:text="@string/no_location_work_is_done_remotely"
-            android:visibility="gone" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/placeholder_company_name" />
 
-        <RelativeLayout
-            android:id="@+id/map_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/mapview"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:background="@color/fn_light_text"
-                android:scaleType="centerCrop"
-                android:src="@drawable/no_map" />
-
-            <ProgressBar
-                android:id="@+id/loading_progress"
-                style="@style/Widget.AppCompat.ProgressBar"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="75dp"
-                android:indeterminate="true" />
-
-            <LinearLayout
-                android:id="@+id/noMap_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/gpsError1_textview"
-                    style="@style/Text_Subhead"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/map_not_available"
-                    android:textColor="@color/fn_white_text" />
-
-                <TextView
-                    android:id="@+id/gpsError2_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:gravity="center"
-                    android:text="@string/check_your_gps_settings"
-                    android:textColor="@color/fn_white_text" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/address_layout"
-            style="@style/Tile.Material"
+        <TextView
+            android:id="@+id/address_textview"
+            style="@style/Text_Body_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="true"
-            android:paddingBottom="16dp"
-            android:paddingTop="16dp">
+            android:layout_below="@+id/siteTitle_textview"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/placeholder_one_line_address" />
 
-            <TextView
-                android:id="@+id/siteTitle_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/placeholder_company_name" />
+        <TextView
+            android:id="@+id/locationType_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/address_textview"
+            android:layout_marginLeft="16dp"
+            android:text="@string/placeholder_phrase" />
 
-            <TextView
-                android:id="@+id/address_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/siteTitle_textview"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:text="@string/placeholder_one_line_address" />
-
-            <TextView
-                android:id="@+id/locationType_textview"
-                style="@style/Text_Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/address_textview"
-                android:layout_marginLeft="16dp"
-                android:text="@string/placeholder_phrase" />
-
-            <TextView
-                android:id="@+id/distance_textview"
-                style="@style/Text_Caption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/address_textview"
-                android:layout_marginBottom="8dp"
-                android:layout_marginRight="16dp"
-                android:layout_toRightOf="@+id/locationType_textview"
-                android:text=" * 19 mi" />
-
-            <View
-                android:id="@+id/divider"
-                style="@style/DividerFull"
-                android:layout_below="@+id/distance_textview" />
-
-            <TextView
-                android:id="@+id/note_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
-                android:text="@string/placeholder_paragraph" />
-
-        </RelativeLayout>
+        <TextView
+            android:id="@+id/distance_textview"
+            style="@style/Text_Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/address_textview"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_toRightOf="@+id/locationType_textview"
+            android:text=" * 19 mi" />
 
         <View
+            android:id="@+id/divider"
             style="@style/DividerFull"
-            android:layout_width="match_parent" />
-    </LinearLayout>
+            android:layout_below="@+id/distance_textview" />
 
-    <com.fieldnation.ui.IconFontButton
-        android:id="@+id/navigate_button"
-        style="@style/Material.Button.Circle"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="140dp"
-        android:text="@string/icon_car"
-        android:textSize="24sp" />
-</RelativeLayout>
+        <TextView
+            android:id="@+id/note_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/placeholder_paragraph" />
+
+    </RelativeLayout>
+
+    <View
+        style="@style/DividerFull"
+        android:layout_width="match_parent" />
+</LinearLayout>

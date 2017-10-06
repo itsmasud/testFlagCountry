@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -64,8 +63,6 @@ public class LocationViewMapBox extends LinearLayout {
     private TextView _distanceTextView;
     private TextView _noteTextView;
 
-    private Button _actionButton;
-
     // Data
     private Workorder _workorder;
     private android.location.Location _userLocation = null;
@@ -117,9 +114,6 @@ public class LocationViewMapBox extends LinearLayout {
         _distanceTextView = findViewById(R.id.distance_textview);
         _noteTextView = findViewById(R.id.note_textview);
 
-        _actionButton = findViewById(R.id.navigate_button);
-        _actionButton.setOnClickListener(_action_onClick);
-
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
 
@@ -168,7 +162,6 @@ public class LocationViewMapBox extends LinearLayout {
 
         setVisibility(VISIBLE);
 
-        _actionButton.setText(R.string.icon_car);
         _action = ACTION_NAVIGATE;
 
         populateAddressTile();
@@ -179,8 +172,9 @@ public class LocationViewMapBox extends LinearLayout {
     private void calculateAddressTileVisibility() {
         if (_invalidAddress) return;
 
-        if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
-            _actionButton.setVisibility(GONE);
+        if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null) {
+
+        }
 
         // hide stuff that shouldn't be seen
         if (_workorder.getIsRemoteWork()) {
@@ -290,8 +284,6 @@ public class LocationViewMapBox extends LinearLayout {
 
     private void populateMap() {
         if (_invalidAddress) {
-            _actionButton.setText(R.string.icon_messages_detail);
-            _actionButton.setVisibility(VISIBLE);
             _action = ACTION_MESSAGES;
             return;
         }
@@ -300,8 +292,6 @@ public class LocationViewMapBox extends LinearLayout {
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
-            _actionButton.setText(R.string.icon_gear);
-            _actionButton.setVisibility(VISIBLE);
             _action = ACTION_GPS_SETTINGS;
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
@@ -397,8 +387,6 @@ public class LocationViewMapBox extends LinearLayout {
                 _loadingProgress.setVisibility(GONE);
                 _mapImageView.setImageResource(R.drawable.no_map);
                 _noMapLayout.setVisibility(VISIBLE);
-                _actionButton.setText(R.string.icon_messages_detail);
-                _actionButton.setVisibility(VISIBLE);
                 _action = ACTION_MESSAGES;
                 _gpsError1TextView.setText(R.string.invalid_address);
                 _gpsError2TextView.setText(R.string.contact_wo_manager);
@@ -494,8 +482,6 @@ public class LocationViewMapBox extends LinearLayout {
         public void onLocation(SimpleGps simpleGps, android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            _actionButton.setText(R.string.icon_car);
-            _actionButton.setVisibility(VISIBLE);
             _action = ACTION_NAVIGATE;
             lookupMap();
             _simpleGps.stop();

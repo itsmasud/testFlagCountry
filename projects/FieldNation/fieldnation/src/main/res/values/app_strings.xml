@@ -564,7 +564,7 @@
     <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_location_provided_by_buyer">No location provided by buyer</string>
-    <string name="no_location_work_is_done_remotely">No Location, work is done remotely.</string>
+    <string name="no_location_work_is_done_remotely">Perform work remotely</string>
     <string name="no_messages">No Messages</string>
     <string name="no_notifications">No Notifications</string>
     <string name="no_payments">No Payments</string>
