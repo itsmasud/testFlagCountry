@@ -76,6 +76,9 @@ public class FailedUploadsView extends RelativeLayout implements WorkOrderRender
         if (_countTextView == null)
             return;
 
+        if (_workOrder.getAttachments() != null)
+            WebTransaction.cleanZombies(_workOrder.getAttachments());
+        
         List<WebTransaction> zombies = WebTransaction.getZombies();
 
         int count = 0;

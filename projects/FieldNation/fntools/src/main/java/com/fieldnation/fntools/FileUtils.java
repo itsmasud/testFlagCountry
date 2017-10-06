@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLConnection;
+import java.security.MessageDigest;
 
 /**
  * Created by Michael on 3/10/2016.
@@ -86,9 +87,17 @@ public class FileUtils {
         }
     }
 
-    public static boolean writeStream(InputStream in, File dest) throws IOException {
+    public static byte[] writeStream(InputStream in, File dest) throws IOException {
         OutputStream outFile = null;
         InputStream inFile = null;
+        MessageDigest sha1 = null;
+
+        try {
+            sha1 = MessageDigest.getInstance("SHA-1");
+            sha1.reset();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
 
         int read = 0;
         byte[] packet = null;
@@ -101,6 +110,7 @@ public class FileUtils {
                 while (true) {
                     read = inFile.read(packet);
                     if (read > 0) {
+                        sha1.update(packet, 0, read);
                         outFile.write(packet, 0, read);
                     } else if (read == 0) {
                         try {
@@ -121,7 +131,7 @@ public class FileUtils {
                 } catch (IOException e) {
                 }
             }
-            return true;
+            return sha1.digest();
         } finally {
             DataUtils.freePacket(packet);
         }

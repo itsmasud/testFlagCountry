@@ -76,6 +76,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         String notes;
         WebTransaction transaction;
         UploadTuple ut = null;
+        String hash;
 
         public FailedUploadTuple(WebTransaction webTransaction) {
             this.transaction = webTransaction;
@@ -87,6 +88,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 this.name = methodParams.getString("attachment.file.name");
                 this.notes = methodParams.has("attachment.notes") ? methodParams.getString("attachment.notes") : "";
                 this.timestamp = methodParams.getLong("timestamp");
+                this.hash = methodParams.getString("fileHash");
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -152,6 +154,12 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     }
 
     private List<UploadTuple> uploads = new LinkedList<>();
+
+    public void uploadClear() {
+        uploads.clear();
+        rebuild();
+        notifyDataSetChanged();
+    }
 
     public void uploadStart(TransactionParams transactionParams) {
         Log.v(TAG, "uploadStart");

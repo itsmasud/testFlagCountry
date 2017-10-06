@@ -13,4 +13,5 @@ interface ObjectStoreConstants {
     String PARAM_LAST_UPDATED = "PARAM_LAST_UPDATED";
     String PARAM_ID = "PARAM_ID";
     String PARAM_EXPIRES = "PARAM_EXPIRES";
+    String PARAM_HASH = "PARAM_HASH";
 }
