@@ -56,9 +56,14 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                     upFile = StoredObject.put(context, App.getProfileId(), "CacheFile", uri.toString(),
                             new InputStreamMonitor(
                                     context.getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
+                                long last = 0;
+
                                 @Override
                                 public void progress(int bytesRead) {
-                                    cacheFileProgress(tag, bytesRead);
+                                    if (System.currentTimeMillis() > last) {
+                                        last = System.currentTimeMillis() + 1000;
+                                        cacheFileProgress(tag, bytesRead);
+                                    }
                                 }
                             }), "uploadTemp.dat");
                 } catch (Exception ex) {
