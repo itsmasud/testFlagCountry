@@ -115,8 +115,6 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         _siteTitleTextView = findViewById(R.id.siteTitle_textview);
         _addressTextView = findViewById(R.id.address_textview);
 
-        _locationTypeLayout = findViewById(R.id.locationType_layout);
-        _locationIconTextView = findViewById(R.id.locationIcon_textview);
         _locationTypeTextView = findViewById(R.id.locationType_textview);
 
         _distanceTextView = findViewById(R.id.distance_textview);

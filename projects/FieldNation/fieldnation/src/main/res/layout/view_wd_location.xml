@@ -31,7 +31,7 @@
             <ImageView
                 android:id="@+id/mapview"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="200dp"
                 android:background="@color/fn_light_text"
                 android:scaleType="centerCrop"
                 android:src="@drawable/no_map" />
@@ -43,7 +43,7 @@
                 android:layout_height="50dp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="50dp"
+                android:layout_marginTop="75dp"
                 android:indeterminate="true" />
 
             <LinearLayout
@@ -76,20 +76,22 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/address_layout"
             style="@style/Tile.Material"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:paddingBottom="16dp"
+            android:paddingTop="16dp">
 
             <TextView
                 android:id="@+id/siteTitle_textview"
                 style="@style/Text_Body_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@string/placeholder_company_name" />
 
             <TextView
@@ -97,49 +99,48 @@
                 style="@style/Text_Body_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/siteTitle_textview"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:text="@string/placeholder_one_line_address" />
 
-            <LinearLayout
-                android:id="@+id/locationType_layout"
+            <TextView
+                android:id="@+id/locationType_textview"
+                style="@style/Text_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.fieldnation.ui.IconFontTextView
-                    android:id="@+id/locationIcon_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:text="@string/icon_solid_pin"
-                    android:textColor="@color/fn_light_text" />
-
-                <TextView
-                    android:id="@+id/locationType_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:text="@string/placeholder_phrase" />
-
-            </LinearLayout>
+                android:layout_below="@id/address_textview"
+                android:layout_marginLeft="16dp"
+                android:text="@string/placeholder_phrase" />
 
             <TextView
                 android:id="@+id/distance_textview"
                 style="@style/Text_Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/placeholder_distance" />
+                android:layout_below="@id/address_textview"
+                android:layout_marginBottom="8dp"
+                android:layout_marginRight="16dp"
+                android:layout_toRightOf="@+id/locationType_textview"
+                android:text=" * 19 mi" />
+
+            <View
+                android:id="@+id/divider"
+                style="@style/DividerFull"
+                android:layout_below="@+id/distance_textview" />
 
             <TextView
                 android:id="@+id/note_textview"
                 style="@style/Text_Body_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/divider"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/placeholder_paragraph" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <View
             style="@style/DividerFull"
