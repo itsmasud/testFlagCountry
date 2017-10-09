@@ -48,6 +48,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
     // UI
     private TextView _noLocationTextView;
+    private RelativeLayout _noLocationLayout;
 
     private RelativeLayout _mapLayout;
     private ImageView _mapImageView;
@@ -64,6 +65,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     private TextView _locationTypeTextView;
 
     private TextView _distanceTextView;
+    private View _noteDivider;
     private TextView _noteTextView;
 
     // Data
@@ -96,6 +98,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
             return;
 
         _noLocationTextView = findViewById(R.id.noLocation_textview);
+        _noLocationLayout = findViewById(R.id.noLocation_layout);
 
         _mapLayout = findViewById(R.id.map_layout);
         _mapImageView = findViewById(R.id.mapview);
@@ -119,6 +122,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         _distanceTextView = findViewById(R.id.distance_textview);
         _noteTextView = findViewById(R.id.note_textview);
         _noteTextView.setOnLongClickListener(_notes_onLongClick);
+        _noteDivider = findViewById(R.id.note_divider);
 
         _gmapsClient = new GmapsClient(_gmapsClient_listener);
         _gmapsClient.connect(App.get());
@@ -182,9 +186,11 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         // hide stuff that shouldn't be seen
         if (_workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE) {
             _mapLayout.setVisibility(GONE);
-            _noLocationTextView.setVisibility(VISIBLE);
+            _noLocationLayout.setVisibility(VISIBLE);
             _distanceTextView.setVisibility(GONE);
             _addressLayout.setVisibility(GONE);
+        } else {
+            _noLocationLayout.setVisibility(GONE);
         }
     }
 
@@ -283,6 +289,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
             _noteTextView.setMovementMethod(LinkMovementMethod.getInstance());
         } else {
             _noteTextView.setVisibility(GONE);
+            _noteDivider.setVisibility(GONE);
         }
     }
 

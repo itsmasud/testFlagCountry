@@ -12,17 +12,27 @@
     <!-- Todo, need to group these things -->
     <View style="@style/DividerFull" />
 
-    <TextView
-        android:id="@+id/noLocation_textview"
-        style="@style/Text_Body_1"
+    <RelativeLayout
+        android:id="@+id/noLocation_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/fn_clickable_bg"
-        android:padding="16dp"
-        android:text="@string/no_location_work_is_done_remotely"
-        android:visibility="gone" />
+        android:visibility="visible">
 
-    <View style="@style/DividerFull" />
+        <TextView
+            android:id="@+id/noLocation_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/fn_clickable_bg"
+            android:padding="16dp"
+            android:text="@string/no_location_work_is_done_remotely"
+            android:visibility="visible" />
+
+        <View
+            style="@style/DividerFull"
+            android:layout_below="@+id/noLocation_textview" />
+    </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/map_layout"
@@ -122,12 +132,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/address_textview"
             android:layout_marginBottom="8dp"
+            android:layout_marginLeft="4dp"
             android:layout_marginRight="16dp"
             android:layout_toRightOf="@+id/locationType_textview"
             android:text=" * 19 mi" />
 
         <View
-            android:id="@+id/divider"
+            android:id="@+id/note_divider"
             style="@style/DividerFull"
             android:layout_below="@+id/distance_textview" />
 
@@ -136,7 +147,7 @@
             style="@style/Text_Body_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/divider"
+            android:layout_below="@id/note_divider"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
