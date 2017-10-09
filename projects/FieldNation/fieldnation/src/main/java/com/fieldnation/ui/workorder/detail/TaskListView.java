@@ -16,6 +16,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.ListItemTaskRowView;
 
 import java.util.Arrays;
 import java.util.List;
@@ -103,19 +104,19 @@ public class TaskListView extends RelativeLayout {
                 if (_groupId.equals(tasks.get(i).getGroup().getId())) {
 
                     final Task task = tasks.get(i);
-                    TaskRowView v = null;
+                    ListItemTaskRowView v = null;
                     if (task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                         if (i < _completeList.getChildCount()) {
-                            v = (TaskRowView) _completeList.getChildAt(i);
+                            v = (ListItemTaskRowView) _completeList.getChildAt(i);
                         } else {
-                            v = new TaskRowView(getContext());
+                            v = new ListItemTaskRowView(getContext());
                             _completeList.addView(v);
                         }
                     } else {
                         if (i < _incompleteList.getChildCount()) {
-                            v = (TaskRowView) _incompleteList.getChildAt(i);
+                            v = (ListItemTaskRowView) _incompleteList.getChildAt(i);
                         } else {
-                            v = new TaskRowView(getContext());
+                            v = new ListItemTaskRowView(getContext());
                             _incompleteList.addView(v);
                         }
                     }
@@ -136,8 +137,8 @@ public class TaskListView extends RelativeLayout {
                 else _incompleteLayout.setVisibility(VISIBLE);
             }
         };
-        _incompleteList.postDelayed(r, new Random().nextInt(1000));
-        _completeList.postDelayed(r, new Random().nextInt(1000));
+        _incompleteList.postDelayed(r, new Random().nextInt(100));
+        _completeList.postDelayed(r, new Random().nextInt(100));
     }
 
 
