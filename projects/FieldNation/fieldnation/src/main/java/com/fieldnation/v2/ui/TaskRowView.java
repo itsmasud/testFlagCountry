@@ -54,8 +54,8 @@ import java.util.Locale;
  * Created by Shoaib on 6/10/17.
  */
 
-public class ListItemTaskRowView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ListItemTaskRowView");
+public class TaskRowView extends RelativeLayout {
+    private final String TAG = UniqueTag.makeTag("TaskRowView");
 
     // Ui
     private TextView _keyTextView;
@@ -64,9 +64,6 @@ public class ListItemTaskRowView extends RelativeLayout {
     private ProgressBar _progressBar;
 
     // Data
-    private String _key;
-    private String _value;
-    private String _action;
     private boolean _progressVisible = false;
     private int _progress = -1;
 
@@ -77,17 +74,17 @@ public class ListItemTaskRowView extends RelativeLayout {
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
 
 
-    public ListItemTaskRowView(Context context) {
+    public TaskRowView(Context context) {
         super(context);
         init();
     }
 
-    public ListItemTaskRowView(Context context, AttributeSet attrs) {
+    public TaskRowView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ListItemTaskRowView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TaskRowView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -107,37 +104,6 @@ public class ListItemTaskRowView extends RelativeLayout {
 
         populateUi();
     }
-
-//    public void setActionVisible(boolean visible) {
-//        _actionVisible = visible;
-//        populateUi();
-//    }
-//
-//    public void setActionString(String action) {
-//        _action = action;
-//
-//        populateUi();
-//    }
-//
-//    public void setProgressVisible(boolean visible) {
-//        _progressVisible = visible;
-//        populateUi();
-//    }
-//
-//    public void setProgress(int progress) {
-//        _progress = progress;
-//        populateUi();
-//    }
-//
-//    public void setOnActionClickedListener(OnActionClickListener onActionClickedListener) {
-//        _actionOnclickListener = onActionClickedListener;
-//    }
-//
-//    public void set(String key, String value) {
-//        _key = key;
-//        _value = value;
-//        populateUi();
-//    }
 
     @Override
     protected void onDetachedFromWindow() {

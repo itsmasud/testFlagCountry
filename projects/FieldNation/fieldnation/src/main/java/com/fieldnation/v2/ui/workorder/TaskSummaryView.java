@@ -15,7 +15,7 @@ import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
-import com.fieldnation.v2.ui.dialog.TaskDialog;
+import com.fieldnation.v2.ui.dialog.TasksDialog;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -197,7 +197,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         public void onClick(View v) {
             Group group = (Group) v.getTag();
             // TODO call the dialog with the group ID here
-            TaskDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
+            TasksDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
 
         }
     };
