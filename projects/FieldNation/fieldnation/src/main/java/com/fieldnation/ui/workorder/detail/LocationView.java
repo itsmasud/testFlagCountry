@@ -231,7 +231,6 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         // set location type
         if (loc.getType().getId() == null || misc.isEmptyOrNull(loc.getType().getName())) {
             _locationTypeLayout.setVisibility(GONE);
-
         } else {
             _locationTypeLayout.setVisibility(VISIBLE);
             switch (loc.getType().getName()) {
