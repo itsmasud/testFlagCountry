@@ -16,6 +16,7 @@ import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
+import com.fieldnation.v2.ui.ListItemTwoVertView;
 
 /**
  * Created by mc on 9/28/17.
@@ -68,9 +69,10 @@ public class BuyerCustomFieldView extends LinearLayout implements WorkOrderRende
                     if (category.getResults().length > 0) {
                         CustomField[] fields = category.getResults();
                         for (CustomField field : fields) {
-                            ListItemTwoHorizView view = new ListItemTwoHorizView(getContext());
+                            ListItemTwoVertView view = new ListItemTwoVertView(getContext());
                             view.setOnLongClickListener(_this_onLongClick);
                             view.set(field.getName(), field.getValue());
+                            view.setActionVisible(false);
                             addView(view);
                         }
                     }

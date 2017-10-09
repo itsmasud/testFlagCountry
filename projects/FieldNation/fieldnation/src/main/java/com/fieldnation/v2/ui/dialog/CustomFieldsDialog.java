@@ -51,7 +51,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setTitle("Fields to Enter");
+        _toolbar.setTitle(getContext().getString(R.string.fields_to_enter));
 
         _list = v.findViewById(R.id.list);
         _list.setItemAnimator(new DefaultItemAnimator());
