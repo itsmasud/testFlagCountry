@@ -61,7 +61,6 @@ import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.ContactListView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
-import com.fieldnation.ui.workorder.detail.DiscountListLayout;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
 import com.fieldnation.ui.workorder.detail.LocationView;
@@ -191,7 +190,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpenseListLayout _expenseListView;
-    private DiscountListLayout _discountListView;
+    private DiscountSummaryView _discountSummaryView;
     private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
@@ -286,9 +285,8 @@ public class WorkOrderScreen extends RelativeLayout {
         _expenseListView.setListener(_expenseListView_listener);
         _renderers.add(_expenseListView);
 
-        _discountListView = findViewById(R.id.discountListLayout_view);
-        _discountListView.setListener(_discountListView_listener);
-        _renderers.add(_discountListView);
+        _discountSummaryView = findViewById(R.id.discountSummaryView);
+        _renderers.add(_discountSummaryView);
 
         _exView = findViewById(R.id.expected_pay_view);
         _renderers.add(_exView);
@@ -308,10 +306,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
-
-//        _taskList = findViewById(R.id.scope_view);
-//        _taskList.setTaskListViewListener(_taskListView_listener);
-//        _renderers.add(_taskList);
 
         _timeLogged = findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
@@ -1275,27 +1269,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
             WorkordersWebApi.deleteExpense(App.get(), _workOrderId, ((Expense) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
-    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
-        @Override
-        public void addDiscount() {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getContext().getString(R.string.dialog_add_discount_title));
-        }
-
-        @Override
-        public void discountOnClick(PayModifier discount) {
-            // TODO discountOnClick
-        }
-
-        @Override
-        public void discountLongClick(final PayModifier discount) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_DISCOUNT,
-                    R.string.dialog_delete_discount_title,
-                    R.string.dialog_delete_discount_body,
-                    R.string.btn_yes, R.string.btn_no, true, discount);
         }
     };
 

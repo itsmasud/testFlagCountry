@@ -7,6 +7,7 @@
 
     <TextView
         style="@style/WoDV2.Header"
+        android:layout_marginTop="16dp"
         android:text="Expected Payment" />
 
     <RelativeLayout

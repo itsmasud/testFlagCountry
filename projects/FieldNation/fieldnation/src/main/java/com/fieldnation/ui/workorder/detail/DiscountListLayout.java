@@ -10,11 +10,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.DiscountDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Random;
@@ -169,6 +173,30 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
             }
         }
     };
+
+
+/*
+    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
+        @Override
+        public void addDiscount() {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getContext().getString(R.string.dialog_add_discount_title));
+        }
+
+        @Override
+        public void discountOnClick(PayModifier discount) {
+            // TODO discountOnClick
+        }
+
+        @Override
+        public void discountLongClick(final PayModifier discount) {
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_DISCOUNT,
+                    R.string.dialog_delete_discount_title,
+                    R.string.dialog_delete_discount_body,
+                    R.string.btn_yes, R.string.btn_no, true, discount);
+        }
+    };
+*/
 
 
     public interface Listener {
