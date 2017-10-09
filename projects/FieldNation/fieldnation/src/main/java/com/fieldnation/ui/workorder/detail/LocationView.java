@@ -497,7 +497,9 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
         @Override
         public void onPermissionDenied(SimpleGps simpleGps) {
+            _mapUnavailable = true;
             _simpleGps.stop();
+            populateUi();
         }
     };
 
