@@ -62,7 +62,6 @@ import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.ContactListView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
-import com.fieldnation.ui.workorder.detail.ExpenseListLayout;
 import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
@@ -80,8 +79,6 @@ import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
-import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
@@ -138,7 +135,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
@@ -153,7 +149,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_DELETE_WORKLOG = TAG + ".deleteWorkLogDialog";
     private static final String DIALOG_DELETE_SHIPMENT = TAG + ".deleteShipmentDialog";
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
-    private static final String DIALOG_DELETE_EXPENSE = TAG + ".deleteExpenseDialog";
     private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
@@ -188,7 +183,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
-    private ExpenseListLayout _expenseListView;
+    private ExpensesSummaryView _expensesSummaryView;
     private DiscountSummaryView _discountSummaryView;
     private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
@@ -280,9 +275,8 @@ public class WorkOrderScreen extends RelativeLayout {
         _coSummaryView.setListener(_coSummary_listener);
         _renderers.add(_coSummaryView);
 
-        _expenseListView = findViewById(R.id.expenseListLayout_view);
-        _expenseListView.setListener(_expenseListView_listener);
-        _renderers.add(_expenseListView);
+        _expensesSummaryView = findViewById(R.id.expensesSummaryView);
+        _renderers.add(_expensesSummaryView);
 
         _discountSummaryView = findViewById(R.id.discountSummaryView);
         _renderers.add(_discountSummaryView);
@@ -402,7 +396,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _workOrderApi.sub();
 
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
         TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
@@ -418,7 +411,6 @@ public class WorkOrderScreen extends RelativeLayout {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
@@ -441,7 +433,6 @@ public class WorkOrderScreen extends RelativeLayout {
     public void onStop() {
         Log.v(TAG, "onStop");
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
         TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
@@ -457,7 +448,6 @@ public class WorkOrderScreen extends RelativeLayout {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         _workOrderApi.unsub();
@@ -1240,35 +1230,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
-        @Override
-        public void addExpense() {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            ExpenseDialog.show(App.get(), DIALOG_EXPENSE, true);
-        }
-
-        @Override
-        public void expenseOnClick(Expense expense) {
-            //TODO expenseOnClick
-        }
-
-        @Override
-        public void expenseLongClick(final Expense expense) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_EXPENSE,
-                    R.string.dialog_delete_expense_title,
-                    R.string.dialog_delete_expense_body,
-                    R.string.btn_yes, R.string.btn_no, true, expense);
-        }
-    };
-
-    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteExpense = new TwoButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary(Parcelable extraData) {
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            WorkordersWebApi.deleteExpense(App.get(), _workOrderId, ((Expense) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteDiscount = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
@@ -1336,27 +1297,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            setLoading(true);
-        }
-    };
-
-    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            try {
-                Expense expense = new Expense();
-                expense.description(description);
-                expense.amount(amount);
-                expense.category(category);
-
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Expense Dialog";
-
-                WorkordersWebApi.addExpense(App.get(), _workOrderId, expense, uiContext);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
             setLoading(true);
         }
     };
@@ -1560,7 +1500,7 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void addExpense() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            ExpenseDialog.show(App.get(), DIALOG_EXPENSE, true);
+            ExpenseDialog.show(App.get(), null, _workOrderId, false, true);
         }
 
         @Override

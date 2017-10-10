@@ -107,11 +107,10 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
-                <com.fieldnation.ui.workorder.detail.ExpenseListLayout
-                    android:id="@+id/expenseListLayout_view"
+                <com.fieldnation.v2.ui.workorder.ExpensesSummaryView
+                    android:id="@+id/expensesSummaryView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
                 <com.fieldnation.v2.ui.workorder.DiscountSummaryView
                     android:id="@+id/discountSummaryView"
