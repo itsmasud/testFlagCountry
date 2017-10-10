@@ -26,7 +26,6 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
     //Data
     private WorkOrder _workOrder;
 
-
     public DiscountSummaryView(Context context) {
         super(context);
         init();

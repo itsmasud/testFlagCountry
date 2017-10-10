@@ -12,11 +12,14 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.LinkedList;
@@ -171,4 +174,29 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
 
         void onAssign(WorkOrder workOrder, Shipment shipment);
     }
+
+/*
+    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+        @Override
+        public void addShipment() {
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
+                    _workOrder.getAttachments(), getContext().getString(R.string.dialog_shipment_title), null, null);
+        }
+
+        @Override
+        public void onDelete(WorkOrder workOrder, final Shipment shipment) {
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SHIPMENT,
+                    R.string.dialog_delete_shipment_title,
+                    R.string.dialog_delete_shipment_body,
+                    R.string.btn_yes, R.string.btn_no, true, shipment);
+        }
+
+        @Override
+        public void onAssign(WorkOrder workOrder, Shipment shipment) {
+            // TODO STUB .onAssign()
+            Log.v(TAG, "STUB .onAssign()");
+            // TODO present a picker of the tasks that this can be assigned too
+        }
+    };
+*/
 }

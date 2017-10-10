@@ -65,7 +65,6 @@ import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
-import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TaskListView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
@@ -178,7 +177,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
     //    private TaskListView _taskList;
-    private ShipmentListView _shipments;
+    private ShipmentSummaryView _shipmentSummaryView;
     private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
@@ -293,9 +292,8 @@ public class WorkOrderScreen extends RelativeLayout {
         _scrollView = findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipments = findViewById(R.id.shipment_view);
-        _shipments.setListener(_shipments_listener);
-        _renderers.add(_shipments);
+        _shipmentSummaryView = findViewById(R.id.shipmentSummaryView);
+        _renderers.add(_shipmentSummaryView);
 
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
@@ -1126,29 +1124,6 @@ public class WorkOrderScreen extends RelativeLayout {
             }
             setLoading(true);
 
-        }
-    };
-
-    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
-        @Override
-        public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
-                    _workOrder.getAttachments(), getContext().getString(R.string.dialog_shipment_title), null, null);
-        }
-
-        @Override
-        public void onDelete(WorkOrder workOrder, final Shipment shipment) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SHIPMENT,
-                    R.string.dialog_delete_shipment_title,
-                    R.string.dialog_delete_shipment_body,
-                    R.string.btn_yes, R.string.btn_no, true, shipment);
-        }
-
-        @Override
-        public void onAssign(WorkOrder workOrder, Shipment shipment) {
-            // TODO STUB .onAssign()
-            Log.v(TAG, "STUB .onAssign()");
-            // TODO present a picker of the tasks that this can be assigned too
         }
     };
 
