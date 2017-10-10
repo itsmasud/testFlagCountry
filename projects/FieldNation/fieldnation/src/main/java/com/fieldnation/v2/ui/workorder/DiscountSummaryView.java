@@ -7,8 +7,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.DiscountListDialog;
 
 /**
  * Created by mc on 10/9/17.
@@ -80,7 +82,7 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            DiscountListDialog.show(App.get(), null, _workOrder.getId());
         }
     };
 }

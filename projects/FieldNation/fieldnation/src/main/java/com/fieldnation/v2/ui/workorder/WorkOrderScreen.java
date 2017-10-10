@@ -138,7 +138,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
@@ -403,7 +402,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _workOrderApi.sub();
 
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
@@ -443,7 +441,6 @@ public class WorkOrderScreen extends RelativeLayout {
     public void onStop() {
         Log.v(TAG, "onStop");
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
@@ -1343,26 +1340,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final DiscountDialog.OnOkListener _discountDialog_onOk = new DiscountDialog.OnOkListener() {
-        @Override
-        public void onOk(String description, double amount) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            try {
-                PayModifier discount = new PayModifier();
-                discount.setAmount(amount);
-                discount.setDescription(description);
-
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Discount Dialog";
-
-                WorkordersWebApi.addDiscount(App.get(), _workOrderId, discount, uiContext);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
-        }
-    };
-
     private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
@@ -1589,7 +1566,7 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getContext().getString(R.string.dialog_add_discount_title));
+            DiscountDialog.show(App.get(), null, _workOrderId, getContext().getString(R.string.dialog_add_discount_title));
         }
 
         @Override
