@@ -224,7 +224,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onSave(String name, Uri uri) {
             if (uri != null) {
-                FileCacheClient.cacheFileUpload(App.get(), "", uri);
+                FileCacheClient.cacheFileUpload(uri.toString(), uri);
                 ProfilePhotoClient.upload(App.get(), uri);
             } else {
                 // TODO need to show a toast?
@@ -256,7 +256,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 if (mime != null && mime.contains("image")) {
                     PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
                 } else {
-                    FileCacheClient.cacheFileUpload(App.get(), null, fui.uri);
+                    FileCacheClient.cacheFileUpload(fui.uri.toString(), fui.uri);
                     ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
             } else {
