@@ -84,7 +84,6 @@ import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Requests;
@@ -154,7 +153,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_DELETE_SHIPMENT = TAG + ".deleteShipmentDialog";
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
     private static final String DIALOG_DELETE_EXPENSE = TAG + ".deleteExpenseDialog";
-    private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
 
@@ -419,7 +417,6 @@ public class WorkOrderScreen extends RelativeLayout {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
 
@@ -458,7 +455,6 @@ public class WorkOrderScreen extends RelativeLayout {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
@@ -1266,14 +1262,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
             WorkordersWebApi.deleteExpense(App.get(), _workOrderId, ((Expense) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
-    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteDiscount = new TwoButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary(Parcelable extraData) {
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData).getId(), App.get().getSpUiContext());
         }
     };
 
