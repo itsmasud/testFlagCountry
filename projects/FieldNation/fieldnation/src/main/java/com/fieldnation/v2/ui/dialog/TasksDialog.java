@@ -22,7 +22,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.TasksAdapter;
 
 /**
- * Created by mc on 9/28/17.
+ * Created by Shoaib on 09/09/17.
  */
 
 public class TasksDialog extends FullScreenDialog {
@@ -137,9 +137,10 @@ public class TasksDialog extends FullScreenDialog {
                     populateUi();
                     AppMessagingClient.setLoading(false);
                 }
-            } else if (methodName.equals("updateTask"))
+            } else if (methodName.equals("updateTask")) {
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
-            AppMessagingClient.setLoading(true);
+                AppMessagingClient.setLoading(true);
+            }
 
         }
     };

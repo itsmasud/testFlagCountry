@@ -52,7 +52,7 @@
         android:textColor="@color/fn_dark_text_50"
         android:layout_alignParentRight="true"
         android:padding="16dp"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:layout_alignBottom="@+id/value" />
 
     <View

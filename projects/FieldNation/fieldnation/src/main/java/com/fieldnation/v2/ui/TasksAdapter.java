@@ -1,5 +1,6 @@
 package com.fieldnation.v2.ui;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -81,11 +82,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_HEADER_INCOMPLETE: {
-                ListItemGroupWithIconView view = new ListItemGroupWithIconView(parent.getContext());
+                ListItemGroupView view = new ListItemGroupView(parent.getContext());
                 return new TaskViewHolder(view);
             }
             case TYPE_HEADER_COMPLETE: {
-                ListItemGroupWithIconView view = new ListItemGroupWithIconView(parent.getContext());
+                ListItemGroupView view = new ListItemGroupView(parent.getContext());
                 return new TaskViewHolder(view);
             }
             case TYPE_TASK: {
@@ -100,13 +101,15 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     public void onBindViewHolder(TaskViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case TYPE_HEADER_INCOMPLETE: {
-                ListItemGroupWithIconView view = (ListItemGroupWithIconView) holder.itemView;
-                view.setData((String) dataHolders.get(position).object, App.get().getResources().getString(R.string.icon_x), App.get().getResources().getColor(R.color.fn_red));
+                ListItemGroupView view = (ListItemGroupView) holder.itemView;
+                view.setTitle((String) dataHolders.get(position).object);
+                view.setIcon(App.get().getResources().getString(R.string.icon_x), ContextCompat.getColor(App.get(), R.color.fn_red));
                 break;
             }
             case TYPE_HEADER_COMPLETE: {
-                ListItemGroupWithIconView view = (ListItemGroupWithIconView) holder.itemView;
-                view.setData((String) dataHolders.get(position).object, App.get().getResources().getString(R.string.icon_checkmark), App.get().getResources().getColor(R.color.fn_accent_color_medium));
+                ListItemGroupView view = (ListItemGroupView) holder.itemView;
+                view.setTitle((String) dataHolders.get(position).object);
+                view.setIcon(App.get().getResources().getString(R.string.icon_checkmark), ContextCompat.getColor(App.get(), R.color.fn_accent_color_medium));
                 break;
             }
             case TYPE_TASK: {

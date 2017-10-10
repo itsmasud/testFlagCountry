@@ -15,17 +15,22 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
@@ -38,6 +43,7 @@ import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.GetFileDialog;
+import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 
@@ -55,7 +61,10 @@ import java.util.Locale;
  */
 
 public class TaskRowView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("TaskRowView");
+    private static final String TAG = UniqueTag.makeTag("TaskRowView");
+
+    // Dialog
+    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
 
     // Ui
     private TextView _keyTextView;
@@ -102,12 +111,15 @@ public class TaskRowView extends RelativeLayout {
 
         setOnClickListener(_click_listener);
 
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+
         populateUi();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _workOrderApi.unsub();
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         super.onDetachedFromWindow();
     }
 
@@ -185,9 +197,9 @@ public class TaskRowView extends RelativeLayout {
 
     private String getFormattedTime(Calendar cal) {
         DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-        symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
+        symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_capital_case_am_pm_array));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
+        SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mm a", Locale.getDefault());
         sdf.setDateFormatSymbols(symbols);
 
         return sdf.format(cal.getTime()) + DateUtils.getDeviceTimezone();
@@ -394,7 +406,7 @@ public class TaskRowView extends RelativeLayout {
     }
 
     private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), null);
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
     public TaskTypeEnum getType() {
@@ -446,17 +458,6 @@ public class TaskRowView extends RelativeLayout {
 
         _workOrderApi.sub();
     }
-
-//    private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            updateView();
-//
-//            if (_listener != null) {
-//                _listener.onTaskClick(_task);
-//            }
-//        }
-//    };
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
@@ -627,7 +628,6 @@ public class TaskRowView extends RelativeLayout {
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
-//                    setLoading(true);
                     break;
                 case UNIQUE_TASK: // unique task
                     if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE))
@@ -638,11 +638,9 @@ public class TaskRowView extends RelativeLayout {
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
-//                    setLoading(true);
                     break;
                 case SIGNATURE: // signature
                     SignOffActivity.startSignOff(App.get(), _workOrder.getId(), _task.getId());
-//                    setLoading(true);
                     break;
                 case SHIPMENT: // shipment
                     List<Shipment> shipments = new LinkedList();
@@ -677,4 +675,46 @@ public class TaskRowView extends RelativeLayout {
             }
         }
     };
+
+    /*-*********************************-*/
+    /*-				Dialogs				-*/
+    /*-*********************************-*/
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
+        @Override
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
+            if (fileResult.size() == 0)
+                return;
+
+            if (fileResult.size() == 1) {
+                GetFileDialog.UriIntent fui = fileResult.get(0);
+                if (fui.uri != null) {
+                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _task, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                } else {
+                    // TODO show a toast?
+                }
+                return;
+            }
+
+            for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("WorkOrderScreen - multiple")
+                                .action("start")
+                                .build());
+
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_task.getAttachments().getId());
+                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+        }
+    };
+
+
 }
