@@ -12,14 +12,11 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
-import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.LinkedList;
@@ -113,8 +110,11 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
                 public void next(int i) throws Exception {
                     ShipmentRowView v = new ShipmentRowView(getContext());
                     views.add(v);
-                    v.setData(_workOrder.getShipments(), _shipments[i]);
-                    v.setListener(_summaryListener);
+                    v.setTag(_shipments[i]);
+                    v.setData(_shipments[i]);
+                    v.setOnLongClickListener(_shipment_onLongClick);
+                    v.setOnClickListener(_shipment_onClick);
+                    v.setEnabled(_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD));
                 }
 
                 @Override
@@ -144,9 +144,10 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
 
     };
 
-    private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
+    private final View.OnLongClickListener _shipment_onLongClick = new OnLongClickListener() {
         @Override
-        public void onDelete(Shipment shipment) {
+        public boolean onLongClick(View view) {
+            Shipment shipment = (Shipment) view.getTag();
             if (_listener != null
                     && shipment != null
                     && shipment.getActionsSet().contains(Shipment.ActionsEnum.DELETE)) {
@@ -154,10 +155,14 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
             } else {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
             }
+            return false;
         }
+    };
 
+    private final View.OnClickListener _shipment_onClick = new OnClickListener() {
         @Override
-        public void onEdit(Shipment shipment) {
+        public void onClick(View view) {
+            Shipment shipment = (Shipment) view.getTag();
             if (_listener != null
                     && shipment != null
                     && shipment.getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
@@ -165,7 +170,6 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
             }
         }
     };
-
 
     public interface Listener {
         void addShipment();
