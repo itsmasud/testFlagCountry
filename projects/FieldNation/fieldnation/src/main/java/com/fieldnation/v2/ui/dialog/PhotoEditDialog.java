@@ -90,7 +90,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
             if (getSavedState() == null
                     || !getSavedState().containsKey("_cachedUri"))
-                FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_sourceUri.toString(), _sourceUri);
         }
         _name = params.getString("name");
 

@@ -351,7 +351,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private final AppMessagingClient _appClient = new AppMessagingClient() {
         @Override
         public void onNetworkDisconnected() {
-            adapter.uploadClear();
+            if (adapter != null)
+                adapter.uploadClear();
             populateUi();
         }
 
