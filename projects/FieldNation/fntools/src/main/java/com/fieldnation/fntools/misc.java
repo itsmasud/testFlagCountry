@@ -37,6 +37,23 @@ public final class misc {
     private static final NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
     private static final NumberFormat _maxOneDecimal = new DecimalFormat("#.#");
 
+    public static String humanReadableBytes(long bytes) {
+
+        // 1kb = 1024
+        // 1mb = 1048576
+        // 1gb = 1073741824
+        if (bytes > 1073741824) {
+            return _maxTwoDecimal.format(bytes / 1073741824.0) + "GB";
+        }
+        if (bytes > 1048576) {
+            return _maxTwoDecimal.format(bytes / 1048576.0) + "MB";
+        }
+
+        if (bytes > 1024) {
+            return _maxTwoDecimal.format(bytes / 1024.0) + "KB";
+        }
+        return bytes + "B";
+    }
 
     public static Location locationFromCoordinates(double lat, double lon) {
         Location loc = new Location("reverseGeocoded");

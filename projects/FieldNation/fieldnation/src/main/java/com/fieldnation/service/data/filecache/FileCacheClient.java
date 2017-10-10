@@ -1,10 +1,10 @@
 package com.fieldnation.service.data.filecache;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
 import com.fieldnation.App;
+import com.fieldnation.InputStreamMonitor;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -22,40 +22,62 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
     public void sub() {
         PigeonRoost.sub(this, ADDRESS_CACHE_FILE_START);
         PigeonRoost.sub(this, ADDRESS_CACHE_FILE_END);
+        PigeonRoost.sub(this, ADDRESS_CACHE_FILE_PROGRESS);
     }
 
     public void unsub() {
         PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_START);
         PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_END);
+        PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_PROGRESS);
     }
 
-    public static void cacheFileUpload(Context context, final String tag, Uri uri) {
+    public static void cacheFileUpload(final String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                Uri uri = (Uri) params[1];
+                Uri uri = (Uri) params[0];
 
-                cacheFileStart(context, tag, uri);
+                cacheFileStart(tag, uri);
                 StoredObject upFile = null;
+
                 try {
-                    upFile = StoredObject.put(context, App.getProfileId(), "CacheFile", uri.toString(),
-                            context.getContentResolver().openInputStream(uri), "uploadTemp.dat");
+                    if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
+                        cacheFileEnd(tag, upFile.getUri(), upFile.size(), true);
+                        return null;
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                try {
+                    upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
+                            new InputStreamMonitor(
+                                    App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
+                                long last = 0;
+
+                                @Override
+                                public void progress(int bytesRead) {
+                                    if (System.currentTimeMillis() > last) {
+                                        last = System.currentTimeMillis() + 1000;
+                                        cacheFileProgress(tag, bytesRead);
+                                    }
+                                }
+                            }), "uploadTemp.dat");
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 } finally {
                     if (upFile != null)
-                        cacheFileEnd(context, tag, upFile.getUri(), upFile.size(), true);
+                        cacheFileEnd(tag, upFile.getUri(), upFile.size(), true);
                     else
-                        cacheFileEnd(context, tag, uri, -1, false);
+                        cacheFileEnd(tag, uri, -1, false);
                 }
                 return null;
             }
-        }.executeEx(context, uri);
+        }.executeEx(uri);
     }
 
-    private static void cacheFileStart(Context context, String tag, Uri uri) {
+    private static void cacheFileStart(String tag, Uri uri) {
         Log.v(TAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
@@ -64,7 +86,15 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_START, bundle, Sticky.TEMP);
     }
 
-    private static void cacheFileEnd(Context context, String tag, Uri uri, long size, boolean success) {
+    private static void cacheFileProgress(String tag, long position) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_TAG, tag);
+        bundle.putLong(PARAM_POS, position);
+
+        PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_PROGRESS, bundle, Sticky.NONE);
+    }
+
+    private static void cacheFileEnd(String tag, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
@@ -83,14 +113,13 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
     public void onMessage(String address, Object message) {
         Log.v(TAG, "address " + address);
 
+        Bundle bundle = (Bundle) message;
         if (address.startsWith(ADDRESS_CACHE_FILE_START)) {
-            Bundle bundle = (Bundle) message;
             onFileCacheStart(
                     bundle.getString(PARAM_TAG),
                     (Uri) bundle.getParcelable(PARAM_URI));
         } else if (address.startsWith(ADDRESS_CACHE_FILE_END)) {
             try {
-                Bundle bundle = (Bundle) message;
                 onFileCacheEnd(
                         bundle.getString(PARAM_TAG),
                         (Uri) bundle.getParcelable(PARAM_URI),
@@ -101,10 +130,20 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        } else if (address.startsWith(ADDRESS_CACHE_FILE_PROGRESS)) {
+            try {
+                onFileCacheProgress(bundle.getString(PARAM_TAG),
+                        bundle.getLong(PARAM_POS));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
     public void onFileCacheStart(String tag, Uri uri) {
+    }
+
+    public void onFileCacheProgress(String tag, long size) {
     }
 
     public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
