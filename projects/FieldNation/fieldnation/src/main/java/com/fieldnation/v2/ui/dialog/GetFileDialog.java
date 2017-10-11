@@ -10,12 +10,15 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -39,6 +42,7 @@ import com.fieldnation.v2.ui.GetFilePackageRowView;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -49,11 +53,21 @@ public class GetFileDialog extends SimpleDialog {
     // Ui
     private ListView _items;
 
+    private View _loadingLayout;
+    private ProgressBar _loadingProgress;
+    private TextView _loadingTextView;
+    private TextView _loadingBytesTextView;
+
     // Data
     private List<GetFilePackage> _activityList = new LinkedList<>();
     private Set<String> _packages = new HashSet<>();
     private Uri _sourceUri;
     private Intent _cameraIntent = null;
+
+    private boolean _isCancelable = true;
+    private Hashtable<String, UriIntent> caching = new Hashtable<>();
+    private List<UriIntent> cached = new LinkedList<>();
+    private Hashtable<String, Long> progress = new Hashtable<>();
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -67,6 +81,11 @@ public class GetFileDialog extends SimpleDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_get_file, container, false);
         _items = v.findViewById(R.id.apps_listview);
+        _loadingLayout = v.findViewById(R.id.loading_layout);
+        _loadingTextView = v.findViewById(R.id.loading_title);
+        _loadingProgress = v.findViewById(R.id.loading_progress);
+        _loadingBytesTextView = v.findViewById(R.id.loadingBytes_textview);
+
         return v;
     }
 
@@ -77,6 +96,7 @@ public class GetFileDialog extends SimpleDialog {
         _items.setAdapter(new GetFilePackageAdapter(_activityList, _app_onClick));
         _permissionsListener.sub();
         _activityResultListener.sub();
+        _fileCacheClient.sub();
     }
 
     @Override
@@ -105,6 +125,52 @@ public class GetFileDialog extends SimpleDialog {
             _sourceUri = savedState.getParcelable("_sourceUri");
         if (savedState.containsKey("_cameraIntent"))
             _cameraIntent = savedState.getParcelable("_cameraIntent");
+
+        if (savedState.containsKey("cached")) {
+            Parcelable[] parcelables = savedState.getParcelableArray("cached");
+            for (Parcelable parcelable : parcelables) {
+                cached.add((UriIntent) parcelable);
+            }
+        }
+
+        if (savedState.containsKey("progress")) {
+            Bundle bundle = savedState.getBundle("progress");
+
+            Set<String> keys = bundle.keySet();
+            for (String key : keys) {
+                progress.put(key, bundle.getLong(key));
+            }
+        }
+
+        if (savedState.containsKey("caching")) {
+            Bundle bundle = savedState.getBundle("caching");
+
+            Set<String> keys = bundle.keySet();
+            for (String key : keys) {
+                caching.put(key, (UriIntent) bundle.getParcelable(key));
+            }
+        }
+        _isCancelable = savedState.getBoolean("_isCancelable");
+
+        if (!_isCancelable) {
+            _items.setVisibility(View.GONE);
+            _loadingLayout.setVisibility(View.VISIBLE);
+            _loadingProgress.setIndeterminate(false);
+
+            long sum = 0;
+            for (Long val : progress.values()) {
+                sum += val;
+            }
+
+            _loadingBytesTextView.setVisibility(View.VISIBLE);
+            _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
+            _loadingProgress.setProgress(cached.size());
+            _loadingProgress.setMax(cached.size() + caching.size());
+            _loadingTextView.setText(
+                    getContext().getString(R.string.preparing_files_num,
+                            cached.size(),
+                            cached.size() + caching.size()));
+        }
     }
 
     @Override
@@ -114,6 +180,29 @@ public class GetFileDialog extends SimpleDialog {
             outState.putParcelable("_sourceUri", _sourceUri);
         if (_cameraIntent != null)
             outState.putParcelable("_cameraIntent", _cameraIntent);
+        if (cached.size() > 0) {
+            outState.putParcelableArray("cached", cached.toArray(new Parcelable[cached.size()]));
+        }
+        if (progress.size() > 0) {
+            Bundle bundle = new Bundle();
+
+            Set<String> keys = progress.keySet();
+            for (String key : keys) {
+                bundle.putLong(key, progress.get(key));
+            }
+            outState.putBundle("progress", bundle);
+        }
+
+        if (caching.size() > 0) {
+            Bundle bundle = new Bundle();
+            Set<String> keys = caching.keySet();
+            for (String key : keys) {
+                bundle.putParcelable(key, caching.get(key));
+            }
+            outState.putBundle("caching", bundle);
+        }
+
+        outState.putBoolean("_isCancelable", _isCancelable);
     }
 
     @Override
@@ -127,6 +216,7 @@ public class GetFileDialog extends SimpleDialog {
         Log.v(TAG, "onStop");
         _permissionsListener.unsub();
         _activityResultListener.unsub();
+        _fileCacheClient.unsub();
         super.onStop();
     }
 
@@ -230,6 +320,11 @@ public class GetFileDialog extends SimpleDialog {
         Controller.show(context, uid, GetFileDialog.class, params);
     }
 
+    @Override
+    public boolean isCancelable() {
+        return _isCancelable;
+    }
+
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
@@ -295,17 +390,27 @@ public class GetFileDialog extends SimpleDialog {
                     }
                 }
 
-                Log.v(TAG, "Dispatch _onFileDispatcher");
+                Log.v(TAG, "Starting caching");
+
+
+                _isCancelable = false;
+                _loadingLayout.setVisibility(View.VISIBLE);
+                _items.setVisibility(View.GONE);
+                _loadingProgress.setIndeterminate(false);
+                _loadingProgress.setMax(fileUris.size());
+                _loadingProgress.setProgress(0);
+                _loadingBytesTextView.setVisibility(View.GONE);
+                _loadingTextView.setText(getContext().getString(R.string.preparing_files_num, 1, fileUris.size()));
+
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
-                        FileCacheClient.cacheFileUpload(App.get(), ui.uri.toString(), ui.uri);
+                        caching.put(ui.uri.toString(), ui);
+                        FileCacheClient.cacheFileUpload(ui.uri.toString(), ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
-                        FileCacheClient.cacheFileUpload(App.get(), ui.intent.getData().toString(), ui.intent.getData());
+                        caching.put(ui.intent.getData().toString(), ui);
+                        FileCacheClient.cacheFileUpload(ui.intent.getData().toString(), ui.intent.getData());
                     }
                 }
-
-                _onFileDispatcher.dispatch(getUid(), fileUris);
-                dismiss(false);
             } catch (Exception ex) {
                 ex.printStackTrace();
                 Log.logException(ex);
@@ -314,7 +419,7 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    public static class UriIntent {
+    public static class UriIntent implements Parcelable {
         public Uri uri = null;
         public Intent intent = null;
 
@@ -325,7 +430,84 @@ public class GetFileDialog extends SimpleDialog {
         private UriIntent(Intent intent) {
             this.intent = intent;
         }
+
+        public static final Parcelable.Creator<UriIntent> CREATOR = new Parcelable.Creator<UriIntent>() {
+            @Override
+            public UriIntent createFromParcel(Parcel source) {
+                Parcelable p = source.readParcelable(Parcelable.class.getClassLoader());
+                if (p instanceof Uri)
+                    return new UriIntent((Uri) p);
+                else if (p instanceof Intent)
+                    return new UriIntent((Intent) p);
+
+                return null;
+            }
+
+            @Override
+            public UriIntent[] newArray(int size) {
+                return new UriIntent[size];
+            }
+        };
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            if (uri != null)
+                dest.writeParcelable(uri, flags);
+            else if (intent != null)
+                dest.writeParcelable(intent, flags);
+        }
     }
+
+    private final FileCacheClient _fileCacheClient = new FileCacheClient() {
+
+        @Override
+        public void onFileCacheProgress(String tag, long size) {
+            progress.put(tag, size);
+
+            long sum = 0;
+            for (Long val : progress.values()) {
+                sum += val;
+            }
+
+            _loadingBytesTextView.setVisibility(View.VISIBLE);
+            _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
+        }
+
+        @Override
+        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+            if (caching.containsKey(tag)) {
+                cached.add(caching.remove(tag));
+
+                _loadingProgress.setProgress(cached.size());
+                _loadingProgress.setMax(cached.size() + caching.size());
+                _loadingTextView.setText(
+                        getContext().getString(R.string.preparing_files_num,
+                                cached.size(),
+                                cached.size() + caching.size()));
+
+                progress.put(tag, size);
+
+                long sum = 0;
+                for (Long val : progress.values()) {
+                    sum += val;
+                }
+
+                _loadingBytesTextView.setVisibility(View.VISIBLE);
+                _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
+
+                if (caching.size() == 0 && cached.size() > 0) {
+                    _isCancelable = true;
+                    _onFileDispatcher.dispatch(getUid(), cached);
+                    dismiss(false);
+                }
+            }
+        }
+    };
 
     /*-***********************************/
     /*-         File Listener           -*/

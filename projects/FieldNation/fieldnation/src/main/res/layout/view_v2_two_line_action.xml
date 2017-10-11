@@ -4,14 +4,29 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white">
 
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/key_iconView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="@string/icon_notifications"
+        android:textColor="@color/fn_red"
+        android:textSize="32sp"
+        android:visibility="visible" />
+
     <TextView
         android:id="@+id/key"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/key_iconView"
         android:text="Key"
         android:textColor="@color/fn_dark_text"
         android:textSize="16sp" />
@@ -20,9 +35,9 @@
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/key"
         android:layout_below="@+id/key"
         android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:gravity="left"
         android:text="Value"

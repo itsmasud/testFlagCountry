@@ -7,6 +7,7 @@ package com.fieldnation.service.data.filecache;
 public interface FileCacheConstants {
     String ADDRESS_CACHE_FILE_START = "FileCacheConstants:ADDRESS_CACHE_FILE_START";
     String ADDRESS_CACHE_FILE_END = "FileCacheConstants:ADDRESS_CACHE_FILE_END";
+    String ADDRESS_CACHE_FILE_PROGRESS = "FileCacheConstants:ADDRESS_CACHE_FILE_PROGRESS";
 
     String PARAM_ACTION = "PARAM_ACTION";
 
@@ -14,4 +15,5 @@ public interface FileCacheConstants {
     String PARAM_TAG = "tag";
     String PARAM_SUCCESS = "success";
     String PARAM_SIZE = "size";
+    String PARAM_POS = "pos";
 }
