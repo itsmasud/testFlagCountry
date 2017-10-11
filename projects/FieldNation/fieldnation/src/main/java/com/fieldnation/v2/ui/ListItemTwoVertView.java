@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 
 /**
  * Created by mc on 7/11/17.
@@ -20,6 +21,7 @@ public class ListItemTwoVertView extends RelativeLayout {
 
     // Ui
     private TextView _keyTextView;
+    private IconFontTextView _keyIconView;
     private TextView _valueTextView;
     private TextView _actionTextView;
     private TextView _alertTextView;
@@ -29,7 +31,9 @@ public class ListItemTwoVertView extends RelativeLayout {
     private String _key;
     private String _value;
     private String _action;
-    private boolean _actionVisible = true;
+    private String _iconText = null;
+    private int _iconTextColor = -1;
+    private boolean _actionVisible = false;
     private boolean _alertVisible = false;
     private boolean _progressVisible = false;
     private int _progress = -1;
@@ -59,6 +63,7 @@ public class ListItemTwoVertView extends RelativeLayout {
             return;
 
         _keyTextView = findViewById(R.id.key);
+        _keyIconView = findViewById(R.id.key_iconView);
         _valueTextView = findViewById(R.id.value);
         _actionTextView = findViewById(R.id.action);
         _actionTextView.setOnClickListener(_action_onClick);
@@ -85,6 +90,14 @@ public class ListItemTwoVertView extends RelativeLayout {
         populateUi();
     }
 
+    public void setIcon(String iconText, int iconTextColor) {
+        _iconText = iconText;
+        _iconTextColor = iconTextColor;
+
+        populateUi();
+    }
+
+
     public void setProgressVisible(boolean visible) {
         _progressVisible = visible;
         populateUi();
@@ -103,6 +116,14 @@ public class ListItemTwoVertView extends RelativeLayout {
         _key = key;
         _value = value;
         populateUi();
+    }
+
+    public String getKey() {
+        return _key;
+    }
+
+    public String getValue() {
+        return _value;
     }
 
     private void populateUi() {
@@ -151,9 +172,20 @@ public class ListItemTwoVertView extends RelativeLayout {
             _alertTextView.setVisibility(GONE);
         }
 
+
+        if (misc.isEmptyOrNull(_iconText))
+            _keyIconView.setVisibility(GONE);
+        else {
+            _keyIconView.setVisibility(VISIBLE);
+            _keyIconView.setText(_iconText);
+        }
+
+
+        if (_iconTextColor != -1)
+            _keyIconView.setTextColor(_iconTextColor);
     }
 
-    private final View.OnClickListener _action_onClick = new OnClickListener() {
+    private final OnClickListener _action_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
             if (_actionOnclickListener != null)

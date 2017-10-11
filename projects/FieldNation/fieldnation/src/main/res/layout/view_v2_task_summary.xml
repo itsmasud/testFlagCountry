@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
     android:background="@color/fn_clickable_bg">
 
     <LinearLayout
@@ -10,8 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
-
     </LinearLayout>
 
     <com.fieldnation.v2.ui.workorder.TaskSummaryRow

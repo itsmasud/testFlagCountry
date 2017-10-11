@@ -186,7 +186,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         } else {
             _customFieldsView.setCountBg(R.drawable.round_rect_gray);
             _customFieldsView.setCount(fteRequiredComplete + "/" + fteRequired);
-            _customFieldsView.setOnClickListener(null);
+            _customFieldsView.setOnClickListener(_fte_onClick);
 
         }
     }
