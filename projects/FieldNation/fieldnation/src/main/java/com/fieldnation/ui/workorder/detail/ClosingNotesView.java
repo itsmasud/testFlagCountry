@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,9 +16,7 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
     private static final String TAG = "ClosingNotesView";
 
     // UI
-    private TextView _noNotesTextView;
     private TextView _notesTextView;
-    private Button _addButton;
 
     // Data
     private WorkOrder _workOrder;
@@ -40,13 +37,8 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         if (isInEditMode())
             return;
 
-        _noNotesTextView = findViewById(R.id.noNotes_textview);
-
         _notesTextView = findViewById(R.id.notes_textview);
-        _notesTextView.setOnClickListener(_notes_onClick);
-
-        _addButton = findViewById(R.id.add_button);
-        _addButton.setOnClickListener(_notes_onClick);
+        setOnClickListener(_notes_onClick);
 
         setVisibility(View.GONE);
     }
@@ -70,26 +62,17 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
             _notesTextView.setText(_workOrder.getClosingNotes());
             _notesTextView.setVisibility(VISIBLE);
-            _noNotesTextView.setVisibility(GONE);
         } else {
             _notesTextView.setVisibility(GONE);
-            _noNotesTextView.setVisibility(VISIBLE);
-            if (!_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
-                setVisibility(View.GONE);
-                return;
-            }
         }
         setVisibility(View.VISIBLE);
 
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
-            _addButton.setVisibility(View.VISIBLE);
-            _notesTextView.setClickable(true);
+            setClickable(true);
         } else {
-            _addButton.setVisibility(View.GONE);
-            _notesTextView.setClickable(false);
+            setClickable(false);
         }
     }
-
 
     /*-*********************************-*/
     /*-				Events				-*/
