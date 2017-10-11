@@ -70,6 +70,8 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _ttaDaysTextView = findViewById(R.id.ttaDays_textview);
 
         setVisibility(GONE);
+
+        populateUi();
     }
 
     @Override
