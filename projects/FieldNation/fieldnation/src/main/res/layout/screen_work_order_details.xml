@@ -177,6 +177,11 @@
                                     android:text="@string/additional_information" />
                 -->
 
+                <com.fieldnation.v2.ui.workorder.SignatureSummaryView
+                    android:id="@+id/signaturesSummaryView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <com.fieldnation.ui.SignatureListView
                     android:id="@+id/signature_view"
                     android:layout_width="match_parent"
