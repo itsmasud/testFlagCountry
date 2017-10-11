@@ -105,6 +105,14 @@ public class ListItemTwoVertView extends RelativeLayout {
         populateUi();
     }
 
+    public String getKey() {
+        return _key;
+    }
+
+    public String getValue() {
+        return _value;
+    }
+
     private void populateUi() {
         if (_keyTextView == null)
             return;

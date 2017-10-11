@@ -18,7 +18,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -27,6 +30,8 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategories;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 
@@ -50,6 +55,8 @@ public class ExpenseDialog extends FullScreenDialog {
     private InputMethodManager _imm;
     private boolean _showCategories = true;
     private int _itemSelectedPosition = -1;
+    private int _workOrderId;
+    private boolean _sendResult = false;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -88,6 +95,8 @@ public class ExpenseDialog extends FullScreenDialog {
 
         if (payload.containsKey("amount"))
             _amountEditText.setText(payload.getDouble("amount") + "");
+
+        _workOrderId = payload.getInt("workOrderId");
 
         super.show(payload, animate);
         populateUi();
@@ -225,8 +234,26 @@ public class ExpenseDialog extends FullScreenDialog {
                 return false;
             }
 
-            _onOkDispatcher.dispatch(getUid(), getDescription(), getAmount(), getCategory());
+            if (_sendResult) {
+                _onOkDispatcher.dispatch(getUid(), getDescription(), getAmount(), getCategory());
+            } else {
+                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+                try {
+                    Expense expense = new Expense();
+                    expense.description(getDescription());
+                    expense.amount(getAmount());
+                    expense.category(getCategory());
 
+                    SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                    uiContext.page += " - Expense Dialog";
+
+                    WorkordersWebApi.addExpense(App.get(), _workOrderId, expense, uiContext);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+                AppMessagingClient.setLoading(true);
+            }
+            
             ExpenseDialog.this.dismiss(true);
             return true;
         }
@@ -244,17 +271,23 @@ public class ExpenseDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, boolean showCategories) {
+    public static void show(Context context, String uid, int workOrderId, boolean sendResult, boolean showCategories) {
         Bundle params = new Bundle();
         params.putBoolean("showCategories", showCategories);
+        params.putInt("workOrderId", workOrderId);
+        params.putBoolean("sendResult", sendResult);
+
         Controller.show(context, uid, ExpenseDialog.class, params);
     }
 
-    public static void show(Context context, String uid, String description, double amount, boolean showCategories) {
+    public static void show(Context context, String uid, int workOrderId, boolean sendResult, String description, double amount, boolean showCategories) {
         Bundle params = new Bundle();
         params.putBoolean("showCategories", showCategories);
         params.putString("description", description);
         params.putDouble("amount", amount);
+        params.putInt("workOrderId", workOrderId);
+        params.putBoolean("sendResult", sendResult);
+
         Controller.show(context, uid, ExpenseDialog.class, params);
     }
 

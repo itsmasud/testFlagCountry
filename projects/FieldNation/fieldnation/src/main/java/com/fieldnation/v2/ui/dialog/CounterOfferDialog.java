@@ -747,7 +747,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         @Override
         public void onClick(final View view) {
             _expenseMenuClickedView = null;
-            ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, false);
+            ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, _workOrderId, true, false);
             getView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -796,7 +796,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             int index = (Integer) _expenseMenuClickedView.getTag();
             Expense expense = _expenses.get(index);
             if (item.getItemId() == R.id.edit_menu) {
-                ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, expense.getDescription(), expense.getAmount(), false);
+                ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, _workOrderId, true, expense.getDescription(), expense.getAmount(), false);
             } else if (item.getItemId() == R.id.delete_menu) {
                 _expenses.remove(index);
                 populateUi();
