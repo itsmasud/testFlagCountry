@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -13,13 +14,15 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ShipmentAdapter;
 
 /**
@@ -29,6 +32,8 @@ import com.fieldnation.v2.ui.ShipmentAdapter;
 public class ShipmentListDialog extends FullScreenDialog {
     private static final String TAG = "ShipmentListDialog";
 
+    private static final String DIALOG_DELETE_SHIPMENT = TAG + ".deleteShipmentDialog";
+
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
@@ -36,6 +41,7 @@ public class ShipmentListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
+    private AttachmentFolders _folders;
     private ShipmentAdapter _adapter = new ShipmentAdapter();
 
     public ShipmentListDialog(Context context, ViewGroup container) {
@@ -71,18 +77,23 @@ public class ShipmentListDialog extends FullScreenDialog {
         _adapter.setListener(_shipments_listener);
 
         _workOrdersApi.sub();
+
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
     }
 
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getShipments(App.get(), _workOrderId, true, false);
+        AppMessagingClient.setLoading(true);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
 
     @Override
     public void onStop() {
         _workOrdersApi.unsub();
+
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         super.onStop();
     }
 
@@ -96,10 +107,8 @@ public class ShipmentListDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-/*
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            DiscountDialog.show(App.get(), null, _workOrderId, getContext().getString(R.string.dialog_add_discount_title));
-*/
+            ShipmentAddDialog.show(App.get(), null, _workOrderId,
+                    _folders, getContext().getString(R.string.dialog_shipment_title), null, null);
             return false;
         }
     };
@@ -107,29 +116,43 @@ public class ShipmentListDialog extends FullScreenDialog {
     private final ShipmentAdapter.Listener _shipments_listener = new ShipmentAdapter.Listener() {
         @Override
         public void onLongClick(View v, Shipment shipment) {
-
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SHIPMENT,
+                    R.string.dialog_delete_shipment_title,
+                    R.string.dialog_delete_shipment_body,
+                    R.string.btn_yes, R.string.btn_no, true, shipment);
         }
 
         @Override
         public void onClick(View v, Shipment shipment) {
+            // TODO edit not supported yet
+        }
+    };
 
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteShipment = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            AppMessagingClient.setLoading(true);
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, ((Shipment) extraData).getId(), App.get().getSpUiContext());
         }
     };
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.toLowerCase().contains("shipment");
+            return methodName.toLowerCase().contains("workorder");
         }
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (success && successObject != null && successObject instanceof Shipments) {
-                Shipments shipment = (Shipments) successObject;
-                _adapter.setShipments(shipment);
+            if (success && successObject != null && successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                _folders = workOrder.getAttachments();
+                _adapter.setShipments(workOrder.getShipments());
                 AppMessagingClient.setLoading(false);
             } else {
-                WorkordersWebApi.getShipments(App.get(), _workOrderId, false, false);
+                AppMessagingClient.setLoading(true);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
         }
     };

@@ -92,7 +92,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
             if (_shipments.getResults().length == 0)
                 return;
 
-            List<Shipment> shipments = new LinkedList();
+            List<Shipment> shipments = new LinkedList<>();
             for (Shipment shipment : _shipments.getResults()) {
                 if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
                     shipments.add(shipment);
