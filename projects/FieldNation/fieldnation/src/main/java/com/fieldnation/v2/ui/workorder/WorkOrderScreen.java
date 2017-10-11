@@ -50,9 +50,6 @@ import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.NestedScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
-import com.fieldnation.ui.SignatureCardView;
-import com.fieldnation.ui.SignatureDisplayActivity;
-import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.menu.MessagesMenuButton;
 import com.fieldnation.ui.menu.MoreMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -179,11 +176,11 @@ public class WorkOrderScreen extends RelativeLayout {
     private TaskSummaryView _taskWidget;
     //    private TaskListView _taskList;
     private ShipmentListView _shipments;
-    private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpensesSummaryView _expensesSummaryView;
+    private SignatureSummaryView _signaturesSummaryView;
     private DiscountSummaryView _discountSummaryView;
     private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
@@ -278,6 +275,9 @@ public class WorkOrderScreen extends RelativeLayout {
         _expensesSummaryView = findViewById(R.id.expensesSummaryView);
         _renderers.add(_expensesSummaryView);
 
+        _signaturesSummaryView = findViewById(R.id.signaturesSummaryView);
+        _renderers.add(_signaturesSummaryView);
+
         _discountSummaryView = findViewById(R.id.discountSummaryView);
         _renderers.add(_discountSummaryView);
 
@@ -307,10 +307,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _closingNotes = findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
-
-        _signatureView = findViewById(R.id.signature_view);
-        _signatureView.setListener(_signatureList_listener);
-        _renderers.add(_signatureView);
 
         _attachmentSummaryView = findViewById(R.id.attachment_summary_view);
         _renderers.add(_attachmentSummaryView);
@@ -1166,29 +1162,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onChangeClosingNotes(String closingNotes) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
             showClosingNotesDialog();
-        }
-    };
-
-    private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
-        @Override
-        public void addSignature() {
-            SignOffActivity.startSignOff(App.get(), _workOrderId);
-            setLoading(true);
-        }
-
-        @Override
-        public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(App.get(), signature);
-            setLoading(true);
-        }
-
-        @Override
-        public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SIGNATURE,
-                    R.string.dialog_delete_signature_title,
-                    R.string.dialog_delete_signature_body,
-                    R.string.btn_yes, R.string.btn_no, true, signature);
-            return true;
         }
     };
 
