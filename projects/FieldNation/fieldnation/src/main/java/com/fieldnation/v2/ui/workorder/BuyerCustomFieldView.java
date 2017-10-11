@@ -12,10 +12,10 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.ListItemTwoHorizView;
 import com.fieldnation.v2.ui.ListItemTwoVertView;
 
 /**
@@ -90,7 +90,10 @@ public class BuyerCustomFieldView extends LinearLayout implements WorkOrderRende
     private final View.OnLongClickListener _this_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
-            ListItemTwoHorizView v = (ListItemTwoHorizView) view;
+            ListItemTwoVertView v = (ListItemTwoVertView) view;
+            if (misc.isEmptyOrNull(v.getKey()) || misc.isEmptyOrNull(v.getValue()))
+                return false;
+
             ClipboardManager clipboard = (ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText(v.getKey(), v.getValue());
             clipboard.setPrimaryClip(clip);
