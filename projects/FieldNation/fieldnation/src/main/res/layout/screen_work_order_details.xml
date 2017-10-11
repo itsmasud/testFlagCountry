@@ -107,17 +107,15 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
-                <com.fieldnation.ui.workorder.detail.ExpenseListLayout
-                    android:id="@+id/expenseListLayout_view"
+                <com.fieldnation.v2.ui.workorder.ExpensesSummaryView
+                    android:id="@+id/expensesSummaryView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
-                <com.fieldnation.ui.workorder.detail.DiscountListLayout
-                    android:id="@+id/discountListLayout_view"
+                <com.fieldnation.v2.ui.workorder.DiscountSummaryView
+                    android:id="@+id/discountSummaryView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
                 <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
                     android:id="@+id/expected_pay_view"

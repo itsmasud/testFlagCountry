@@ -13,12 +13,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.ui.DiscountsAdapter;
 
 public class DiscountDialog extends SimpleDialog {
     private static String TAG = "DiscountDialog";
@@ -35,6 +42,7 @@ public class DiscountDialog extends SimpleDialog {
 
     // Data
     private String _title;
+    private int _workOrderId;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -69,6 +77,7 @@ public class DiscountDialog extends SimpleDialog {
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
         _title = payload.getString("title");
+        _workOrderId = payload.getInt("workOrderId");
     }
 
     private String getDescription() {
@@ -115,7 +124,21 @@ public class DiscountDialog extends SimpleDialog {
             }
 
             dismiss(true);
-            _onOkDispatcher.dispatch(getUid(), getDescription(), getAmount());
+
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+            try {
+                PayModifier discount = new PayModifier();
+                discount.setAmount(getAmount());
+                discount.setDescription(getDescription());
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Discount Dialog";
+
+                WorkordersWebApi.addDiscount(App.get(), _workOrderId, discount, uiContext);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            AppMessagingClient.setLoading(true);
         }
     };
 
@@ -127,38 +150,12 @@ public class DiscountDialog extends SimpleDialog {
         }
     };
 
-
-    public static void show(Context context, String uid, String title) {
+    public static void show(Context context, String uid, int workOrderId, String title) {
         Bundle params = new Bundle();
         params.putString("title", title);
+        params.putInt("workOrderId", workOrderId);
 
         Controller.show(context, uid, DiscountDialog.class, params);
-    }
-
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
-    public interface OnOkListener {
-        void onOk(String description, double amount);
-    }
-
-    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
-        @Override
-        public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((String) parameters[0], (Double) parameters[1]);
-        }
-    };
-
-    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.add(uid, onOkListener);
-    }
-
-    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.remove(uid, onOkListener);
-    }
-
-    public static void removeAllOnOkListener(String uid) {
-        _onOkDispatcher.removeAll(uid);
     }
 
     /*-**************************-*/
