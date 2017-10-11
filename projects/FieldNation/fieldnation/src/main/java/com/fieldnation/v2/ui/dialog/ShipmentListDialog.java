@@ -18,6 +18,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.ui.ShipmentAdapter;
 
@@ -67,7 +68,7 @@ public class ShipmentListDialog extends FullScreenDialog {
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _list.setAdapter(_adapter);
 
-//        _adapter.setListener(_discounts_listener);
+        _adapter.setListener(_shipments_listener);
 
         _workOrdersApi.sub();
     }
@@ -100,6 +101,18 @@ public class ShipmentListDialog extends FullScreenDialog {
             DiscountDialog.show(App.get(), null, _workOrderId, getContext().getString(R.string.dialog_add_discount_title));
 */
             return false;
+        }
+    };
+
+    private final ShipmentAdapter.Listener _shipments_listener = new ShipmentAdapter.Listener() {
+        @Override
+        public void onLongClick(View v, Shipment shipment) {
+
+        }
+
+        @Override
+        public void onClick(View v, Shipment shipment) {
+
         }
     };
 

@@ -3,7 +3,11 @@ package com.fieldnation.v2.ui;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.fieldnation.App;
+import com.fieldnation.R;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;
@@ -16,10 +20,15 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
     private static final String TAG = "ShipmentAdapter";
 
     private Shipments shipments;
+    private Listener listener;
 
     public void setShipments(Shipments shipments) {
         this.shipments = shipments;
         rebuild();
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     private void rebuild() {
@@ -53,15 +62,13 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
     private final View.OnLongClickListener _shipment_onLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
-/*
-            if (_listener != null
-                    && shipment != null
+            Shipment shipment = (Shipment) view.getTag();
+            if (listener != null
                     && shipment.getActionsSet().contains(Shipment.ActionsEnum.DELETE)) {
-                _listener.onDelete(_workOrder, shipment);
+                listener.onLongClick(view, shipment);
             } else {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
             }
-*/
             return false;
         }
     };
@@ -69,13 +76,17 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
     private final View.OnClickListener _shipment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-/*
-            if (_listener != null
-                    && shipment != null
+            Shipment shipment = (Shipment) view.getTag();
+            if (listener != null
                     && shipment.getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
-                _listener.onAssign(_workOrder, shipment);
+                listener.onClick(view, shipment);
             }
-*/
         }
     };
+
+    public interface Listener {
+        void onLongClick(View v, Shipment shipment);
+
+        void onClick(View v, Shipment shipment);
+    }
 }
