@@ -48,9 +48,6 @@ import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.NestedScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
-import com.fieldnation.ui.SignatureCardView;
-import com.fieldnation.ui.SignatureDisplayActivity;
-import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.menu.MessagesMenuButton;
 import com.fieldnation.ui.menu.MoreMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -78,7 +75,6 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Requests;
@@ -145,7 +141,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_DELETE_WORKLOG = TAG + ".deleteWorkLogDialog";
     private static final String DIALOG_DELETE_SHIPMENT = TAG + ".deleteShipmentDialog";
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
-    private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
 
@@ -174,11 +169,11 @@ public class WorkOrderScreen extends RelativeLayout {
     private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
     private ShipmentListView _shipments;
-    private SignatureListView _signatureView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpensesSummaryView _expensesSummaryView;
+    private SignatureSummaryView _signaturesSummaryView;
     private DiscountSummaryView _discountSummaryView;
     private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
@@ -273,6 +268,9 @@ public class WorkOrderScreen extends RelativeLayout {
         _expensesSummaryView = findViewById(R.id.expensesSummaryView);
         _renderers.add(_expensesSummaryView);
 
+        _signaturesSummaryView = findViewById(R.id.signaturesSummaryView);
+        _renderers.add(_signaturesSummaryView);
+
         _discountSummaryView = findViewById(R.id.discountSummaryView);
         _renderers.add(_discountSummaryView);
 
@@ -302,10 +300,6 @@ public class WorkOrderScreen extends RelativeLayout {
         _closingNotes = findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
-
-        _signatureView = findViewById(R.id.signature_view);
-        _signatureView.setListener(_signatureList_listener);
-        _renderers.add(_signatureView);
 
         _attachmentSummaryView = findViewById(R.id.attachment_summary_view);
         _renderers.add(_attachmentSummaryView);
@@ -406,7 +400,6 @@ public class WorkOrderScreen extends RelativeLayout {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
 
@@ -443,7 +436,6 @@ public class WorkOrderScreen extends RelativeLayout {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
         _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
@@ -998,29 +990,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
-        @Override
-        public void addSignature() {
-            SignOffActivity.startSignOff(App.get(), _workOrderId);
-            setLoading(true);
-        }
-
-        @Override
-        public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(App.get(), signature);
-            setLoading(true);
-        }
-
-        @Override
-        public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SIGNATURE,
-                    R.string.dialog_delete_signature_title,
-                    R.string.dialog_delete_signature_body,
-                    R.string.btn_yes, R.string.btn_no, true, signature);
-            return true;
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteSignature = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
@@ -1056,14 +1025,6 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onCounterOffer() {
             CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
-        }
-    };
-
-    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteDiscount = new TwoButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary(Parcelable extraData) {
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData).getId(), App.get().getSpUiContext());
         }
     };
 
