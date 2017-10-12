@@ -1,11 +1,7 @@
 package com.fieldnation.v2.ui;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +14,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnactivityresult.ActivityClient;
-import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -27,32 +21,21 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.documents.DocumentClient;
-import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
-import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
-import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
-import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
-import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
-import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,9 +46,6 @@ import java.util.Locale;
 public class TaskRowView extends RelativeLayout {
     private static final String TAG = UniqueTag.makeTag("TaskRowView");
 
-    // Dialog
-    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
-
     // Ui
     private TextView _keyTextView;
     private TextView _valueTextView;
@@ -73,9 +53,6 @@ public class TaskRowView extends RelativeLayout {
     private ProgressBar _progressBar;
 
     // Data
-    private boolean _progressVisible = false;
-    private int _progress = -1;
-
     private WorkOrder _workOrder;
     private Task _task;
 
@@ -109,17 +86,12 @@ public class TaskRowView extends RelativeLayout {
         _rightValueTextView = findViewById(R.id.value_right);
         _progressBar = findViewById(R.id.progressBar);
 
-        setOnClickListener(_click_listener);
-
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-
         populateUi();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _workOrderApi.unsub();
-        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         super.onDetachedFromWindow();
     }
 
@@ -189,7 +161,8 @@ public class TaskRowView extends RelativeLayout {
             }
 
         } else {
-            drawRowByType(getType());
+            _progressBar.setVisibility(GONE);
+            drawRowByType(getType(_task));
         }
         updateView();
     }
@@ -203,7 +176,10 @@ public class TaskRowView extends RelativeLayout {
         sdf.setDateFormatSymbols(symbols);
 
         return sdf.format(cal.getTime()) + DateUtils.getDeviceTimezone();
+    }
 
+    public TaskTypeEnum getType(Task task) {
+        return TaskTypeEnum.fromTypeId(task.getType().getId());
     }
 
     private void drawRowByType(TaskTypeEnum taskType) {
@@ -253,9 +229,9 @@ public class TaskRowView extends RelativeLayout {
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
 
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -264,21 +240,20 @@ public class TaskRowView extends RelativeLayout {
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
 
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
                 case CUSTOM_FIELD: // custom field
-                    _progressBar.setVisibility(GONE);
                     _keyTextView.setText(_task.getLabel());
                     _rightValueTextView.setVisibility(GONE);
 
-                    if (misc.isEmptyOrNull(_task.getDescription())){ // TODO need to add task.getDescriptions().getFirst(). Talk with Kamrul vai
+                    if (misc.isEmptyOrNull(_task.getDescription())) { // TODO need to add task.getDescriptions().getFirst(). Talk with Kamrul vai
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getDescription());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -287,9 +262,9 @@ public class TaskRowView extends RelativeLayout {
                     _keyTextView.setText("Call " + _task.getPhone());
                     _rightValueTextView.setVisibility(GONE);
 
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -297,9 +272,9 @@ public class TaskRowView extends RelativeLayout {
                 case EMAIL: // email
                     _keyTextView.setText("Email " + _task.getEmail());
                     _rightValueTextView.setVisibility(GONE);
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -307,9 +282,9 @@ public class TaskRowView extends RelativeLayout {
                 case UNIQUE_TASK: // unique task
                     _keyTextView.setText("Complete tasks");
                     _rightValueTextView.setVisibility(GONE);
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -317,9 +292,9 @@ public class TaskRowView extends RelativeLayout {
                 case SIGNATURE: // signature
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -327,9 +302,9 @@ public class TaskRowView extends RelativeLayout {
                 case SHIPMENT: // shipment
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -337,9 +312,9 @@ public class TaskRowView extends RelativeLayout {
                 case DOWNLOAD:
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
-                    if (misc.isEmptyOrNull(_task.getLabel())){
+                    if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
-                    }else {
+                    } else {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
@@ -359,92 +334,6 @@ public class TaskRowView extends RelativeLayout {
         } else {
             _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
             setEnabled(false);
-        }
-    }
-
-
-    /*-*********************************************-*/
-    /*-				Closing notes Process			-*/
-    /*-*********************************************-*/
-
-    private void showClosingNotesDialog() {
-        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
-            ClosingNotesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getClosingNotes());
-    }
-
-    /*-*********************************************-*/
-    /*-				Check In Process				-*/
-    /*-*********************************************-*/
-    private void doCheckin() {
-        App.get().analActionTitle = null;
-        CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
-                _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-    }
-
-    /*-*********************************************-*/
-    /*-				Check Out Process				-*/
-    /*-*********************************************-*/
-    private void doCheckOut() {
-//        setLoading(true);
-        int deviceCount = -1;
-
-        Pay pay = _workOrder.getPay();
-        if (pay.getType() == Pay.TypeEnum.DEVICE
-                && pay.getBase().getUnits() != null) {
-            deviceCount = pay.getBase().getUnits().intValue();
-        }
-
-        App.get().analActionTitle = null;
-
-        if (deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
-                    _workOrder.getTimeLogs(), deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-        } else {
-            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
-                    _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-        }
-    }
-
-    private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
-    }
-
-    public TaskTypeEnum getType() {
-        return TaskTypeEnum.fromTypeId(_task.getType().getId());
-    }
-
-    private enum TaskTypeEnum {
-        SET_ETA(1),
-        CLOSING_NOTES(2),
-        CHECK_IN(3),
-        CHECK_OUT(4),
-        UPLOAD_FILE(5),
-        UPLOAD_PICTURE(6),
-        CUSTOM_FIELD(7),
-        PHONE(8),
-        EMAIL(9),
-        UNIQUE_TASK(10),
-        SIGNATURE(11),
-        SHIPMENT(12),
-        DOWNLOAD(13),
-        NOT_SUPPORTED(14);
-
-        private int value;
-
-        TaskTypeEnum(int value) {
-            this.value = value;
-        }
-
-        private int getValue() {
-            return this.value;
-        }
-
-        private static TaskTypeEnum fromTypeId(int id) {
-            for (int i = 0; i < values().length; i++) {
-                if (values()[i].value == id)
-                    return values()[i];
-            }
-            return NOT_SUPPORTED;
         }
     }
 
@@ -550,171 +439,22 @@ public class TaskRowView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _click_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            WorkOrderTracker.onTaskEvent(App.get(), _task.getType(), _workOrder.getId());
+//    private final View.OnClickListener _click_listener = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View view) {
+////            if (_listener == null)
+////                return;
+//
+//            WorkOrderTracker.onTaskEvent(App.get(), _task.getType(), _workOrder.getId());
+//            updateView();
+////            _listener.onTaskClick(_task);
+//
+//        }
+//    };
 
-            updateView();
-
-            switch (getType()) {
-
-                case SET_ETA: // set eta
-                    App.get().analActionTitle = null;
-                    EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
-                            _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
-                    break;
-                case CLOSING_NOTES: // closing notes
-                    showClosingNotesDialog();
-                    break;
-                case CHECK_IN: // check in
-                    doCheckin();
-                    break;
-                case CHECK_OUT: // check out
-                    doCheckOut();
-                    break;
-                case UPLOAD_FILE: // upload file
-                    startAppPickerDialog();
-                    break;
-                case UPLOAD_PICTURE: // upload picture
-                    startAppPickerDialog();
-                    break;
-                case CUSTOM_FIELD: // custom field
-                    CustomFieldDialog.show(App.get(), null, _workOrder.getId(), _task.getCustomField());
-                    break;
-                case PHONE: // phone
-                    if (_task.getStatus() != null && !_task.getStatus().equals(Task.StatusEnum.COMPLETE))
-                        try {
-                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
-
-                    try {
-                        if (_task.getPhone() != null) {
-                            if (!TextUtils.isEmpty(_task.getPhone()) && android.util.Patterns.PHONE.matcher(_task.getPhone()).matches()) {
-                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                                String phNum = "tel:" + _task.getPhone();
-                                callIntent.setData(Uri.parse(phNum));
-                                ActivityClient.startActivity(callIntent);
-//                                setLoading(true);
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                builder.setMessage(R.string.dialog_no_number_message);
-                                builder.setTitle(R.string.dialog_no_number_title);
-                                builder.setPositiveButton(R.string.btn_ok, null);
-                                builder.show();
-                            }
-
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                            builder.setMessage(R.string.dialog_no_number_message);
-                            builder.setTitle(R.string.dialog_no_number_title);
-                            builder.setPositiveButton(R.string.btn_ok, null);
-                            builder.show();
-                        }
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                    break;
-                case EMAIL: // email
-                    String email = _task.getEmail();
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:" + email));
-                    ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
-
-                    try {
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                    break;
-                case UNIQUE_TASK: // unique task
-                    if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE))
-                        return;
-
-                    try {
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                    break;
-                case SIGNATURE: // signature
-                    SignOffActivity.startSignOff(App.get(), _workOrder.getId(), _task.getId());
-                    break;
-                case SHIPMENT: // shipment
-                    List<Shipment> shipments = new LinkedList();
-                    for (Shipment shipment : _workOrder.getShipments().getResults()) {
-                        if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
-                            shipments.add(shipment);
-                    }
-
-                    if (shipments.size() == 0) {
-                        ShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
-                                _workOrder.getAttachments(), getContext().getString(R.string.dialog_task_shipment_title), null, _task);
-                    } else {
-                        TaskShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
-                                _workOrder.getShipments(), getContext().getString(R.string.dialog_task_shipment_title), _task);
-                    }
-                    break;
-                case DOWNLOAD:
-                    Attachment doc = _task.getAttachment();
-                    if (doc.getId() != null) {
-                        Log.v(TAG, "docid: " + doc.getId());
-                        if (_task.getStatus() != null && !_task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
-                            try {
-                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                            } catch (Exception ex) {
-                                Log.v(TAG, ex);
-                            }
-                        }
-                        DocumentClient.downloadDocument(App.get(), doc.getId(),
-                                doc.getFile().getLink(), doc.getFile().getName(), false);
-                    }
-                    break;
-            }
-        }
-    };
-
-    /*-*********************************-*/
-    /*-				Dialogs				-*/
-    /*-*********************************-*/
-    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
-        @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
-            Log.v(TAG, "onFile");
-            if (fileResult.size() == 0)
-                return;
-
-            if (fileResult.size() == 1) {
-                GetFileDialog.UriIntent fui = fileResult.get(0);
-                if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _task, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                } else {
-                    // TODO show a toast?
-                }
-                return;
-            }
-
-            for (GetFileDialog.UriIntent fui : fileResult) {
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category("AttachmentUpload")
-                                .label("WorkOrderScreen - multiple")
-                                .action("start")
-                                .build());
-
-                try {
-                    Attachment attachment = new Attachment();
-                    attachment.folderId(_task.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            }
-        }
-    };
-
+//    public interface Listener {
+//        void onTaskClick(Task task);
+//    }
+//
 
 }

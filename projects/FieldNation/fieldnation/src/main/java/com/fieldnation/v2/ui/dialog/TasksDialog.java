@@ -1,10 +1,14 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +16,32 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
+import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.TaskTypeEnum;
 import com.fieldnation.v2.ui.TasksAdapter;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Shoaib on 09/09/17.
@@ -27,6 +49,9 @@ import com.fieldnation.v2.ui.TasksAdapter;
 
 public class TasksDialog extends FullScreenDialog {
     private static final String TAG = "TasksDialog";
+
+    // Dialog
+    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
 
     // Params
     private static final String PARAM_WORK_ORDER_ID = "workOrderId";
@@ -43,6 +68,7 @@ public class TasksDialog extends FullScreenDialog {
     private String _groupId = null;
     private String _dialogTitle;
     private final TasksAdapter _adapter = new TasksAdapter();
+    private Task _currentTask;
 
 
     /*-*****************************-*/
@@ -71,9 +97,18 @@ public class TasksDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
+        _adapter.setListener(_taskClick_listener);
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+
     }
 
     @Override
@@ -160,4 +195,225 @@ public class TasksDialog extends FullScreenDialog {
 
         Controller.show(context, uid, TasksDialog.class, params);
     }
+
+
+    public TaskTypeEnum getType(Task task) {
+        return TaskTypeEnum.fromTypeId(task.getType().getId());
+    }
+
+        /*-*********************************************-*/
+    /*-				Closing notes Process			-*/
+    /*-*********************************************-*/
+
+    private void showClosingNotesDialog() {
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
+            ClosingNotesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getClosingNotes());
+    }
+
+    /*-*********************************************-*/
+    /*-				Check In Process				-*/
+    /*-*********************************************-*/
+    private void doCheckin() {
+        App.get().analActionTitle = null;
+        CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+    }
+
+    /*-*********************************************-*/
+    /*-				Check Out Process				-*/
+    /*-*********************************************-*/
+    private void doCheckOut() {
+//        setLoading(true);
+        int deviceCount = -1;
+
+        Pay pay = _workOrder.getPay();
+        if (pay.getType() == Pay.TypeEnum.DEVICE
+                && pay.getBase().getUnits() != null) {
+            deviceCount = pay.getBase().getUnits().intValue();
+        }
+
+        App.get().analActionTitle = null;
+
+        if (deviceCount > -1) {
+            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+        } else {
+            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                    _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+        }
+    }
+
+    private void startAppPickerDialog() {
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+    }
+
+    private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
+        @Override
+        public void onTaskClick(View view, Task task) {
+            WorkOrderTracker.onTaskEvent(App.get(), task.getType(), _workOrder.getId());
+
+            switch (getType(task)) {
+
+                case SET_ETA: // set eta
+                    App.get().analActionTitle = null;
+                    EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
+                            _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
+                    break;
+                case CLOSING_NOTES: // closing notes
+                    showClosingNotesDialog();
+                    break;
+                case CHECK_IN: // check in
+                    doCheckin();
+                    break;
+                case CHECK_OUT: // check out
+                    doCheckOut();
+                    break;
+                case UPLOAD_FILE: // upload file
+                    _currentTask = task;
+                    startAppPickerDialog();
+                    break;
+                case UPLOAD_PICTURE: // upload picture
+                    _currentTask = task;
+                    startAppPickerDialog();
+                    break;
+                case CUSTOM_FIELD: // custom field
+                    CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
+                    break;
+                case PHONE: // phone
+                    if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                        try {
+                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
+
+                    try {
+                        if (task.getPhone() != null) {
+                            if (!TextUtils.isEmpty(task.getPhone()) && android.util.Patterns.PHONE.matcher(task.getPhone()).matches()) {
+                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                String phNum = "tel:" + task.getPhone();
+                                callIntent.setData(Uri.parse(phNum));
+                                ActivityClient.startActivity(callIntent);
+//                                setLoading(true);
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(App.get());
+                                builder.setMessage(R.string.dialog_no_number_message);
+                                builder.setTitle(R.string.dialog_no_number_title);
+                                builder.setPositiveButton(R.string.btn_ok, null);
+                                builder.show();
+                            }
+
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(App.get());
+                            builder.setMessage(R.string.dialog_no_number_message);
+                            builder.setTitle(R.string.dialog_no_number_title);
+                            builder.setPositiveButton(R.string.btn_ok, null);
+                            builder.show();
+                        }
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                    break;
+                case EMAIL: // email
+                    String email = task.getEmail();
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:" + email));
+                    ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
+
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                    break;
+                case UNIQUE_TASK: // unique task
+                    if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                        return;
+
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                    break;
+                case SIGNATURE: // signature
+                    SignOffActivity.startSignOff(App.get(), _workOrder.getId(), task.getId());
+                    break;
+                case SHIPMENT: // shipment
+                    List<Shipment> shipments = new LinkedList();
+                    for (Shipment shipment : _workOrder.getShipments().getResults()) {
+                        if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
+                            shipments.add(shipment);
+                    }
+
+                    if (shipments.size() == 0) {
+                        ShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
+                                _workOrder.getAttachments(), App.get().getString(R.string.dialog_task_shipment_title), null, task);
+                    } else {
+                        TaskShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
+                                _workOrder.getShipments(), App.get().getString(R.string.dialog_task_shipment_title), task);
+                    }
+                    break;
+                case DOWNLOAD:
+                    Attachment doc = task.getAttachment();
+                    if (doc.getId() != null) {
+                        Log.v(TAG, "docid: " + doc.getId());
+                        if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                            try {
+                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                            } catch (Exception ex) {
+                                Log.v(TAG, ex);
+                            }
+                        }
+                        DocumentClient.downloadDocument(App.get(), doc.getId(),
+                                doc.getFile().getLink(), doc.getFile().getName(), false);
+                    }
+                    break;
+            }
+
+        }
+    };
+
+
+    /*-*********************************-*/
+    /*-				Dialogs				-*/
+    /*-*********************************-*/
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
+        @Override
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
+            if (fileResult.size() == 0)
+                return;
+
+            if (fileResult.size() == 1) {
+                GetFileDialog.UriIntent fui = fileResult.get(0);
+                if (fui.uri != null) {
+                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                } else {
+                    // TODO show a toast?
+                }
+                return;
+            }
+
+            for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("WorkOrderScreen - multiple")
+                                .action("start")
+                                .build());
+
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_currentTask.getAttachments().getId());
+                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+        }
+    };
+
+
 }

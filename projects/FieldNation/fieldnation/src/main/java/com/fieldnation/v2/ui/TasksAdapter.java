@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui;
 
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
@@ -28,6 +29,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     // data
     private WorkOrder _workOrder = null;
     private String _groupId = null;
+    private Listener _listener;
 
     private static class DataHolder {
         int type;
@@ -39,8 +41,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
     }
 
-
-    // TODO find a way how you can put header and cell in same layout
     public void setData(WorkOrder workOrder, String groupId) {
         _workOrder = workOrder;
         _groupId = groupId;
@@ -77,6 +77,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
         notifyDataSetChanged();
     }
+
+    public void setListener(TasksAdapter.Listener listener) {
+        _listener = listener;
+    }
+
 
     @Override
     public TaskViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -123,8 +128,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 //                        misc.isEmptyOrNull(customField.getValue()) ? customField.getTip() : customField.getValue());
                 view.setTag(task);
 //                view.setActionVisible(false);
-
-
+                view.setOnClickListener(_task_onClick);
                 view.setData(_workOrder, task);
                 break;
             }
@@ -140,4 +144,21 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     public int getItemViewType(int position) {
         return dataHolders.get(position).type;
     }
+
+
+    private final View.OnClickListener _task_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Task task = (Task) v.getTag();
+            if (_listener != null)
+                _listener.onTaskClick(v, task);
+        }
+    };
+
+
+    public interface Listener {
+        void onTaskClick(View view, Task task);
+    }
+
+
 }
