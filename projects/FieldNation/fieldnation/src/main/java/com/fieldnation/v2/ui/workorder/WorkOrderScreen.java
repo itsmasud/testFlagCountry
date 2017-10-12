@@ -27,14 +27,11 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
-import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -61,10 +58,8 @@ import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
-import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -92,12 +87,10 @@ import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
-import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
@@ -120,7 +113,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String TAG = "WorkOrderScreen";
 
     // Dialog tags
-    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
@@ -139,7 +131,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
 
     // saved state keys
-    private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
@@ -162,7 +153,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
-    //    private TaskListView _taskList;
     private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
@@ -185,7 +175,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private String _scannedImagePath;
     private Location _currentLocation;
     private boolean _locationFailed = false;
-    private Task _currentTask;
     private int _workOrderId;
     private SimpleGps _simpleGps;
 
@@ -325,9 +314,6 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
-        if (_currentTask != null)
-            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
 
@@ -342,9 +328,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         if (savedInstanceState != null) {
             _workOrderId = savedInstanceState.getInt("workOrderId");
-            if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
-                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
-            }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
@@ -352,10 +335,6 @@ public class WorkOrderScreen extends RelativeLayout {
                 _scannedImagePath = savedInstanceState.getString(STATE_SCANNED_IMAGE_PATH);
             }
         }
-    }
-
-    private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
     public void onStart() {
@@ -389,7 +368,6 @@ public class WorkOrderScreen extends RelativeLayout {
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
@@ -423,7 +401,6 @@ public class WorkOrderScreen extends RelativeLayout {
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
-        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
@@ -997,44 +974,6 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
-    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
-        @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
-            Log.v(TAG, "onFile");
-            if (fileResult.size() == 0)
-                return;
-
-            if (fileResult.size() == 1) {
-                GetFileDialog.UriIntent fui = fileResult.get(0);
-                if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                } else {
-                    // TODO show a toast?
-                }
-                return;
-            }
-
-            for (GetFileDialog.UriIntent fui : fileResult) {
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category("AttachmentUpload")
-                                .label("WorkOrderScreen - multiple")
-                                .action("start")
-                                .build());
-
-                try {
-                    Attachment attachment = new Attachment();
-                    attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            }
-            _currentTask = null;
-        }
-    };
-
     private void showClosingNotesDialog() {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
             ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrderId, _workOrder.getClosingNotes());
