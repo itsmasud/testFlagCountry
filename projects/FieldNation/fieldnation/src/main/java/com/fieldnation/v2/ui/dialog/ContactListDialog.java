@@ -14,7 +14,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.detail.ContactTileView;
+import com.fieldnation.v2.ui.workorder.ContactTileView;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Contacts;
 

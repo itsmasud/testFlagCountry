@@ -164,8 +164,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.fieldnation.ui.workorder.detail.ContactListView
-                    android:id="@+id/contactList_view"
+                <com.fieldnation.v2.ui.workorder.ContactSummaryView
+                    android:id="@+id/contactSummary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
