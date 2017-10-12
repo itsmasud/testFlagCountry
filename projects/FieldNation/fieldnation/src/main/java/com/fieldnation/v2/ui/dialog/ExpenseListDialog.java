@@ -42,6 +42,7 @@ public class ExpenseListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
+    private Expenses _expenses;
     private ExpensesAdapter _adapter = new ExpensesAdapter();
 
     public ExpenseListDialog(Context context, ViewGroup container) {
@@ -89,6 +90,23 @@ public class ExpenseListDialog extends FullScreenDialog {
 
         _workOrderId = params.getInt("workOrderId");
         WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, false);
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_list == null)
+            return;
+
+        if (_expenses == null)
+            return;
+
+        if (_expenses.getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
+            _finishMenu.setVisibility(View.VISIBLE);
+        } else {
+            _finishMenu.setVisibility(View.GONE);
+        }
+
+        _adapter.setExpenses(_expenses.getResults());
     }
 
     @Override
@@ -145,8 +163,9 @@ public class ExpenseListDialog extends FullScreenDialog {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof Expenses) {
                 Expenses expenses = (Expenses) successObject;
-                _adapter.setExpenses(expenses.getResults());
+                _expenses = expenses;
                 AppMessagingClient.setLoading(false);
+                populateUi();
             } else {
                 WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, false);
             }
