@@ -4,8 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.detail.ExpenseView;
+import com.fieldnation.v2.ui.workorder.ExpenseView;
 import com.fieldnation.v2.data.model.Expense;
 
 /**
