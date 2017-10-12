@@ -54,7 +54,6 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
-import com.fieldnation.ui.workorder.detail.ContactListView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.LocationView;
@@ -158,7 +157,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
-    private ContactListView _contactListView;
+    private ContactSummaryView _contactSummaryView;
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
@@ -244,8 +243,8 @@ public class WorkOrderScreen extends RelativeLayout {
         _companySummaryView = findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
 
-        _contactListView = findViewById(R.id.contactList_view);
-        _renderers.add(_contactListView);
+        _contactSummaryView = findViewById(R.id.contactSummary_view);
+        _renderers.add(_contactSummaryView);
 
         _locView = findViewById(R.id.location_view);
         _renderers.add(_locView);

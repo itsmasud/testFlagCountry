@@ -98,6 +98,8 @@ public class ExpenseDialog extends FullScreenDialog {
 
         _workOrderId = payload.getInt("workOrderId");
 
+        _sendResult = payload.getBoolean("sendResult");
+
         super.show(payload, animate);
         populateUi();
     }
@@ -253,7 +255,7 @@ public class ExpenseDialog extends FullScreenDialog {
                 }
                 AppMessagingClient.setLoading(true);
             }
-            
+
             ExpenseDialog.this.dismiss(true);
             return true;
         }

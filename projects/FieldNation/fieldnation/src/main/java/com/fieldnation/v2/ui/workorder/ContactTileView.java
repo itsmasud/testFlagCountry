@@ -1,7 +1,9 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.workorder;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -10,8 +12,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 
@@ -102,24 +107,55 @@ public class ContactTileView extends RelativeLayout {
         public void onClick(View v) {
             if (!misc.isEmptyOrNull(_phone)) {
                 try {
-/*
+                    int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
+                    if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                        _permissionsListener.sub();
+                        PermissionsClient.requestPermissions(
+                                new String[]{Manifest.permission.CALL_PHONE},
+                                new boolean[]{false});
+                        return;
+                    }
+
                     // TODO Save this for when we upgrade to Android 6+
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
-                    callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(_phone + "," + _phoneExt, "UTF-8")));
-*/
+
+                    String phone = _phone;
+                    if (!misc.isEmptyOrNull(_phoneExt)){
+                        _phone += "," + _phoneExt;
+                    }
+                    callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(phone, "UTF-8")));
+
+                    /*
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
                     callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(_phone, "UTF-8")));
+                    */
 
                     if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
                         getContext().startActivity(callIntent);
                     } else {
-                        ToastClient.toast(getContext(), "Couldn't call number: " + _phone + (misc.isEmptyOrNull(_phoneExt)? "" : " x" + _phoneExt), Toast.LENGTH_LONG);
+                        ToastClient.toast(getContext(),
+                                "Couldn't call number: "
+                                        + _phone + (misc.isEmptyOrNull(_phoneExt) ? "" : " x" + _phoneExt), Toast.LENGTH_LONG);
                     }
 
                 } catch (Exception ex) {
                     Log.logException(ex);
                 }
+            }
+        }
+    };
 
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
+        @Override
+        public void onComplete(String permission, int grantResult) {
+            if (permission.equals(Manifest.permission.CALL_PHONE)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    _this_onClick.onClick(ContactTileView.this);
+                    _permissionsListener.unsub();
+                } else {
+                    ToastClient.toast(getContext(), "Couldn't call number: " + _phone + (misc.isEmptyOrNull(_phoneExt) ? "" : " x" + _phoneExt) + ". Permissions denied.", Toast.LENGTH_LONG);
+                    _permissionsListener.unsub();
+                }
             }
         }
     };
