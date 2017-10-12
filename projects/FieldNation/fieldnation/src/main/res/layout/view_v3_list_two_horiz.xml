@@ -17,7 +17,8 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="10dp"
-            android:text="Key"
+            android:layout_toLeftOf="@id/value"
+            android:text="@string/placeholder_paragraph"
             android:textColor="@color/fn_dark_text"
             android:textSize="16sp" />
 
@@ -26,8 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
-            android:layout_toRightOf="@+id/key"
             android:gravity="right"
             android:text="Value"
             android:textColor="@color/fn_dark_text_50"
