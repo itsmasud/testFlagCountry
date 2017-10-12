@@ -94,6 +94,8 @@ public class ExpenseListDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
+        _finishMenu.setVisibility(View.GONE);
+
         if (_list == null)
             return;
 
@@ -102,8 +104,6 @@ public class ExpenseListDialog extends FullScreenDialog {
 
         if (_expenses.getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);
-        } else {
-            _finishMenu.setVisibility(View.GONE);
         }
 
         _adapter.setExpenses(_expenses.getResults());
