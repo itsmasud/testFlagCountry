@@ -42,6 +42,7 @@ public class DiscountListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
+    private PayModifiers _discounts;
     private DiscountsAdapter _adapter = new DiscountsAdapter();
 
     public DiscountListDialog(Context context, ViewGroup container) {
@@ -86,8 +87,22 @@ public class DiscountListDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
+        _finishMenu.setVisibility(View.GONE);
         _workOrderId = params.getInt("workOrderId");
         WorkordersWebApi.getDiscounts(App.get(), _workOrderId, true, false);
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_list == null) return;
+        if (_discounts == null) return;
+
+        if (_discounts.getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
+            _finishMenu.setVisibility(View.VISIBLE);
+        } else {
+            _finishMenu.setVisibility(View.GONE);
+        }
+        _adapter.setDiscounts(_discounts.getResults());
     }
 
     @Override
@@ -143,8 +158,9 @@ public class DiscountListDialog extends FullScreenDialog {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers discounts = (PayModifiers) successObject;
-                _adapter.setDiscounts(discounts.getResults());
+                _discounts = discounts;
                 AppMessagingClient.setLoading(false);
+                populateUi();
             } else {
                 WorkordersWebApi.getDiscounts(App.get(), _workOrderId, true, false);
             }
