@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -11,7 +10,6 @@ import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
-import com.fieldnation.v2.data.model.Shipments;
 
 public class ShipmentRowView extends RelativeLayout {
     private static final String TAG = "ShipmentRowView";
@@ -23,9 +21,7 @@ public class ShipmentRowView extends RelativeLayout {
     private TextView _directionTextView;
 
     // Data
-    private Shipments _shipments;
     private Shipment _shipment;
-    private Listener _listener;
     private boolean _taskMode = false;
 
     /*-*************************************-*/
@@ -57,12 +53,6 @@ public class ShipmentRowView extends RelativeLayout {
         _descTextView = findViewById(R.id.description_textview);
         _directionTextView = findViewById(R.id.direction_textview);
 
-        setOnLongClickListener(_delete_onClick);
-        setOnClickListener(_assign_onClick);
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     public void hideForTaskShipmentDialog() {
@@ -70,10 +60,8 @@ public class ShipmentRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Shipments shipments, Shipment shipment) {
+    public void setData(Shipment shipment) {
         _shipment = shipment;
-        _shipments = shipments;
-
         populateUi();
     }
 
@@ -115,36 +103,5 @@ public class ShipmentRowView extends RelativeLayout {
         } else {
             _directionTextView.setText("From Site");
         }
-
-        setEnabled(_shipments.getActionsSet().contains(Shipments.ActionsEnum.ADD));
-    }
-
-    /*-*********************************-*/
-    /*-				Events				-*/
-    /*-*********************************-*/
-    private final View.OnLongClickListener _delete_onClick = new OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (_listener != null) {
-                _listener.onDelete(_shipment);
-                return true;
-            }
-            return false;
-        }
-    };
-
-    private final View.OnClickListener _assign_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onEdit(_shipment);
-            }
-        }
-    };
-
-    public interface Listener {
-        void onDelete(Shipment shipment);
-
-        void onEdit(Shipment shipment);
     }
 }

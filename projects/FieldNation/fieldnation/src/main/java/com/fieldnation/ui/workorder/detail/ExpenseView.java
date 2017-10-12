@@ -23,7 +23,6 @@ public class ExpenseView extends LinearLayout {
     private TextView _costTextView;
 
     // Data
-    private WorkOrder _workOrder;
     private Expense _expense = null;
     private ExpenseCategory[] _categories;
 
@@ -68,9 +67,8 @@ public class ExpenseView extends LinearLayout {
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-    public void setData(WorkOrder workOrder, Expense expense) {
+    public void setData(Expense expense) {
         _expense = expense;
-        _workOrder = workOrder;
         refresh();
     }
 

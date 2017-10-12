@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.workorder.detail.ExpenseView;
 import com.fieldnation.v2.data.model.Expense;
 
 /**
@@ -33,16 +34,16 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
 
     @Override
     public ExpenseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ListItemTwoHorizView v = new ListItemTwoHorizView(parent.getContext());
+        ExpenseView v = new ExpenseView(parent.getContext());
         return new ExpenseViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ExpenseViewHolder holder, int position) {
-        ListItemTwoHorizView v = (ListItemTwoHorizView) holder.itemView;
+        ExpenseView v = (ExpenseView) holder.itemView;
         v.setTag(expenses[position]);
         v.setOnLongClickListener(_expense_onLongClick);
-        v.set(expenses[position].getDescription(), misc.toCurrency(expenses[position].getAmount()));
+        v.setData(expenses[position]);
     }
 
     private final View.OnLongClickListener _expense_onLongClick = new View.OnLongClickListener() {

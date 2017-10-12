@@ -60,6 +60,7 @@ import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
+import com.fieldnation.ui.workorder.detail.TaskListView;
 import com.fieldnation.ui.workorder.detail.ShipmentListView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
@@ -80,8 +81,6 @@ import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.ShipmentCarrier;
-import com.fieldnation.v2.data.model.ShipmentTask;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -131,7 +130,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
-    private static final String DIALOG_SHIPMENT_ADD = TAG + ".shipmentAddDialog";
     private static final String DIALOG_TASK_SHIPMENT_ADD = TAG + ".taskShipmentAddDialog";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
@@ -139,7 +137,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
     private static final String DIALOG_DELETE_WORKLOG = TAG + ".deleteWorkLogDialog";
-    private static final String DIALOG_DELETE_SHIPMENT = TAG + ".deleteShipmentDialog";
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
@@ -168,7 +165,8 @@ public class WorkOrderScreen extends RelativeLayout {
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
-    private ShipmentListView _shipments;
+    //    private TaskListView _taskList;
+    private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
@@ -286,9 +284,8 @@ public class WorkOrderScreen extends RelativeLayout {
         _scrollView = findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipments = findViewById(R.id.shipment_view);
-        _shipments.setListener(_shipments_listener);
-        _renderers.add(_shipments);
+        _shipmentSummaryView = findViewById(R.id.shipmentSummaryView);
+        _renderers.add(_shipmentSummaryView);
 
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
@@ -386,7 +383,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
-        ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
         TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
         TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
@@ -398,7 +394,6 @@ public class WorkOrderScreen extends RelativeLayout {
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
@@ -422,7 +417,6 @@ public class WorkOrderScreen extends RelativeLayout {
         Log.v(TAG, "onStop");
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
-        ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
         TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
         TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
@@ -434,7 +428,6 @@ public class WorkOrderScreen extends RelativeLayout {
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
         _workOrderApi.unsub();
@@ -448,7 +441,7 @@ public class WorkOrderScreen extends RelativeLayout {
     }
 
     public void setWorkOrder(WorkOrder workOrder) {
-        Log.v(TAG, "setData");
+        //Log.v(TAG, "setWorkOrder");
         _workOrder = workOrder;
         _workOrderId = workOrder.getId();
         populateUi();
@@ -950,37 +943,172 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
-        public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
-                    _workOrder.getAttachments(), getContext().getString(R.string.dialog_shipment_title), null, null);
+        public void onCheckin(Task task) {
+            doCheckin();
         }
 
         @Override
-        public void onDelete(WorkOrder workOrder, final Shipment shipment) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_SHIPMENT,
-                    R.string.dialog_delete_shipment_title,
-                    R.string.dialog_delete_shipment_body,
-                    R.string.btn_yes, R.string.btn_no, true, shipment);
+        public void onCheckout(Task task) {
+            doCheckOut();
         }
 
         @Override
-        public void onAssign(WorkOrder workOrder, Shipment shipment) {
-            // TODO STUB .onAssign()
-            Log.v(TAG, "STUB .onAssign()");
-            // TODO present a picker of the tasks that this can be assigned too
+        public void onCloseOutNotes(Task task) {
+            showClosingNotesDialog();
         }
-    };
 
-    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteShipment = new TwoButtonDialog.OnPrimaryListener() {
         @Override
-        public void onPrimary(Parcelable extraData) {
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, ((Shipment) extraData).getId(), App.get().getSpUiContext());
+        public void onSetEta(Task task) {
+            App.get().analActionTitle = null;
+            EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
+                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
+        }
+
+        @Override
+        public void onCustomField(Task task) {
+            CustomFieldDialog.show(App.get(), null, _workOrderId, task.getCustomField());
+        }
+
+        @Override
+        public void onDownload(Task task) {
+            Attachment doc = task.getAttachment();
+            if (doc.getId() != null) {
+                Log.v(TAG, "docid: " + doc.getId());
+                if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+                DocumentClient.downloadDocument(App.get(), doc.getId(),
+                        doc.getFile().getLink(), doc.getFile().getName(), false);
+            }
+        }
+
+        @Override
+        public void onEmail(Task task) {
+            String email = task.getEmail();
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setData(Uri.parse("mailto:" + email));
+            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
+
+            try {
+                WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
+
+        @Override
+        public void onPhone(Task task) {
+            if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                try {
+                    WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+            try {
+                if (task.getPhone() != null) {
+                    // Todo, need to figure out if there is a phone number here
+//                    Spannable test = new SpannableString(task.getPhoneNumber());
+//                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
+//                    if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                        builder.setMessage(R.string.dialog_no_number_message);
+//                        builder.setTitle(R.string.dialog_no_number_title);
+//                        builder.setPositiveButton(R.string.btn_ok, null);
+//                        builder.show();
+//
+//                    } else {
+//                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+//                        String phNum = "tel:" + task.getPhoneNumber();
+//                        callIntent.setData(Uri.parse(phNum));
+//                        startActivity(callIntent);
+//                        setLoading(true);
+//                    }
+
+                    if (!TextUtils.isEmpty(task.getPhone()) && android.util.Patterns.PHONE.matcher(task.getPhone()).matches()) {
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        String phNum = "tel:" + task.getPhone();
+                        callIntent.setData(Uri.parse(phNum));
+                        ActivityClient.startActivity(callIntent);
+                        setLoading(true);
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage(R.string.dialog_no_number_message);
+                        builder.setTitle(R.string.dialog_no_number_title);
+                        builder.setPositiveButton(R.string.btn_ok, null);
+                        builder.show();
+                    }
+
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage(R.string.dialog_no_number_message);
+                    builder.setTitle(R.string.dialog_no_number_title);
+                    builder.setPositiveButton(R.string.btn_ok, null);
+                    builder.show();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onShipment(Task task) {
+            List<Shipment> shipments = new LinkedList();
+            for (Shipment shipment : _workOrder.getShipments().getResults()) {
+                if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
+                    shipments.add(shipment);
+            }
+
+            if (shipments.size() == 0) {
+                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
+                        _workOrder.getAttachments(), getContext().getString(R.string.dialog_task_shipment_title), null, task);
+            } else {
+                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrderId,
+                        _workOrder.getShipments(), getContext().getString(R.string.dialog_task_shipment_title), task);
+            }
+        }
+
+        @Override
+        public void onSignature(Task task) {
+            _currentTask = task;
+            SignOffActivity.startSignOff(App.get(), _workOrderId, task.getId());
+            setLoading(true);
+        }
+
+        @Override
+        public void onUploadFile(Task task) {
+            _currentTask = task;
+            startAppPickerDialog();
+        }
+
+        @Override
+        public void onUploadPicture(Task task) {
+            _currentTask = task;
+            startAppPickerDialog();
+        }
+
+        @Override
+        public void onUniqueTask(Task task) {
+            if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                return;
+
+            try {
+                WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            setLoading(true);
+
+        }
     };
+
 
     private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
@@ -1177,41 +1305,10 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final ShipmentAddDialog.OnOkListener _shipmentAddDialog_onOk = new ShipmentAddDialog.OnOkListener() {
-        @Override
-        public void onOk(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-
-            try {
-                ShipmentCarrier shipmentCarrier = new ShipmentCarrier();
-                shipmentCarrier.name(carrier);
-                if (carrier == ShipmentCarrier.NameEnum.OTHER)
-                    shipmentCarrier.other(carrierName);
-                shipmentCarrier.tracking(trackingId);
-
-                Shipment shipment = new Shipment();
-                shipment.carrier(shipmentCarrier);
-                shipment.name(description);
-                shipment.direction(direction);
-
-                if (taskId > 0)
-                    shipment.task(new ShipmentTask().id(taskId));
-
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Shipment Add Dialog";
-                WorkordersWebApi.addShipment(App.get(), _workOrderId, shipment, uiContext);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
-        }
-    };
-
     private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
         @Override
         public void onAddShipment(int workOrderId, Shipment shipment, Task task) {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workOrderId,
+            ShipmentAddDialog.show(App.get(), null, workOrderId,
                     _workOrder.getAttachments(),
                     getContext().getString(R.string.dialog_shipment_title),
                     shipment == null ? "" : shipment.getName(), task);
@@ -1307,7 +1404,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addShipment() {
-            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrderId,
+            ShipmentAddDialog.show(App.get(), null, _workOrderId,
                     _workOrder.getAttachments(), App.get().getString(R.string.dialog_shipment_title), null, null);
         }
 

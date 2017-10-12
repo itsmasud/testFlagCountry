@@ -1,38 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/CardContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@android:color/white">
 
     <TextView
         android:id="@+id/description_textview"
-        style="?attr/tileTextBodyStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_marginRight="10dp"
-        android:layout_toLeftOf="@+id/cost_textview"
-        android:text="@string/description" />
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="Key"
+        android:textColor="@color/fn_dark_text"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/cost_textview"
-        style="?attr/tileTextBodyStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_gravity="right"
-        android:text="$5.50" />
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="4dp"
+        android:layout_marginRight="16dp"
+        android:gravity="right"
+        android:text="Value"
+        android:textColor="@color/fn_dark_text_50"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/category_textview"
-        style="?attr/tileTextStatusStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/description_textview"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:text="@string/category" />
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="left"
+        android:text="Value"
+        android:textColor="@color/fn_dark_text_50"
+        android:textSize="16sp" />
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/category_textview"
+        android:layout_marginTop="12dp" />
+
 </RelativeLayout>
