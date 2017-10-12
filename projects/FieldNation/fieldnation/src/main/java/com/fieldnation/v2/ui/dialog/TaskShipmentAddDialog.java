@@ -92,7 +92,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
             if (_shipments.getResults().length == 0)
                 return;
 
-            List<Shipment> shipments = new LinkedList();
+            List<Shipment> shipments = new LinkedList<>();
             for (Shipment shipment : _shipments.getResults()) {
                 if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
                     shipments.add(shipment);
@@ -103,27 +103,34 @@ public class TaskShipmentAddDialog extends SimpleDialog {
             for (int i = 0; i < shipments.size(); i++) {
                 ShipmentRowView view = new ShipmentRowView(getView().getContext());
                 _shipmentsLayout.addView(view);
-                view.setData(_shipments, shipments.get(i));
+                view.setTag(shipments.get(i));
+                view.setData(shipments.get(i));
+                view.setOnLongClickListener(_shipment_onLongClick);
+                view.setOnClickListener(_shipment_onClick);
                 view.hideForTaskShipmentDialog();
-                view.setListener(_summaryListener);
+                view.setEnabled(_shipments.getActionsSet().contains(Shipments.ActionsEnum.ADD));
             }
         } catch (Exception ex) {
         }
     }
 
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
+    private View.OnLongClickListener _shipment_onLongClick = new View.OnLongClickListener() {
         @Override
-        public void onDelete(Shipment shipment) {
+        public boolean onLongClick(View view) {
+            Shipment shipment = (Shipment) view.getTag();
             _onDeleteDispatcher.dispatch(getUid(), _workOrderId, shipment);
+            return true;
         }
+    };
 
+    private View.OnClickListener _shipment_onClick = new View.OnClickListener() {
         @Override
-        public void onEdit(Shipment shipment) {
+        public void onClick(View view) {
             // TODO need to present an edit dialog
+            Shipment shipment = (Shipment) view.getTag();
             dismiss(true);
             _onAddShipmentDispatcher.dispatch(getUid(), _workOrderId, shipment, _task);
         }

@@ -20,7 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
@@ -39,6 +42,7 @@ import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.ShipmentTask;
 import com.fieldnation.v2.data.model.Task;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -373,7 +377,7 @@ public class ShipmentAddDialog extends SimpleDialog {
             if (_task != null && _task.getId() != 0) {
                 if (_carrierPosition == CARRIER_OTHER) {
                     uploadBarcodeImage();
-                    _onOkDispatcher.dispatch(getUid(),
+                    saveShipment(
                             _trackingIdEditText.getText().toString(),
                             ShipmentCarrier.NameEnum.OTHER,
                             _carrierEditText.getText().toString(),
@@ -382,7 +386,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                             _task.getId());
                 } else {
                     uploadBarcodeImage();
-                    _onOkDispatcher.dispatch(getUid(),
+                    saveShipment(
                             _trackingIdEditText.getText().toString(),
                             ShipmentCarrier.NameEnum.values()[_carrierPosition],
                             null,
@@ -394,7 +398,7 @@ public class ShipmentAddDialog extends SimpleDialog {
             } else {
                 if (_carrierPosition == CARRIER_OTHER) {
                     uploadBarcodeImage();
-                    _onOkDispatcher.dispatch(getUid(),
+                    saveShipment(
                             _trackingIdEditText.getText().toString(),
                             ShipmentCarrier.NameEnum.OTHER,
                             _carrierEditText.getText().toString(),
@@ -403,7 +407,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                             0);
                 } else {
                     uploadBarcodeImage();
-                    _onOkDispatcher.dispatch(getUid(),
+                    saveShipment(
                             _trackingIdEditText.getText().toString(),
                             ShipmentCarrier.NameEnum.values()[_carrierPosition],
                             null,
@@ -415,6 +419,34 @@ public class ShipmentAddDialog extends SimpleDialog {
             dismiss(true);
         }
     };
+
+    private void saveShipment(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId){
+        WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+
+        try {
+            ShipmentCarrier shipmentCarrier = new ShipmentCarrier();
+            shipmentCarrier.name(carrier);
+            if (carrier == ShipmentCarrier.NameEnum.OTHER)
+                shipmentCarrier.other(carrierName);
+            shipmentCarrier.tracking(trackingId);
+
+            Shipment shipment = new Shipment();
+            shipment.carrier(shipmentCarrier);
+            shipment.name(description);
+            shipment.direction(direction);
+
+            if (taskId > 0)
+                shipment.task(new ShipmentTask().id(taskId));
+
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Shipment Add Dialog";
+            WorkordersWebApi.addShipment(App.get(), _workOrderId, shipment, uiContext);
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        AppMessagingClient.setLoading(true);
+    }
 
     private void uploadBarcodeImage() {
         if (_scannedImageUri == null)
@@ -523,33 +555,6 @@ public class ShipmentAddDialog extends SimpleDialog {
         params.putParcelable("task", task);
 
         Controller.show(context, uid, ShipmentAddDialog.class, params);
-    }
-
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
-    public interface OnOkListener {
-        void onOk(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum directionEnum, int taskId);
-    }
-
-    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
-        @Override
-        public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((String) parameters[0], (ShipmentCarrier.NameEnum) parameters[1], (String) parameters[2],
-                    (String) parameters[3], (Shipment.DirectionEnum) parameters[4], (Integer) parameters[5]);
-        }
-    };
-
-    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.add(uid, onOkListener);
-    }
-
-    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.remove(uid, onOkListener);
-    }
-
-    public static void removeAllOnOkListener(String uid) {
-        _onOkDispatcher.removeAll(uid);
     }
 
     /*-**************************-*/
