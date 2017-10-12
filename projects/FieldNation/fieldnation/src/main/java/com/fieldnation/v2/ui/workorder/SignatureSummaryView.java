@@ -11,7 +11,6 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.ExpenseListDialog;
 import com.fieldnation.v2.ui.dialog.SignatureListDialog;
 
 /**
@@ -51,6 +50,8 @@ public class SignatureSummaryView extends RelativeLayout implements WorkOrderRen
         _titleTextView = findViewById(R.id.title_textview);
         _countTextView = findViewById(R.id.count_textview);
         _countTextView.setBackgroundResource(R.drawable.round_rect_gray);
+
+        setVisibility(GONE);
         populateUi();
     }
 
