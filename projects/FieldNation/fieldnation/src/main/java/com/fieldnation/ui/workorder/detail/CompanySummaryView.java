@@ -85,9 +85,10 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         if (_ttaDaysTextView == null)
             return;
 
-        if (_workOrder == null)
+        if (_workOrder == null) {
             setVisibility(GONE);
-        else {
+            return;
+        } else {
             setVisibility(VISIBLE);
         }
 
