@@ -82,11 +82,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <com.fieldnation.v2.ui.workorder.RequestNewPayView
+                    android:id="@+id/requestNewPay_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <!-- Payment -->
                 <com.fieldnation.v2.ui.workorder.WodHeader
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Payment" />
+                    android:text="Payments" />
 
                 <com.fieldnation.ui.workorder.detail.PaymentView
                     android:id="@+id/payment_view"

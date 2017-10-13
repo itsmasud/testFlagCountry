@@ -4,13 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <ViewStub
-        android:id="@+id/requestNewPayTile_viewstub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout="@layout/stub_request_new_pay"
-        android:visibility="gone" />
-
     <LinearLayout
         style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
@@ -47,14 +40,6 @@
         android:paddingRight="16dp"
         android:text="@string/view_field_nation_terms"
         android:textSize="14sp" />
-
-    <Button
-        android:id="@+id/action_button"
-        style="?attr/buttonWhiteStyle"
-        android:layout_gravity="right"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:text="COUNTER OFFER" />
 
     <View
         style="@style/DividerFull"

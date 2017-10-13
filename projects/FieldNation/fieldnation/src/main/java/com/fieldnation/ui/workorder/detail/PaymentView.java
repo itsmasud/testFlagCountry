@@ -21,12 +21,8 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "PaymentView";
 
     // UI
-    // TODO need to grab the description views at the top
     private TextView _payTextView;
     private TextView _termsTextView;
-    private Button _actionButton;
-    private ViewStub _requestNewPayStub;
-    private RequestNewPayTile _requestNewPayTile = null;
 
     // Data
     private WorkOrder _workOrder;
@@ -52,14 +48,9 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _requestNewPayStub = findViewById(R.id.requestNewPayTile_viewstub);
-
         _payTextView = findViewById(R.id.pay_textview);
         _termsTextView = findViewById(R.id.terms_textview);
         _termsTextView.setOnClickListener(_terms_onClick);
-
-        _actionButton = findViewById(R.id.action_button);
-        _actionButton.setOnClickListener(_action_onClick);
 
         setVisibility(View.GONE);
     }
@@ -77,25 +68,9 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         refresh();
     }
 
-    private RequestNewPayTile getRequestNewPayTile() {
-        if (_requestNewPayTile == null) {
-            _requestNewPayTile = (RequestNewPayTile) _requestNewPayStub.inflate();
-            _requestNewPayTile.setOnClickListener(_requestNewPay_onClick);
-        }
-        return _requestNewPayTile;
-    }
-
     private void refresh() {
-        if (_actionButton == null)
+        if (_termsTextView == null)
             return;
-
-        if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
-            getRequestNewPayTile().setVisibility(VISIBLE);
-            getRequestNewPayTile().setData(_workOrder);
-
-        } else {
-            getRequestNewPayTile().setVisibility(GONE);
-        }
 
         Pay pay = _workOrder.getPay();
 
@@ -117,45 +92,11 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         }
         _payTextView.setText(data);
         setVisibility(View.VISIBLE);
-
-        _actionButton.setVisibility(VISIBLE);
-        _actionButton.setEnabled(true);
-
-        // can counter offer
-        if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
-            _actionButton.setText(R.string.btn_counter_offer);
-
-            // can request pay increase
-        } else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
-            _actionButton.setText(R.string.btn_request_new_pay);
-
-            // counter offers disabled and in the marketplace
-        } else if (!(_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
-                && _workOrder.getRequests().getCounterOffer() == null
-                && (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)) {
-            _actionButton.setEnabled(false);
-            _actionButton.setText(R.string.btn_counter_disabled);
-        } else {
-            _actionButton.setVisibility(GONE);
-        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _action_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null) {
-                if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)
-                        && _workOrder.getRequests().getCounterOffer() == null) {
-                    _listener.onCounterOffer(_workOrder);
-                } else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
-                    _listener.onRequestNewPay(_workOrder);
-                }
-            }
-        }
-    };
 
     private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
         @Override
@@ -165,22 +106,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         }
     };
 
-    private final View.OnClickListener _requestNewPay_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
-                if (_listener != null) {
-                    _listener.onRequestNewPay(_workOrder);
-                }
-            }
-        }
-    };
-
     public interface Listener {
-        void onCounterOffer(WorkOrder workOrder);
-
-        void onRequestNewPay(WorkOrder workOrder);
-
         void onShowTerms(WorkOrder workOrder);
     }
 }
