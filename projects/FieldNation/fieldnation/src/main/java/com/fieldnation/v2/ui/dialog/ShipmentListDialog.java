@@ -22,6 +22,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ShipmentAdapter;
 
@@ -42,6 +43,7 @@ public class ShipmentListDialog extends FullScreenDialog {
     // Data
     private int _workOrderId;
     private AttachmentFolders _folders;
+    private Shipments _shipments;
     private ShipmentAdapter _adapter = new ShipmentAdapter();
 
     public ShipmentListDialog(Context context, ViewGroup container) {
@@ -89,10 +91,18 @@ public class ShipmentListDialog extends FullScreenDialog {
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
 
+    private void populateUi() {
+        _finishMenu.setVisibility(View.GONE);
+        if (_list == null) return;
+        if (_shipments == null) return;
+        if (_shipments.getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+            _finishMenu.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public void onStop() {
         _workOrdersApi.unsub();
-
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SHIPMENT, _twoButtonDialog_deleteShipment);
         super.onStop();
     }
@@ -148,7 +158,9 @@ public class ShipmentListDialog extends FullScreenDialog {
             if (success && successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _folders = workOrder.getAttachments();
-                _adapter.setShipments(workOrder.getShipments());
+                _shipments = workOrder.getShipments();
+                _adapter.setShipments(_shipments);
+                populateUi();
                 AppMessagingClient.setLoading(false);
             } else {
                 AppMessagingClient.setLoading(true);
