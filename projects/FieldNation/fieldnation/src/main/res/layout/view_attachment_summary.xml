@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
-        android:background="@android:color/white">
+        android:background="@color/fn_clickable_bg">
 
         <TextView
             android:id="@+id/summary_attached_files_textview"
