@@ -49,7 +49,6 @@ import com.fieldnation.ui.menu.MessagesMenuButton;
 import com.fieldnation.ui.menu.MoreMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
-import com.fieldnation.ui.workorder.detail.ClosingNotesView;
 import com.fieldnation.ui.workorder.detail.CompanySummaryView;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;

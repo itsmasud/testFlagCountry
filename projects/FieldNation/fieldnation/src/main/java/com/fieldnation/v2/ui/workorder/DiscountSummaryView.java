@@ -49,6 +49,8 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
         _titleTextView = findViewById(R.id.title_textview);
         _countTextView = findViewById(R.id.count_textview);
         _countTextView.setBackgroundResource(R.drawable.round_rect_gray);
+
+        setVisibility(GONE);
         populateUi();
     }
 
@@ -61,7 +63,6 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
     private void populateUi() {
         if (_workOrder == null || _countTextView == null)
             return;
-
 
         _titleTextView.setText("Discounts");
 
