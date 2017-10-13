@@ -1274,7 +1274,7 @@ public class WorkOrderScreen extends RelativeLayout {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            populateUi();
+            AppMessagingClient.setLoading(true);
         }
     };
 
