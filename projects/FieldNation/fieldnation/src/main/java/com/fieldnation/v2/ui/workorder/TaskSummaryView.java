@@ -196,9 +196,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void onClick(View v) {
             Group group = (Group) v.getTag();
-            // TODO call the dialog with the group ID here
             TasksDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
-
         }
     };
 

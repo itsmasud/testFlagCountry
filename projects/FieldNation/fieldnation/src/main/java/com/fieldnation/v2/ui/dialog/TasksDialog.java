@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -207,8 +208,16 @@ public class TasksDialog extends FullScreenDialog {
         }
     }
 
+    private boolean checkMedia() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
+    }
+
     private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+        if (checkMedia()) {
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+        } else {
+            ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
+        }
     }
 
 
@@ -277,27 +286,34 @@ public class TasksDialog extends FullScreenDialog {
                     EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                             _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
                     break;
+
                 case CLOSING_NOTES: // closing notes
                     showClosingNotesDialog();
                     break;
+
                 case CHECK_IN: // check in
                     doCheckin();
                     break;
+
                 case CHECK_OUT: // check out
                     doCheckOut();
                     break;
+
                 case UPLOAD_FILE: // upload file
                     _currentTask = task;
                     startAppPickerDialog();
                     break;
+
                 case UPLOAD_PICTURE: // upload picture
                     _currentTask = task;
                     startAppPickerDialog();
                     break;
+
                 case CUSTOM_FIELD: // custom field
                     if (task.getCustomField() == null) break;
                     CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
                     break;
+
                 case PHONE: // phone
                     if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
                         try {
@@ -313,7 +329,6 @@ public class TasksDialog extends FullScreenDialog {
                                 String phNum = "tel:" + task.getPhone();
                                 callIntent.setData(Uri.parse(phNum));
                                 ActivityClient.startActivity(callIntent);
-//                                setLoading(true);
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(App.get());
                                 builder.setMessage(R.string.dialog_no_number_message);
@@ -333,6 +348,7 @@ public class TasksDialog extends FullScreenDialog {
                         Log.v(TAG, ex);
                     }
                     break;
+
                 case EMAIL: // email
                     String email = task.getEmail();
                     Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -345,6 +361,7 @@ public class TasksDialog extends FullScreenDialog {
                         Log.v(TAG, ex);
                     }
                     break;
+
                 case UNIQUE_TASK: // unique task
                     if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
                         return;
@@ -355,9 +372,11 @@ public class TasksDialog extends FullScreenDialog {
                         Log.v(TAG, ex);
                     }
                     break;
+
                 case SIGNATURE: // signature
                     SignOffActivity.startSignOff(App.get(), _workOrder.getId(), task.getId());
                     break;
+
                 case SHIPMENT: // shipment
                     List<Shipment> shipments = new LinkedList();
                     for (Shipment shipment : _workOrder.getShipments().getResults()) {
@@ -373,6 +392,7 @@ public class TasksDialog extends FullScreenDialog {
                                 _workOrder.getShipments(), App.get().getString(R.string.dialog_task_shipment_title), task);
                     }
                     break;
+
                 case DOWNLOAD:
                     Attachment attachment = task.getAttachment();
                     if (attachment.getId() != null) {
@@ -391,7 +411,6 @@ public class TasksDialog extends FullScreenDialog {
                     }
                     break;
             }
-
         }
     };
 

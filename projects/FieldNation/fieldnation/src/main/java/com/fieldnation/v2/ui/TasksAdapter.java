@@ -163,7 +163,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 dataHolders.add(new DataHolder(TYPE_TASK, task));
             }
         }
-
     }
 
     @Override
@@ -231,7 +230,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
                 break;
             }
-
 
             case TYPE_ATTACHMENT: {
                 TaskRowView view = (TaskRowView) holder.itemView;

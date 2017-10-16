@@ -152,7 +152,6 @@ public class TaskRowView extends RelativeLayout {
         updateView();
     }
 
-
     private String getFormattedTime(Calendar cal) {
         DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
         symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_capital_case_am_pm_array));
@@ -180,6 +179,7 @@ public class TaskRowView extends RelativeLayout {
                         _rightValueTextView.setText(getFormattedTime(_task.getEta().getStart().getCalendar()));
                     }
                     break;
+
                 case CLOSING_NOTES: // closing notes
                     _keyTextView.setText(_task.getLabel());
                     if (misc.isEmptyOrNull(_task.getClosingNotes()))
@@ -190,6 +190,7 @@ public class TaskRowView extends RelativeLayout {
                     }
                     _rightValueTextView.setVisibility(GONE);
                     break;
+
                 case CHECK_IN: // check in
                     _keyTextView.setText(_task.getLabel());
                     _valueTextView.setVisibility(GONE);
@@ -200,6 +201,7 @@ public class TaskRowView extends RelativeLayout {
                         _rightValueTextView.setText(getFormattedTime(_task.getTimeLog().getIn().getCreated().getCalendar()));
                     }
                     break;
+
                 case CHECK_OUT: // check out
                     _keyTextView.setText(_task.getLabel());
                     _valueTextView.setVisibility(GONE);
@@ -210,6 +212,7 @@ public class TaskRowView extends RelativeLayout {
                         _rightValueTextView.setText(getFormattedTime(_task.getTimeLog().getOut().getCreated().getCalendar()));
                     }
                     break;
+
                 case UPLOAD_FILE: // upload file
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
@@ -221,6 +224,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case UPLOAD_PICTURE: // upload picture
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
@@ -232,6 +236,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case CUSTOM_FIELD: // custom field
                     if (_task.getCustomField() == null) break;
                     _keyTextView.setText(_task.getLabel());
@@ -244,6 +249,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case PHONE: // phone
                     _keyTextView.setText("Call " + _task.getPhone());
                     _rightValueTextView.setVisibility(GONE);
@@ -255,6 +261,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case EMAIL: // email
                     _keyTextView.setText("Email " + _task.getEmail());
                     _rightValueTextView.setVisibility(GONE);
@@ -265,6 +272,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case UNIQUE_TASK: // unique task
                     _keyTextView.setText("Complete tasks");
                     _rightValueTextView.setVisibility(GONE);
@@ -275,6 +283,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case SIGNATURE: // signature
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
@@ -285,6 +294,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case SHIPMENT: // shipment
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
@@ -295,6 +305,7 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setVisibility(VISIBLE);
                     }
                     break;
+
                 case DOWNLOAD:
                     _keyTextView.setText(_task.getType().getName());
                     _rightValueTextView.setVisibility(GONE);
@@ -316,7 +327,6 @@ public class TaskRowView extends RelativeLayout {
                     } else {
                         _progressBar.setVisibility(GONE);
                     }
-
                     break;
             }
         } catch (Exception e) {
