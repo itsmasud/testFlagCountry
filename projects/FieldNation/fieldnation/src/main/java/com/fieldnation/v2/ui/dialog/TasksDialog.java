@@ -24,6 +24,7 @@ import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -149,34 +150,16 @@ public class TasksDialog extends FullScreenDialog {
         super.onPause();
     }
 
+
+    /*-*****************************-*/
+    /*-		      Events			-*/
+    /*-*****************************-*/
+
+
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             dismiss(true);
-        }
-    };
-
-    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
-        @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.equals("getWorkOrder")
-                    || methodName.equals("updateTask");
-        }
-
-        @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject != null && (methodName.equals("getWorkOrder"))) {
-                WorkOrder workOrder = (WorkOrder) successObject;
-                if (success) {
-                    _workOrder = workOrder;
-                    populateUi();
-                    AppMessagingClient.setLoading(false);
-                }
-            } else if (methodName.equals("updateTask")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
-                AppMessagingClient.setLoading(true);
-            }
-
         }
     };
 
@@ -201,7 +184,7 @@ public class TasksDialog extends FullScreenDialog {
         return TaskTypeEnum.fromTypeId(task.getType().getId());
     }
 
-        /*-*********************************************-*/
+    /*-*********************************************-*/
     /*-				Closing notes Process			-*/
     /*-*********************************************-*/
 
@@ -223,7 +206,6 @@ public class TasksDialog extends FullScreenDialog {
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
     private void doCheckOut() {
-//        setLoading(true);
         int deviceCount = -1;
 
         Pay pay = _workOrder.getPay();
@@ -413,6 +395,132 @@ public class TasksDialog extends FullScreenDialog {
                 }
             }
         }
+    };
+
+
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.toLowerCase().contains("attachment")
+                    || methodName.equals("getWorkOrder")
+                    || methodName.equals("updateTask");
+        }
+
+        @Override
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+            Log.v(TAG, "WorkordersWebApi.onQueued");
+
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+                _adapter.uploadStart(transactionParams);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            populateUi();
+        }
+
+        @Override
+        public void onStart(TransactionParams transactionParams, String methodName) {
+            Log.v(TAG, "WorkordersWebApi.onStart");
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+                _adapter.uploadProgress(transactionParams, 0);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            populateUi();
+        }
+
+        @Override
+        public void onPaused(TransactionParams transactionParams, String methodName) {
+            Log.v(TAG, "WorkordersWebApi.onPaused");
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+                _adapter.uploadProgress(transactionParams, -1);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            populateUi();
+        }
+
+        @Override
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            Log.v(TAG, "WorkordersWebApi.onProgress");
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                Double percent = pos * 1.0 / size;
+                Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+
+                if (pos == size) {
+                    AppMessagingClient.setLoading(true);
+                    _adapter.uploadStop(transactionParams);
+                    populateUi();
+                } else {
+                    _adapter.uploadProgress(transactionParams, (int) (pos * 100 / size));
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            populateUi();
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "WorkordersWebApi.onComplete");
+
+
+            if (successObject != null && (methodName.equals("getWorkOrder"))) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (success) {
+                    _workOrder = workOrder;
+                    populateUi();
+                    AppMessagingClient.setLoading(false);
+                }
+            } else if (methodName.equals("updateTask")) {
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+                AppMessagingClient.setLoading(true);
+            } else if (methodName.equals("addAttachment")) {
+                try {
+                    JsonObject obj = new JsonObject(transactionParams.methodParams);
+                    String name = obj.getString("attachment.file.name");
+                    int folderId = obj.getInt("attachment.folder_id");
+                    _adapter.uploadStop(transactionParams);
+                    AppMessagingClient.setLoading(true);
+                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else if (successObject != null && methodName.equals("getAttachments")) {
+//TODO                folders = (AttachmentFolders) successObject;
+                populateUi();
+                AppMessagingClient.setLoading(false);
+            }
+
+
+        }
+
+
     };
 
 

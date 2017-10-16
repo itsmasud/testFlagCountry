@@ -4,39 +4,23 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
-import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnanalytics.Tracker;
-import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
-import com.fieldnation.v2.data.client.AttachmentHelper;
-import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.GetFileDialog;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Locale;
 
 /**
@@ -91,18 +75,12 @@ public class TaskRowView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        _workOrderApi.unsub();
         super.onDetachedFromWindow();
     }
 
     public void setData(WorkOrder workOrder, Task task) {
         _task = task;
         _workOrder = workOrder;
-
-        if (_task.getAttachments().getId() != null) {
-            subscribeUpload();
-        }
-
         populateUi();
     }
 
@@ -336,125 +314,4 @@ public class TaskRowView extends RelativeLayout {
             setEnabled(false);
         }
     }
-
-
-    /*-*********************************-*/
-    /*-             Events              -*/
-    /*-*********************************-*/
-    private void subscribeUpload() {
-        if (_workOrder == null)
-            return;
-
-        _workOrderApi.sub();
-    }
-
-    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
-        @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.equals("addAttachment");
-        }
-
-        @Override
-        public void onQueued(TransactionParams transactionParams, String methodName) {
-            if (!methodName.equals("addAttachment"))
-                return;
-            Log.v(TAG, "onQueued");
-            try {
-                JsonObject obj = new JsonObject(transactionParams.methodParams);
-                String name = obj.getString("attachment.file.name");
-                int folderId = obj.getInt("attachment.folder_id");
-
-                if (folderId == _task.getAttachments().getId()) {
-                    _uploadingFiles.add(name);
-                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_QUEUED);
-                    populateUi();
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onPaused(TransactionParams transactionParams, String methodName) {
-            if (!methodName.equals("addAttachment"))
-                return;
-            Log.v(TAG, "onPaused");
-            try {
-                JsonObject obj = new JsonObject(transactionParams.methodParams);
-                String name = obj.getString("attachment.file.name");
-                int folderId = obj.getInt("attachment.folder_id");
-
-                if (folderId == _task.getAttachments().getId()) {
-                    _uploadingFiles.add(name);
-                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_PAUSED);
-                    populateUi();
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
-            if (!methodName.equals("addAttachment"))
-                return;
-
-            Log.v(TAG, "onProgress");
-            try {
-                JsonObject obj = new JsonObject(transactionParams.methodParams);
-                String name = obj.getString("attachment.file.name");
-                int folderId = obj.getInt("attachment.folder_id");
-
-                if (folderId == _task.getAttachments().getId()) {
-                    Double percent = pos * 1.0 / size;
-                    Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
-                    _uploadingFiles.add(name);
-                    _uploadingProgress.put(name, (int) (pos * 100 / size));
-                    populateUi();
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (!methodName.equals("addAttachment"))
-                return;
-
-            Log.v(TAG, "onComplete");
-            try {
-                JsonObject obj = new JsonObject(transactionParams.methodParams);
-                String name = obj.getString("attachment.file.name");
-                int folderId = obj.getInt("attachment.folder_id");
-
-                if (folderId == _task.getAttachments().getId()) {
-                    _uploadingFiles.remove(name);
-                    _uploadingProgress.remove(name);
-                    populateUi();
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-    };
-
-//    private final View.OnClickListener _click_listener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View view) {
-////            if (_listener == null)
-////                return;
-//
-//            WorkOrderTracker.onTaskEvent(App.get(), _task.getType(), _workOrder.getId());
-//            updateView();
-////            _listener.onTaskClick(_task);
-//
-//        }
-//    };
-
-//    public interface Listener {
-//        void onTaskClick(Task task);
-//    }
-//
-
 }
