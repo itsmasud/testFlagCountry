@@ -20,6 +20,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Signature;
@@ -43,6 +44,7 @@ public class SignatureListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
+    private Signatures _signatures;
     private SignatureAdapter _adapter = new SignatureAdapter();
 
     public SignatureListDialog(Context context, ViewGroup container) {
@@ -60,6 +62,7 @@ public class SignatureListDialog extends FullScreenDialog {
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
+        _finishMenu.setVisibility(View.GONE);
 
         _refreshView = v.findViewById(R.id.refresh_view);
 
@@ -90,6 +93,7 @@ public class SignatureListDialog extends FullScreenDialog {
 
         _workOrderId = params.getInt("workOrderId");
         WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, false);
+        populateUi();
     }
 
     @Override
@@ -99,6 +103,21 @@ public class SignatureListDialog extends FullScreenDialog {
         _workOrdersApi.unsub();
         super.onStop();
     }
+
+    private void populateUi() {
+        if (_list == null)
+            return;
+
+        if (_signatures == null)
+            return;
+
+        if (_signatures.getActionsSet().contains(Signatures.ActionsEnum.ADD)) {
+            _finishMenu.setVisibility(View.VISIBLE);
+        }
+
+        _adapter.setSignatures(_signatures.getResults());
+    }
+
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
@@ -125,6 +144,12 @@ public class SignatureListDialog extends FullScreenDialog {
                     R.string.dialog_delete_signature_body,
                     R.string.btn_yes, R.string.btn_no, true, signature);
         }
+
+        @Override
+        public void signatureOnClick(View v, Signature signature) {
+            SignatureDisplayActivity.startIntent(App.get(), signature);
+
+        }
     };
 
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteSignature = new TwoButtonDialog.OnPrimaryListener() {
@@ -145,9 +170,9 @@ public class SignatureListDialog extends FullScreenDialog {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof Signatures) {
-                Signatures signature = (Signatures) successObject;
-                _adapter.setSignatures(signature.getResults());
+                _signatures = (Signatures) successObject;
                 AppMessagingClient.setLoading(false);
+                populateUi();
             } else {
                 WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, false);
                 AppMessagingClient.setLoading(true);

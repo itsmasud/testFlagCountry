@@ -47,6 +47,7 @@ public class SignatureAdapter extends RecyclerView.Adapter<SignatureViewHolder> 
         v.setTag(signatures[position]);
         v.setIcon(App.get().getString(R.string.icon_circle_signature), ContextCompat.getColor(App.get(), R.color.fn_accent_color));
         v.setOnLongClickListener(_signature_onLongClick);
+        v.setOnClickListener(_signature_onClick);
         try {
             v.set(signatures[position].getName(), "Signed by " + signatures[position].getName()
                     + " on " + DateUtils.formatDateLong(signatures[position].getCreated().getCalendar()));
@@ -67,6 +68,15 @@ public class SignatureAdapter extends RecyclerView.Adapter<SignatureViewHolder> 
         }
     };
 
+    private final View.OnClickListener _signature_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Signature signature = (Signature) v.getTag();
+            if (_listener != null)
+                _listener.signatureOnClick(v, signature);
+        }
+    };
+
     @Override
     public int getItemCount() {
         if (signatures == null)
@@ -76,5 +86,7 @@ public class SignatureAdapter extends RecyclerView.Adapter<SignatureViewHolder> 
 
     public interface Listener {
         void onLongClick(View v, Signature signature);
+
+        void signatureOnClick(View v, Signature signature);
     }
 }
