@@ -135,7 +135,7 @@ public class BundleEtaCardView extends RelativeLayout {
                 dateTimeString += App.get().getString(R.string.schedule_business_hours_format3,
                         sdf1.format(sCal.getTime()),
                         sdf1.format(eCal.getTime()),
-                        DateUtils.getDeviceTimezone());
+                        DateUtils.getDeviceTimezone(eCal));
 
                 return dateTimeString;
 
@@ -149,7 +149,7 @@ public class BundleEtaCardView extends RelativeLayout {
                 dateTimeString = App.get().getString(R.string.schedule_open_range_format2,
                         sdf.format(sCal.getTime()),
                         sdf.format(eCal.getTime()),
-                        DateUtils.getDeviceTimezone());
+                        DateUtils.getDeviceTimezone(eCal));
 
                 return dateTimeString;
 
@@ -158,7 +158,7 @@ public class BundleEtaCardView extends RelativeLayout {
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
-                dateTimeString = sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone();
+                dateTimeString = sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone(sCal);
 
                 return dateTimeString;
             }
