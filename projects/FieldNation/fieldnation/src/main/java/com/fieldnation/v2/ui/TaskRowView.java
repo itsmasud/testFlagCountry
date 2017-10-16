@@ -159,7 +159,7 @@ public class TaskRowView extends RelativeLayout {
         SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mm a", Locale.getDefault());
         sdf.setDateFormatSymbols(symbols);
 
-        return sdf.format(cal.getTime()) + DateUtils.getDeviceTimezone();
+        return sdf.format(cal.getTime()) + DateUtils.getDeviceTimezone(cal);
     }
 
     public TaskTypeEnum getType(Task task) {
