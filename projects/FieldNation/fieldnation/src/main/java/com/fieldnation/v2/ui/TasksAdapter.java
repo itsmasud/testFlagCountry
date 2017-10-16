@@ -29,6 +29,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private static final int TYPE_HEADER_COMPLETE = 1;
     private static final int TYPE_TASK = 2;
     private static final int TYPE_TASK_UPLOAD = 3;
+    private static final int TYPE_ATTACHMENT = 4;
 
     // data
     private WorkOrder _workOrder = null;
@@ -38,7 +39,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private static class DataHolder {
         int type;
         Object object;
-        Object uObject;
+        UploadTuple uObject;
+        DownloadTuple dObject;
 
         public DataHolder(int type, Object object) {
             this.type = type;
@@ -46,10 +48,16 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             this.uObject = null;
         }
 
-        public DataHolder(int type, Object object, Object uObject) {
+        public DataHolder(int type, Object object, UploadTuple uObject) {
             this.type = type;
             this.object = object;
             this.uObject = uObject;
+        }
+
+        public DataHolder(int type, Object object, DownloadTuple dObject) {
+            this.type = type;
+            this.object = object;
+            this.dObject = dObject;
         }
 
     }
@@ -99,6 +107,22 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
                 if (match) continue;
 
+                if (task.getAttachment().getId() != null) {
+                    DownloadTuple tuple = new DownloadTuple();
+                    tuple.attachmentId = task.getAttachment().getId();
+
+
+                    for (DownloadTuple dt : downloads) {
+                        if (dt.attachmentId == task.getAttachment().getId()){
+                            tuple.downloading = true;
+                            break;
+                        }
+                    }
+
+                    dataHolders.add(new DataHolder(TYPE_ATTACHMENT, task, tuple));
+                    continue;
+                }
+
                 dataHolders.add(new DataHolder(TYPE_TASK, task));
             }
         }
@@ -120,6 +144,21 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 }
 
                 if (match) continue;
+
+                if (task.getAttachment().getId() != null) {
+                    DownloadTuple tuple = new DownloadTuple();
+                    tuple.attachmentId = task.getAttachment().getId();
+
+                    for (DownloadTuple dt : downloads) {
+                        if (dt.attachmentId == task.getAttachment().getId()){
+                            tuple.downloading = true;
+                            break;
+                        }
+                    }
+
+                    dataHolders.add(new DataHolder(TYPE_ATTACHMENT, task, tuple));
+                    continue;
+                }
 
                 dataHolders.add(new DataHolder(TYPE_TASK, task));
             }
@@ -147,6 +186,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 TaskRowView view = new TaskRowView(parent.getContext());
                 return new TaskViewHolder(view);
             }
+
+            case TYPE_ATTACHMENT: {
+                TaskRowView view = new TaskRowView(parent.getContext());
+                return new TaskViewHolder(view);
+            }
         }
         return null;
     }
@@ -167,63 +211,43 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 break;
             }
             case TYPE_TASK: {
-                Log.v(TAG, "TYPE_TASK");
                 TaskRowView view = (TaskRowView) holder.itemView;
                 Task task = (Task) dataHolders.get(position).object;
-//                view.setOnClickListener(_customField_onClick);
-//                view.setOnLongClickListener(_customField_onLongClick);
-//                view.set(
-//                        (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED) ? "* " : "")
-//                                + customField.getName(),
-//                        misc.isEmptyOrNull(customField.getValue()) ? customField.getTip() : customField.getValue());
                 view.setTag(task);
-//                view.setActionVisible(false);
                 view.setOnClickListener(_task_onClick);
                 view.setData(_workOrder, task);
-
-                // TODO things for downloading
-//                if (objects.get(position).downloading) {
-//                    view.setProgressVisible(true);
-//                } else {
-//                    view.setProgressVisible(false);
-//                }
-
-
-                // TODO how uploading works
-//                TasksAdapter.UploadTuple ut = (TasksAdapter.UploadTuple) objects.get(position).object;
-//                view.set(ut.name, "");
-//                view.setProgress(ut.progress);
-
-
                 break;
             }
 
             case TYPE_TASK_UPLOAD: {
-                Log.v(TAG, "TYPE_TASK_UPLOAD");
                 TaskRowView view = (TaskRowView) holder.itemView;
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
-//                view.setActionVisible(false);
                 view.setOnClickListener(_task_onClick);
                 view.setData(_workOrder, task);
 
-                // TODO things for downloading
-//                if (objects.get(position).downloading) {
-//                    view.setProgressVisible(true);
-//                } else {
-//                    view.setProgressVisible(false);
-//                }
-
-
-                // TODO how uploading works
                 TasksAdapter.UploadTuple ut = (TasksAdapter.UploadTuple) dataHolders.get(position).uObject;
-//                view.set(ut.name, "");
                 view.setProgress(ut.progress);
-
 
                 break;
             }
 
+
+            case TYPE_ATTACHMENT: {
+                TaskRowView view = (TaskRowView) holder.itemView;
+                Task task = (Task) dataHolders.get(position).object;
+                view.setTag(task);
+                view.setOnClickListener(_task_onClick);
+                view.setData(_workOrder, task);
+
+                if (dataHolders.get(position).dObject.downloading) {
+                    view.setProgressVisible(true);
+                } else {
+                    view.setProgressVisible(false);
+                }
+
+                break;
+            }
         }
     }
 
@@ -355,6 +379,46 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     }
 
 
+    /*-*****************************-*/
+    /*-         Downloads           -*/
+    /*-*****************************-*/
+    private List<TasksAdapter.DownloadTuple> downloads = new LinkedList<>();
+
+    private static class DownloadTuple {
+        int attachmentId;
+        public boolean downloading = false;
+    }
+
+    public void downloadStart(int attachmentId) {
+        for (int i = 0; i < dataHolders.size(); i++) {
+            TasksAdapter.DownloadTuple tuple = dataHolders.get(i).dObject;
+            if (tuple == null) continue;
+
+            if (tuple.attachmentId == attachmentId) {
+                tuple.downloading = true;
+                notifyItemChanged(i);
+                downloads.add(tuple);
+                break;
+            }
+
+        }
+    }
+
+    public void downloadComplete(int attachmentId) {
+        for (int i = 0; i < dataHolders.size(); i++) {
+            TasksAdapter.DownloadTuple tuple = dataHolders.get(i).dObject;
+            if (tuple == null) continue;
+
+            if (tuple.attachmentId == attachmentId) {
+                tuple.downloading = false;
+                notifyItemChanged(i);
+                downloads.remove(tuple);
+                return;
+            }
+
+        }
+    }
+
     private final View.OnClickListener _task_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -364,10 +428,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
     };
 
-
     public interface Listener {
         void onTaskClick(View view, Task task);
     }
-
-
 }

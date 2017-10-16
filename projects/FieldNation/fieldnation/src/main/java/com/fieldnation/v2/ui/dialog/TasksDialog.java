@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
@@ -26,8 +27,10 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -41,6 +44,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.TaskTypeEnum;
 import com.fieldnation.v2.ui.TasksAdapter;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -62,6 +66,9 @@ public class TasksDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
+
+    // Services
+    private DocumentClient _docClient;
 
     // Data
     private int _workOrderId = 0;
@@ -117,6 +124,9 @@ public class TasksDialog extends FullScreenDialog {
         super.onResume();
 
         _workOrdersApi.sub();
+
+        _docClient = new DocumentClient(_documentClient_listener);
+        _docClient.connect(App.get());
     }
 
     @Override
@@ -147,36 +157,8 @@ public class TasksDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         _workOrdersApi.unsub();
+        if (_docClient != null) _docClient.disconnect(App.get());
         super.onPause();
-    }
-
-
-    /*-*****************************-*/
-    /*-		      Events			-*/
-    /*-*****************************-*/
-
-
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            dismiss(true);
-        }
-    };
-
-    /**
-     * @param context
-     * @param uid
-     * @param workOrderId
-     * @param groupId
-     * @param dialogTitle
-     */
-    public static void show(Context context, String uid, int workOrderId, String groupId, String dialogTitle) {
-        Bundle params = new Bundle();
-        params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
-        params.putString(PARAM_GROUP_ID, groupId);
-        params.putString(PARAM_DIALOG_TITLE, dialogTitle);
-
-        Controller.show(context, uid, TasksDialog.class, params);
     }
 
 
@@ -229,6 +211,60 @@ public class TasksDialog extends FullScreenDialog {
         GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
+
+    /*-*********************************-*/
+    /*-				Dialogs				-*/
+    /*-*********************************-*/
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
+        @Override
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+            Log.v(TAG, "onFile");
+            if (fileResult.size() == 0)
+                return;
+
+            if (fileResult.size() == 1) {
+                GetFileDialog.UriIntent fui = fileResult.get(0);
+                if (fui.uri != null) {
+                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                } else {
+                    // TODO show a toast?
+                }
+                return;
+            }
+
+            for (GetFileDialog.UriIntent fui : fileResult) {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("AttachmentUpload")
+                                .label("WorkOrderScreen - multiple")
+                                .action("start")
+                                .build());
+
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_currentTask.getAttachments().getId());
+                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+        }
+    };
+
+
+    /*-*****************************-*/
+    /*-		      Events			-*/
+    /*-*****************************-*/
+
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            dismiss(true);
+        }
+    };
+
+
     private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
         @Override
         public void onTaskClick(View view, Task task) {
@@ -259,6 +295,7 @@ public class TasksDialog extends FullScreenDialog {
                     startAppPickerDialog();
                     break;
                 case CUSTOM_FIELD: // custom field
+                    if (task.getCustomField() == null) break;
                     CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
                     break;
                 case PHONE: // phone
@@ -337,9 +374,9 @@ public class TasksDialog extends FullScreenDialog {
                     }
                     break;
                 case DOWNLOAD:
-                    Attachment doc = task.getAttachment();
-                    if (doc.getId() != null) {
-                        Log.v(TAG, "docid: " + doc.getId());
+                    Attachment attachment = task.getAttachment();
+                    if (attachment.getId() != null) {
+                        Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                             try {
                                 WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
@@ -347,56 +384,16 @@ public class TasksDialog extends FullScreenDialog {
                                 Log.v(TAG, ex);
                             }
                         }
-                        DocumentClient.downloadDocument(App.get(), doc.getId(),
-                                doc.getFile().getLink(), doc.getFile().getName(), false);
+                        _adapter.downloadStart(attachment.getId());
+
+                        DocumentClient.downloadDocument(App.get(), attachment.getId(),
+                                attachment.getFile().getLink(), attachment.getFile().getName(), false);
                     }
                     break;
             }
 
         }
     };
-
-
-    /*-*********************************-*/
-    /*-				Dialogs				-*/
-    /*-*********************************-*/
-    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
-        @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
-            Log.v(TAG, "onFile");
-            if (fileResult.size() == 0)
-                return;
-
-            if (fileResult.size() == 1) {
-                GetFileDialog.UriIntent fui = fileResult.get(0);
-                if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                } else {
-                    // TODO show a toast?
-                }
-                return;
-            }
-
-            for (GetFileDialog.UriIntent fui : fileResult) {
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category("AttachmentUpload")
-                                .label("WorkOrderScreen - multiple")
-                                .action("start")
-                                .build());
-
-                try {
-                    Attachment attachment = new Attachment();
-                    attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            }
-        }
-    };
-
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
@@ -516,12 +513,44 @@ public class TasksDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
-
-
         }
-
-
     };
 
+
+    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _docClient.subDocument();
+        }
+
+        @Override
+        public void onDownload(long documentId, final File file, int state) {
+            Log.v(TAG, "DocumentClient.onDownload");
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
+                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                    ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
+                return;
+            }
+
+            _adapter.downloadComplete((int) documentId);
+        }
+    };
+
+
+    /**
+     * @param context
+     * @param uid
+     * @param workOrderId
+     * @param groupId
+     * @param dialogTitle
+     */
+    public static void show(Context context, String uid, int workOrderId, String groupId, String dialogTitle) {
+        Bundle params = new Bundle();
+        params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putString(PARAM_GROUP_ID, groupId);
+        params.putString(PARAM_DIALOG_TITLE, dialogTitle);
+
+        Controller.show(context, uid, TasksDialog.class, params);
+    }
 
 }

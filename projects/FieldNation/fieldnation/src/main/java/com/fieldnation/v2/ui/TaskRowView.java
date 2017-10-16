@@ -39,6 +39,7 @@ public class TaskRowView extends RelativeLayout {
     // Data
     private WorkOrder _workOrder;
     private Task _task;
+    private boolean _progressVisible = false;
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -98,6 +99,12 @@ public class TaskRowView extends RelativeLayout {
         _progressBar.setMax(100);
         _progressBar.setProgress(progress);
     }
+
+    public void setProgressVisible(boolean visible) {
+        _progressVisible = visible;
+        populateUi();
+    }
+
 
     private void populateUi() {
         if (_keyTextView == null)
@@ -226,6 +233,7 @@ public class TaskRowView extends RelativeLayout {
                     }
                     break;
                 case CUSTOM_FIELD: // custom field
+                    if (_task.getCustomField() == null) break;
                     _keyTextView.setText(_task.getLabel());
                     _rightValueTextView.setVisibility(GONE);
 
@@ -296,6 +304,19 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setText(_task.getLabel());
                         _valueTextView.setVisibility(VISIBLE);
                     }
+
+                    if (_progressVisible) {
+                        _progressBar.setVisibility(VISIBLE);
+
+                        if (_progressVisible) {
+                            _progressBar.setIndeterminate(true);
+                        } else {
+                            _progressBar.setIndeterminate(false);
+                        }
+                    } else {
+                        _progressBar.setVisibility(GONE);
+                    }
+
                     break;
             }
         } catch (Exception e) {
