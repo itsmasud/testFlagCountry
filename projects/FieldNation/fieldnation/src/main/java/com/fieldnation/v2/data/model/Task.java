@@ -36,12 +36,6 @@ public class Task implements Parcelable {
     @Json(name = "author")
     private User _author;
 
-    @Json(name = "check_in")
-    private TimeLog _checkIn;
-
-    @Json(name = "check_out")
-    private TimeLog _checkOut;
-
     @Json(name = "closing_notes")
     private String _closingNotes;
 
@@ -83,6 +77,9 @@ public class Task implements Parcelable {
 
     @Json(name = "status")
     private StatusEnum _status;
+
+    @Json(name = "time_log")
+    private TimeLog _timeLog;
 
     @Json(name = "type")
     private TaskType _type;
@@ -238,56 +235,6 @@ public class Task implements Parcelable {
     public Task author(User author) throws ParseException {
         _author = author;
         SOURCE.put("author", author.getJson());
-        return this;
-    }
-
-    public void setCheckIn(TimeLog checkIn) throws ParseException {
-        _checkIn = checkIn;
-        SOURCE.put("check_in", checkIn.getJson());
-    }
-
-    public TimeLog getCheckIn() {
-        try {
-            if (_checkIn == null && SOURCE.has("check_in") && SOURCE.get("check_in") != null)
-                _checkIn = TimeLog.fromJson(SOURCE.getJsonObject("check_in"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_checkIn == null)
-            _checkIn = new TimeLog();
-
-        return _checkIn;
-    }
-
-    public Task checkIn(TimeLog checkIn) throws ParseException {
-        _checkIn = checkIn;
-        SOURCE.put("check_in", checkIn.getJson());
-        return this;
-    }
-
-    public void setCheckOut(TimeLog checkOut) throws ParseException {
-        _checkOut = checkOut;
-        SOURCE.put("check_out", checkOut.getJson());
-    }
-
-    public TimeLog getCheckOut() {
-        try {
-            if (_checkOut == null && SOURCE.has("check_out") && SOURCE.get("check_out") != null)
-                _checkOut = TimeLog.fromJson(SOURCE.getJsonObject("check_out"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_checkOut == null)
-            _checkOut = new TimeLog();
-
-        return _checkOut;
-    }
-
-    public Task checkOut(TimeLog checkOut) throws ParseException {
-        _checkOut = checkOut;
-        SOURCE.put("check_out", checkOut.getJson());
         return this;
     }
 
@@ -617,6 +564,31 @@ public class Task implements Parcelable {
     public Task status(StatusEnum status) throws ParseException {
         _status = status;
         SOURCE.put("status", status.toString());
+        return this;
+    }
+
+    public void setTimeLog(TimeLog timeLog) throws ParseException {
+        _timeLog = timeLog;
+        SOURCE.put("time_log", timeLog.getJson());
+    }
+
+    public TimeLog getTimeLog() {
+        try {
+            if (_timeLog == null && SOURCE.has("time_log") && SOURCE.get("time_log") != null)
+                _timeLog = TimeLog.fromJson(SOURCE.getJsonObject("time_log"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_timeLog == null)
+            _timeLog = new TimeLog();
+
+        return _timeLog;
+    }
+
+    public Task timeLog(TimeLog timeLog) throws ParseException {
+        _timeLog = timeLog;
+        SOURCE.put("time_log", timeLog.getJson());
         return this;
     }
 

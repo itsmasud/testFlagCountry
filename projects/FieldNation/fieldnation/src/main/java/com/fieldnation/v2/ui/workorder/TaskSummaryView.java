@@ -15,6 +15,7 @@ import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
+import com.fieldnation.v2.ui.dialog.TasksDialog;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -124,11 +125,11 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 view.setCount(String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
             } else if (_workOrder.getStatus().getId() == 3) {
-                view.setCount(group.completed + "/" + group.total);
+                view.setCount(String.valueOf(group.completed) + "/" + String.valueOf(group.total));
                 view.setCountBg(group.total == group.completed ? R.drawable.round_rect_green : R.drawable.round_rect_red);
                 view.setOnClickListener(_task_onClick);
             } else {
-                view.setCount(group.completed + "/" + group.total);
+                view.setCount(String.valueOf(group.completed) + "/" + String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
                 view.setOnClickListener(_task_onClick);
             }
@@ -181,11 +182,11 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         } else if (_workOrder.getStatus().getId() == 3) {
             _customFieldsView.setOnClickListener(_fte_onClick);
-            _customFieldsView.setCount(fteRequiredComplete + "/" + fteRequired);
+            _customFieldsView.setCount(String.valueOf(fteRequiredComplete) + "/" + String.valueOf(fteRequired));
             _customFieldsView.setCountBg(fteRequired == fteRequiredComplete ? R.drawable.round_rect_green : R.drawable.round_rect_red);
         } else {
             _customFieldsView.setCountBg(R.drawable.round_rect_gray);
-            _customFieldsView.setCount(fteRequiredComplete + "/" + fteRequired);
+            _customFieldsView.setCount(String.valueOf(fteRequiredComplete) + "/" + String.valueOf(fteRequired));
             _customFieldsView.setOnClickListener(_fte_onClick);
 
         }
@@ -195,7 +196,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void onClick(View v) {
             Group group = (Group) v.getTag();
-            // TODO call the dialog with the group ID here
+            TasksDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
         }
     };
 

@@ -1,7 +1,6 @@
 package com.fieldnation.v2.ui.workorder;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -13,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -29,14 +27,11 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
-import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -60,13 +55,10 @@ import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.LocationView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
-import com.fieldnation.ui.workorder.detail.TaskListView;
 import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
-import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -90,17 +82,14 @@ import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
-import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
-import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
@@ -123,7 +112,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String TAG = "WorkOrderScreen";
 
     // Dialog tags
-    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
@@ -142,7 +130,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
 
     // saved state keys
-    private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
@@ -165,7 +152,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
-    //    private TaskListView _taskList;
     private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
     private PaymentView _payView;
@@ -188,7 +174,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private String _scannedImagePath;
     private Location _currentLocation;
     private boolean _locationFailed = false;
-    private Task _currentTask;
     private int _workOrderId;
     private SimpleGps _simpleGps;
 
@@ -328,9 +313,6 @@ public class WorkOrderScreen extends RelativeLayout {
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
-        if (_currentTask != null)
-            outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
 
@@ -345,9 +327,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         if (savedInstanceState != null) {
             _workOrderId = savedInstanceState.getInt("workOrderId");
-            if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
-                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
-            }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
@@ -355,10 +334,6 @@ public class WorkOrderScreen extends RelativeLayout {
                 _scannedImagePath = savedInstanceState.getString(STATE_SCANNED_IMAGE_PATH);
             }
         }
-    }
-
-    private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
     }
 
     public void onStart() {
@@ -392,7 +367,6 @@ public class WorkOrderScreen extends RelativeLayout {
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
@@ -426,7 +400,6 @@ public class WorkOrderScreen extends RelativeLayout {
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
-        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
@@ -943,173 +916,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
-        @Override
-        public void onCheckin(Task task) {
-            doCheckin();
-        }
-
-        @Override
-        public void onCheckout(Task task) {
-            doCheckOut();
-        }
-
-        @Override
-        public void onCloseOutNotes(Task task) {
-            showClosingNotesDialog();
-        }
-
-        @Override
-        public void onSetEta(Task task) {
-            App.get().analActionTitle = null;
-            EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
-                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
-        }
-
-        @Override
-        public void onCustomField(Task task) {
-            CustomFieldDialog.show(App.get(), null, _workOrderId, task.getCustomField());
-        }
-
-        @Override
-        public void onDownload(Task task) {
-            Attachment doc = task.getAttachment();
-            if (doc.getId() != null) {
-                Log.v(TAG, "docid: " + doc.getId());
-                if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
-                    try {
-                        WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-                DocumentClient.downloadDocument(App.get(), doc.getId(),
-                        doc.getFile().getLink(), doc.getFile().getName(), false);
-            }
-        }
-
-        @Override
-        public void onEmail(Task task) {
-            String email = task.getEmail();
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:" + email));
-            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
-
-            try {
-                WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
-        }
-
-        @Override
-        public void onPhone(Task task) {
-            if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
-                try {
-                    WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-
-            try {
-                if (task.getPhone() != null) {
-                    // Todo, need to figure out if there is a phone number here
-//                    Spannable test = new SpannableString(task.getPhoneNumber());
-//                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
-//                    if (test.getSpans(0, test.length(), URLSpan.class).length == 0) {
-//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                        builder.setMessage(R.string.dialog_no_number_message);
-//                        builder.setTitle(R.string.dialog_no_number_title);
-//                        builder.setPositiveButton(R.string.btn_ok, null);
-//                        builder.show();
-//
-//                    } else {
-//                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
-//                        String phNum = "tel:" + task.getPhoneNumber();
-//                        callIntent.setData(Uri.parse(phNum));
-//                        startActivity(callIntent);
-//                        setLoading(true);
-//                    }
-
-                    if (!TextUtils.isEmpty(task.getPhone()) && android.util.Patterns.PHONE.matcher(task.getPhone()).matches()) {
-                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        String phNum = "tel:" + task.getPhone();
-                        callIntent.setData(Uri.parse(phNum));
-                        ActivityClient.startActivity(callIntent);
-                        setLoading(true);
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setMessage(R.string.dialog_no_number_message);
-                        builder.setTitle(R.string.dialog_no_number_title);
-                        builder.setPositiveButton(R.string.btn_ok, null);
-                        builder.show();
-                    }
-
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setMessage(R.string.dialog_no_number_message);
-                    builder.setTitle(R.string.dialog_no_number_title);
-                    builder.setPositiveButton(R.string.btn_ok, null);
-                    builder.show();
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onShipment(Task task) {
-            List<Shipment> shipments = new LinkedList();
-            for (Shipment shipment : _workOrder.getShipments().getResults()) {
-                if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
-                    shipments.add(shipment);
-            }
-
-            if (shipments.size() == 0) {
-                ShipmentAddDialog.show(App.get(), null, _workOrderId,
-                        _workOrder.getAttachments(), getContext().getString(R.string.dialog_task_shipment_title), null, task);
-            } else {
-                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrderId,
-                        _workOrder.getShipments(), getContext().getString(R.string.dialog_task_shipment_title), task);
-            }
-        }
-
-        @Override
-        public void onSignature(Task task) {
-            _currentTask = task;
-            SignOffActivity.startSignOff(App.get(), _workOrderId, task.getId());
-            setLoading(true);
-        }
-
-        @Override
-        public void onUploadFile(Task task) {
-            _currentTask = task;
-            startAppPickerDialog();
-        }
-
-        @Override
-        public void onUploadPicture(Task task) {
-            _currentTask = task;
-            startAppPickerDialog();
-        }
-
-        @Override
-        public void onUniqueTask(Task task) {
-            if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
-                return;
-
-            try {
-                WorkordersWebApi.updateTask(App.get(), _workOrderId, task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
-
-        }
-    };
-
-
     private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
         public void onChangeClosingNotes(String closingNotes) {
@@ -1167,44 +973,6 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
-    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
-        @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
-            Log.v(TAG, "onFile");
-            if (fileResult.size() == 0)
-                return;
-
-            if (fileResult.size() == 1) {
-                GetFileDialog.UriIntent fui = fileResult.get(0);
-                if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, _workOrderId, _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                } else {
-                    // TODO show a toast?
-                }
-                return;
-            }
-
-            for (GetFileDialog.UriIntent fui : fileResult) {
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category("AttachmentUpload")
-                                .label("WorkOrderScreen - multiple")
-                                .action("start")
-                                .build());
-
-                try {
-                    Attachment attachment = new Attachment();
-                    attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            }
-            _currentTask = null;
-        }
-    };
-
     private void showClosingNotesDialog() {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
             ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrderId, _workOrder.getClosingNotes());
