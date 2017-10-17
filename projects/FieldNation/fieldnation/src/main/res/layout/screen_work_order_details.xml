@@ -77,7 +77,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <com.fieldnation.ui.workorder.detail.LocationView
+                <com.fieldnation.v2.ui.workorder.LocationView
                     android:id="@+id/location_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:text="Buyer Information" />
 
-                <com.fieldnation.ui.workorder.detail.CompanySummaryView
+                <com.fieldnation.v2.ui.workorder.CompanySummaryView
                     android:id="@+id/companySummary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
