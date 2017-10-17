@@ -9,6 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -33,7 +34,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     // data
     private WorkOrder _workOrder = null;
-    private String _groupId = null;
+    private String _groupId;
     private Listener _listener;
 
     private static class DataHolder {
@@ -76,6 +77,9 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     }
 
     private void rebuild() {
+        if (_workOrder == null || misc.isEmptyOrNull(_groupId))
+            return;
+
         final List<Task> incompleteTasks = new LinkedList<>();
         final List<Task> completeTasks = new LinkedList<>();
 
@@ -87,7 +91,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 completeTasks.add(task);
             } else incompleteTasks.add(task);
         }
-
 
         // populating incomplete list
         if (incompleteTasks.size() != 0) {
@@ -112,9 +115,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                     DownloadTuple tuple = new DownloadTuple();
                     tuple.attachmentId = task.getAttachment().getId();
 
-
                     for (DownloadTuple dt : downloads) {
-                        if (dt.attachmentId == task.getAttachment().getId()){
+                        if (dt.attachmentId == task.getAttachment().getId()) {
                             tuple.downloading = true;
                             break;
                         }
@@ -152,7 +154,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                     tuple.attachmentId = task.getAttachment().getId();
 
                     for (DownloadTuple dt : downloads) {
-                        if (dt.attachmentId == task.getAttachment().getId()){
+                        if (dt.attachmentId == task.getAttachment().getId()) {
                             tuple.downloading = true;
                             break;
                         }

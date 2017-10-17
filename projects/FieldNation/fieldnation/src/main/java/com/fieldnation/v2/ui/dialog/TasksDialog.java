@@ -74,7 +74,7 @@ public class TasksDialog extends FullScreenDialog {
     // Data
     private int _workOrderId = 0;
     private WorkOrder _workOrder;
-    private String _groupId = null;
+    private String _groupId;
     private String _dialogTitle;
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
@@ -99,7 +99,6 @@ public class TasksDialog extends FullScreenDialog {
         _list.setItemAnimator(new DefaultItemAnimator());
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-
         return v;
     }
 
@@ -110,7 +109,6 @@ public class TasksDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
         _adapter.setListener(_taskClick_listener);
-
     }
 
     @Override
@@ -132,11 +130,9 @@ public class TasksDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
-
         _workOrderId = params.getInt(PARAM_WORK_ORDER_ID);
         _dialogTitle = params.getString(PARAM_DIALOG_TITLE);
         _groupId = params.getString(PARAM_GROUP_ID);
-        super.show(params, animate);
         populateUi();
 
         AppMessagingClient.setLoading(true);
@@ -161,9 +157,12 @@ public class TasksDialog extends FullScreenDialog {
         super.onPause();
     }
 
-
     public TaskTypeEnum getType(Task task) {
         return TaskTypeEnum.fromTypeId(task.getType().getId());
+    }
+
+    private boolean checkMedia() {
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     /*-*********************************************-*/
@@ -207,10 +206,6 @@ public class TasksDialog extends FullScreenDialog {
         }
     }
 
-    private boolean checkMedia() {
-        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
-    }
-
     private void startAppPickerDialog() {
         if (checkMedia()) {
             GetFileDialog.show(App.get(), DIALOG_GET_FILE);
@@ -218,7 +213,6 @@ public class TasksDialog extends FullScreenDialog {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
         }
     }
-
 
     /*-*********************************-*/
     /*-				Dialogs				-*/
@@ -260,7 +254,6 @@ public class TasksDialog extends FullScreenDialog {
         }
     };
 
-
     /*-*****************************-*/
     /*-		      Events			-*/
     /*-*****************************-*/
@@ -271,7 +264,6 @@ public class TasksDialog extends FullScreenDialog {
             dismiss(true);
         }
     };
-
 
     private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
         @Override
@@ -312,7 +304,6 @@ public class TasksDialog extends FullScreenDialog {
                     if (task.getCustomField().getId() == null) {
                         break;
                     }
-
                     CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
                     break;
 
@@ -507,7 +498,6 @@ public class TasksDialog extends FullScreenDialog {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
-
             if (successObject != null && (methodName.equals("getWorkOrder"))) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
@@ -552,7 +542,6 @@ public class TasksDialog extends FullScreenDialog {
                     ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
                 return;
             }
-
             _adapter.downloadComplete((int) documentId);
         }
     };
