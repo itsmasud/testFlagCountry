@@ -14,7 +14,6 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -37,7 +36,6 @@ public class TaskRowView extends RelativeLayout {
     private ProgressBar _progressBar;
 
     // Data
-    private WorkOrder _workOrder;
     private Task _task;
     private boolean _progressVisible = false;
 
@@ -79,9 +77,8 @@ public class TaskRowView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setData(WorkOrder workOrder, Task task) {
+    public void setData(Task task) {
         _task = task;
-        _workOrder = workOrder;
         populateUi();
     }
 
@@ -108,9 +105,6 @@ public class TaskRowView extends RelativeLayout {
 
     private void populateUi() {
         if (_keyTextView == null)
-            return;
-
-        if (_workOrder == null)
             return;
 
         if (_task == null)

@@ -147,7 +147,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrder, _groupId);
+        _adapter.setData(_workOrder.getTasks(), _groupId);
     }
 
     @Override

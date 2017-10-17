@@ -12,7 +12,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.Tasks;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private final int TYPE_TASK_DOWNLOAD = 4;
 
     // data
-    private WorkOrder _workOrder = null;
+    private Tasks _tasks = null;
     private String _groupId;
     private Listener _listener;
 
@@ -63,8 +63,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     }
 
-    public void setData(WorkOrder workOrder, String groupId) {
-        _workOrder = workOrder;
+    public void setData(Tasks tasks, String groupId) {
+        _tasks = tasks;
         _groupId = groupId;
         dataHolders.clear();
 
@@ -77,13 +77,13 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     }
 
     private void rebuild() {
-        if (_workOrder == null || misc.isEmptyOrNull(_groupId))
+        if (_tasks == null || misc.isEmptyOrNull(_groupId))
             return;
 
         final List<Task> incompleteTasks = new LinkedList<>();
         final List<Task> completeTasks = new LinkedList<>();
 
-        for (Task task : _workOrder.getTasks().getResults()) {
+        for (Task task : _tasks.getResults()) {
             if (!_groupId.equals(task.getGroup().getId()))
                 continue;
 
@@ -218,7 +218,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
                 view.setOnClickListener(_task_onClick);
-                view.setData(_workOrder, task);
+                view.setData(task);
                 break;
             }
 
@@ -227,7 +227,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
                 view.setOnClickListener(null);
-                view.setData(_workOrder, task);
+                view.setData(task);
 
                 UploadTuple ut = dataHolders.get(position).uObject;
                 view.setProgress(ut.progress);
@@ -239,7 +239,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 TaskRowView view = (TaskRowView) holder.itemView;
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
-                view.setData(_workOrder, task);
+                view.setData(task);
 
                 if (dataHolders.get(position).dObject.downloading) {
                     view.setProgressVisible(true);
