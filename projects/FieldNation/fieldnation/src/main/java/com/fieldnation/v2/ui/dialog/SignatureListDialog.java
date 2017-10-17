@@ -74,6 +74,7 @@ public class SignatureListDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
+        AppMessagingClient.setLoading(true);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
@@ -81,7 +82,6 @@ public class SignatureListDialog extends FullScreenDialog {
         _list.setAdapter(_adapter);
 
         _adapter.setListener(_signatures_listener);
-
         _workOrdersApi.sub();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
@@ -92,7 +92,7 @@ public class SignatureListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getSignatures(App.get(), _workOrderId, false, false);
         populateUi();
     }
 
@@ -114,8 +114,6 @@ public class SignatureListDialog extends FullScreenDialog {
         if (_signatures.getActionsSet().contains(Signatures.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);
         }
-
-        _adapter.setSignatures(_signatures.getResults());
     }
 
 
@@ -171,6 +169,7 @@ public class SignatureListDialog extends FullScreenDialog {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof Signatures) {
                 _signatures = (Signatures) successObject;
+                _adapter.setSignatures(_signatures.getResults());
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {

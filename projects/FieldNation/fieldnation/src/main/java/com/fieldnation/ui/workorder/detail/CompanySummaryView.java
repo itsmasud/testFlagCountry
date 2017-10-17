@@ -165,20 +165,23 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
 
         // Time To Approval
         if (overall != null && overall.getApprovalDays() != null) {
-            _ttaLayout.setVisibility(VISIBLE);
-            _ttaDaysTextView.setText(overall.getApprovalDays() + " days");
-            boolean found = false;
+            int days = 0;
+            int percent = 0;
             for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
-                if (ob.getDays().equals(overall.getApprovalDays())) {
-                    _ttaNotesTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
-                    found = true;
-                    break;
+                if (ob.getPercent() > percent) {
+                    percent = ob.getPercent();
+                    days = ob.getDays();
+                } else if (ob.getPercent() == percent && ob.getDays() < days) {
+                    days = ob.getDays();
                 }
             }
-            if (found) {
+            if (days != 0 && percent != 0) {
+                _ttaLayout.setVisibility(VISIBLE);
+                _ttaNotesTextView.setText(getResources().getString(R.string.company_percentage_approval, percent));
+                _ttaDaysTextView.setText(days + " days");
                 _ttaNotesTextView.setVisibility(VISIBLE);
             } else {
-                _ttaNotesTextView.setVisibility(GONE);
+                _ttaLayout.setVisibility(GONE);
             }
         } else {
             _ttaLayout.setVisibility(GONE);

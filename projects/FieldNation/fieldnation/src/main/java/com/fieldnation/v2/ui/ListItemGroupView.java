@@ -7,6 +7,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 
 /**
  * Created by mc on 8/4/17.
@@ -17,9 +19,12 @@ public class ListItemGroupView extends RelativeLayout {
 
     // Ui
     private TextView _titleTextView;
+    private IconFontTextView _iconView;
 
     // Data
     private String _title;
+    private String _iconText = null;
+    private int _iconTextColor = -1;
 
     public ListItemGroupView(Context context) {
         super(context);
@@ -43,6 +48,7 @@ public class ListItemGroupView extends RelativeLayout {
             return;
 
         _titleTextView = findViewById(R.id.title_textview);
+        _iconView = findViewById(R.id.x_textview);
 
         populateUi();
     }
@@ -53,6 +59,14 @@ public class ListItemGroupView extends RelativeLayout {
         populateUi();
     }
 
+    public void setIcon(String iconText, int iconTextColor) {
+        _iconText = iconText;
+        _iconTextColor = iconTextColor;
+
+        populateUi();
+    }
+
+
     private void populateUi() {
         if (_titleTextView == null)
             return;
@@ -61,5 +75,17 @@ public class ListItemGroupView extends RelativeLayout {
             _titleTextView.setText("");
         else
             _titleTextView.setText(_title);
+
+        if (misc.isEmptyOrNull(_iconText))
+            _iconView.setVisibility(GONE);
+        else {
+            _iconView.setVisibility(VISIBLE);
+            _iconView.setText(_iconText);
+        }
+
+
+        if (_iconTextColor != -1)
+            _iconView.setTextColor(_iconTextColor);
+
     }
 }
