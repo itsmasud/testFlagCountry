@@ -126,7 +126,7 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
             try {
                 _timeTextView.setText(
                         _message.getFrom().getName() + " \u2022 " +
-                                TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone());
+                                TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone(_message.getCreated().getCalendar()));
             } catch (Exception ex) {
                 _timeTextView.setVisibility(GONE);
             }

@@ -28,7 +28,7 @@ import java.util.Locale;
 
 public class ChatRightView extends RelativeLayout implements ChatRenderer {
     private static final String TAG = "ChatRightView";
-    private  final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.getDefault());
+    private final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.getDefault());
 
     // Ui
     private TextView _messageTextView;
@@ -94,7 +94,7 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
         if (_position == Position.FULL || _position == Position.BOTTOM) {
             _timeTextView.setVisibility(VISIBLE);
             try {
-                _timeTextView.setText(TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone());
+                _timeTextView.setText(TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone(_message.getCreated().getCalendar()));
             } catch (Exception ex) {
                 _timeTextView.setVisibility(GONE);
             }
