@@ -47,13 +47,16 @@
         android:id="@+id/value_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left"
+        android:gravity="right"
+        android:layout_toRightOf="@+id/key"
         android:text="Value"
         android:textColor="@color/fn_dark_text_50"
         android:layout_alignParentRight="true"
-        android:padding="16dp"
-        android:textSize="14sp"
-        android:layout_alignBottom="@+id/value" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="16dp"
+        android:textSize="14sp"/>
 
     <View
         style="@style/DividerFull"
