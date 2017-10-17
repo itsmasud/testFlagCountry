@@ -392,6 +392,16 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     }
 
     public void downloadStart(int attachmentId) {
+
+        // catching duplicate request
+        for (DownloadTuple dt : downloads) {
+            if (dt.attachmentId == attachmentId) {
+                rebuild();
+                notifyDataSetChanged();
+                return;
+            }
+        }
+
         for (int i = 0; i < dataHolders.size(); i++) {
             DownloadTuple tuple = dataHolders.get(i).dObject;
             if (tuple == null) continue;
@@ -402,7 +412,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 downloads.add(tuple);
                 break;
             }
-
         }
     }
 
