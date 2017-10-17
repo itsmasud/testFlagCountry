@@ -25,11 +25,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     private List<DataHolder> dataHolders = new LinkedList<>();
 
-    private static final int TYPE_HEADER_INCOMPLETE = 0;
-    private static final int TYPE_HEADER_COMPLETE = 1;
-    private static final int TYPE_TASK = 2;
-    private static final int TYPE_TASK_UPLOAD = 3;
-    private static final int TYPE_ATTACHMENT = 4;
+    private final int TYPE_HEADER_INCOMPLETE = 0;
+    private final int TYPE_HEADER_COMPLETE = 1;
+    private final int TYPE_TASK = 2;
+    private final int TYPE_TASK_UPLOAD = 3;
+    private final int TYPE_ATTACHMENT = 4;
 
     // data
     private WorkOrder _workOrder = null;
@@ -107,6 +107,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
                 if (match) continue;
 
+                // sensing downloading
                 if (task.getAttachment().getId() != null) {
                     DownloadTuple tuple = new DownloadTuple();
                     tuple.attachmentId = task.getAttachment().getId();
@@ -145,6 +146,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
                 if (match) continue;
 
+                // sensing downloading
                 if (task.getAttachment().getId() != null) {
                     DownloadTuple tuple = new DownloadTuple();
                     tuple.attachmentId = task.getAttachment().getId();
@@ -225,7 +227,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 view.setOnClickListener(_task_onClick);
                 view.setData(_workOrder, task);
 
-                TasksAdapter.UploadTuple ut = (TasksAdapter.UploadTuple) dataHolders.get(position).uObject;
+                UploadTuple ut = dataHolders.get(position).uObject;
                 view.setProgress(ut.progress);
 
                 break;
@@ -293,7 +295,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
     }
 
-    private List<TasksAdapter.UploadTuple> uploads = new LinkedList<>();
+    private List<UploadTuple> uploads = new LinkedList<>();
 
     public void uploadClear() {
         uploads.clear();
@@ -312,14 +314,14 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             Log.v(TAG, ex);
         }
 
-        for (TasksAdapter.UploadTuple ut : uploads) {
+        for (UploadTuple ut : uploads) {
             if (ut.name.equals(name)) {
                 rebuild();
                 notifyDataSetChanged();
                 return;
             }
         }
-        TasksAdapter.UploadTuple t = new TasksAdapter.UploadTuple(transactionParams, -1);
+        UploadTuple t = new UploadTuple(transactionParams, -1);
         uploads.add(t);
         // TODO find position and notify accordingly
         rebuild();
@@ -337,7 +339,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             Log.v(TAG, ex);
         }
 
-        for (TasksAdapter.UploadTuple ut : uploads) {
+        for (UploadTuple ut : uploads) {
             if (ut.name.equals(name)) {
                 ut.progress = progress;
                 rebuild();
@@ -345,7 +347,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 return;
             }
         }
-        TasksAdapter.UploadTuple t = new TasksAdapter.UploadTuple(transactionParams, progress);
+        UploadTuple t = new UploadTuple(transactionParams, progress);
         uploads.add(t);
         // TODO find location and notify accordingly
         rebuild();
@@ -363,8 +365,8 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             Log.v(TAG, ex);
         }
 
-        TasksAdapter.UploadTuple t = null;
-        for (TasksAdapter.UploadTuple ut : uploads) {
+        UploadTuple t = null;
+        for (UploadTuple ut : uploads) {
             if (ut.name.equals(name)) {
                 t = ut;
                 break;
@@ -380,7 +382,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     /*-*****************************-*/
     /*-         Downloads           -*/
     /*-*****************************-*/
-    private List<TasksAdapter.DownloadTuple> downloads = new LinkedList<>();
+    private List<DownloadTuple> downloads = new LinkedList<>();
 
     private static class DownloadTuple {
         int attachmentId;
@@ -389,7 +391,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     public void downloadStart(int attachmentId) {
         for (int i = 0; i < dataHolders.size(); i++) {
-            TasksAdapter.DownloadTuple tuple = dataHolders.get(i).dObject;
+            DownloadTuple tuple = dataHolders.get(i).dObject;
             if (tuple == null) continue;
 
             if (tuple.attachmentId == attachmentId) {
@@ -404,7 +406,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     public void downloadComplete(int attachmentId) {
         for (int i = 0; i < dataHolders.size(); i++) {
-            TasksAdapter.DownloadTuple tuple = dataHolders.get(i).dObject;
+            DownloadTuple tuple = dataHolders.get(i).dObject;
             if (tuple == null) continue;
 
             if (tuple.attachmentId == attachmentId) {
@@ -413,7 +415,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 downloads.remove(tuple);
                 return;
             }
-
         }
     }
 

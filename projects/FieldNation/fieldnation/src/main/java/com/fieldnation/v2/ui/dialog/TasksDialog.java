@@ -117,7 +117,6 @@ public class TasksDialog extends FullScreenDialog {
     public void onStop() {
         super.onStop();
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-
     }
 
     @Override
