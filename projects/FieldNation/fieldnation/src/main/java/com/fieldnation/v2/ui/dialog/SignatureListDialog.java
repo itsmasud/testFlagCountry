@@ -77,6 +77,7 @@ public class SignatureListDialog extends FullScreenDialog {
         AppMessagingClient.setLoading(true);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _finishMenu.setVisibility(View.GONE);
 
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _list.setAdapter(_adapter);
@@ -85,6 +86,7 @@ public class SignatureListDialog extends FullScreenDialog {
         _workOrdersApi.sub();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        populateUi();
     }
 
     @Override
@@ -113,6 +115,8 @@ public class SignatureListDialog extends FullScreenDialog {
 
         if (_signatures.getActionsSet().contains(Signatures.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);
+        } else {
+            _finishMenu.setVisibility(View.GONE);
         }
     }
 
