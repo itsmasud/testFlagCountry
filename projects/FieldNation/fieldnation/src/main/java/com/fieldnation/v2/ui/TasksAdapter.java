@@ -30,7 +30,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private final int TYPE_HEADER_COMPLETE = 1;
     private final int TYPE_TASK = 2;
     private final int TYPE_TASK_UPLOAD = 3;
-    private final int TYPE_ATTACHMENT = 4;
+    private final int TYPE_TASK_DOWNLOAD = 4;
 
     // data
     private WorkOrder _workOrder = null;
@@ -122,7 +122,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                         }
                     }
 
-                    dataHolders.add(new DataHolder(TYPE_ATTACHMENT, task, tuple));
+                    dataHolders.add(new DataHolder(TYPE_TASK_DOWNLOAD, task, tuple));
                     continue;
                 }
 
@@ -160,7 +160,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                         }
                     }
 
-                    dataHolders.add(new DataHolder(TYPE_ATTACHMENT, task, tuple));
+                    dataHolders.add(new DataHolder(TYPE_TASK_DOWNLOAD, task, tuple));
                     continue;
                 }
 
@@ -190,7 +190,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 return new TaskViewHolder(view);
             }
 
-            case TYPE_ATTACHMENT: {
+            case TYPE_TASK_DOWNLOAD: {
                 TaskRowView view = new TaskRowView(parent.getContext());
                 return new TaskViewHolder(view);
             }
@@ -226,7 +226,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 TaskRowView view = (TaskRowView) holder.itemView;
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
-                view.setOnClickListener(_task_onClick);
+                view.setOnClickListener(null);
                 view.setData(_workOrder, task);
 
                 UploadTuple ut = dataHolders.get(position).uObject;
@@ -235,17 +235,18 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 break;
             }
 
-            case TYPE_ATTACHMENT: {
+            case TYPE_TASK_DOWNLOAD: {
                 TaskRowView view = (TaskRowView) holder.itemView;
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
-                view.setOnClickListener(_task_onClick);
                 view.setData(_workOrder, task);
 
                 if (dataHolders.get(position).dObject.downloading) {
                     view.setProgressVisible(true);
+                    view.setOnClickListener(null);
                 } else {
                     view.setProgressVisible(false);
+                    view.setOnClickListener(_task_onClick);
                 }
 
                 break;
