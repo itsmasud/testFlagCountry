@@ -238,11 +238,14 @@ public class TaskRowView extends RelativeLayout {
                     break;
 
                 case CUSTOM_FIELD: // custom field
-                    if (_task.getCustomField() == null) break;
+                    if (_task.getCustomField().getId() == null) {
+                        setOnClickListener(null);
+                    }
+
                     _keyTextView.setText(_task.getLabel());
                     _rightValueTextView.setVisibility(GONE);
 
-                    if (misc.isEmptyOrNull(_task.getDescription())) { // TODO need to add task.getDescriptions().getFirst(). Talk with Kamrul vai
+                    if (misc.isEmptyOrNull(_task.getDescription())) {
                         _valueTextView.setVisibility(GONE);
                     } else {
                         _valueTextView.setText(_task.getDescription());

@@ -310,7 +310,10 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CUSTOM_FIELD: // custom field
-                    if (task.getCustomField() == null) break;
+                    if (task.getCustomField().getId() == null) {
+                        break;
+                    }
+
                     CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
                     break;
 
