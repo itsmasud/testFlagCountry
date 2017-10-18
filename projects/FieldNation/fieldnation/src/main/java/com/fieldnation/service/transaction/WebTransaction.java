@@ -14,14 +14,12 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Michael Carver on 3/3/2015.
@@ -44,6 +42,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private TrackerEnum _trackType;
     private String _timingKey;
     private boolean _wasZombie = false;
+    private String _uuid;
 
     private int _notifId = -1;
 
@@ -85,6 +84,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _trackType = TrackerEnum.values()[cursor.getInt(Column.TRACK_TYPE.getIndex())];
         _timingKey = cursor.getString(Column.TIMING_KEY.getIndex());
         _wasZombie = cursor.getInt(Column.WAS_ZOMBIE.getIndex()) == 1;
+        _uuid = cursor.getString(Column.UUID.getIndex());
 
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
 
@@ -113,6 +113,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _trackType = TrackerEnum.values()[bundle.getInt(PARAM_TRACK_ENUM)];
         _timingKey = bundle.getString(PARAM_TIMING_KEY);
         _wasZombie = bundle.getBoolean(PARAM_ZOMBIE);
+        _uuid = bundle.getString(PARAM_UUID);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);
         _notifStartArray = bundle.getByteArray(PARAM_NOTIFICATION_START);
@@ -151,6 +152,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             bundle.putString(PARAM_TIMING_KEY, _timingKey);
 
         bundle.putBoolean(PARAM_ZOMBIE, _wasZombie);
+        bundle.putString(PARAM_UUID, _uuid);
 
         bundle.putInt(PARAM_NOTIFICATION_ID, _notifId);
         if (_notifStartArray != null)
@@ -273,6 +275,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public boolean wasZombie() {
         return _wasZombie;
+    }
+
+    public String getUUID() {
+        return _uuid;
     }
 
     public int getNotificationId() {
@@ -556,6 +562,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.TRACK_TYPE.getName(), obj._trackType.ordinal());
         v.put(Column.TIMING_KEY.getName(), obj._timingKey);
         v.put(Column.WAS_ZOMBIE.getName(), obj._wasZombie ? 1 : 0);
+        v.put(Column.UUID.getName(), obj._uuid);
 
         v.put(Column.NOTIF_ID.getName(), obj._notifId);
         v.put(Column.NOTIF_FAILED.getName(), obj._notifFailedArray);
@@ -714,6 +721,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putInt(PARAM_TRACK_ENUM, 0);
             params.putBoolean(PARAM_ZOMBIE, false);
             params.putInt(PARAM_NOTIFICATION_ID, -1);
+            params.putString(PARAM_UUID, null);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_FAILED, (byte[]) null);
@@ -730,6 +738,16 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder priority(Priority priority) {
             params.putSerializable(PARAM_PRIORITY, priority);
+            return this;
+        }
+
+        public Builder uuid(String uuid) {
+            params.putString(PARAM_UUID, uuid);
+            return this;
+        }
+
+        public Builder uuid(UUID uuid) {
+            params.putString(PARAM_UUID, uuid.toString());
             return this;
         }
 

@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpTrackingContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
@@ -289,14 +290,17 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param folderId    Folder id
      * @param attachment  Folder
      */
-    static void addAttachment(Context context, Integer workOrderId, Integer folderId,
-                              Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
+    static void addAttachment(
+            Context context, Integer workOrderId, Integer folderId, Attachment attachment,
+            String filename, StoredObject storedObject, EventContext uiContext, SpTrackingContext spTrackingContext) {
+
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")
                 .label(workOrderId + "")
                 .category("workorder")
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .addContext(spTrackingContext)
                 .property("folder_id")
                 .value(folderId)
                 .build()
@@ -306,6 +310,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .header("X-App-UUID", spTrackingContext.uuid)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);
@@ -326,12 +331,14 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "addAttachment", methodParams))
+                            TransactionListener.params(
+                                    "ADDRESS_WEB_API_V2/WorkordersWebApi", WorkordersWebApi.class,
+                                    "addAttachment", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .setTrack(true)
                     .setTrackType(TrackerEnum.DELIVERABLES)
+                    .uuid(spTrackingContext.uuid)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
