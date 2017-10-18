@@ -277,15 +277,7 @@
             android:exported="false"
             android:process=":frontside" />
         <service
-            android:name=".service.GpsTrackingService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".fnpigeon.TopicService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.AnalyticsPassThroughService"
             android:exported="false"
             android:process=":frontside" />
         <service
@@ -296,8 +288,17 @@
             android:name=".service.data.payment.PaymentService"
             android:exported="false"
             android:process=":frontside" />
+
+        <service
+            android:name=".service.GpsTrackingService"
+            android:exported="false"
+            android:process=":frontside" />
         <service
             android:name=".service.crawler.WebCrawlerService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.AnalyticsPassThroughService"
             android:exported="false"
             android:process=":frontside" />
 
