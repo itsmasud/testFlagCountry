@@ -232,10 +232,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service
-            android:name=".service.GpsTrackingService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.auth.AuthService"
             android:exported="true"
             android:process=":frontside">
@@ -260,6 +256,31 @@
                 android:resource="@xml/syncadapter" />
         </service>
         <service
+            android:name=".gcm.MyGcmListenerService"
+            android:exported="false"
+            android:process=":frontside">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".gcm.MyInstanceIDListenerService"
+            android:exported="false"
+            android:process=":frontside">
+            <intent-filter>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.GpsTrackingService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
             android:name=".fnpigeon.TopicService"
             android:exported="false"
             android:process=":frontside" />
@@ -277,26 +298,6 @@
             android:process=":frontside" />
         <service
             android:name=".service.crawler.WebCrawlerService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".gcm.MyGcmListenerService"
-            android:exported="false"
-            android:process=":frontside">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".gcm.MyInstanceIDListenerService"
-            android:exported="false"
-            android:process=":frontside">
-            <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
-            </intent-filter>
-        </service>
-        <service
-            android:name=".gcm.RegistrationIntentService"
             android:exported="false"
             android:process=":frontside" />
 
