@@ -276,10 +276,6 @@
             android:exported="false"
             android:process=":frontside" />
         <service
-            android:name=".service.data.documents.DocumentService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
             android:process=":frontside" />
