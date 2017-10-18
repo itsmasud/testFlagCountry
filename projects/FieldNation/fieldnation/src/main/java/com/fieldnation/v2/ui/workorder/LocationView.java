@@ -36,8 +36,6 @@ import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Location;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 public class LocationView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "LocationView";
