@@ -65,6 +65,7 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Requests;
@@ -152,6 +153,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private TaskSummaryView _taskWidget;
     private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
+    private RequestNewPayView _requestNewPayView;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpensesSummaryView _expensesSummaryView;
@@ -237,6 +239,10 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _scheduleView = findViewById(R.id.schedule_view);
         _renderers.add(_scheduleView);
+
+        _requestNewPayView = findViewById(R.id.requestNewPay_view);
+        _requestNewPayView.setOnClickListener(_requestNewPay_onClick);
+        _renderers.add(_requestNewPayView);
 
         _payView = findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
@@ -930,23 +936,22 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
+    private final View.OnClickListener _requestNewPay_onClick = new OnClickListener() {
         @Override
-        public void onCounterOffer(WorkOrder workOrder) {
-            CounterOfferDialog.show(App.get(), workOrder.getId(), workOrder.getPay(), workOrder.getSchedule());
-        }
-
-        @Override
-        public void onRequestNewPay(WorkOrder workOrder) {
-            // TODO add analytics
-            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-            if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
-                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
-            } else {
-                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);
+        public void onClick(View v) {
+            if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
+                // TODO add analytics
+                Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
+                if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
+                    PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
+                } else {
+                    PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);
+                }
             }
         }
+    };
 
+    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onShowTerms(WorkOrder workOrder) {
             TermsDialog.show(App.get(), DIALOG_TERMS, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));
@@ -1035,7 +1040,7 @@ public class WorkOrderScreen extends RelativeLayout {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            populateUi();
+            AppMessagingClient.setLoading(true);
         }
     };
 
