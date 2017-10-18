@@ -229,23 +229,10 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
         // set location type
         if (loc.getType().getId() == null || misc.isEmptyOrNull(loc.getType().getName())) {
+            _locationTypeTextView.setVisibility(GONE);
         } else {
-            switch (loc.getType().getName()) {
-                case "Commercial":
-                    _locationTypeTextView.setText(R.string.commercial);
-                    break;
-                case "Government":
-                    _locationTypeTextView.setText(R.string.government);
-                    break;
-                case "Residential":
-                    _locationTypeTextView.setText(R.string.residential);
-                    break;
-                case "Educational":
-                    _locationTypeTextView.setText(R.string.educational);
-                    break;
-                default:
-                    break;
-            }
+            _locationTypeTextView.setText(misc.capitalize(loc.getType().getName()));
+            _locationTypeTextView.setVisibility(VISIBLE);
         }
 
         // distance
