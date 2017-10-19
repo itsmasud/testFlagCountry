@@ -360,6 +360,7 @@ public class TasksDialog extends FullScreenDialog {
                         return;
 
                     try {
+                        AppMessagingClient.setLoading(true);
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -505,9 +506,11 @@ public class TasksDialog extends FullScreenDialog {
                     populateUi();
                     AppMessagingClient.setLoading(false);
                 }
+
             } else if (methodName.equals("updateTask")) {
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
                 AppMessagingClient.setLoading(true);
+
             } else if (methodName.equals("addAttachment")) {
                 try {
                     JsonObject obj = new JsonObject(transactionParams.methodParams);
@@ -519,8 +522,9 @@ public class TasksDialog extends FullScreenDialog {
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
+
             } else if (successObject != null && methodName.equals("getAttachments")) {
-//TODO                folders = (AttachmentFolders) successObject;
+//                folders = (AttachmentFolders) successObject;
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
