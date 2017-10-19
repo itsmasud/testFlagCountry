@@ -16,4 +16,5 @@ public interface FileCacheConstants {
     String PARAM_SUCCESS = "success";
     String PARAM_SIZE = "size";
     String PARAM_POS = "pos";
+    String PARAM_UUID = "uuid";
 }

@@ -118,7 +118,7 @@ public class ProfileSystem implements ProfileConstants {
         }.executeEx(context, page, isSync, allowCache);
     }
 
-    public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename) {
+    public static void uploadProfilePhoto(Context context, String uuid, long profileId, String filePath, String filename) {
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... objects) {
@@ -126,14 +126,15 @@ public class ProfileSystem implements ProfileConstants {
                 long profileId = (Long) objects[1];
                 String filePath = (String) objects[2];
                 String filename = (String) objects[3];
+                String uuid = (String) objects[4];
 
-                ProfileTransactionBuilder.uploadProfilePhoto(context, filename, filePath, profileId);
+                ProfileTransactionBuilder.uploadProfilePhoto(context, uuid, filename, filePath, profileId);
                 return null;
             }
-        }.executeEx(context, profileId, filePath, filename);
+        }.executeEx(context, profileId, filePath, filename, uuid);
     }
 
-    public static void uploadProfilePhoto(Context context, long profileId, String filename, Uri uri) {
+    public static void uploadProfilePhoto(Context context, String uuid, long profileId, String filename, Uri uri) {
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... objects) {
@@ -141,14 +142,15 @@ public class ProfileSystem implements ProfileConstants {
                 long profileId = (Long) objects[1];
                 String filename = (String) objects[2];
                 Uri uri = (Uri) objects[3];
+                String uuid = (String) objects[4];
 
                 if (uri != null) {
                     try {
                         StoredObject cache = StoredObject.get(context, App.getProfileId(), "CacheFile", uri.toString());
                         if (cache != null) {
-                            ProfileTransactionBuilder.uploadProfilePhoto(context, cache, filename, uri.toString(), profileId);
+                            ProfileTransactionBuilder.uploadProfilePhoto(context, uuid, cache, filename, uri.toString(), profileId);
                         } else {
-                            ProfileTransactionBuilder.uploadProfilePhoto(context, context.getContentResolver().openInputStream(uri), filename, uri.toString(), profileId);
+                            ProfileTransactionBuilder.uploadProfilePhoto(context, uuid, context.getContentResolver().openInputStream(uri), filename, uri.toString(), profileId);
                         }
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -156,6 +158,6 @@ public class ProfileSystem implements ProfileConstants {
                 }
                 return null;
             }
-        }.executeEx(context, profileId, filename, uri);
+        }.executeEx(context, profileId, filename, uri, uuid);
     }
 }

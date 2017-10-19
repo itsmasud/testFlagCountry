@@ -167,9 +167,10 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
+                    // TODO analytics
                 }
                 return;
             }
@@ -186,7 +187,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentFolder.getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

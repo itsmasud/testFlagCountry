@@ -46,6 +46,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class GetFileDialog extends SimpleDialog {
     private static final String TAG = "GetFileDialog";
@@ -341,7 +342,6 @@ public class GetFileDialog extends SimpleDialog {
     };
 
     private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
-
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
@@ -405,10 +405,10 @@ public class GetFileDialog extends SimpleDialog {
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
                         caching.put(ui.uri.toString(), ui);
-                        FileCacheClient.cacheFileUpload(ui.uri.toString(), ui.uri);
+                        FileCacheClient.cacheFileUpload(ui.uuid, ui.uri.toString(), ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
                         caching.put(ui.intent.getData().toString(), ui);
-                        FileCacheClient.cacheFileUpload(ui.intent.getData().toString(), ui.intent.getData());
+                        FileCacheClient.cacheFileUpload(ui.uuid, ui.intent.getData().toString(), ui.intent.getData());
                     }
                 }
             } catch (Exception ex) {
@@ -422,6 +422,7 @@ public class GetFileDialog extends SimpleDialog {
     public static class UriIntent implements Parcelable {
         public Uri uri = null;
         public Intent intent = null;
+        public String uuid = UUID.randomUUID().toString();
 
         private UriIntent(Uri uri) {
             this.uri = uri;
@@ -431,15 +432,21 @@ public class GetFileDialog extends SimpleDialog {
             this.intent = intent;
         }
 
+        private UriIntent(Bundle bundle) {
+            this.uri = bundle.getParcelable("uri");
+            this.intent = bundle.getParcelable("intent");
+            this.uuid = bundle.getString("uuid");
+        }
+
         public static final Parcelable.Creator<UriIntent> CREATOR = new Parcelable.Creator<UriIntent>() {
             @Override
             public UriIntent createFromParcel(Parcel source) {
-                Parcelable p = source.readParcelable(Parcelable.class.getClassLoader());
-                if (p instanceof Uri)
-                    return new UriIntent((Uri) p);
-                else if (p instanceof Intent)
-                    return new UriIntent((Intent) p);
-
+                try {
+                    Bundle bundle = source.readBundle(getClass().getClassLoader());
+                    return new UriIntent(bundle);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
                 return null;
             }
 
@@ -456,17 +463,18 @@ public class GetFileDialog extends SimpleDialog {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            if (uri != null)
-                dest.writeParcelable(uri, flags);
-            else if (intent != null)
-                dest.writeParcelable(intent, flags);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("uri", uri);
+            bundle.putParcelable("intent", intent);
+            bundle.putString("uuid", uuid);
+            dest.writeBundle(bundle);
         }
     }
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
 
         @Override
-        public void onFileCacheProgress(String tag, long size) {
+        public void onFileCacheProgress(String uuid, String tag, long size) {
             progress.put(tag, size);
 
             long sum = 0;
@@ -479,7 +487,7 @@ public class GetFileDialog extends SimpleDialog {
         }
 
         @Override
-        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(String uuid, String tag, Uri uri, long size, boolean success) {
             if (caching.containsKey(tag)) {
                 cached.add(caching.remove(tag));
 

@@ -222,19 +222,20 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     private final PhotoEditDialog.OnSaveListener _photoEdit_onSave = new PhotoEditDialog.OnSaveListener() {
         @Override
-        public void onSave(String name, Uri uri) {
+        public void onSave(String uuid, String name, Uri uri) {
             if (uri != null) {
-                FileCacheClient.cacheFileUpload(uri.toString(), uri);
-                ProfilePhotoClient.upload(App.get(), uri);
+                FileCacheClient.cacheFileUpload(uuid, uri.toString(), uri);
+                ProfilePhotoClient.upload(App.get(), uuid, uri);
             } else {
                 // TODO need to show a toast?
+                // TODO analytics
             }
         }
     };
 
     private final PhotoEditDialog.OnCancelListener _photoEdit_onCancel = new PhotoEditDialog.OnCancelListener() {
         @Override
-        public void onCancel(String name, Uri uri) {
+        public void onCancel(String uuid, String name, Uri uri) {
         }
     };
 
@@ -254,12 +255,13 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
                 String mime = App.get().getContentResolver().getType(fui.uri);
                 if (mime != null && mime.contains("image")) {
-                    PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
+                    PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uuid, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
                 } else {
-                    FileCacheClient.cacheFileUpload(fui.uri.toString(), fui.uri);
-                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    FileCacheClient.cacheFileUpload(fui.uuid, fui.uri.toString(), fui.uri);
+                    ProfileClient.uploadProfilePhoto(App.get(), fui.uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
             } else {
+                // TODO analytics
                 // TODO toast?
             }
         }
@@ -268,6 +270,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // TODO analytics
             GetFileDialog.show(App.get(), DIALOG_GET_FILE);
         }
     };

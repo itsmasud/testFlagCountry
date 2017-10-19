@@ -34,6 +34,8 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
                 return true;
             }
+
+            // TODO analytics
             //Log.v(TAG, "processIntent saving transaction");
             webTransaction.setState(WebTransaction.State.IDLE);
             webTransaction.save();

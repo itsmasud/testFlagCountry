@@ -242,7 +242,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onFailedClick(WebTransaction webTransaction) {
-            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, webTransaction.getId());
+            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, webTransaction.getUUID(), webTransaction.getId());
         }
 
         @Override
@@ -275,10 +275,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _selectedFolder,
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId, _selectedFolder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
+                    // TODO analytics
                 }
                 return;
             }
@@ -294,7 +295,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_selectedFolder.getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

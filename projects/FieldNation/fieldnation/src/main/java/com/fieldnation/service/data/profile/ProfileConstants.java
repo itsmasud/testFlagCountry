@@ -25,6 +25,7 @@ public interface ProfileConstants {
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_PROFILE_ID = "PARAM_PROFILE_ID";
     String PARAM_ERROR = "PARAM_ERROR";
+    String PARAM_UUID = "PARAM_UUID";
     String PARAM_USER_ID = "PARAM_USER_ID";
     String PARAM_ALLOW_CACHE = "PARAM_ALLOW_CACHE";
     String PARAM_IS_CACHED = "PARAM_IS_CACHED";

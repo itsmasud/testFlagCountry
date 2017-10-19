@@ -100,6 +100,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private TransactionParams _transactionParams;
     private JsonObject _methodParams;
     private JsonObject _httpBuilder;
+    private String _uuid;
 
 
     private static int getIcon(String ext) {
@@ -263,6 +264,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
+        // TODO analytics
+
+        _uuid = payload.getString("uuid");
 
         if (payload.containsKey("webTransactionId")) {
             try {
@@ -307,7 +311,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             if (payload.containsKey("uri")) {
                 _sourceUri = payload.getParcelable("uri");
                 Log.v(TAG, "uri: " + _sourceUri);
-                FileCacheClient.cacheFileUpload(_sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_uuid, _sourceUri.toString(), _sourceUri);
             }
         }
         populateUi();
@@ -510,7 +514,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                         attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
                         // TODO: API cant take notes with the attachment
-                        AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                        AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
                     } catch (Exception e) {
                         Log.v(TAG, e);
                     }
@@ -530,7 +534,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                         Attachment attachment = new Attachment();
                         attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                        AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                        AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
                     } catch (Exception e) {
                         Log.v(TAG, e);
                     }
@@ -613,7 +617,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(String uuid, String tag, Uri uri, long size, boolean success) {
             Log.v(TAG, "onFileCacheEnd tag: " + tag);
             Log.v(TAG, "onFileCacheEnd uri: " + uri);
             if (!tag.equals(_sourceUri.toString())) {
@@ -635,29 +639,32 @@ public class PhotoUploadDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, Task task, String fileName, Uri uri) {
+    public static void show(Context context, String uid, String uuid, int workOrderId, Task task, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("task", task);
+        params.putString("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
+    public static void show(Context context, String uid, String uuid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("slot", slot);
+        params.putString("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, long webTransactionId) {
+    public static void show(Context context, String uid, String uuid, long webTransactionId) {
         Bundle params = new Bundle();
         params.putLong("webTransactionId", webTransactionId);
+        params.putString("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }

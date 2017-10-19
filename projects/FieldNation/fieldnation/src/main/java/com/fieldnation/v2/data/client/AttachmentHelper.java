@@ -20,12 +20,13 @@ import com.fieldnation.v2.data.model.Attachment;
 public class AttachmentHelper {
     private static final String TAG = "AttachmentHelper";
 
-    public static void addAttachment(final Context context, final int workOrderId, final Attachment attachment, Intent data) {
+    public static void addAttachment(final Context context, final String uuid, final int workOrderId, final Attachment attachment, Intent data) {
         Log.v(TAG, "addAttachment");
+        // TODO analytics
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
             public void fromUri(String filename, Uri uri) {
-                addAttachment(context, workOrderId, attachment, filename, uri);
+                addAttachment(context, uuid, workOrderId, attachment, filename, uri);
             }
 
             @Override
@@ -36,8 +37,10 @@ public class AttachmentHelper {
         });
     }
 
-    public static void addAttachment(Context context, int workOrderId, Attachment attachment, String filename, Uri uri) {
+    public static void addAttachment(Context context, String uuid, int workOrderId, Attachment attachment, String filename, Uri uri) {
         Log.v(TAG, "addAttachment");
+        // TODO analytics
+
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... objects) {
@@ -46,6 +49,7 @@ public class AttachmentHelper {
                 Attachment attachment = (Attachment) objects[2];
                 String filename = (String) objects[3];
                 Uri uri = (Uri) objects[4];
+                String uuid = (String) objects[5];
 
                 Log.v(TAG, "processIntent " + workOrderId + ", " + attachment.getFolderId() + ", "
                         + filename + ", " + (uri == null ? "null" : uri.toString()));
@@ -63,13 +67,13 @@ public class AttachmentHelper {
                             cache = StoredObject.put(context, App.getProfileId(), "TempFile", uri.toString(),
                                     context.getContentResolver().openInputStream(uri), filename);
                         }
-                        WorkordersWebApi.addAttachment(context, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
+                        WorkordersWebApi.addAttachment(context,uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
                 }
                 return null;
             }
-        }.executeEx(context, workOrderId, attachment, filename, uri);
+        }.executeEx(context, workOrderId, attachment, filename, uri, uuid);
     }
 }

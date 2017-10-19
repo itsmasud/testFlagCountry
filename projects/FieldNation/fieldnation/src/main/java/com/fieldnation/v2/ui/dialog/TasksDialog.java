@@ -227,9 +227,10 @@ public class TasksDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
+                    // TODO analytics
                 }
                 return;
             }
@@ -246,7 +247,7 @@ public class TasksDialog extends FullScreenDialog {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

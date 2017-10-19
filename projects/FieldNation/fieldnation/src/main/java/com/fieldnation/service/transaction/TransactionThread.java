@@ -137,6 +137,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
 
         WebTransaction trans = null;
+        // TODO analytics
         try {
             trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
                     _syncThread ? Priority.LOW : Priority.NORMAL);

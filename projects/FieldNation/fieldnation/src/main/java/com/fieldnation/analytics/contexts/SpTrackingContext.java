@@ -38,6 +38,7 @@ public class SpTrackingContext implements EventContext, SpContext {
     public SpTrackingContext(Builder builder) {
         this.workOrderId = builder.workOrderId;
         this.uuid = builder.uuid;
+        this.stage = builder.stage;
     }
 
     @Override

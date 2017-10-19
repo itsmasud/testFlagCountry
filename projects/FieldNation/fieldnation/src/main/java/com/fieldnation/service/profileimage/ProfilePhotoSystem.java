@@ -50,9 +50,10 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
         }
     }
 
-    public void upload(Context context, Uri uri) {
+    public void upload(Context context, String uuid, Uri uri) {
+        // TODO analytics
         _currentProfileImage = uri;
-        ProfileClient.uploadProfilePhoto(context, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
+        ProfileClient.uploadProfilePhoto(context, uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
         ProfilePhotoClient.dispatchGet(context, _currentProfileImage);
     }
 

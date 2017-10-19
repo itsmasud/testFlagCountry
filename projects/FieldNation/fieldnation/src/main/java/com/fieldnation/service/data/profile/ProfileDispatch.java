@@ -81,12 +81,13 @@ public class ProfileDispatch implements ProfileConstants {
         PigeonRoost.sendMessage(address, bundle, Sticky.NONE);
     }
 
-    public static void uploadProfilePhoto(String filePath, boolean isComplete, boolean failed) {
+    public static void uploadProfilePhoto(String uuid, String filePath, boolean isComplete, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
         bundle.putString(PARAM_PHOTO_PATH, filePath);
         bundle.putBoolean(PARAM_IS_COMPLETE, isComplete);
         bundle.putBoolean(PARAM_ERROR, failed);
+        bundle.putString(PARAM_UUID, uuid);
 
         String address = ADDRESS_UPLOAD_PHOTO;
 

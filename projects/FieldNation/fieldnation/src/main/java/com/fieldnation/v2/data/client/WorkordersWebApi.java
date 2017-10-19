@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.contexts.SpTrackingContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
@@ -291,16 +290,16 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param attachment  Folder
      */
     static void addAttachment(
-            Context context, Integer workOrderId, Integer folderId, Attachment attachment,
-            String filename, StoredObject storedObject, EventContext uiContext, SpTrackingContext spTrackingContext) {
+            Context context, String uuid, Integer workOrderId, Integer folderId,
+            Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
 
+        // TODO analytics
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")
                 .label(workOrderId + "")
                 .category("workorder")
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
-                .addContext(spTrackingContext)
                 .property("folder_id")
                 .value(folderId)
                 .build()
@@ -310,7 +309,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .header("X-App-UUID", spTrackingContext.uuid)
+                    .header("X-App-UUID", uuid)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);
@@ -338,7 +337,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .request(builder)
                     .setTrack(true)
                     .setTrackType(TrackerEnum.DELIVERABLES)
-                    .uuid(spTrackingContext.uuid)
+                    .uuid(uuid)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
