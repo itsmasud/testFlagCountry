@@ -315,13 +315,9 @@ public class TaskRowView extends RelativeLayout {
 
                     if (_progressVisible) {
                         _progressBar.setVisibility(VISIBLE);
-
-                        if (_progressVisible) {
-                            _progressBar.setIndeterminate(true);
-                        } else {
-                            _progressBar.setIndeterminate(false);
-                        }
+                        _progressBar.setIndeterminate(true);
                     } else {
+                        _progressBar.setIndeterminate(false);
                         _progressBar.setVisibility(GONE);
                     }
                     break;
