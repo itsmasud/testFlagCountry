@@ -125,6 +125,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
     private static final String DIALOG_DELETE_WORKLOG = TAG + ".deleteWorkLogDialog";
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
+    private static final String DIALOG_DELETE_INCREASE = TAG + ".deleteIncreaseDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
 
@@ -242,6 +243,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _requestNewPayView = findViewById(R.id.requestNewPay_view);
         _requestNewPayView.setOnClickListener(_requestNewPay_onClick);
+        _requestNewPayView.setOnLongClickListener(_requestNewPay_onLongClick);
         _renderers.add(_requestNewPayView);
 
         _payView = findViewById(R.id.payment_view);
@@ -373,6 +375,7 @@ public class WorkOrderScreen extends RelativeLayout {
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_INCREASE, _twoButtonDialog_deleteIncrease);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
 
@@ -406,6 +409,7 @@ public class WorkOrderScreen extends RelativeLayout {
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_INCREASE, _twoButtonDialog_deleteIncrease);
 
         _workOrderApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
@@ -951,6 +955,29 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
+    private final View.OnLongClickListener _requestNewPay_onLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (_workOrder.getPay().getIncreases().getLastIncrease().getActionsSet().contains(PayIncrease.ActionsEnum.DELETE)) {
+                TwoButtonDialog.show(
+                        App.get(), DIALOG_DELETE_INCREASE, R.string.dialog_delete_increase_title,
+                        R.string.dialog_delete_increase_body, R.string.btn_yes, R.string.btn_no,
+                        true, _workOrder.getPay().getIncreases().getLastIncrease());
+                return true;
+            }
+            return false;
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteIncrease = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            AppMessagingClient.setLoading(true);
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.PAY_REQUEST);
+            WorkordersWebApi.deleteIncrease(App.get(), _workOrderId, ((PayIncrease) extraData).getId(), App.get().getSpUiContext());
+        }
+    };
+
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onShowTerms(WorkOrder workOrder) {
@@ -1035,12 +1062,13 @@ public class WorkOrderScreen extends RelativeLayout {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Pay Dialog";
 
+                AppMessagingClient.setLoading(true);
+
                 WorkordersWebApi.addIncrease(App.get(), _workOrderId,
                         new PayIncrease().pay(pay).description(explanation), uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            AppMessagingClient.setLoading(true);
         }
     };
 
