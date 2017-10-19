@@ -315,6 +315,9 @@
     <string name="dialog_delete_worklog_title">Delete Worklog</string>
     <string name="dialog_delete_worklog_body">Are you sure you want to delete this work log?</string>
 
+    <string name="dialog_delete_increase_title">Delete New Pay Request</string>
+    <string name="dialog_delete_increase_body">Are you sure you want to delete this new pay request?</string>
+
     <string name="dialog_delete_add_worklog_title">Add Worklog</string>
     <string name="dialog_confidential_information_title">Confidential Information</string>
     <string name="dialog_policy_title">Policies And Procedures</string>
