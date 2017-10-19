@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
@@ -117,6 +118,7 @@ public class ClosingNotesDialog extends SimpleDialog {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Closing Notes Dialog";
 
+                AppMessagingClient.setLoading(true);
                 WorkordersWebApi.updateWorkOrder(App.get(), _workOrderId, workOrder, uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
