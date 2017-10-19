@@ -578,8 +578,8 @@
     <string name="number_of_devices">Number of Devices</string>
     <string name="number_of_device_completed">Devices Completed</string>
     <string name="num_failed">%1$d failed</string>
-    <string name="num_mi_driving">%1$smi (driving)</string>
-    <string name="num_mi_straight_line">%1$smi (straight line)</string>
+    <string name="num_mi_driving"> \u2022 %1$smi (driving)</string>
+    <string name="num_mi_straight_line"> \u2022 %1$smi (straight line)</string>
 
     <plurals name="num_deliverables_uploading">
         <item quantity="one">%1$d deliverable uploading</item>
