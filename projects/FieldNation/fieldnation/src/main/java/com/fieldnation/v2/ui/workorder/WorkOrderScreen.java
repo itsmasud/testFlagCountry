@@ -155,6 +155,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
     private RequestNewPayView _requestNewPayView;
+    private TimeLogSummaryView _timeLogSummaryView;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpensesSummaryView _expensesSummaryView;
@@ -245,6 +246,9 @@ public class WorkOrderScreen extends RelativeLayout {
         _requestNewPayView.setOnClickListener(_requestNewPay_onClick);
         _requestNewPayView.setOnLongClickListener(_requestNewPay_onLongClick);
         _renderers.add(_requestNewPayView);
+
+        _timeLogSummaryView = findViewById(R.id.timelogSummary_view);
+        _renderers.add(_timeLogSummaryView);
 
         _payView = findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);

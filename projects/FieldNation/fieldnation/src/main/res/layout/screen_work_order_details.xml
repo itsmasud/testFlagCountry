@@ -99,6 +99,13 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
+                <com.fieldnation.v2.ui.workorder.TimeLogSummaryView
+                    android:id="@+id/timelogSummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+
+
                 <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
                     android:id="@+id/counterOfferSummary_view"
                     android:layout_width="match_parent"
