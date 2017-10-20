@@ -17,6 +17,8 @@ public class TransactionTracker {
 
     public enum Location {
         WEB_TRANSACTION_SYSTEM_QUEUE,
+        QUEUE_PROCESSING,
+        TRANSACTION_PROCESSING,
     }
 
     public static void onEvent(Context context, String uuid, Action action, Location location) {

@@ -1,6 +1,7 @@
 package com.fieldnation.service.transaction;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.TransactionTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
@@ -35,10 +36,10 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
                 return true;
             }
 
-            if (!misc.isEmptyOrNull( webTransaction.getUUID())){
-
+            if (!misc.isEmptyOrNull(webTransaction.getUUID())) {
+                TransactionTracker.onEvent(App.get(), webTransaction.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.QUEUE_PROCESSING);
             }
-            // TODO analytics
+
             //Log.v(TAG, "processIntent saving transaction");
             webTransaction.setState(WebTransaction.State.IDLE);
             webTransaction.save();
@@ -46,6 +47,10 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
             String listenerName = webTransaction.getListenerName();
             if (!misc.isEmptyOrNull(listenerName)) {
                 WebTransactionDispatcher.queued(App.get(), listenerName, webTransaction);
+            }
+
+            if (!misc.isEmptyOrNull(webTransaction.getUUID())) {
+                TransactionTracker.onEvent(App.get(), webTransaction.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.QUEUE_PROCESSING);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);

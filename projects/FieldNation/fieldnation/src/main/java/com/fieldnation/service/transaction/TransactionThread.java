@@ -15,6 +15,7 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.trackers.TransactionTracker;
 import com.fieldnation.fnanalytics.Timing;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
@@ -151,6 +152,10 @@ class TransactionThread extends ThreadManager.ManagedThread {
             return false;
         }
 
+        if (!misc.isEmptyOrNull(trans.getUUID())) {
+            TransactionTracker.onEvent(App.get(), trans.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.TRANSACTION_PROCESSING);
+        }
+
         // debug if have key, output
         //if (!misc.isEmptyOrNull(trans.getKey())) {
         //Log.v(TAG, "Key: " + trans.getKey());
@@ -271,6 +276,8 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransaction.delete(trans.getId());
                 break;
             case CONTINUE:
+                if (!misc.isEmptyOrNull(trans.getUUID()))
+                    TransactionTracker.onEvent(App.get(), trans.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.TRANSACTION_PROCESSING);
                 generateNotification(notifId, notifSuccess);
                 WebTransaction.delete(trans.getId());
                 break;
