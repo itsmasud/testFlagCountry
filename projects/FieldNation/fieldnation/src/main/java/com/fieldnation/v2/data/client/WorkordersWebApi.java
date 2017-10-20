@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -293,7 +294,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             Context context, String uuid, Integer workOrderId, Integer folderId,
             Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
 
-        // TODO analytics
+        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.WORKORDER_WEB_API);
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")
                 .label(workOrderId + "")
@@ -341,6 +342,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
+            DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.WORKORDER_WEB_API);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

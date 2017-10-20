@@ -35,6 +35,9 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
                 return true;
             }
 
+            if (!misc.isEmptyOrNull( webTransaction.getUUID())){
+
+            }
             // TODO analytics
             //Log.v(TAG, "processIntent saving transaction");
             webTransaction.setState(WebTransaction.State.IDLE);

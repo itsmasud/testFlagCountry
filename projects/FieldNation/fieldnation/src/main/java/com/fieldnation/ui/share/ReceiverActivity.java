@@ -14,6 +14,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
@@ -153,7 +154,10 @@ public class ReceiverActivity extends AuthSimpleActivity {
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             _sharedFiles[0] = new SharedFile(fileName, fileUri);
-            // TODO analytics
+            DeliverableTracker.onEvent(App.get(), _sharedFiles[0].getUUID(),
+                    DeliverableTracker.Action.START,
+                    DeliverableTracker.Location.RECEIVER_ACTIVITY_SINGLE);
+
             FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri.toString(), fileUri);
         } else {
             Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
@@ -180,7 +184,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
                 _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
-                // TODO analytics
+                DeliverableTracker.onEvent(App.get(), _sharedFiles[i].getUUID(),
+                        DeliverableTracker.Action.START,
+                        DeliverableTracker.Location.RECEIVER_ACTIVITY_MULTIPLE);
                 FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i).toString(), fileUris.get(i));
             }
         } else {

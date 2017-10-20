@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import com.fieldnation.App;
 import com.fieldnation.InputStreamMonitor;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -33,7 +34,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
     public static void cacheFileUpload(String uuid, final String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
-        // TODO analytics
+        DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.FILE_CACHE_CLIENT);
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
@@ -69,7 +70,6 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 } finally {
-                    // TODO analytics
                     if (upFile != null)
                         cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
                     else
@@ -101,6 +101,8 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
     private static void cacheFileEnd(String uuid, String tag, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
+        DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FILE_CACHE_CLIENT);
+
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
         bundle.putString(PARAM_TAG, tag);

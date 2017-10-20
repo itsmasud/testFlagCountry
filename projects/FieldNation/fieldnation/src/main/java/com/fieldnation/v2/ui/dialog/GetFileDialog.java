@@ -422,14 +422,16 @@ public class GetFileDialog extends SimpleDialog {
     public static class UriIntent implements Parcelable {
         public Uri uri = null;
         public Intent intent = null;
-        public String uuid = UUID.randomUUID().toString();
+        public String uuid = null;
 
         private UriIntent(Uri uri) {
             this.uri = uri;
+            this.uuid = UUID.randomUUID().toString();
         }
 
         private UriIntent(Intent intent) {
             this.intent = intent;
+            this.uuid = UUID.randomUUID().toString();
         }
 
         private UriIntent(Bundle bundle) {

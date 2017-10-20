@@ -5,8 +5,10 @@ import android.os.Handler;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
+import com.fieldnation.analytics.trackers.TransactionTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ThreadManager;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
@@ -164,10 +166,16 @@ public class WebTransactionSystem implements WebTransactionConstants {
     protected static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
 
     public static void queueTransaction(Context context, WebTransaction transaction) {
+        if (!misc.isEmptyOrNull(transaction.getUUID()))
+            TransactionTracker.onEvent(context, transaction.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.WEB_TRANSACTION_SYSTEM_QUEUE);
+
         synchronized (TRANSACTION_QUEUE) {
             TRANSACTION_QUEUE.add(transaction);
         }
         getInstance()._manager.wakeUp();
+
+        if (!misc.isEmptyOrNull(transaction.getUUID()))
+            TransactionTracker.onEvent(context, transaction.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.WEB_TRANSACTION_SYSTEM_QUEUE);
     }
 }
 

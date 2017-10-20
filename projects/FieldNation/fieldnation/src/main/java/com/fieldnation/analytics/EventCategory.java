@@ -6,4 +6,5 @@ package com.fieldnation.analytics;
 public interface EventCategory {
     String WORK_ORDER = "Work Order";
     String GCM = "Google Cloud Messaging";
+    String DELIVERABLE = "Deliverables";
 }

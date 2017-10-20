@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
@@ -39,7 +40,7 @@ public class AttachmentHelper {
 
     public static void addAttachment(Context context, String uuid, int workOrderId, Attachment attachment, String filename, Uri uri) {
         Log.v(TAG, "addAttachment");
-        // TODO analytics
+        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.ATTACHMENT_HELPER);
 
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
@@ -67,8 +68,10 @@ public class AttachmentHelper {
                             cache = StoredObject.put(context, App.getProfileId(), "TempFile", uri.toString(),
                                     context.getContentResolver().openInputStream(uri), filename);
                         }
-                        WorkordersWebApi.addAttachment(context,uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
+                        WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
+                        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.ATTACHMENT_HELPER);
                     } catch (Exception ex) {
+                        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.FAIL, DeliverableTracker.Location.ATTACHMENT_HELPER);
                         Log.v(TAG, ex);
                     }
                 }
