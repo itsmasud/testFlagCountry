@@ -285,6 +285,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "3");
                 generateNotification(notifId, notifRetry);
                 trans.requeue(getRetry());
+
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
 
