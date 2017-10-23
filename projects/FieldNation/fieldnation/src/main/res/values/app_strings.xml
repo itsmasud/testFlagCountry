@@ -456,7 +456,7 @@
     <string name="downloading">Downloading…</string>
     <string name="during">During</string>
 
-    <string name="earliest_arrival">Earliest Arrival</string>
+    <string name="start_after">Start After</string>
     <string name="edit_your_profile">Edit your profile</string>
     <string name="educational">Educational</string>
     <string name="empty_state_assigned_wol_title">No Assigned Work Orders</string>
@@ -533,7 +533,7 @@
 
     <string name="job_duration">Job Duration</string>
 
-    <string name="latest_arrival">Latest Arrival</string>
+    <string name="finish_by">Finish By</string>
     <string name="legal">Legal</string>
     <string name="loading_">Loading…</string>
     <string name="location">Location</string>
@@ -699,6 +699,7 @@
     <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
     <string name="request_expires">Request expires</string>
+    <string name="request_new_pay">Request New Pay</string>
     <string name="request_reschedule">Request reschedule</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="requested_new_pay">Requested New Pay</string>

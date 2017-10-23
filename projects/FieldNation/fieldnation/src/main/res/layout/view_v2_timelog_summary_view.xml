@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/fn_clickable_bg">
+
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
+        android:id="@+id/summary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/count_textview" />
+
+</RelativeLayout>

@@ -121,17 +121,17 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             TaskSummaryRow view = new TaskSummaryRow(getContext());
             view.setTitle(group.name);
             view.setTag(group);
+            view.setOnClickListener(_task_onClick);
+
             if (_workOrder.getStatus().getId() == 2) {
                 view.setCount(String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
             } else if (_workOrder.getStatus().getId() == 3) {
                 view.setCount(String.valueOf(group.completed) + "/" + String.valueOf(group.total));
                 view.setCountBg(group.total == group.completed ? R.drawable.round_rect_green : R.drawable.round_rect_red);
-                view.setOnClickListener(_task_onClick);
             } else {
                 view.setCount(String.valueOf(group.completed) + "/" + String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
-                view.setOnClickListener(_task_onClick);
             }
 
             _tasksList.addView(view);

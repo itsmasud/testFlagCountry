@@ -617,14 +617,14 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _pay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _woPay, false);
+            PayDialog.show(App.get(), DIALOG_UID_PAY, R.string.change_pay, R.string.btn_ok, _pay != null ? _pay : _woPay, false);
         }
     };
 
     private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _woPay, false);
+            PayDialog.show(App.get(), DIALOG_UID_PAY, R.string.change_pay, R.string.btn_ok, _pay != null ? _pay : _woPay, false);
             getView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -653,7 +653,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             if (item.getItemId() == R.id.edit_menu) {
-                PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _woPay, false);
+                PayDialog.show(App.get(), DIALOG_UID_PAY, R.string.change_pay, R.string.btn_ok, _pay != null ? _pay : _woPay, false);
             } else if (item.getItemId() == R.id.delete_menu) {
                 _pay = null;
                 populateUi();
