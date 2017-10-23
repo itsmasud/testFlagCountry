@@ -1124,9 +1124,9 @@ public class WorkOrderScreen extends RelativeLayout {
         public void addRequestNewPay() {
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
             if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
-                PayDialog.show(App.get(), DIALOG_PAY, R.string.request_new_pay, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
+                PayDialog.show(App.get(), DIALOG_PAY, R.string.request_new_pay, R.string.btn_submit, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {
-                PayDialog.show(App.get(), DIALOG_PAY, R.string.request_new_pay, _workOrder.getPay(), true);
+                PayDialog.show(App.get(), DIALOG_PAY, R.string.request_new_pay, R.string.btn_submit, _workOrder.getPay(), true);
             }
         }
 
