@@ -147,6 +147,7 @@ public class PayDialog extends FullScreenDialog {
         _pay = payload.getParcelable("pay");
         _showExplanation = payload.getBoolean("showExplanation");
         _toolbar.setTitle(payload.getInt("title"));
+        _finishMenu.setText(payload.getInt("buttonText"));
 
         super.show(payload, animate);
 
@@ -416,11 +417,12 @@ public class PayDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int titleResId, Pay pay, boolean showExplanation) {
+    public static void show(Context context, String uid, int titleResId, int buttonTextResId, Pay pay, boolean showExplanation) {
         Bundle params = new Bundle();
         params.putParcelable("pay", pay);
         params.putBoolean("showExplanation", showExplanation);
         params.putInt("title", titleResId);
+        params.putInt("buttonText", buttonTextResId);
 
         Controller.show(context, uid, PayDialog.class, params);
     }
