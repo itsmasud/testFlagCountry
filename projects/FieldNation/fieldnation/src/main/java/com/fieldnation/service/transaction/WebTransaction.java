@@ -115,7 +115,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _trackType = TrackerEnum.values()[bundle.getInt(PARAM_TRACK_ENUM)];
         _timingKey = bundle.getString(PARAM_TIMING_KEY);
         _wasZombie = bundle.getBoolean(PARAM_ZOMBIE);
-        _uuid = bundle.getParcelable(PARAM_UUID);
+        if (bundle.getParcelable(PARAM_UUID) != null)
+            _uuid = bundle.getParcelable(PARAM_UUID);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);
         _notifStartArray = bundle.getByteArray(PARAM_NOTIFICATION_START);
@@ -154,7 +155,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             bundle.putString(PARAM_TIMING_KEY, _timingKey);
 
         bundle.putBoolean(PARAM_ZOMBIE, _wasZombie);
-        bundle.putParcelable(PARAM_UUID, _uuid);
+
+        if (_uuid != null)
+            bundle.putParcelable(PARAM_UUID, _uuid);
 
         bundle.putInt(PARAM_NOTIFICATION_ID, _notifId);
         if (_notifStartArray != null)
@@ -564,7 +567,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.TRACK_TYPE.getName(), obj._trackType.ordinal());
         v.put(Column.TIMING_KEY.getName(), obj._timingKey);
         v.put(Column.WAS_ZOMBIE.getName(), obj._wasZombie ? 1 : 0);
-        v.put(Column.UUID.getName(), obj._uuid.toJson().toString());
+        if (obj._uuid != null)
+            v.put(Column.UUID.getName(), obj._uuid.toJson().toString());
 
         v.put(Column.NOTIF_ID.getName(), obj._notifId);
         v.put(Column.NOTIF_FAILED.getName(), obj._notifFailedArray);

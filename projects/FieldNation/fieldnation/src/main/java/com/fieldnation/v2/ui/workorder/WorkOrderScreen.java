@@ -28,6 +28,8 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
@@ -101,6 +103,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class WorkOrderScreen extends RelativeLayout {
     private static final String TAG = "WorkOrderScreen";
@@ -1110,7 +1113,11 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addAttachment() {
-            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _workOrderId);
+            // TODO UUID
+            // TODO analytics
+            UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
+            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.WOD_BOTTOMSHEET);
+            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, uuid.parentUUID, _workOrderId);
         }
     };
 

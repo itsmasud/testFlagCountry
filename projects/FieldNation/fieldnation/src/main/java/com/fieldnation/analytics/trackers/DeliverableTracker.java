@@ -20,6 +20,10 @@ public class DeliverableTracker {
     }
 
     public enum Location {
+        WOD_BOTTOMSHEET,
+        TASKS_DIALOG,
+        FILES_DIALOG,
+        PROFILE_DIALOG,
         RECEIVER_ACTIVITY_MULTIPLE,
         RECEIVER_ACTIVITY_SINGLE,
         FILE_CACHE_CLIENT,

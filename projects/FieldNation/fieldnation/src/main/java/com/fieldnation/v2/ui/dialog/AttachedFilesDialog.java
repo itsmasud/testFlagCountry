@@ -19,6 +19,8 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -41,6 +43,7 @@ import com.fieldnation.v2.ui.AttachedFilesAdapter;
 
 import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by mc on 3/9/17.
@@ -195,7 +198,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Utils
     private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+        // TODO UUID
+        // TODO analytics
+        UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
+        DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.FILES_DIALOG);
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
     }
 
     private boolean checkMedia() {

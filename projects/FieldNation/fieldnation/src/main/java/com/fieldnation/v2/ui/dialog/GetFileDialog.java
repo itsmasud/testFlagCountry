@@ -70,7 +70,7 @@ public class GetFileDialog extends SimpleDialog {
     private Hashtable<String, UriIntent> caching = new Hashtable<>();
     private List<UriIntent> cached = new LinkedList<>();
     private Hashtable<String, Long> progress = new Hashtable<>();
-    private String _myUUID = UUID.randomUUID().toString();
+    private String _uiUUID = null;
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -116,6 +116,8 @@ public class GetFileDialog extends SimpleDialog {
             for (Parcelable parcelable : intents) {
                 addIntent((GetFileIntent) parcelable);
             }
+
+        _uiUUID = payload.getString("uiUUID");
 
         super.show(payload, animate);
     }
@@ -294,7 +296,7 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid) {
+    public static void show(Context context, String uid, String uiUUID) {
         Intent intent = new Intent();
         intent.setType("*/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -309,16 +311,17 @@ public class GetFileDialog extends SimpleDialog {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(App.get(), uid, new GetFileIntent[]{intent1, intent2});
+            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1, intent2});
         } else {
-            GetFileDialog.show(App.get(), uid, new GetFileIntent[]{intent1});
+            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1});
         }
     }
 
-    private static void show(Context context, String uid, GetFileIntent[] intents) {
+    private static void show(Context context, String uid, String uiUUID, GetFileIntent[] intents) {
         Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelableArray("intents", intents);
+        params.putString("uiUUID", uiUUID);
 
         Controller.show(context, uid, GetFileDialog.class, params);
     }
@@ -361,7 +364,7 @@ public class GetFileDialog extends SimpleDialog {
 
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
-                    fileUris.add(new UriIntent(_myUUID, _sourceUri));
+                    fileUris.add(new UriIntent(_uiUUID, _sourceUri));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();
@@ -373,23 +376,23 @@ public class GetFileDialog extends SimpleDialog {
 
                             if (count == 1) {
                                 _sourceUri = null;// TODO not sure this is corrects
-                                fileUris.add(new UriIntent(_myUUID, data.getData()));
+                                fileUris.add(new UriIntent(_uiUUID, data.getData()));
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
-                                    fileUris.add(new UriIntent(_myUUID, new Intent().setData(uri)));
+                                    fileUris.add(new UriIntent(_uiUUID, new Intent().setData(uri)));
                                 }
                             }
                         } else {
                             Log.v(TAG, "Single local/ non-local file upload");
                             if (data.getData() != null) _sourceUri = data.getData();
                             if (_sourceUri != null)
-                                fileUris.add(new UriIntent(_myUUID, _sourceUri));
+                                fileUris.add(new UriIntent(_uiUUID, _sourceUri));
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         if (data.getData() != null) _sourceUri = data.getData();
-                        if (_sourceUri != null) fileUris.add(new UriIntent(_myUUID, _sourceUri));
+                        if (_sourceUri != null) fileUris.add(new UriIntent(_uiUUID, _sourceUri));
                     }
                 }
 

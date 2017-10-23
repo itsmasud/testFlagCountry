@@ -21,6 +21,8 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
@@ -49,6 +51,7 @@ import com.fieldnation.v2.ui.TasksAdapter;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 09/10/17.
@@ -216,7 +219,11 @@ public class TasksDialog extends FullScreenDialog {
 
     private void startAppPickerDialog() {
         if (checkMedia()) {
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+            // TODO UUID
+            // TODO analytics
+            UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
+            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.TASKS_DIALOG);
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
         } else {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
         }

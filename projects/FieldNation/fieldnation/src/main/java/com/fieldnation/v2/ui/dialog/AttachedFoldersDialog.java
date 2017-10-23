@@ -49,6 +49,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     private AttachmentFolders _folders = null;
     private int _workOrderId;
     private AttachmentFolder _currentFolder;
+    private String _uiUUID;
 
     /*-*********----------**********-*/
     /*-         Life Cycle          -*/
@@ -96,6 +97,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         Log.v(TAG, "show");
         super.show(params, animate);
         _workOrderId = params.getInt("workOrderId");
+        _uiUUID = params.getString("uiUUID");
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
         populateUi();
     }
@@ -147,7 +149,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     };
 
     private void startAppPickerDialog() {
-        GetFileDialog.show(getContext(), DIALOG_GET_FILE);
+        GetFileDialog.show(getContext(), DIALOG_GET_FILE, _uiUUID);
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -221,9 +223,10 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId) {
+    public static void show(Context context, String uid, String uiUUID, int workOrderId) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
+        params.putString("uiUUID", uiUUID);
 
         Controller.show(context, uid, AttachedFoldersDialog.class, params);
     }

@@ -9,6 +9,7 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by mc on 10/23/17.
@@ -52,7 +53,21 @@ public class UUIDGroup implements Parcelable {
 
     @Override
     public String toString() {
-        return uuid + " " + parentUUID;
+        String str = null;
+
+        if (!misc.isEmptyOrNull(parentUUID) && parentUUID.length() > 12) {
+            str = "P:" + parentUUID.substring(parentUUID.length() - 12);
+        }
+
+        if (!misc.isEmptyOrNull(uuid) && uuid.length() > 12) {
+            if (str == null) {
+                str = "U:" + uuid.substring(uuid.length() - 12);
+            } else {
+                str = str + " U:" + uuid.substring(uuid.length() - 12);
+            }
+        }
+
+        return str;
     }
 
     public static final Parcelable.Creator<UUIDGroup> CREATOR = new Parcelable.Creator<UUIDGroup>() {

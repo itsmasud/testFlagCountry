@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.Controller;
@@ -28,6 +29,7 @@ import com.fieldnation.ui.ProfilePicView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 13/01/2016.
@@ -271,8 +273,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // TODO UUID
             // TODO analytics
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+            UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
+            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.PROFILE_DIALOG);
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
         }
     };
 
