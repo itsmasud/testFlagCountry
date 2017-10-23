@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.InputStreamMonitor;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -32,14 +33,14 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_PROGRESS);
     }
 
-    public static void cacheFileUpload(String uuid, final String tag, Uri uri) {
+    public static void cacheFileUpload(UUIDGroup uuid, final String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
         DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.FILE_CACHE_CLIENT);
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
                 Uri uri = (Uri) params[0];
-                final String uuid = (String) params[1];
+                final UUIDGroup uuid = (UUIDGroup) params[1];
 
                 cacheFileStart(uuid, tag, uri);
                 StoredObject upFile = null;
@@ -80,26 +81,26 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         }.executeEx(uri, uuid);
     }
 
-    private static void cacheFileStart(String uuid, String tag, Uri uri) {
+    private static void cacheFileStart(UUIDGroup uuid, String tag, Uri uri) {
         Log.v(TAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
         bundle.putString(PARAM_TAG, tag);
-        bundle.putString(PARAM_UUID, uuid);
+        bundle.putParcelable(PARAM_UUID, uuid);
 
         PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_START, bundle, Sticky.TEMP);
     }
 
-    private static void cacheFileProgress(String uuid, String tag, long position) {
+    private static void cacheFileProgress(UUIDGroup uuid, String tag, long position) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_TAG, tag);
         bundle.putLong(PARAM_POS, position);
-        bundle.putString(PARAM_UUID, uuid);
+        bundle.putParcelable(PARAM_UUID, uuid);
 
         PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_PROGRESS, bundle, Sticky.NONE);
     }
 
-    private static void cacheFileEnd(String uuid, String tag, Uri uri, long size, boolean success) {
+    private static void cacheFileEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
         DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FILE_CACHE_CLIENT);
 
@@ -108,7 +109,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         bundle.putString(PARAM_TAG, tag);
         bundle.putBoolean(PARAM_SUCCESS, success);
         bundle.putLong(PARAM_SIZE, size);
-        bundle.putString(PARAM_UUID, uuid);
+        bundle.putParcelable(PARAM_UUID, uuid);
 
         PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_END, bundle, Sticky.TEMP);
     }
@@ -124,13 +125,13 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         Bundle bundle = (Bundle) message;
         if (address.startsWith(ADDRESS_CACHE_FILE_START)) {
             onFileCacheStart(
-                    bundle.getString(PARAM_UUID),
+                    (UUIDGroup) bundle.getParcelable(PARAM_UUID),
                     bundle.getString(PARAM_TAG),
                     (Uri) bundle.getParcelable(PARAM_URI));
         } else if (address.startsWith(ADDRESS_CACHE_FILE_END)) {
             try {
                 onFileCacheEnd(
-                        bundle.getString(PARAM_UUID),
+                        (UUIDGroup) bundle.getParcelable(PARAM_UUID),
                         bundle.getString(PARAM_TAG),
                         (Uri) bundle.getParcelable(PARAM_URI),
                         bundle.getLong(PARAM_SIZE),
@@ -143,7 +144,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         } else if (address.startsWith(ADDRESS_CACHE_FILE_PROGRESS)) {
             try {
                 onFileCacheProgress(
-                        bundle.getString(PARAM_UUID),
+                        (UUIDGroup) bundle.getParcelable(PARAM_UUID),
                         bundle.getString(PARAM_TAG),
                         bundle.getLong(PARAM_POS));
             } catch (Exception ex) {
@@ -152,12 +153,12 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         }
     }
 
-    public void onFileCacheStart(String uuid, String tag, Uri uri) {
+    public void onFileCacheStart(UUIDGroup uuid, String tag, Uri uri) {
     }
 
-    public void onFileCacheProgress(String uuid, String tag, long size) {
+    public void onFileCacheProgress(UUIDGroup uuid, String tag, long size) {
     }
 
-    public void onFileCacheEnd(String uuid, String tag, Uri uri, long size, boolean success) {
+    public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
     }
 }

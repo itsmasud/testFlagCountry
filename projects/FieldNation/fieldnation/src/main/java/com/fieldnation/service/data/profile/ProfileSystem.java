@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -118,7 +119,7 @@ public class ProfileSystem implements ProfileConstants {
         }.executeEx(context, page, isSync, allowCache);
     }
 
-    public static void uploadProfilePhoto(Context context, String uuid, long profileId, String filePath, String filename) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, long profileId, String filePath, String filename) {
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... objects) {
@@ -126,7 +127,7 @@ public class ProfileSystem implements ProfileConstants {
                 long profileId = (Long) objects[1];
                 String filePath = (String) objects[2];
                 String filename = (String) objects[3];
-                String uuid = (String) objects[4];
+                UUIDGroup uuid = (UUIDGroup) objects[4];
 
                 ProfileTransactionBuilder.uploadProfilePhoto(context, uuid, filename, filePath, profileId);
                 return null;
@@ -134,7 +135,7 @@ public class ProfileSystem implements ProfileConstants {
         }.executeEx(context, profileId, filePath, filename, uuid);
     }
 
-    public static void uploadProfilePhoto(Context context, String uuid, long profileId, String filename, Uri uri) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, long profileId, String filename, Uri uri) {
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... objects) {
@@ -142,7 +143,7 @@ public class ProfileSystem implements ProfileConstants {
                 long profileId = (Long) objects[1];
                 String filename = (String) objects[2];
                 Uri uri = (Uri) objects[3];
-                String uuid = (String) objects[4];
+                UUIDGroup uuid = (UUIDGroup) objects[4];
 
                 if (uri != null) {
                     try {

@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -45,7 +46,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     private Uri _sourceUri;
     private Uri _cachedUri;
     private String _name;
-    private String _uuid;
+    private UUIDGroup _uuid;
 
     public PhotoEditDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -87,7 +88,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
         // TODO analytics
-        _uuid = params.getString("uuid");
+        _uuid = params.getParcelable("uuid");
 
         if (params.containsKey("uri")) {
             _sourceUri = params.getParcelable("uri");
@@ -195,7 +196,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String uuid, String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             if (!tag.equals(_sourceUri.toString())) {
                 Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
                 return;
@@ -206,11 +207,11 @@ public class PhotoEditDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, String uuid, Uri uri, String name) {
+    public static void show(Context context, String uid, UUIDGroup uuid, Uri uri, String name) {
         Bundle params = new Bundle();
         params.putParcelable("uri", uri);
         params.putString("name", name);
-        params.putString("uuid", uuid);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoEditDialog.class, params);
     }
@@ -219,13 +220,13 @@ public class PhotoEditDialog extends FullScreenDialog {
     /*-         Save            -*/
     /*-*************************-*/
     public interface OnSaveListener {
-        void onSave(String uuid, String name, Uri uri);
+        void onSave(UUIDGroup uuid, String name, Uri uri);
     }
 
     private static KeyedDispatcher<OnSaveListener> _onSaveDispatcher = new KeyedDispatcher<OnSaveListener>() {
         @Override
         public void onDispatch(OnSaveListener listener, Object... parameters) {
-            listener.onSave((String) parameters[0], (String) parameters[1], (Uri) parameters[2]);
+            listener.onSave((UUIDGroup) parameters[0], (String) parameters[1], (Uri) parameters[2]);
         }
     };
 
@@ -245,13 +246,13 @@ public class PhotoEditDialog extends FullScreenDialog {
     /*-         Cancel          -*/
     /*-*************************-*/
     public interface OnCancelListener {
-        void onCancel(String uuid, String name, Uri uri);
+        void onCancel(UUIDGroup uuid, String name, Uri uri);
     }
 
     private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
         @Override
         public void onDispatch(OnCancelListener listener, Object... parameters) {
-            listener.onCancel((String) parameters[0], (String) parameters[1], (Uri) parameters[2]);
+            listener.onCancel((UUIDGroup) parameters[0], (String) parameters[1], (Uri) parameters[2]);
         }
     };
 

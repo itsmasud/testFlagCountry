@@ -166,7 +166,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
     protected static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
 
     public static void queueTransaction(Context context, WebTransaction transaction) {
-        if (!misc.isEmptyOrNull(transaction.getUUID()))
+        if (transaction.getUUID() != null && !misc.isEmptyOrNull(transaction.getUUID().uuid) && !misc.isEmptyOrNull(transaction.getUUID().parentUUID))
             TransactionTracker.onEvent(context, transaction.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.WEB_TRANSACTION_SYSTEM_QUEUE);
 
         synchronized (TRANSACTION_QUEUE) {
@@ -174,7 +174,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
         }
         getInstance()._manager.wakeUp();
 
-        if (!misc.isEmptyOrNull(transaction.getUUID()))
+        if (transaction.getUUID() != null && !misc.isEmptyOrNull(transaction.getUUID().uuid) && !misc.isEmptyOrNull(transaction.getUUID().parentUUID))
             TransactionTracker.onEvent(context, transaction.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.WEB_TRANSACTION_SYSTEM_QUEUE);
     }
 }

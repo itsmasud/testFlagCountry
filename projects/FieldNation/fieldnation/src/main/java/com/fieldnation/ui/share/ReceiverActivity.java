@@ -15,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
@@ -31,6 +32,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by Michael on 9/27/2016.
@@ -53,6 +55,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     private AttachmentFolder _selectedUploadSlot;
     private SharedFile[] _sharedFiles;
     private int _remainingCacheItems = 0;
+    private String _myUUID = UUID.randomUUID().toString();
 
     // Animations
     private Animation _slideInLeft;
@@ -153,7 +156,8 @@ public class ReceiverActivity extends AuthSimpleActivity {
         _loadingTextView.setText(getString(R.string.preparing_files_num, 1, 1));
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
-            _sharedFiles[0] = new SharedFile(fileName, fileUri);
+            // TODO, the parent ID needs to be something else?
+            _sharedFiles[0] = new SharedFile(_myUUID, fileName, fileUri);
             DeliverableTracker.onEvent(App.get(), _sharedFiles[0].getUUID(),
                     DeliverableTracker.Action.START,
                     DeliverableTracker.Location.RECEIVER_ACTIVITY_SINGLE);
@@ -183,7 +187,8 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
-                _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
+                // TODO, the parent ID needs to be something else?
+                _sharedFiles[i] = new SharedFile(_myUUID, fileName, fileUris.get(i));
                 DeliverableTracker.onEvent(App.get(), _sharedFiles[i].getUUID(),
                         DeliverableTracker.Action.START,
                         DeliverableTracker.Location.RECEIVER_ACTIVITY_MULTIPLE);
@@ -316,7 +321,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String uuid, String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             _remainingCacheItems--;
 
             _loadingProgress.setProgress(_sharedFiles.length - _remainingCacheItems);

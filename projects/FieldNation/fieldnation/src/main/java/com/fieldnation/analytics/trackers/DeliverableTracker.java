@@ -28,7 +28,7 @@ public class DeliverableTracker {
         WEB_TRANSACTION_QUEUE,
     }
 
-    public static void onEvent(Context context, String uuid, Action action, Location location) {
+    public static void onEvent(Context context, UUIDGroup uuid, Action action, Location location) {
         Log.v(TAG, uuid + " " + action.toString() + " " + location.toString());
     }
 }

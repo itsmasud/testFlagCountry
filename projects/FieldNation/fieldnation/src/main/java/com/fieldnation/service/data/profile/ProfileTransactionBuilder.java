@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -211,7 +212,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     }
 
     // returns the deliverable details
-    public static void uploadProfilePhoto(Context context, String uuid, String filename, String filePath, long profileId) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto file");
         try {
             StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new FileInputStream(new File(filePath)), "uploadTemp.dat");
@@ -221,13 +222,13 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         }
     }
 
-    public static void uploadProfilePhoto(Context context, String uuid, InputStream inputStream, String filename, String filePath, long profileId) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, InputStream inputStream, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto uri");
         StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, inputStream, "uploadTemp.dat");
         uploadProfilePhoto(context, uuid, upFile, filename, filePath, profileId);
     }
 
-    public static void uploadProfilePhoto(Context context, String uuid, StoredObject upFile, String filename, String filePath, long profileId) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, StoredObject upFile, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto uri");
 
         // TODO analytics
@@ -267,7 +268,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .header("X-App-UUID", uuid)
+                    .header("X-App-UUID", uuid.uuid)
+                    .header("X-App-PARENT-UUID", uuid.parentUUID)
                     .path("/api/rest/v2/users/" + profileId + "/profile/avatar")
                     .multipartFile("file", filename, upFile)
                     .doNotRead();

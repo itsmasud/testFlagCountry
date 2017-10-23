@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -148,14 +149,14 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
         PigeonRoost.unsub(this, ADDRESS_SWITCH_USER);
     }
 
-    public static void uploadProfilePhoto(Context context, String uuid, long profileId, String filePath, String filename) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, long profileId, String filePath, String filename) {
         Log.v(TAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(uuid, filePath, false, false);
         ProfileSystem.uploadProfilePhoto(context, uuid, profileId, filePath, filename);
     }
 
-    public static void uploadProfilePhoto(Context context, String uuid, long profileId, String filename, Uri uri) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, long profileId, String filename, Uri uri) {
         Log.v(TAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(uuid, filename, false, false);
@@ -232,18 +233,18 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     private void preUploadPhoto(Bundle payload) {
         if (payload.containsKey(PARAM_ERROR) && payload.getBoolean(PARAM_ERROR)) {
             preUploadPhoto(
-                    payload.getString(PARAM_UUID),
+                    (UUIDGroup) payload.getParcelable(PARAM_UUID),
                     payload.getString(PARAM_PHOTO_PATH),
                     payload.getBoolean(PARAM_IS_COMPLETE), true);
         } else {
             preUploadPhoto(
-                    payload.getString(PARAM_UUID),
+                    (UUIDGroup) payload.getParcelable(PARAM_UUID),
                     payload.getString(PARAM_PHOTO_PATH),
                     payload.getBoolean(PARAM_IS_COMPLETE), false);
         }
     }
 
-    public void preUploadPhoto(String uuid, String filename, boolean isComplete, boolean failed) {
+    public void preUploadPhoto(UUIDGroup uuid, String filename, boolean isComplete, boolean failed) {
     }
 
     public void onSwitchUser(long userId, boolean failed) {

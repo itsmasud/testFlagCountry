@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
@@ -21,7 +22,7 @@ import com.fieldnation.v2.data.model.Attachment;
 public class AttachmentHelper {
     private static final String TAG = "AttachmentHelper";
 
-    public static void addAttachment(final Context context, final String uuid, final int workOrderId, final Attachment attachment, Intent data) {
+    public static void addAttachment(final Context context, final UUIDGroup uuid, final int workOrderId, final Attachment attachment, Intent data) {
         Log.v(TAG, "addAttachment");
         // TODO analytics
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
@@ -38,7 +39,7 @@ public class AttachmentHelper {
         });
     }
 
-    public static void addAttachment(Context context, String uuid, int workOrderId, Attachment attachment, String filename, Uri uri) {
+    public static void addAttachment(Context context, UUIDGroup uuid, int workOrderId, Attachment attachment, String filename, Uri uri) {
         Log.v(TAG, "addAttachment");
         DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.ATTACHMENT_HELPER);
 
@@ -50,7 +51,7 @@ public class AttachmentHelper {
                 Attachment attachment = (Attachment) objects[2];
                 String filename = (String) objects[3];
                 Uri uri = (Uri) objects[4];
-                String uuid = (String) objects[5];
+                UUIDGroup uuid = (UUIDGroup) objects[5];
 
                 Log.v(TAG, "processIntent " + workOrderId + ", " + attachment.getFolderId() + ", "
                         + filename + ", " + (uri == null ? "null" : uri.toString()));

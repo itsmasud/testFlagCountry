@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -222,7 +223,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     private final PhotoEditDialog.OnSaveListener _photoEdit_onSave = new PhotoEditDialog.OnSaveListener() {
         @Override
-        public void onSave(String uuid, String name, Uri uri) {
+        public void onSave(UUIDGroup uuid, String name, Uri uri) {
             if (uri != null) {
                 FileCacheClient.cacheFileUpload(uuid, uri.toString(), uri);
                 ProfilePhotoClient.upload(App.get(), uuid, uri);
@@ -235,7 +236,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     private final PhotoEditDialog.OnCancelListener _photoEdit_onCancel = new PhotoEditDialog.OnCancelListener() {
         @Override
-        public void onCancel(String uuid, String name, Uri uri) {
+        public void onCancel(UUIDGroup uuid, String name, Uri uri) {
         }
     };
 

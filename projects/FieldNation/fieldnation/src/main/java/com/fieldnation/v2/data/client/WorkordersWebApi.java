@@ -9,6 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -291,7 +292,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param attachment  Folder
      */
     static void addAttachment(
-            Context context, String uuid, Integer workOrderId, Integer folderId,
+            Context context, UUIDGroup uuid, Integer workOrderId, Integer folderId,
             Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
 
         DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.WORKORDER_WEB_API);
@@ -310,7 +311,8 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .header("X-App-UUID", uuid)
+                    .header("X-App-UUID", uuid.uuid)
+                    .header("X-App-PARENT-UUID", uuid.parentUUID)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);

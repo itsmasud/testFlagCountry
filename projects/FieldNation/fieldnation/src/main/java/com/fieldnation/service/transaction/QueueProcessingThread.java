@@ -36,7 +36,7 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
                 return true;
             }
 
-            if (!misc.isEmptyOrNull(webTransaction.getUUID())) {
+            if (webTransaction.getUUID() != null && !misc.isEmptyOrNull(webTransaction.getUUID().uuid) && !misc.isEmptyOrNull(webTransaction.getUUID().parentUUID)) {
                 TransactionTracker.onEvent(App.get(), webTransaction.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.QUEUE_PROCESSING);
             }
 
@@ -49,7 +49,7 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
                 WebTransactionDispatcher.queued(App.get(), listenerName, webTransaction);
             }
 
-            if (!misc.isEmptyOrNull(webTransaction.getUUID())) {
+            if (webTransaction.getUUID() != null && !misc.isEmptyOrNull(webTransaction.getUUID().uuid) && !misc.isEmptyOrNull(webTransaction.getUUID().parentUUID)) {
                 TransactionTracker.onEvent(App.get(), webTransaction.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.QUEUE_PROCESSING);
             }
         } catch (Exception ex) {

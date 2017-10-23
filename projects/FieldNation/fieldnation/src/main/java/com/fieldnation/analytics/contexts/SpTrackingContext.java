@@ -3,6 +3,7 @@ package com.fieldnation.analytics.contexts;
 import android.content.Context;
 
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -14,7 +15,6 @@ import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 /**
  * Created by mc on 10/18/17.
@@ -28,7 +28,7 @@ public class SpTrackingContext implements EventContext, SpContext {
     @Json
     public Integer workOrderId;
     @Json
-    public String uuid;
+    public UUIDGroup uuid;
     @Json
     public String stage;
 
@@ -50,8 +50,13 @@ public class SpTrackingContext implements EventContext, SpContext {
         if (workOrderId != null)
             dataMap.put("workOrderId", workOrderId);
 
-        if (!misc.isEmptyOrNull(uuid))
-            dataMap.put("uuid", uuid);
+        if (uuid != null) {
+            if (!misc.isEmptyOrNull(uuid.uuid))
+                dataMap.put("uuid", uuid.uuid);
+
+            if (!misc.isEmptyOrNull(uuid.parentUUID))
+                dataMap.put("parentUUID", uuid.parentUUID);
+        }
 
         if (!misc.isEmptyOrNull(stage))
             dataMap.put("stage", stage);
@@ -80,7 +85,7 @@ public class SpTrackingContext implements EventContext, SpContext {
 
     public static class Builder {
         private Integer workOrderId;
-        private String uuid;
+        private UUIDGroup uuid;
         private String stage;
 
         public Builder() {
@@ -95,13 +100,8 @@ public class SpTrackingContext implements EventContext, SpContext {
             return this;
         }
 
-        public Builder uuid(String uuid) {
+        public Builder uuid(UUIDGroup uuid) {
             this.uuid = uuid;
-            return this;
-        }
-
-        public Builder uuid(UUID uuid) {
-            this.uuid = uuid.toString();
             return this;
         }
 

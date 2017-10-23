@@ -27,6 +27,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -100,7 +101,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private TransactionParams _transactionParams;
     private JsonObject _methodParams;
     private JsonObject _httpBuilder;
-    private String _uuid;
+    private UUIDGroup _uuid;
 
 
     private static int getIcon(String ext) {
@@ -266,7 +267,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
         super.show(payload, animate);
         // TODO analytics
 
-        _uuid = payload.getString("uuid");
+        _uuid = payload.getParcelable("uuid");
 
         if (payload.containsKey("webTransactionId")) {
             try {
@@ -617,7 +618,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String uuid, String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             Log.v(TAG, "onFileCacheEnd tag: " + tag);
             Log.v(TAG, "onFileCacheEnd uri: " + uri);
             if (!tag.equals(_sourceUri.toString())) {
@@ -639,32 +640,32 @@ public class PhotoUploadDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, String uuid, int workOrderId, Task task, String fileName, Uri uri) {
+    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, Task task, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("task", task);
-        params.putString("uuid", uuid);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, String uuid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
+    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("slot", slot);
-        params.putString("uuid", uuid);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, String uuid, long webTransactionId) {
+    public static void show(Context context, String uid, UUIDGroup uuid, long webTransactionId) {
         Bundle params = new Bundle();
         params.putLong("webTransactionId", webTransactionId);
-        params.putString("uuid", uuid);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
