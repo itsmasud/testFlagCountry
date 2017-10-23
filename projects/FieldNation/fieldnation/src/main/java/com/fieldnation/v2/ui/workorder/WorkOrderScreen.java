@@ -53,7 +53,6 @@ import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
-import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -146,7 +145,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private ContactSummaryView _contactSummaryView;
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
-    private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
     private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
@@ -280,10 +278,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
-
-        _timeLogged = findViewById(R.id.timelogged_view);
-        _timeLogged.setListener(_timeLoggedView_listener);
-        _renderers.add(_timeLogged);
 
         _closingNotes = findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
@@ -888,29 +882,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
-        @Override
-        public void addWorklog(boolean showdevice) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, showdevice);
-        }
-
-        @Override
-        public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, timeLog, showDeviceCount);
-        }
-
-        @Override
-        public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_WORKLOG,
-                    R.string.dialog_delete_worklog_title,
-                    R.string.dialog_delete_worklog_body,
-                    R.string.btn_yes,
-                    R.string.btn_no, true, timeLog);
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteWorkLog = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
@@ -1140,7 +1111,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addRequestNewPay() {
-            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
+            Log.v(TAG, "Inside _paymentView_listener.onRequestNewPay()");
             if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
                 PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {

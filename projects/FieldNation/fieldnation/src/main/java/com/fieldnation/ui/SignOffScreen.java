@@ -16,7 +16,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.detail.TimeLogRowView;
+import com.fieldnation.v2.ui.TimeLogRowView;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;

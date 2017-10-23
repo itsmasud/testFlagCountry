@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
+import com.fieldnation.v2.ui.dialog.TimeLogListDialog;
 
 /**
  * Created by Shoaib on 10/20/17.
@@ -62,12 +64,9 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getTimeLogs().getHours() == null) {
             setVisibility(GONE);
             return;
-        } else if (_workOrder.getTimeLogs().getHours() > 0) {
+        } else {
             _summaryView.set(_summaryView.getContext().getString(R.string.time_logged), String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
             setVisibility(VISIBLE);
-        } else {
-            setVisibility(GONE);
-            return;
         }
 
         setOnClickListener(_this_onClick);
@@ -76,7 +75,7 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-//            TimelogsListDialog.show(App.get(), null, _workOrder.getId());
+            TimeLogListDialog.show(App.get(), null, _workOrder.getId());
         }
     };
 

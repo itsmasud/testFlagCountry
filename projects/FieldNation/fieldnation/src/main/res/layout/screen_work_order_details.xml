@@ -112,12 +112,6 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
-                <com.fieldnation.ui.workorder.detail.TimeLogListView
-                    android:id="@+id/timelogged_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
                 <com.fieldnation.v2.ui.workorder.ExpensesSummaryView
                     android:id="@+id/expensesSummaryView"
                     android:layout_width="match_parent"
