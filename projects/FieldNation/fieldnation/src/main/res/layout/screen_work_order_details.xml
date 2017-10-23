@@ -99,14 +99,15 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
-                <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
-                    android:id="@+id/counterOfferSummary_view"
+                <com.fieldnation.v2.ui.workorder.TimeLogSummaryView
+                    android:id="@+id/timelogSummary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
 
-                <com.fieldnation.ui.workorder.detail.TimeLogListView
-                    android:id="@+id/timelogged_view"
+
+                <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
+                    android:id="@+id/counterOfferSummary_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />

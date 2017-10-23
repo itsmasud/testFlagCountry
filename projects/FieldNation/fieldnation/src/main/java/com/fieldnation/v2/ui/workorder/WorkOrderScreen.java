@@ -53,7 +53,6 @@ import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ExpectedPaymentView;
 import com.fieldnation.ui.workorder.detail.PaymentView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
-import com.fieldnation.ui.workorder.detail.TimeLogListView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -69,9 +68,7 @@ import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
@@ -94,7 +91,6 @@ import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
-import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WebViewDialog;
@@ -116,7 +112,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
-    private static final String DIALOG_TASK_SHIPMENT_ADD = TAG + ".taskShipmentAddDialog";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
@@ -148,11 +143,11 @@ public class WorkOrderScreen extends RelativeLayout {
     private ContactSummaryView _contactSummaryView;
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
-    private TimeLogListView _timeLogged;
     private TaskSummaryView _taskWidget;
     private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
     private RequestNewPayView _requestNewPayView;
+    private TimeLogSummaryView _timeLogSummaryView;
     private PaymentView _payView;
     private CounterOfferSummaryView _coSummaryView;
     private ExpensesSummaryView _expensesSummaryView;
@@ -242,6 +237,9 @@ public class WorkOrderScreen extends RelativeLayout {
         _requestNewPayView = findViewById(R.id.requestNewPay_view);
         _renderers.add(_requestNewPayView);
 
+        _timeLogSummaryView = findViewById(R.id.timelogSummary_view);
+        _renderers.add(_timeLogSummaryView);
+
         _payView = findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
         _renderers.add(_payView);
@@ -276,10 +274,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
-
-        _timeLogged = findViewById(R.id.timelogged_view);
-        _timeLogged.setListener(_timeLoggedView_listener);
-        _renderers.add(_timeLogged);
 
         _closingNotes = findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
@@ -360,8 +354,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
-        TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
-        TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
@@ -393,8 +385,6 @@ public class WorkOrderScreen extends RelativeLayout {
         Log.v(TAG, "onStop");
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
-        TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
-        TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
@@ -886,29 +876,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
-        @Override
-        public void addWorklog(boolean showdevice) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, showdevice);
-        }
-
-        @Override
-        public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, timeLog, showDeviceCount);
-        }
-
-        @Override
-        public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
-            TwoButtonDialog.show(App.get(), DIALOG_DELETE_WORKLOG,
-                    R.string.dialog_delete_worklog_title,
-                    R.string.dialog_delete_worklog_body,
-                    R.string.btn_yes,
-                    R.string.btn_no, true, timeLog);
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteWorkLog = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
@@ -1060,28 +1027,6 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
-        @Override
-        public void onAddShipment(int workOrderId, Shipment shipment, Task task) {
-            ShipmentAddDialog.show(App.get(), null, workOrderId,
-                    _workOrder.getAttachments(),
-                    getContext().getString(R.string.dialog_shipment_title),
-                    shipment == null ? "" : shipment.getName(), task);
-        }
-    };
-
-    private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
-        @Override
-        public void onDelete(int workOrderId, Shipment shipment) {
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-
-            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-            uiContext.page += " - Task Shipment Add Dialog";
-            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
-            setLoading(true);
-        }
-    };
-
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
         public void onWithdraw(int workOrderId) {
@@ -1122,7 +1067,7 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addRequestNewPay() {
-            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
+            Log.v(TAG, "Inside _paymentView_listener.onRequestNewPay()");
             if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
                 PayDialog.show(App.get(), DIALOG_PAY, R.string.request_new_pay, R.string.btn_submit, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {
