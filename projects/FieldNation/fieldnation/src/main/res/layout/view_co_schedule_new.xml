@@ -95,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="@string/earliest_arrival" />
+                    android:text="@string/start_after" />
 
                 <Button
                     android:id="@+id/start_date_button"
@@ -123,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="@string/latest_arrival" />
+                    android:text="@string/finish_by" />
 
                 <Button
                     android:id="@+id/end_date_button"
