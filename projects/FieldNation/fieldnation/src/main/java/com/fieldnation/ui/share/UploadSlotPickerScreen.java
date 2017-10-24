@@ -106,6 +106,20 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
         AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
 
+        boolean canUpload = false;
+        for (AttachmentFolder folder : folders) {
+            if (folder.getType() == AttachmentFolder.TypeEnum.SLOT && folder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
+                canUpload = true;
+                break;
+            }
+        }
+
+        if (!canUpload) {
+            ToastClient.toast(App.get(), "Cannot upload to this workorder.", Toast.LENGTH_LONG);
+            if (_listener != null) _listener.onBackPressed();
+        }
+
+
         final List<AttachmentFolder> slots = new LinkedList<>();
         for (AttachmentFolder folder : folders) {
             if (folder.getType() == AttachmentFolder.TypeEnum.SLOT) {
