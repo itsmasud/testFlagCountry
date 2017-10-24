@@ -99,7 +99,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
-        Log.e(TAG, "SplashActivity#onProfile");
+        Log.v(TAG, "SplashActivity#onProfile");
 
         if (profile != null)
             Log.v(TAG, profile.toJson().display());

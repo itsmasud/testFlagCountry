@@ -20,6 +20,7 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
@@ -58,6 +59,8 @@ public class TasksDialog extends FullScreenDialog {
 
     // Dialog
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
+    private static final String DIALOG_TASK_SHIPMENT_ADD = TAG + ".taskShipmentAddDialog";
+
 
     // Params
     private static final String PARAM_WORK_ORDER_ID = "workOrderId";
@@ -103,6 +106,9 @@ public class TasksDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
+        TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
+
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
         _adapter.setListener(_taskClick_listener);
@@ -112,6 +118,8 @@ public class TasksDialog extends FullScreenDialog {
     public void onStop() {
         super.onStop();
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
+        TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
     }
 
     @Override
@@ -249,6 +257,27 @@ public class TasksDialog extends FullScreenDialog {
         }
     };
 
+    private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
+        @Override
+        public void onAddShipment(int workOrderId, Shipment shipment, Task task) {
+            ShipmentAddDialog.show(App.get(), null, workOrderId,
+                    _workOrder.getAttachments(),
+                    getContext().getString(R.string.dialog_shipment_title),
+                    shipment == null ? "" : shipment.getName(), task);
+        }
+    };
+
+    private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
+        @Override
+        public void onDelete(int workOrderId, Shipment shipment) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Task Shipment Add Dialog";
+            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
+        }
+    };
+
     /*-*****************************-*/
     /*-		      Events			-*/
     /*-*****************************-*/
@@ -355,6 +384,7 @@ public class TasksDialog extends FullScreenDialog {
                         return;
 
                     try {
+                        AppMessagingClient.setLoading(true);
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -376,7 +406,7 @@ public class TasksDialog extends FullScreenDialog {
                         ShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
                                 _workOrder.getAttachments(), App.get().getString(R.string.dialog_task_shipment_title), null, task);
                     } else {
-                        TaskShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
+                        TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder.getId(),
                                 _workOrder.getShipments(), App.get().getString(R.string.dialog_task_shipment_title), task);
                     }
                     break;
@@ -500,9 +530,11 @@ public class TasksDialog extends FullScreenDialog {
                     populateUi();
                     AppMessagingClient.setLoading(false);
                 }
+
             } else if (methodName.equals("updateTask")) {
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
                 AppMessagingClient.setLoading(true);
+
             } else if (methodName.equals("addAttachment")) {
                 try {
                     JsonObject obj = new JsonObject(transactionParams.methodParams);
@@ -514,8 +546,9 @@ public class TasksDialog extends FullScreenDialog {
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
+
             } else if (successObject != null && methodName.equals("getAttachments")) {
-//TODO                folders = (AttachmentFolders) successObject;
+//                folders = (AttachmentFolders) successObject;
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }

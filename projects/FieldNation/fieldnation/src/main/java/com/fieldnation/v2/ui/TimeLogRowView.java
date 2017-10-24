@@ -1,9 +1,8 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ public class TimeLogRowView extends RelativeLayout {
     private TextView _hoursTextView;
 
     // Data
-    private Listener _listener;
     private WorkOrder _workOrder;
     private TimeLog _timeLog;
 
@@ -61,14 +59,7 @@ public class TimeLogRowView extends RelativeLayout {
         _devicesTextView = findViewById(R.id.devices_textview);
         _hoursTextView = findViewById(R.id.hours_textview);
 
-        setOnClickListener(_edit_onClick);
-        setOnLongClickListener(_delete_onClick);
-
         populateUi();
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     public void setData(WorkOrder workOrder, TimeLog timeLog) {
@@ -129,41 +120,5 @@ public class TimeLogRowView extends RelativeLayout {
         } else {
             _devicesTextView.setVisibility(GONE);
         }
-    }
-
-    /*-******************************-*/
-    /*-             Events           -*/
-    /*-******************************-*/
-
-    private final View.OnClickListener _edit_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            boolean showdevices = false;
-            try {
-                showdevices = _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE;
-            } catch (Exception ex) {
-            }
-
-            if (_listener != null)
-                _listener.editTimeLog(_workOrder, _timeLog, showdevices);
-        }
-    };
-
-    private final OnLongClickListener _delete_onClick = new OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (_listener != null
-                    && _timeLog.getActionsSet().contains(TimeLog.ActionsEnum.DELETE)) {
-                _listener.deleteTimeLog(TimeLogRowView.this, _workOrder, _timeLog);
-                return true;
-            }
-            return false;
-        }
-    };
-
-    public interface Listener {
-        void editTimeLog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount);
-
-        void deleteTimeLog(TimeLogRowView view, WorkOrder workOrder, TimeLog timeLog);
     }
 }

@@ -81,7 +81,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
     }
 
     private void populateUi() {
-        Log.e(TAG, "populateUi");
+        Log.v(TAG, "populateUi");
 
         if (_payStatusTextView == null)
             return;

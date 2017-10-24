@@ -142,6 +142,7 @@ public class WorkOrderTracker {
         public static final Identity EXPENSE_DELETE_ITEM = new Identity("Expense Delete", ElementType.LIST_ITEM, true);
         public static final Identity DISCOUNT_DELETE_ITEM = new Identity("Discount Delete", ElementType.LIST_ITEM, true);
         public static final Identity SHIPMENT_DELETE_ITEM = new Identity("Shipment Delete", ElementType.LIST_ITEM, true);
+        public static final Identity NEW_PAY_REQUEST_DELETE_ITEM = new Identity("New Pay Request Delete", ElementType.LIST_ITEM, true);
 
         // Task
         public static final Identity CONFIRM_TASK = new Identity("Confirm Assignment Task", ElementType.LIST_ITEM, true);
@@ -282,7 +283,7 @@ public class WorkOrderTracker {
     }
 
     public enum WorkOrderDetailsSection {
-        TIME_LOGGED, SIGNATURES, EXPENSES, DISCOUNTS, SHIPMENTS, CLOSING_NOTES;
+        TIME_LOGGED, SIGNATURES, EXPENSES, DISCOUNTS, SHIPMENTS, CLOSING_NOTES, PAY_REQUEST;
 
         public Identity getEditIdentity() {
             switch (this) {
@@ -330,6 +331,8 @@ public class WorkOrderTracker {
                     return Identity.DISCOUNT_DELETE_ITEM;
                 case SHIPMENTS:
                     return Identity.SHIPMENT_DELETE_ITEM;
+                case PAY_REQUEST:
+                    return Identity.NEW_PAY_REQUEST_DELETE_ITEM;
             }
             return null;
         }
