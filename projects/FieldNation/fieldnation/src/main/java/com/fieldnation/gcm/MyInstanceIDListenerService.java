@@ -33,10 +33,6 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
     public void onTokenRefresh() {
         Log.v(TAG, "onTokenRefresh");
         // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
-/*
-        Intent intent = new Intent(this, RegistrationIntentService.class);
-        startService(intent);
-*/
         App.get().deviceToken = null;
         RegClient.requestToken(this);
     }

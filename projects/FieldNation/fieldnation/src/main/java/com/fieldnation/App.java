@@ -459,6 +459,7 @@ public class App extends Application {
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");
 
+            // had no profile previously, or new profile, then request new token
             if (_profile == null || !_profile.getUserId().equals(profile.getUserId())) {
                 deviceToken = null;
                 RegClient.requestToken(App.this);
@@ -503,6 +504,7 @@ public class App extends Application {
     private final RegClient _regClient = new RegClient() {
         @Override
         public void onToken(String token) {
+            // have profile and no token, or a new token, then register
             if (_profile != null
                     && (deviceToken == null
                     || !deviceToken.equals(token))) {
