@@ -19,6 +19,7 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -42,7 +43,6 @@ import com.fieldnation.v2.ui.AttachedFilesAdapter;
 
 import java.io.File;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by mc on 3/9/17.
@@ -73,6 +73,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private AttachmentFolder _selectedFolder = null;
     private Attachment _selectedAttachment = null;
     private long _selectedTransactionId;
+    private String _myUUID;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -125,6 +126,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
         Log.v(TAG, "show");
         super.show(payload, animate);
         _workOrderId = payload.getInt("workOrderId");
+        _myUUID = payload.getString("uuid");
+
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+                DeliverableTracker.Action.START, DeliverableTracker.Location.FILES_DIALOG);
+
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
         AppMessagingClient.setLoading(true);
     }
@@ -173,11 +179,13 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FILES_DIALOG);
+
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
         PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoDialog_onUpload);
-
         super.onStop();
     }
 
@@ -197,10 +205,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Utils
     private void startAppPickerDialog() {
-        // TODO UUID
-        // TODO analytics
-        UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE, _myUUID);
     }
 
     private boolean checkMedia() {
@@ -480,9 +485,10 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId) {
+    public static void show(Context context, String uid, String uuid, int workOrderId) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
+        params.putString("uuid", uuid);
 
         Controller.show(context, uid, AttachedFilesDialog.class, params);
     }

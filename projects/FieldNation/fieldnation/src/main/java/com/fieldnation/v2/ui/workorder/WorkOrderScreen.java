@@ -173,6 +173,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private boolean _locationFailed = false;
     private int _workOrderId;
     private SimpleGps _simpleGps;
+    private String _myUUID;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -413,6 +414,13 @@ public class WorkOrderScreen extends RelativeLayout {
         _workOrder = workOrder;
         _workOrderId = workOrder.getId();
         populateUi();
+    }
+
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
+
+        _failedUploads.setUUID(_myUUID);
+        _attachmentSummaryView.setUUID(_myUUID);
     }
 
     private void populateUi() {

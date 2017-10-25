@@ -23,6 +23,7 @@ public class DeliverableTracker {
         WOD_BOTTOMSHEET,
         TASKS_DIALOG,
         FOLDERS_DIALOG,
+        FILES_DIALOG,
         GET_FILE_DIALOG,
         PROFILE_DIALOG,
         RECEIVER_ACTIVITY,
