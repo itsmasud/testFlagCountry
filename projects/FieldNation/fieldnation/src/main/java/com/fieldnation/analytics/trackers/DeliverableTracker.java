@@ -26,6 +26,7 @@ public class DeliverableTracker {
         FILES_DIALOG,
         GET_FILE_DIALOG,
         PROFILE_DIALOG,
+        PHOTO_UPLOAD_DIALOG,
         RECEIVER_ACTIVITY,
         RECEIVER_ACTIVITY_MULTIPLE,
         RECEIVER_ACTIVITY_SINGLE,

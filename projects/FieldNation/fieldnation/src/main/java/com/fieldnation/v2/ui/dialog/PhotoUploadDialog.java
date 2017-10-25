@@ -27,6 +27,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnanalytics.Tracker;
@@ -269,6 +270,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         _uuid = payload.getParcelable("uuid");
 
+        DeliverableTracker.onEvent(App.get(), _uuid, DeliverableTracker.Action.START,
+                DeliverableTracker.Location.PHOTO_UPLOAD_DIALOG);
+
         if (payload.containsKey("webTransactionId")) {
             try {
                 _mode = MODE_RETRY;
@@ -373,6 +377,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
     public void onPause() {
         _fileCacheClient.unsub();
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        DeliverableTracker.onEvent(App.get(), _uuid, DeliverableTracker.Action.COMPLETE,
+                DeliverableTracker.Location.PHOTO_UPLOAD_DIALOG);
+        super.onStop();
     }
 
     public void setPhoto(Bitmap bitmap) {
