@@ -472,6 +472,13 @@ public class App extends Application {
                 if (deviceToken != null) {
                     ProfileClient.actionRegisterDevice(App.this, deviceToken, _profile.getUserId());
                     deviceToken = null;
+                } else {
+                    try {
+                        Intent intent = new Intent(App.this, RegistrationIntentService.class);
+                        startService(intent);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
                 }
 
                 AppMessagingClient.gotProfile(profile);
@@ -481,12 +488,6 @@ public class App extends Application {
                     _switchingUser = false;
                 }
 
-                try {
-                    Intent intent = new Intent(App.this, RegistrationIntentService.class);
-                    startService(intent);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
             } else {
                 // TODO should do something... like retry or logout
             }
