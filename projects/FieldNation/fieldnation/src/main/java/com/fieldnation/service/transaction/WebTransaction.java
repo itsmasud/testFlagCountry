@@ -87,6 +87,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         try {
             _uuid = UUIDGroup.fromJson(new JsonObject(cursor.getString(Column.UUID.getIndex())));
         } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
 
@@ -115,7 +116,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _trackType = TrackerEnum.values()[bundle.getInt(PARAM_TRACK_ENUM)];
         _timingKey = bundle.getString(PARAM_TIMING_KEY);
         _wasZombie = bundle.getBoolean(PARAM_ZOMBIE);
-        if (bundle.getParcelable(PARAM_UUID) != null)
+        if (bundle.containsKey(PARAM_UUID))
             _uuid = bundle.getParcelable(PARAM_UUID);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);

@@ -8,7 +8,6 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.analytics.trackers.TransactionTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ThreadManager;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 
@@ -166,7 +165,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
     protected static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
 
     public static void queueTransaction(Context context, WebTransaction transaction) {
-        if (transaction.getUUID() != null && !misc.isEmptyOrNull(transaction.getUUID().uuid) && !misc.isEmptyOrNull(transaction.getUUID().parentUUID))
+        if (transaction.getUUID() != null)
             TransactionTracker.onEvent(context, transaction.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.WEB_TRANSACTION_SYSTEM_QUEUE);
 
         synchronized (TRANSACTION_QUEUE) {
@@ -174,7 +173,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
         }
         getInstance()._manager.wakeUp();
 
-        if (transaction.getUUID() != null && !misc.isEmptyOrNull(transaction.getUUID().uuid) && !misc.isEmptyOrNull(transaction.getUUID().parentUUID))
+        if (transaction.getUUID() != null)
             TransactionTracker.onEvent(context, transaction.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.WEB_TRANSACTION_SYSTEM_QUEUE);
     }
 }

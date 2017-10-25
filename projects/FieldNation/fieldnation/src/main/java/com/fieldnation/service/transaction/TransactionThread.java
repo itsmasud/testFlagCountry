@@ -152,7 +152,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             return false;
         }
 
-        if (trans.getUUID() != null && !misc.isEmptyOrNull(trans.getUUID().uuid) && !misc.isEmptyOrNull(trans.getUUID().parentUUID)) {
+        if (trans.getUUID() != null) {
             TransactionTracker.onEvent(App.get(), trans.getUUID(), TransactionTracker.Action.START, TransactionTracker.Location.TRANSACTION_PROCESSING);
         }
 
@@ -276,7 +276,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransaction.delete(trans.getId());
                 break;
             case CONTINUE:
-                if (trans.getUUID() != null && !misc.isEmptyOrNull(trans.getUUID().uuid) && !misc.isEmptyOrNull(trans.getUUID().parentUUID))
+                if (trans.getUUID() != null)
                     TransactionTracker.onEvent(App.get(), trans.getUUID(), TransactionTracker.Action.COMPLETE, TransactionTracker.Location.TRANSACTION_PROCESSING);
                 generateNotification(notifId, notifSuccess);
                 WebTransaction.delete(trans.getId());

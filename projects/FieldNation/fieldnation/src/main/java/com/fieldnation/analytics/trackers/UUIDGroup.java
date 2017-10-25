@@ -23,6 +23,9 @@ public class UUIDGroup implements Parcelable {
     @Json
     public String parentUUID = "";
 
+    public UUIDGroup() {
+    }
+
     public UUIDGroup(String parentUUID, String uuid) {
         this.uuid = uuid;
         this.parentUUID = parentUUID;
