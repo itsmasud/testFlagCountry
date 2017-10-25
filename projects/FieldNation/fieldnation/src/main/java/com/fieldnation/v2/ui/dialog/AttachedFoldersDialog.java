@@ -13,6 +13,8 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -96,9 +98,14 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "show");
         super.show(params, animate);
+
         _workOrderId = params.getInt("workOrderId");
         _uiUUID = params.getString("uiUUID");
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
+
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_uiUUID, null),
+                DeliverableTracker.Action.START, DeliverableTracker.Location.FOLDERS_DIALOG);
+
         populateUi();
     }
 
@@ -135,6 +142,9 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_uiUUID, null),
+                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FOLDERS_DIALOG);
+
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onOk);
         super.onStop();

@@ -19,7 +19,6 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -201,7 +200,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
         // TODO UUID
         // TODO analytics
         UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
-        DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.FILES_DIALOG);
         GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
     }
 

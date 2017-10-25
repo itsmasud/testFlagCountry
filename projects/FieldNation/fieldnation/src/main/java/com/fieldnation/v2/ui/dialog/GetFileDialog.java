@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
@@ -118,6 +119,9 @@ public class GetFileDialog extends SimpleDialog {
             }
 
         _uiUUID = payload.getString("uiUUID");
+
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_uiUUID, null),
+                DeliverableTracker.Action.START, DeliverableTracker.Location.GET_FILE_DIALOG);
 
         super.show(payload, animate);
     }
@@ -219,6 +223,8 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void onStop() {
         Log.v(TAG, "onStop");
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_uiUUID, null),
+                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.GET_FILE_DIALOG);
         _permissionsListener.unsub();
         _activityResultListener.unsub();
         _fileCacheClient.unsub();
