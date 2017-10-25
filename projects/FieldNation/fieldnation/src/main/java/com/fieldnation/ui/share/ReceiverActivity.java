@@ -231,6 +231,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
+            // TODO analytics
             _selectedWorkOrder = workOrder;
             _slotPicker.setWorkOrderId(workOrder.getId());
             animateSwap(_slotPicker, _workOrderPicker, false);
@@ -247,6 +248,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public void onSlotSelected(AttachmentFolder uploadSlot) {
             _selectedUploadSlot = uploadSlot;
             // if file list == 1, then start upload and redirect to work order details
+            // TODO analytics
             if (_sharedFiles.length == 1) {
                 startWorkOrderDetails();
                 Tracker.event(App.get(),
@@ -282,6 +284,8 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onSendFiles(SharedFile[] sharedFiles) {
             ToastClient.toast(App.get(), getString(R.string.sending_num_files, sharedFiles.length), Toast.LENGTH_SHORT);
+
+            // TODO analytics
 
             // TODO V2 api is not ready for this
 //            if (_selectedUploadSlot.getMaxFiles() != null
@@ -339,10 +343,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public View view;
 
         @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
-        @Override
         public void onAnimationEnd(Animation animation) {
             view.clearAnimation();
             view.setVisibility(View.GONE);
@@ -351,10 +351,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     private static class AnimationInListener extends DefaultAnimationListener {
         public View view;
-
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
 
         @Override
         public void onAnimationEnd(Animation animation) {
