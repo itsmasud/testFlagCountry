@@ -300,10 +300,6 @@
             </intent-filter>
         </service>
         <service
-            android:name=".gcm.RegistrationIntentService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.tracker.UploadTrackerService"
             android:exported="false"
             android:process=":frontside" />

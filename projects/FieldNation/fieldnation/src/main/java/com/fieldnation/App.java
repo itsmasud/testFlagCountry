@@ -42,7 +42,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.gcm.RegistrationIntentService;
+import com.fieldnation.gcm.RegClient;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
@@ -225,6 +225,9 @@ public class App extends Application {
 
         _profileClient.subGet();
         _profileClient.subSwitchUser();
+
+        _regClient.sub();
+
         ProfileClient.get(App.this);
 
         _authClient.subAuthStateChange();
@@ -289,6 +292,7 @@ public class App extends Application {
     public void onTerminate() {
         _profileClient.unsubGet();
         _profileClient.unsubSwitchUser();
+        _regClient.unsub();
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubNetworkConnect();
         _appMessagingClient.unsubNetworkState();
@@ -454,6 +458,12 @@ public class App extends Application {
         @Override
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");
+
+            if (_profile == null || !_profile.getUserId().equals(profile.getUserId())) {
+                deviceToken = null;
+                RegClient.requestToken(App.this);
+            }
+
             if (profile != null) {
                 _profile = profile;
 
@@ -467,18 +477,6 @@ public class App extends Application {
 
                 if (!misc.isEmptyOrNull(_profile.getFirstname()) && !misc.isEmptyOrNull(_profile.getLastname())) {
                     Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
-                }
-
-                if (deviceToken != null) {
-                    ProfileClient.actionRegisterDevice(App.this, deviceToken, _profile.getUserId());
-                    deviceToken = null;
-                } else {
-                    try {
-                        Intent intent = new Intent(App.this, RegistrationIntentService.class);
-                        startService(intent);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
                 }
 
                 AppMessagingClient.gotProfile(profile);
@@ -498,6 +496,19 @@ public class App extends Application {
             if (!failed) {
                 _switchingUser = true;
                 ProfileClient.get(App.this, false);
+            }
+        }
+    };
+
+    private final RegClient _regClient = new RegClient() {
+        @Override
+        public void onToken(String token) {
+            if (_profile != null
+                    && (deviceToken == null
+                    || !deviceToken.equals(token))) {
+
+                deviceToken = token;
+                ProfileClient.actionRegisterDevice(App.this, deviceToken, _profile.getUserId());
             }
         }
     };

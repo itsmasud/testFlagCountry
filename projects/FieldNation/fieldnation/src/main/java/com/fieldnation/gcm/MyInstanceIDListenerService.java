@@ -16,8 +16,8 @@
 
 package com.fieldnation.gcm;
 
-import android.content.Intent;
-
+import com.fieldnation.App;
+import com.fieldnation.fnlog.Log;
 import com.google.android.gms.iid.InstanceIDListenerService;
 
 public class MyInstanceIDListenerService extends InstanceIDListenerService {
@@ -31,9 +31,14 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
     // [START refresh_token]
     @Override
     public void onTokenRefresh() {
+        Log.v(TAG, "onTokenRefresh");
         // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
+/*
         Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
+*/
+        App.get().deviceToken = null;
+        RegClient.requestToken(this);
     }
 // [END refresh_token]
 }
