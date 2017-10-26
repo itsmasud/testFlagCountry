@@ -23,6 +23,7 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
@@ -37,11 +38,13 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.share.SharedFile;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
@@ -82,9 +85,10 @@ public class ShipmentAddDialog extends SimpleDialog {
     private int _directionPosition = -1;
     private String _shipmentDescription;
     private Task _task;
+    private String _myUUID;
 
     // Barcode stuff
-    private Uri _scannedImageUri;
+    private SharedFile _scannedFile;
 
     // Modes
     private static final int CARRIER_FEDEX = 0;
@@ -162,6 +166,10 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         _workOrderId = payload.getInt("workOrderId");
         _attachmentFolders = payload.getParcelable("attachmentFolders");
+        _myUUID = payload.getString("uuid");
+
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+                DeliverableTracker.Action.START, DeliverableTracker.Location.SHIPMENT_DIALOG);
 
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
 
@@ -189,7 +197,7 @@ public class ShipmentAddDialog extends SimpleDialog {
             }
 
             if (savedState.containsKey(STATE_SCANNED_IMAGE)) {
-                _scannedImageUri = savedState.getParcelable(STATE_SCANNED_IMAGE);
+                _scannedFile = savedState.getParcelable(STATE_SCANNED_IMAGE);
             }
         }
     }
@@ -204,8 +212,11 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (_directionPosition != -1)
             outState.putInt(STATE_DIRECTION_SELECTION, _directionPosition);
 
-        if (_scannedImageUri != null)
-            outState.putParcelable(STATE_SCANNED_IMAGE, _scannedImageUri);
+        if (_scannedFile != null)
+            outState.putParcelable(STATE_SCANNED_IMAGE, _scannedFile);
+
+        if (_myUUID != null)
+            outState.putString("uuid", _myUUID);
     }
 
     @Override
@@ -216,6 +227,9 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.SHIPMENT_DIALOG);
+
         _permissionsListener.unsub();
         super.onStop();
     }
@@ -452,7 +466,7 @@ public class ShipmentAddDialog extends SimpleDialog {
     }
 
     private void uploadBarcodeImage() {
-        if (_scannedImageUri == null)
+        if (_scannedFile == null)
             return;
 
         if (_attachmentFolders == null)
@@ -472,18 +486,16 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
         if (miscFolder != null) {
             try {
-                String fileName = FileUtils.getFileNameFromUri(App.get(), _scannedImageUri);
-
                 Attachment attachment = new Attachment();
                 attachment.folderId(miscFolder.getId())
-                        .file(new com.fieldnation.v2.data.model.File().name(fileName));
+                        .file(new com.fieldnation.v2.data.model.File().name(_scannedFile.getFileName()));
 
-                AttachmentHelper.addAttachment(App.get(), new UUIDGroup(UUID.randomUUID().toString(), UUID.randomUUID().toString()), _workOrderId, attachment, fileName, _scannedImageUri);
+                AttachmentHelper.addAttachment(App.get(), _scannedFile.getUUID(), _workOrderId,
+                        attachment, _scannedFile.getFileName(), _scannedFile.getUri());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
         }
-
     }
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
@@ -543,7 +555,8 @@ public class ShipmentAddDialog extends SimpleDialog {
                         Log.e(TAG, "onActivityResult: no image path");
                     } else {
                         Log.v(TAG, "onActivityResult");
-                        _scannedImageUri = Uri.fromFile(new File(result.getBarcodeImagePath()));
+                        Uri imageUri = Uri.fromFile(new File(result.getBarcodeImagePath()));
+                        _scannedFile = new SharedFile(_myUUID, FileUtils.getFileNameFromUri(App.get(), imageUri), imageUri);
                         _trackingIdEditText.setText(content);
                         _carrierPosition = misc.getCarrierId(content);
                         getCarrierSpinner().setSelection(_carrierPosition);
@@ -565,6 +578,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         params.putString("title", title);
         params.putString("description", description);
         params.putParcelable("task", task);
+        params.putString("uuid", UUID.randomUUID().toString());
 
         Controller.show(context, uid, ShipmentAddDialog.class, params);
     }

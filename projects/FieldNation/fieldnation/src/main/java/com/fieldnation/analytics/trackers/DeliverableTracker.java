@@ -36,6 +36,7 @@ public class DeliverableTracker {
         ATTACHMENT_HELPER,
         WORKORDER_WEB_API,
         WEB_TRANSACTION_QUEUE,
+        SHIPMENT_DIALOG,
     }
 
     public static void onEvent(Context context, UUIDGroup uuid, Action action, Location location) {
