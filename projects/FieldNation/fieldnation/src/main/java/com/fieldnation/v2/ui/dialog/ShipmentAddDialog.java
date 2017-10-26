@@ -23,6 +23,7 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
@@ -49,6 +50,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
+import java.util.UUID;
 
 public class ShipmentAddDialog extends SimpleDialog {
     private static final String TAG = "ShipmentAddDialog";
@@ -476,7 +478,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                 attachment.folderId(miscFolder.getId())
                         .file(new com.fieldnation.v2.data.model.File().name(fileName));
 
-                AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fileName, _scannedImageUri);
+                AttachmentHelper.addAttachment(App.get(), new UUIDGroup(UUID.randomUUID().toString(), UUID.randomUUID().toString()), _workOrderId, attachment, fileName, _scannedImageUri);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

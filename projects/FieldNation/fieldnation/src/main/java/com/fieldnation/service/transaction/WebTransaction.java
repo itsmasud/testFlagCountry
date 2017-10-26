@@ -87,7 +87,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         try {
             _uuid = UUIDGroup.fromJson(new JsonObject(cursor.getString(Column.UUID.getIndex())));
         } catch (Exception ex) {
-            Log.v(TAG, ex);
         }
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
 
