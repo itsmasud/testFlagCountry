@@ -644,7 +644,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 */
 
 
-    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
+/*    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
         Log.v(STAG, "requestUploadDeliverable");
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
@@ -701,9 +701,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 ToastClient.toast(context, R.string.toast_could_not_upload_file, Toast.LENGTH_LONG);
             }
         });
-    }
+    }*/
 
-    public boolean subDeliverableUpload() {
+/*    public boolean subDeliverableUpload() {
         return register(TOPIC_ID_UPLOAD_DELIVERABLE);
     }
 
@@ -721,7 +721,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         topicId += "/" + workorderId + "/" + uploadSlotId;
 
         return register(topicId);
-    }
+    }*/
 
 //    public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
 //        WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId);
