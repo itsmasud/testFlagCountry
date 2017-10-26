@@ -275,9 +275,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
         public void onClick(View v) {
             // TODO UUID
             // TODO analytics
-            UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
+            UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
             DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.PROFILE_DIALOG);
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
         }
     };
 

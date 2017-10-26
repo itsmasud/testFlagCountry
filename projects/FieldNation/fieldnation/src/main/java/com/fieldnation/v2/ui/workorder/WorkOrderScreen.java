@@ -1123,9 +1123,10 @@ public class WorkOrderScreen extends RelativeLayout {
         public void addAttachment() {
             // TODO UUID
             // TODO analytics
-            UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
-            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.WOD_BOTTOMSHEET);
-            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, uuid.parentUUID, _workOrderId);
+            UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
+            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO,
+                    DeliverableTracker.Location.WOD_BOTTOMSHEET);
+            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, uuid.uuid, _workOrderId);
         }
     };
 

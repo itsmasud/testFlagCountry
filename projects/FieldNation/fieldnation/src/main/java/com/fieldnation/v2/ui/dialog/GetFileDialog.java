@@ -120,7 +120,7 @@ public class GetFileDialog extends SimpleDialog {
 
         _uiUUID = payload.getString("uiUUID");
 
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_uiUUID, null),
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _uiUUID),
                 DeliverableTracker.Action.START, DeliverableTracker.Location.GET_FILE_DIALOG);
 
         super.show(payload, animate);
@@ -223,7 +223,7 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void onStop() {
         Log.v(TAG, "onStop");
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_uiUUID, null),
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _uiUUID),
                 DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.GET_FILE_DIALOG);
         _permissionsListener.unsub();
         _activityResultListener.unsub();

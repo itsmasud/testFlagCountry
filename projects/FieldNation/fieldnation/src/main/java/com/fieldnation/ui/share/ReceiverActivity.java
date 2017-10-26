@@ -213,7 +213,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     public void finish() {
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null), DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.RECEIVER_ACTIVITY);
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID), DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.RECEIVER_ACTIVITY);
         super.finish();
     }
 
@@ -237,7 +237,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
-            DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null), DeliverableTracker.Action.INFO, DeliverableTracker.Location.RECEIVER_ACTIVITY_WORKORDER);
+            DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID), DeliverableTracker.Action.INFO, DeliverableTracker.Location.RECEIVER_ACTIVITY_WORKORDER);
             _selectedWorkOrder = workOrder;
             _slotPicker.setWorkOrderId(workOrder.getId());
             animateSwap(_slotPicker, _workOrderPicker, false);
@@ -254,7 +254,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public void onSlotSelected(AttachmentFolder uploadSlot) {
             _selectedUploadSlot = uploadSlot;
             // if file list == 1, then start upload and redirect to work order details
-            DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null), DeliverableTracker.Action.INFO, DeliverableTracker.Location.RECEIVER_ACTIVITY_TASK);
+            DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID), DeliverableTracker.Action.INFO, DeliverableTracker.Location.RECEIVER_ACTIVITY_TASK);
             if (_sharedFiles.length == 1) {
                 startWorkOrderDetails();
                 Tracker.event(App.get(),

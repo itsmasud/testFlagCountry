@@ -168,7 +168,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         _attachmentFolders = payload.getParcelable("attachmentFolders");
         _myUUID = payload.getString("uuid");
 
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
                 DeliverableTracker.Action.START, DeliverableTracker.Location.SHIPMENT_DIALOG);
 
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
@@ -227,7 +227,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
                 DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.SHIPMENT_DIALOG);
 
         _permissionsListener.unsub();

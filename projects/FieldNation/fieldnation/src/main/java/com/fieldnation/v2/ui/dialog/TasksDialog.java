@@ -221,9 +221,10 @@ public class TasksDialog extends FullScreenDialog {
         if (checkMedia()) {
             // TODO UUID
             // TODO analytics
-            UUIDGroup uuid = new UUIDGroup(UUID.randomUUID().toString(), null);
-            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.TASKS_DIALOG);
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.parentUUID);
+            UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
+            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO,
+                    DeliverableTracker.Location.TASKS_DIALOG);
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
         } else {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
         }

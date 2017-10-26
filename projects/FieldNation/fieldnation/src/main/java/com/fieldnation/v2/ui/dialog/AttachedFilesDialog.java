@@ -128,7 +128,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         _workOrderId = payload.getInt("workOrderId");
         _myUUID = payload.getString("uuid");
 
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
                 DeliverableTracker.Action.START, DeliverableTracker.Location.FILES_DIALOG);
 
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
@@ -179,7 +179,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(_myUUID, null),
+        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
                 DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FILES_DIALOG);
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
