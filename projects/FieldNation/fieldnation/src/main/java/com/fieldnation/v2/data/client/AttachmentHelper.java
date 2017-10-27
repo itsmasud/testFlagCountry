@@ -1,5 +1,6 @@
 package com.fieldnation.v2.data.client;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -43,41 +44,43 @@ public class AttachmentHelper {
         Log.v(TAG, "addAttachment");
         DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.ATTACHMENT_HELPER);
 
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... objects) {
-                Context context = (Context) objects[0];
-                int workOrderId = (Integer) objects[1];
-                Attachment attachment = (Attachment) objects[2];
-                String filename = (String) objects[3];
-                Uri uri = (Uri) objects[4];
-                UUIDGroup uuid = (UUIDGroup) objects[5];
+        new AddAttachmentTask().executeEx(context, workOrderId, attachment, filename, uri, uuid);
+    }
 
-                Log.v(TAG, "processIntent " + workOrderId + ", " + attachment.getFolderId() + ", "
-                        + filename + ", " + (uri == null ? "null" : uri.toString()));
+    private static class AddAttachmentTask extends AsyncTaskEx<Object, Object, Object>{
+        @Override
+        protected Object doInBackground(Object... objects) {
+            Context context = (Context) objects[0];
+            int workOrderId = (Integer) objects[1];
+            Attachment attachment = (Attachment) objects[2];
+            String filename = (String) objects[3];
+            Uri uri = (Uri) objects[4];
+            UUIDGroup uuid = (UUIDGroup) objects[5];
 
+            Log.v(TAG, "processIntent " + workOrderId + ", " + attachment.getFolderId() + ", "
+                    + filename + ", " + (uri == null ? "null" : uri.toString()));
+
+            try {
+                attachment.file(new com.fieldnation.v2.data.model.File().name(filename));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            if (uri != null) {
                 try {
-                    attachment.file(new com.fieldnation.v2.data.model.File().name(filename));
+                    StoredObject cache = StoredObject.get(context, App.getProfileId(), "CacheFile", uri.toString());
+                    if (cache == null) {
+                        cache = StoredObject.put(context, App.getProfileId(), "TempFile", uri.toString(),
+                                context.getContentResolver().openInputStream(uri), filename);
+                    }
+                    WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
+                    DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.ATTACHMENT_HELPER);
                 } catch (Exception ex) {
+                    DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.FAIL, DeliverableTracker.Location.ATTACHMENT_HELPER);
                     Log.v(TAG, ex);
                 }
-
-                if (uri != null) {
-                    try {
-                        StoredObject cache = StoredObject.get(context, App.getProfileId(), "CacheFile", uri.toString());
-                        if (cache == null) {
-                            cache = StoredObject.put(context, App.getProfileId(), "TempFile", uri.toString(),
-                                    context.getContentResolver().openInputStream(uri), filename);
-                        }
-                        WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
-                        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.ATTACHMENT_HELPER);
-                    } catch (Exception ex) {
-                        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.FAIL, DeliverableTracker.Location.ATTACHMENT_HELPER);
-                        Log.v(TAG, ex);
-                    }
-                }
-                return null;
             }
-        }.executeEx(context, workOrderId, attachment, filename, uri, uuid);
+            return null;
+        }
     }
 }

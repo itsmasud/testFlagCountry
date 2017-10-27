@@ -4,12 +4,6 @@ import android.content.Context;
 
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpContext;
-import com.fieldnation.analytics.contexts.SpScreenDisplayUiContext;
-import com.fieldnation.analytics.contexts.SpSearchContext;
-import com.fieldnation.analytics.contexts.SpStackContext;
-import com.fieldnation.analytics.contexts.SpTracingContext;
-import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.TrackerWrapper;
@@ -142,7 +136,7 @@ public class SnowplowWrapper implements TrackerWrapper {
     private void event(Context context, CustomEvent event, List<SelfDescribingJson> customContext) {
         if (customContext.size() == 0)
             return;
-        
+
         SelfDescribingJson sdj = customContext.remove(0);
         Tracker t = getTracker(context);
         t.track(SelfDescribing.builder()

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.InputStreamMonitor;
 import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
@@ -19,6 +20,7 @@ import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.FileUtils;
 
 /**
  * Created by mc on 12/19/16.
@@ -26,18 +28,6 @@ import com.fieldnation.fntools.DebugUtils;
 
 public class FileCacheClient extends Pigeon implements FileCacheConstants {
     private static final String TAG = "FileCacheClient";
-
-    private static void track(UUIDGroup uuid, StackTraceElement stackTraceElement, SpStatusContext.Status status) {
-        Tracker.event(App.get(), new CustomEvent.Builder()
-                .addContext(new SpTracingContext(uuid))
-                .addContext(new SpStackContext.Builder()
-                        .stackElement(stackTraceElement)
-                        .build())
-                .addContext(new SpStatusContext.Builder()
-                        .status(status)
-                        .build())
-                .build());
-    }
 
     public void sub() {
         PigeonRoost.sub(this, ADDRESS_CACHE_FILE_START);
@@ -51,56 +41,68 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_PROGRESS);
     }
 
+    private static class UploadTask extends AsyncTaskEx<Object, Object, Object> {
+        @Override
+        protected Object doInBackground(Object... params) {
+            Uri uri = (Uri) params[0];
+            final UUIDGroup uuid = (UUIDGroup) params[1];
+            final String tag = (String) params[2];
+
+            cacheFileStart(uuid, tag, uri);
+            StoredObject upFile = null;
+
+            try {
+                if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
+                    cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                    return null;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            try {
+                upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
+                        new InputStreamMonitor(
+                                App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
+                            long last = 0;
+
+                            @Override
+                            public void progress(int bytesRead) {
+                                if (System.currentTimeMillis() > last) {
+                                    last = System.currentTimeMillis() + 1000;
+                                    cacheFileProgress(uuid, tag, bytesRead);
+                                }
+                            }
+                        }), "uploadTemp.dat");
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            } finally {
+                if (upFile != null)
+                    cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                else
+                    cacheFileEnd(uuid, tag, uri, -1, false);
+            }
+            return null;
+        }
+    }
+
     public static void cacheFileUpload(UUIDGroup uuid, String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
-        track(uuid, DebugUtils.getStackTraceElement(), SpStatusContext.Status.START);
-
-        @SuppressLint("StaticFieldLeak") AsyncTaskEx<Object, Object, Object> task =
-                new AsyncTaskEx<Object, Object, Object>() {
-                    @Override
-                    protected Object doInBackground(Object... params) {
-                        Uri uri = (Uri) params[0];
-                        final UUIDGroup uuid = (UUIDGroup) params[1];
-                        final String tag = (String) params[2];
-
-                        cacheFileStart(uuid, tag, uri);
-                        StoredObject upFile = null;
-
-                        try {
-                            if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
-                                cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
-                                return null;
-                            }
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
-
-                        try {
-                            upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
-                                    new InputStreamMonitor(
-                                            App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
-                                        long last = 0;
-
-                                        @Override
-                                        public void progress(int bytesRead) {
-                                            if (System.currentTimeMillis() > last) {
-                                                last = System.currentTimeMillis() + 1000;
-                                                cacheFileProgress(uuid, tag, bytesRead);
-                                            }
-                                        }
-                                    }), "uploadTemp.dat");
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        } finally {
-                            if (upFile != null)
-                                cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
-                            else
-                                cacheFileEnd(uuid, tag, uri, -1, false);
-                        }
-                        return null;
-                    }
-                };
-        task.executeEx(uri, uuid, tag);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext.Builder()
+                        .stackElement(DebugUtils.getStackTraceElement())
+                        .build())
+                .addContext(new SpStatusContext.Builder()
+                        .status(SpStatusContext.Status.START)
+                        .build())
+                .addContext(new SpFileContext.Builder()
+                        .name(FileUtils.getFileNameFromUri(App.get(), uri))
+                        .size(0)
+                        .createdAt(System.currentTimeMillis() / 1000)
+                        .build())
+                .build());
+        new UploadTask().executeEx(uri, uuid, tag);
     }
 
     private static void cacheFileStart(UUIDGroup uuid, String tag, Uri uri) {
@@ -124,7 +126,21 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
     private static void cacheFileEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
-        track(uuid, DebugUtils.getStackTraceElement(), SpStatusContext.Status.COMPLETE);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext.Builder()
+                        .stackElement(DebugUtils.getStackTraceElement())
+                        .build())
+                .addContext(new SpStatusContext.Builder()
+                        .status(SpStatusContext.Status.INFO)
+                        .message("Cache complete")
+                        .build())
+                .addContext(new SpFileContext.Builder()
+                        .name(FileUtils.getFileNameFromUri(App.get(), uri))
+                        .size((int) size)
+                        .createdAt(System.currentTimeMillis() / 1000)
+                        .build())
+                .build());
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
