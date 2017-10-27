@@ -19,39 +19,43 @@ import java.util.Map;
  * Created by mc on 10/27/17.
  */
 
-public class SpStackContext implements EventContext, SpContext {
-    public static final String TAG = "SpStackContext";
+public class SpFileContext implements EventContext, SpContext {
+    public static final String TAG = "SpFileContext";
 
     @Json
     public String tag = TAG;
-    @Json(name = "class")
-    public String clazz;
     @Json
-    public int lineOfCode;
+    public String name;
     @Json
-    public String methodName;
+    public Integer size;
+    @Json
+    public Long create;
+    @Json
+    public Integer id;
 
     static {
         // FIXME uncomment to enable
-        //SnowplowWrapper.registerContext(TAG, SpStackContext.class);
+        //SnowplowWrapper.registerContext(TAG, SpFileContext.class);
     }
 
-    public SpStackContext() {
+    public SpFileContext() {
     }
 
-    public SpStackContext(Builder builder) {
-        this.clazz = builder.clazz;
-        this.lineOfCode = builder.lineOfCode;
-        this.methodName = builder.methodName;
+    public SpFileContext(Builder builder) {
+        this.name = builder.name;
+        this.size = builder.size;
+        this.create = builder.create;
+        this.id = builder.id;
     }
 
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        dataMap.put("class", clazz);
-        dataMap.put("lineOfCode", lineOfCode);
-        dataMap.put("methodName", methodName);
+        dataMap.put("name", name);
+        dataMap.put("size", size);
+        dataMap.put("create", create);
+        dataMap.put("id", id);
 
         // FIXME might need default values
         // FIXME need schema
@@ -68,9 +72,9 @@ public class SpStackContext implements EventContext, SpContext {
         return null;
     }
 
-    public static SpStackContext fromJson(JsonObject object) {
+    public static SpFileContext fromJson(JsonObject object) {
         try {
-            return Unserializer.unserializeObject(SpStackContext.class, object);
+            return Unserializer.unserializeObject(SpFileContext.class, object);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -78,36 +82,35 @@ public class SpStackContext implements EventContext, SpContext {
     }
 
     public static class Builder {
-        private String clazz;
-        private int lineOfCode;
-        private String methodName;
+        private String name;
+        private Integer size;
+        private Long create;
+        private Integer id;
 
         public Builder() {
         }
 
-        public SpStackContext build() {
-            return new SpStackContext(this);
+        public SpFileContext build() {
+            return new SpFileContext(this);
         }
 
-        public Builder clazz(String className) {
-            this.clazz = className;
+        public Builder name(String name) {
+            this.name = name;
             return this;
         }
 
-        public Builder lineOfCode(int lineOfCode) {
-            this.lineOfCode = lineOfCode;
+        public Builder size(Integer size) {
+            this.size = size;
             return this;
         }
 
-        public Builder methodName(String methodName) {
-            this.methodName = methodName;
+        public Builder create(Long create) {
+            this.create = create;
             return this;
         }
 
-        public Builder stackElement(StackTraceElement stackTraceElement) {
-            this.clazz = stackTraceElement.getClassName();
-            this.lineOfCode = stackTraceElement.getLineNumber();
-            this.methodName = stackTraceElement.getMethodName();
+        public Builder id(Integer id) {
+            this.id = id;
             return this;
         }
     }
