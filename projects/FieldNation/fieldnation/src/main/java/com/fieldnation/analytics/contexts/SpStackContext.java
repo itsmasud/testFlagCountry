@@ -89,7 +89,7 @@ public class SpStackContext implements EventContext, SpContext {
     public String toString() {
         String str = "";
 
-        str += clazz + "#" + method + "(" + line + ")";
+        str += clazz + "." + method + ":" + line;
 
         if (!misc.isEmptyOrNull(trace))
             str += "\n" + trace;
