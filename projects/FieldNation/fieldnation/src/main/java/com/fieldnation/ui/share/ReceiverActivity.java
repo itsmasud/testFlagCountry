@@ -13,14 +13,18 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -158,9 +162,19 @@ public class ReceiverActivity extends AuthSimpleActivity {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             // TODO, the parent ID needs to be something else?
             _sharedFiles[0] = new SharedFile(_myUUID, fileName, fileUri);
-            DeliverableTracker.onEvent(App.get(), _sharedFiles[0].getUUID(),
-                    DeliverableTracker.Action.START,
-                    DeliverableTracker.Location.RECEIVER_ACTIVITY_SINGLE);
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext.Builder()
+                            .uuidGroup(_sharedFiles[0].getUUID())
+                            .build())
+                    .addContext(new SpStackContext.Builder()
+                            .stackElement(DebugUtils.getStackTraceElement())
+                            .build())
+                    .addContext(new SpStatusContext.Builder()
+                            .status(SpStatusContext.Status.START)
+                            .message("Single File")
+                            .build())
+                    .build());
 
             FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri.toString(), fileUri);
         } else {
@@ -189,9 +203,20 @@ public class ReceiverActivity extends AuthSimpleActivity {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
                 // TODO, the parent ID needs to be something else?
                 _sharedFiles[i] = new SharedFile(_myUUID, fileName, fileUris.get(i));
-                DeliverableTracker.onEvent(App.get(), _sharedFiles[i].getUUID(),
-                        DeliverableTracker.Action.START,
-                        DeliverableTracker.Location.RECEIVER_ACTIVITY_MULTIPLE);
+
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext.Builder()
+                                .uuidGroup(_sharedFiles[i].getUUID())
+                                .build())
+                        .addContext(new SpStackContext.Builder()
+                                .stackElement(DebugUtils.getStackTraceElement())
+                                .build())
+                        .addContext(new SpStatusContext.Builder()
+                                .status(SpStatusContext.Status.START)
+                                .message("Multiple Files")
+                                .build())
+                        .build());
+
                 FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i).toString(), fileUris.get(i));
             }
         } else {
@@ -213,7 +238,17 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     public void finish() {
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID), DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.RECEIVER_ACTIVITY);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext.Builder()
+                        .uuid(_myUUID)
+                        .build())
+                .addContext(new SpStackContext.Builder()
+                        .stackElement(DebugUtils.getStackTraceElement())
+                        .build())
+                .addContext(new SpStatusContext.Builder()
+                        .status(SpStatusContext.Status.COMPLETE)
+                        .build())
+                .build());
         super.finish();
     }
 
@@ -237,7 +272,19 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
-            DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID), DeliverableTracker.Action.INFO, DeliverableTracker.Location.RECEIVER_ACTIVITY_WORKORDER);
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext.Builder()
+                            .uuid(_myUUID)
+                            .build())
+                    .addContext(new SpStackContext.Builder()
+                            .stackElement(DebugUtils.getStackTraceElement())
+                            .build())
+                    .addContext(new SpStatusContext.Builder()
+                            .status(SpStatusContext.Status.INFO)
+                            .message("Workorder Selected")
+                            .build())
+                    .build());
+
             _selectedWorkOrder = workOrder;
             _slotPicker.setWorkOrderId(workOrder.getId());
             animateSwap(_slotPicker, _workOrderPicker, false);
@@ -254,7 +301,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public void onSlotSelected(AttachmentFolder uploadSlot) {
             _selectedUploadSlot = uploadSlot;
             // if file list == 1, then start upload and redirect to work order details
-            DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID), DeliverableTracker.Action.INFO, DeliverableTracker.Location.RECEIVER_ACTIVITY_TASK);
             if (_sharedFiles.length == 1) {
                 startWorkOrderDetails();
                 Tracker.event(App.get(),
@@ -263,6 +309,16 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - single")
                                 .action("start")
+                                .addContext(new SpTracingContext.Builder()
+                                        .uuid(_myUUID)
+                                        .build())
+                                .addContext(new SpStackContext.Builder()
+                                        .stackElement(DebugUtils.getStackTraceElement())
+                                        .build())
+                                .addContext(new SpStatusContext.Builder()
+                                        .status(SpStatusContext.Status.INFO)
+                                        .message("Slot Selected")
+                                        .build())
                                 .build());
 
                 try {
@@ -308,6 +364,16 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - multiple")
                                 .action("start")
+                                .addContext(new SpTracingContext.Builder()
+                                        .uuid(_myUUID)
+                                        .build())
+                                .addContext(new SpStackContext.Builder()
+                                        .stackElement(DebugUtils.getStackTraceElement())
+                                        .build())
+                                .addContext(new SpStatusContext.Builder()
+                                        .status(SpStatusContext.Status.INFO)
+                                        .message("Send Files")
+                                        .build())
                                 .build());
 
                 try {
@@ -363,4 +429,5 @@ public class ReceiverActivity extends AuthSimpleActivity {
             view.clearAnimation();
         }
     }
+
 }

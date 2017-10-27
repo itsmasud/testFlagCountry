@@ -9,7 +9,6 @@ import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
@@ -27,6 +26,18 @@ import com.fieldnation.fntools.DebugUtils;
 public class FileCacheClient extends Pigeon implements FileCacheConstants {
     private static final String TAG = "FileCacheClient";
 
+    private static void track(UUIDGroup uuid, StackTraceElement stackTraceElement, SpStatusContext.Status status) {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext.Builder()
+                        .stackElement(stackTraceElement)
+                        .build())
+                .addContext(new SpStatusContext.Builder()
+                        .status(status)
+                        .build())
+                .build());
+    }
+
     public void sub() {
         PigeonRoost.sub(this, ADDRESS_CACHE_FILE_START);
         PigeonRoost.sub(this, ADDRESS_CACHE_FILE_END);
@@ -41,7 +52,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
     public static void cacheFileUpload(UUIDGroup uuid, final String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
-        DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.FILE_CACHE_CLIENT);
+        track(uuid, DebugUtils.getStackTraceElement(), SpStatusContext.Status.START);
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
@@ -108,15 +119,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
     private static void cacheFileEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
-        Tracker.event(App.get(), new CustomEvent.Builder()
-                .addContext(new SpTracingContext(uuid))
-                .addContext(new SpStackContext.Builder()
-                        .stackElement(DebugUtils.getStackTraceElement())
-                        .build())
-                .addContext(new SpStatusContext.Builder()
-                        .status(SpStatusContext.Status.COMPLETE)
-                        .build())
-                .build());
+        track(uuid, DebugUtils.getStackTraceElement(), SpStatusContext.Status.COMPLETE);
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
