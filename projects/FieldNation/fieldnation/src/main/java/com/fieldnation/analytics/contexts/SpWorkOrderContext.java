@@ -3,6 +3,7 @@ package com.fieldnation.analytics.contexts;
 import android.content.Context;
 
 import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -24,6 +25,10 @@ public class SpWorkOrderContext implements EventContext, SpContext {
     public String tag = TAG;
     @Json
     public Integer workOrderId;
+
+    static {
+        SnowplowWrapper.registerContext(TAG, SpWorkOrderContext.class);
+    }
 
     public SpWorkOrderContext() {
     }
