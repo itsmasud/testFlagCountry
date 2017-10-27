@@ -83,6 +83,18 @@ public class SpStatusContext implements EventContext, SpContext {
         return null;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+
+        if (code != null)
+            str += "c: " + code + " ";
+
+        str += "S: " + status.name() + " M: " + message;
+        
+        return str;
+    }
+
     public static class Builder {
         private int code;
         private Status status;

@@ -1,5 +1,6 @@
 package com.fieldnation.service.data.filecache;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -50,52 +51,56 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         PigeonRoost.unsub(this, ADDRESS_CACHE_FILE_PROGRESS);
     }
 
-    public static void cacheFileUpload(UUIDGroup uuid, final String tag, Uri uri) {
+    public static void cacheFileUpload(UUIDGroup uuid, String tag, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
         track(uuid, DebugUtils.getStackTraceElement(), SpStatusContext.Status.START);
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                Uri uri = (Uri) params[0];
-                final UUIDGroup uuid = (UUIDGroup) params[1];
 
-                cacheFileStart(uuid, tag, uri);
-                StoredObject upFile = null;
+        @SuppressLint("StaticFieldLeak") AsyncTaskEx<Object, Object, Object> task =
+                new AsyncTaskEx<Object, Object, Object>() {
+                    @Override
+                    protected Object doInBackground(Object... params) {
+                        Uri uri = (Uri) params[0];
+                        final UUIDGroup uuid = (UUIDGroup) params[1];
+                        final String tag = (String) params[2];
 
-                try {
-                    if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
-                        cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                        cacheFileStart(uuid, tag, uri);
+                        StoredObject upFile = null;
+
+                        try {
+                            if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
+                                cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                                return null;
+                            }
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
+
+                        try {
+                            upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
+                                    new InputStreamMonitor(
+                                            App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
+                                        long last = 0;
+
+                                        @Override
+                                        public void progress(int bytesRead) {
+                                            if (System.currentTimeMillis() > last) {
+                                                last = System.currentTimeMillis() + 1000;
+                                                cacheFileProgress(uuid, tag, bytesRead);
+                                            }
+                                        }
+                                    }), "uploadTemp.dat");
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        } finally {
+                            if (upFile != null)
+                                cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                            else
+                                cacheFileEnd(uuid, tag, uri, -1, false);
+                        }
                         return null;
                     }
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-
-                try {
-                    upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
-                            new InputStreamMonitor(
-                                    App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
-                                long last = 0;
-
-                                @Override
-                                public void progress(int bytesRead) {
-                                    if (System.currentTimeMillis() > last) {
-                                        last = System.currentTimeMillis() + 1000;
-                                        cacheFileProgress(uuid, tag, bytesRead);
-                                    }
-                                }
-                            }), "uploadTemp.dat");
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                } finally {
-                    if (upFile != null)
-                        cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
-                    else
-                        cacheFileEnd(uuid, tag, uri, -1, false);
-                }
-                return null;
-            }
-        }.executeEx(uri, uuid);
+                };
+        task.executeEx(uri, uuid, tag);
     }
 
     private static void cacheFileStart(UUIDGroup uuid, String tag, Uri uri) {
