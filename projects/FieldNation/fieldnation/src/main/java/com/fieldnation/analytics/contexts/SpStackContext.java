@@ -45,8 +45,10 @@ public class SpStackContext implements EventContext, SpContext {
     public SpStackContext(Builder builder) {
         this.clazz = builder.clazz;
         this.line = builder.line;
-//        this.method = builder.method;
-//        this.trace = builder.trace;
+        this.method = builder.method;
+        this.trace = builder.trace;
+
+        Log.v(TAG, toString());
     }
 
     @Override
@@ -83,10 +85,23 @@ public class SpStackContext implements EventContext, SpContext {
         return null;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+
+        str += clazz + "#" + method + "(" + line + ")";
+
+        if (!misc.isEmptyOrNull(trace))
+            str += "\n" + trace;
+
+        return str;
+    }
+
     public static class Builder {
         private String clazz;
         private int line;
-        private String methodName;
+        private String method;
+        private String trace;
 
         public Builder() {
         }
@@ -100,20 +115,25 @@ public class SpStackContext implements EventContext, SpContext {
             return this;
         }
 
-        public Builder lineOfCode(int lineOfCode) {
-//            this.lineOfCode = lineOfCode;
+        public Builder line(int line) {
+            this.line = line;
             return this;
         }
 
-        public Builder methodName(String methodName) {
-            this.methodName = methodName;
+        public Builder method(String method) {
+            this.method = method;
             return this;
         }
 
         public Builder stackElement(StackTraceElement stackTraceElement) {
             this.clazz = stackTraceElement.getClassName();
-//            this.lineOfCode = stackTraceElement.getLineNumber();
-            this.methodName = stackTraceElement.getMethodName();
+            this.line = stackTraceElement.getLineNumber();
+            this.method = stackTraceElement.getMethodName();
+            return this;
+        }
+
+        public Builder trace(String trace) {
+            this.trace = trace;
             return this;
         }
     }

@@ -28,6 +28,8 @@ public class SpStatusContext implements EventContext, SpContext {
     @Json
     public String tag = TAG;
     @Json
+    public Integer code;
+    @Json
     public Status status;
     @Json
     public String message;
@@ -41,8 +43,11 @@ public class SpStatusContext implements EventContext, SpContext {
     }
 
     public SpStatusContext(Builder builder) {
+        this.code = builder.code;
         this.status = builder.status;
         this.message = builder.message;
+
+        Log.v(TAG, toString());
     }
 
     @Override
@@ -51,6 +56,9 @@ public class SpStatusContext implements EventContext, SpContext {
 
         dataMap.put("status", status.name());
         dataMap.put("message", message);
+
+        if (code != null)
+            dataMap.put("code", code);
 
         // TODO Schema needed
         return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
@@ -76,6 +84,7 @@ public class SpStatusContext implements EventContext, SpContext {
     }
 
     public static class Builder {
+        private int code;
         private Status status;
         private String message;
 
@@ -84,6 +93,11 @@ public class SpStatusContext implements EventContext, SpContext {
 
         public SpStatusContext build() {
             return new SpStatusContext(this);
+        }
+
+        public Builder code(int code) {
+            this.code = code;
+            return this;
         }
 
         public Builder status(Status status) {

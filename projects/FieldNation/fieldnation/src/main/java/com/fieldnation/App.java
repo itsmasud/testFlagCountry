@@ -154,8 +154,6 @@ public class App extends Application {
 
         super.onCreate();
 
-        Log.v(TAG, UUID.randomUUID().toString());
-
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);
 
