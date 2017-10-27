@@ -113,4 +113,41 @@ public class DebugUtils {
 
         return trace.toString();
     }
+
+    // Modified version of the answer here:
+    // https://stackoverflow.com/questions/17473148/dynamically-get-the-current-line-number
+
+    /**
+     * @return The line number of the code that ran this method
+     * @author Brian_Entei
+     */
+    public static StackTraceElement getStackTraceElement() {
+        return ___8drrd3148796d_Xaf();
+    }
+
+    /**
+     * This methods name is ridiculous on purpose to prevent any other method
+     * names in the stack trace from potentially matching this one.
+     *
+     * @return The StackTraceElement of the method that called
+     * this method(Should only be called by getLineNumber()).
+     * @author Brian_Entei
+     */
+    private static StackTraceElement ___8drrd3148796d_Xaf() {
+        boolean thisOne = false;
+        int thisOneCountDown = 1;
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : elements) {
+            String methodName = element.getMethodName();
+            if (thisOne && (thisOneCountDown == 0)) {
+                return element;
+            } else if (thisOne) {
+                thisOneCountDown--;
+            }
+            if (methodName.equals("___8drrd3148796d_Xaf")) {
+                thisOne = true;
+            }
+        }
+        return null;
+    }
 }

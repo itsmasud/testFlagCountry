@@ -62,6 +62,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -152,6 +153,8 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+
+        Log.v(TAG, UUID.randomUUID().toString());
 
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);

@@ -5,14 +5,20 @@ import android.os.Bundle;
 
 import com.fieldnation.App;
 import com.fieldnation.InputStreamMonitor;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DebugUtils;
 
 /**
  * Created by mc on 12/19/16.
@@ -102,7 +108,15 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
     private static void cacheFileEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
-        DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FILE_CACHE_CLIENT);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext.Builder()
+                        .stackElement(DebugUtils.getStackTraceElement())
+                        .build())
+                .addContext(new SpStatusContext.Builder()
+                        .status(SpStatusContext.Status.COMPLETE)
+                        .build())
+                .build());
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);

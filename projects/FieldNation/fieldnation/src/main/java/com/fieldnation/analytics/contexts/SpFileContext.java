@@ -25,13 +25,13 @@ public class SpFileContext implements EventContext, SpContext {
     @Json
     public String tag = TAG;
     @Json
+    public Integer id;
+    @Json
     public String name;
     @Json
     public Integer size;
     @Json
-    public Long create;
-    @Json
-    public Integer id;
+    public Long createdAt;
 
     static {
         // FIXME uncomment to enable
@@ -44,20 +44,22 @@ public class SpFileContext implements EventContext, SpContext {
     public SpFileContext(Builder builder) {
         this.name = builder.name;
         this.size = builder.size;
-        this.create = builder.create;
+        this.createdAt = builder.createdAt;
         this.id = builder.id;
+        Log.v(TAG, toString());
     }
 
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
 
+        if (id != null)
+            dataMap.put("id", id);
+
         dataMap.put("name", name);
         dataMap.put("size", size);
-        dataMap.put("create", create);
-        dataMap.put("id", id);
+        dataMap.put("created_at", createdAt);
 
-        // FIXME might need default values
         // FIXME need schema
         return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
     }
@@ -81,10 +83,17 @@ public class SpFileContext implements EventContext, SpContext {
         return null;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+        str += "s:" + size + " c:" + createdAt + " n:" + name;
+        return str;
+    }
+
     public static class Builder {
         private String name;
         private Integer size;
-        private Long create;
+        private Long createdAt;
         private Integer id;
 
         public Builder() {
@@ -104,8 +113,8 @@ public class SpFileContext implements EventContext, SpContext {
             return this;
         }
 
-        public Builder create(Long create) {
-            this.create = create;
+        public Builder createdAt(Long createdAt) {
+            this.createdAt = createdAt;
             return this;
         }
 

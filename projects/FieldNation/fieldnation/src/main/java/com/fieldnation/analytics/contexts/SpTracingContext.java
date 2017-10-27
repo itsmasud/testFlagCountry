@@ -26,9 +26,11 @@ public class SpTracingContext implements EventContext, SpContext {
     @Json
     public String tag = TAG;
     @Json
+    public String name;
+    @Json
     public String uuid;
     @Json
-    public String parent;
+    public String parentUUID;
 
     static {
         // FIXME enable
@@ -39,22 +41,31 @@ public class SpTracingContext implements EventContext, SpContext {
     }
 
     public SpTracingContext(Builder builder) {
+        this.name = builder.name;
         this.uuid = builder.uuid;
-        this.parent = builder.parent;
+        this.parentUUID = builder.parentUUID;
+
+        Log.v(TAG, toString());
+    }
+
+    public SpTracingContext(UUIDGroup uuidGroup) {
+        this.uuid = uuidGroup.uuid;
+        this.parentUUID = uuidGroup.parentUUID;
+
+        Log.v(TAG, toString());
     }
 
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        dataMap.put("uuid", "");
-        dataMap.put("parent", "");
+        dataMap.put("uuid", uuid);
 
-        if (!misc.isEmptyOrNull(uuid))
-            dataMap.put("uuid", uuid);
+        if (!misc.isEmptyOrNull(parentUUID))
+            dataMap.put("parent_uuid", parentUUID);
 
-        if (!misc.isEmptyOrNull(parent))
-            dataMap.put("parent", parent);
+        if (!misc.isEmptyOrNull(name))
+            dataMap.put("name", name);
 
         // FIXME need schema
         return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
@@ -79,9 +90,29 @@ public class SpTracingContext implements EventContext, SpContext {
         return null;
     }
 
+    @Override
+    public String toString() {
+        String str = "";
+
+        if (!misc.isEmptyOrNull(name)) {
+            str = name;
+        }
+
+        if (!misc.isEmptyOrNull(parentUUID) && parentUUID.length() > 12) {
+            str += "P:" + parentUUID.substring(parentUUID.length() - 12);
+        }
+
+        if (!misc.isEmptyOrNull(uuid) && uuid.length() > 12) {
+            str += " U:" + uuid.substring(uuid.length() - 12);
+        }
+
+        return str;
+    }
+
     public static class Builder {
+        private String name;
         private String uuid;
-        private String parent;
+        private String parentUUID;
 
         public Builder() {
         }
@@ -95,14 +126,19 @@ public class SpTracingContext implements EventContext, SpContext {
             return this;
         }
 
-        public Builder parent(String parent) {
-            this.parent = parent;
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder parentUUID(String parentUUID) {
+            this.parentUUID = parentUUID;
             return this;
         }
 
         public Builder uuidGroup(UUIDGroup group) {
             this.uuid = group.uuid;
-            this.parent = group.parentUUID;
+            this.parentUUID = group.parentUUID;
             return this;
         }
     }

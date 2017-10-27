@@ -10,6 +10,7 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
 
 import java.util.HashMap;
@@ -27,9 +28,11 @@ public class SpStackContext implements EventContext, SpContext {
     @Json(name = "class")
     public String clazz;
     @Json
-    public int lineOfCode;
+    public String method;
     @Json
-    public String methodName;
+    public int line;
+    @Json
+    public String trace;
 
     static {
         // FIXME uncomment to enable
@@ -41,8 +44,9 @@ public class SpStackContext implements EventContext, SpContext {
 
     public SpStackContext(Builder builder) {
         this.clazz = builder.clazz;
-        this.lineOfCode = builder.lineOfCode;
-        this.methodName = builder.methodName;
+        this.line = builder.line;
+//        this.method = builder.method;
+//        this.trace = builder.trace;
     }
 
     @Override
@@ -50,10 +54,12 @@ public class SpStackContext implements EventContext, SpContext {
         Map<String, Object> dataMap = new HashMap<>();
 
         dataMap.put("class", clazz);
-        dataMap.put("lineOfCode", lineOfCode);
-        dataMap.put("methodName", methodName);
+        dataMap.put("line", line);
+        dataMap.put("method", method);
 
-        // FIXME might need default values
+        if (!misc.isEmptyOrNull(trace))
+            dataMap.put("trace", trace);
+
         // FIXME need schema
         return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
     }
@@ -79,7 +85,7 @@ public class SpStackContext implements EventContext, SpContext {
 
     public static class Builder {
         private String clazz;
-        private int lineOfCode;
+        private int line;
         private String methodName;
 
         public Builder() {
@@ -95,7 +101,7 @@ public class SpStackContext implements EventContext, SpContext {
         }
 
         public Builder lineOfCode(int lineOfCode) {
-            this.lineOfCode = lineOfCode;
+//            this.lineOfCode = lineOfCode;
             return this;
         }
 
@@ -106,7 +112,7 @@ public class SpStackContext implements EventContext, SpContext {
 
         public Builder stackElement(StackTraceElement stackTraceElement) {
             this.clazz = stackTraceElement.getClassName();
-            this.lineOfCode = stackTraceElement.getLineNumber();
+//            this.lineOfCode = stackTraceElement.getLineNumber();
             this.methodName = stackTraceElement.getMethodName();
             return this;
         }

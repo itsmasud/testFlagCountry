@@ -56,18 +56,14 @@ public class UUIDGroup implements Parcelable {
 
     @Override
     public String toString() {
-        String str = null;
+        String str = "";
 
         if (!misc.isEmptyOrNull(parentUUID) && parentUUID.length() > 12) {
-            str = "P:" + parentUUID.substring(parentUUID.length() - 12);
+            str += "P:" + parentUUID.substring(parentUUID.length() - 12);
         }
 
         if (!misc.isEmptyOrNull(uuid) && uuid.length() > 12) {
-            if (str == null) {
-                str = "U:" + uuid.substring(uuid.length() - 12);
-            } else {
-                str = str + " U:" + uuid.substring(uuid.length() - 12);
-            }
+            str += " U:" + uuid.substring(uuid.length() - 12);
         }
 
         return str;
