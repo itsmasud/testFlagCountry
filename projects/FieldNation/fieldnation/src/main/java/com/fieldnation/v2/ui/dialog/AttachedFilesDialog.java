@@ -196,6 +196,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
         PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoDialog_onUpload);
+
         super.onStop();
     }
 

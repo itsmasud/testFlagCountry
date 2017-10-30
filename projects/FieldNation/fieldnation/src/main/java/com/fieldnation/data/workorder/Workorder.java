@@ -3,6 +3,8 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.gcm.Action;
+import com.fieldnation.gcm.ActionContainer;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -10,8 +12,6 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.gcm.Action;
-import com.fieldnation.gcm.ActionContainer;
 
 import java.util.HashSet;
 import java.util.Iterator;

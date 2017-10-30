@@ -25,6 +25,7 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.ui.DiscountsAdapter;
 
 public class DiscountDialog extends SimpleDialog {
     private static String TAG = "DiscountDialog";

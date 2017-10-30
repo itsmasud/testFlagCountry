@@ -299,12 +299,6 @@ public abstract class WorkordersWebApi extends Pigeon {
             Context context, UUIDGroup uuid, Integer workOrderId, Integer folderId,
             Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
 
-        Tracker.event(App.get(), new CustomEvent.Builder()
-                .addContext(new SpTracingContext(uuid))
-                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Work Order Web API"))
-                .build());
-
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")
                 .label(workOrderId + "")
@@ -313,6 +307,9 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("folder_id")
                 .value(folderId)
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Work Order Web API"))
                 .build()
         );
 

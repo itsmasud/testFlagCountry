@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;

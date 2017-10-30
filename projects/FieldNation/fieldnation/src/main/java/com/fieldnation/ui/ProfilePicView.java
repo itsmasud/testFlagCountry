@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael Carver on 5/12/2015.

@@ -2,9 +2,13 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.fieldnation.FileHelper;
+import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Signature;
@@ -14,6 +18,7 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.transaction.WebTransactionSystem;
