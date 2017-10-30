@@ -56,9 +56,12 @@ public class SpFileContext implements EventContext, SpContext {
         if (id != null)
             dataMap.put("id", id);
 
+        if (createdAt != null)
+            dataMap.put("created_at", createdAt);
+
+
         dataMap.put("name", name);
         dataMap.put("size", size);
-        dataMap.put("created_at", createdAt);
 
         // FIXME need schema
         return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);

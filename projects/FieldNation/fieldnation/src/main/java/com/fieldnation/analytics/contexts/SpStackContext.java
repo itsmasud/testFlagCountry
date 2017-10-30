@@ -51,6 +51,14 @@ public class SpStackContext implements EventContext, SpContext {
         Log.v(TAG, toString());
     }
 
+    public SpStackContext(StackTraceElement stackTraceElement) {
+        this.clazz = stackTraceElement.getClassName();
+        this.method = stackTraceElement.getMethodName();
+        this.line = stackTraceElement.getLineNumber();
+
+        Log.v(TAG, toString());
+    }
+
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();

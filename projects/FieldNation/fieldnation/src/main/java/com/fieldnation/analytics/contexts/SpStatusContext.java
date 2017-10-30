@@ -50,6 +50,19 @@ public class SpStatusContext implements EventContext, SpContext {
         Log.v(TAG, toString());
     }
 
+    public SpStatusContext(Status status) {
+        this.status = status;
+
+        Log.v(TAG, toString());
+    }
+
+    public SpStatusContext(Status status, String message) {
+        this.status = status;
+        this.message = message;
+
+        Log.v(TAG, toString());
+    }
+
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
@@ -91,7 +104,7 @@ public class SpStatusContext implements EventContext, SpContext {
             str += "c: " + code + " ";
 
         str += "S: " + status.name() + " M: " + message;
-        
+
         return str;
     }
 

@@ -15,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
@@ -164,16 +165,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
             _sharedFiles[0] = new SharedFile(_myUUID, fileName, fileUri);
 
             Tracker.event(App.get(), new CustomEvent.Builder()
-                    .addContext(new SpTracingContext.Builder()
-                            .uuidGroup(_sharedFiles[0].getUUID())
-                            .build())
-                    .addContext(new SpStackContext.Builder()
-                            .stackElement(DebugUtils.getStackTraceElement())
-                            .build())
-                    .addContext(new SpStatusContext.Builder()
-                            .status(SpStatusContext.Status.START)
-                            .message("Single File")
-                            .build())
+                    .addContext(new SpTracingContext(_sharedFiles[0].getUUID()))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.START, "Single File"))
                     .build());
 
             FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri.toString(), fileUri);
@@ -205,16 +199,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
                 _sharedFiles[i] = new SharedFile(_myUUID, fileName, fileUris.get(i));
 
                 Tracker.event(App.get(), new CustomEvent.Builder()
-                        .addContext(new SpTracingContext.Builder()
-                                .uuidGroup(_sharedFiles[i].getUUID())
-                                .build())
-                        .addContext(new SpStackContext.Builder()
-                                .stackElement(DebugUtils.getStackTraceElement())
-                                .build())
-                        .addContext(new SpStatusContext.Builder()
-                                .status(SpStatusContext.Status.START)
-                                .message("Multiple Files")
-                                .build())
+                        .addContext(new SpTracingContext(_sharedFiles[i].getUUID()))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.START, "Multiple Files"))
                         .build());
 
                 FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i).toString(), fileUris.get(i));
@@ -239,15 +226,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     public void finish() {
         Tracker.event(App.get(), new CustomEvent.Builder()
-                .addContext(new SpTracingContext.Builder()
-                        .uuid(_myUUID)
-                        .build())
-                .addContext(new SpStackContext.Builder()
-                        .stackElement(DebugUtils.getStackTraceElement())
-                        .build())
-                .addContext(new SpStatusContext.Builder()
-                        .status(SpStatusContext.Status.COMPLETE)
-                        .build())
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Leaving Receiver"))
                 .build());
         super.finish();
     }
@@ -273,16 +254,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
             Tracker.event(App.get(), new CustomEvent.Builder()
-                    .addContext(new SpTracingContext.Builder()
-                            .uuid(_myUUID)
-                            .build())
-                    .addContext(new SpStackContext.Builder()
-                            .stackElement(DebugUtils.getStackTraceElement())
-                            .build())
-                    .addContext(new SpStatusContext.Builder()
-                            .status(SpStatusContext.Status.INFO)
-                            .message("Workorder Selected")
-                            .build())
+                    .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Workorder Selected"))
                     .build());
 
             _selectedWorkOrder = workOrder;
@@ -309,16 +283,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - single")
                                 .action("start")
-                                .addContext(new SpTracingContext.Builder()
-                                        .uuid(_myUUID)
-                                        .build())
-                                .addContext(new SpStackContext.Builder()
-                                        .stackElement(DebugUtils.getStackTraceElement())
-                                        .build())
-                                .addContext(new SpStatusContext.Builder()
-                                        .status(SpStatusContext.Status.INFO)
-                                        .message("Slot Selected")
-                                        .build())
+                                .addContext(new SpTracingContext(null, _myUUID))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Slot Selected"))
                                 .build());
 
                 try {
@@ -364,16 +331,10 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - multiple")
                                 .action("start")
-                                .addContext(new SpTracingContext.Builder()
-                                        .uuid(_myUUID)
-                                        .build())
-                                .addContext(new SpStackContext.Builder()
-                                        .stackElement(DebugUtils.getStackTraceElement())
-                                        .build())
-                                .addContext(new SpStatusContext.Builder()
-                                        .status(SpStatusContext.Status.INFO)
-                                        .message("Send Files")
-                                        .build())
+                                .addContext(new SpTracingContext(file.getUUID()))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Send Files"))
+                                .addContext(new SpFileContext.Builder().)
                                 .build());
 
                 try {

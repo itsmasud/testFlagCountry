@@ -48,9 +48,24 @@ public class SpTracingContext implements EventContext, SpContext {
         Log.v(TAG, toString());
     }
 
+    public SpTracingContext(String parentUUID, String uuid) {
+        this.uuid = uuid;
+        this.parentUUID = parentUUID;
+
+        Log.v(TAG, toString());
+    }
+
     public SpTracingContext(UUIDGroup uuidGroup) {
         this.uuid = uuidGroup.uuid;
         this.parentUUID = uuidGroup.parentUUID;
+
+        Log.v(TAG, toString());
+    }
+
+    public SpTracingContext(String name, UUIDGroup uuidGroup) {
+        this.uuid = uuidGroup.uuid;
+        this.parentUUID = uuidGroup.parentUUID;
+        this.name = name;
 
         Log.v(TAG, toString());
     }
