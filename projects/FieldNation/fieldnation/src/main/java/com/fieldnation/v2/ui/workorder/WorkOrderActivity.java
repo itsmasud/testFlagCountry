@@ -250,13 +250,14 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         ActivityClient.startActivity(intent);
     }
 
-    public static Intent makeIntentAttachments(Context context, int workOrderId) {
+    public static Intent makeIntentAttachments(Context context, int workOrderId, String uuid) {
         Log.v(TAG, "makeIntentAttachments");
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_ATTACHMENTS);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        intent.putExtra(INTENT_UI_UUID, uuid);
         return intent;
     }
 

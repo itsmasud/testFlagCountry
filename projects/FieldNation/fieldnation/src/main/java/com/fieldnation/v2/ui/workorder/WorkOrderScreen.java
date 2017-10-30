@@ -27,6 +27,10 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -34,10 +38,12 @@ import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -1121,12 +1127,14 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addAttachment() {
-            // TODO UUID
-            // TODO analytics
-            UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
-            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO,
-                    DeliverableTracker.Location.WOD_BOTTOMSHEET);
-            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, uuid.uuid, _workOrderId);
+            UUIDGroup uuid = new UUIDGroup(null, _myUUID);
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "WoD BottomSheet Add Attachment"))
+                    .build());
+
+            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _myUUID, _workOrderId);
         }
     };
 

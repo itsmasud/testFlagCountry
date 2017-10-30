@@ -23,17 +23,23 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -120,8 +126,11 @@ public class GetFileDialog extends SimpleDialog {
 
         _uiUUID = payload.getString("uiUUID");
 
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _uiUUID),
-                DeliverableTracker.Action.START, DeliverableTracker.Location.GET_FILE_DIALOG);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Get File Dialog"))
+                .build());
 
         super.show(payload, animate);
     }
@@ -223,8 +232,13 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void onStop() {
         Log.v(TAG, "onStop");
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _uiUUID),
-                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.GET_FILE_DIALOG);
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Get File Dialog"))
+                .build());
+
         _permissionsListener.unsub();
         _activityResultListener.unsub();
         _fileCacheClient.unsub();

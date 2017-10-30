@@ -168,10 +168,17 @@ public class ReceiverActivity extends AuthSimpleActivity {
                     .addContext(new SpTracingContext(_sharedFiles[0].getUUID()))
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.START, "Single File"))
+                    .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).size(0).build())
                     .build());
 
             FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri.toString(), fileUri);
         } else {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Single File"))
+                    .build());
+
             Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -202,11 +209,18 @@ public class ReceiverActivity extends AuthSimpleActivity {
                         .addContext(new SpTracingContext(_sharedFiles[i].getUUID()))
                         .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                         .addContext(new SpStatusContext(SpStatusContext.Status.START, "Multiple Files"))
+                        .addContext(new SpFileContext.Builder().name(_sharedFiles[i].getFileName()).size(0).build())
                         .build());
 
                 FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i).toString(), fileUris.get(i));
             }
         } else {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Multiple Files"))
+                    .build());
+
             Toast.makeText(this, "Cannot upload files", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -286,7 +300,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .addContext(new SpTracingContext(null, _myUUID))
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Slot Selected"))
-                                .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).build())
+                                .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).size(0).build())
                                 .build());
 
                 try {
@@ -315,8 +329,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public void onSendFiles(SharedFile[] sharedFiles) {
             ToastClient.toast(App.get(), getString(R.string.sending_num_files, sharedFiles.length), Toast.LENGTH_SHORT);
 
-            // TODO analytics
-
             // TODO V2 api is not ready for this
 //            if (_selectedUploadSlot.getMaxFiles() != null
 //                    && _selectedUploadSlot.getMaxFiles() > 0
@@ -335,7 +347,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .addContext(new SpTracingContext(file.getUUID()))
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Send Files"))
-                                .addContext(new SpFileContext.Builder().name(file.getFileName()).build())
+                                .addContext(new SpFileContext.Builder().name(file.getFileName()).size(0).build())
                                 .build());
 
                 try {
@@ -353,7 +365,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     };
 
     private void startWorkOrderDetails() {
-        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId()));
+        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId(), _myUUID));
         finish();
     }
 
