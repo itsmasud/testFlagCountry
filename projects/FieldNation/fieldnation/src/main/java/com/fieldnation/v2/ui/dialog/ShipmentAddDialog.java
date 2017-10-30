@@ -34,10 +34,11 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.data.model.Shipment;
@@ -420,7 +421,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    private void saveShipment(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId){
+    private void saveShipment(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId) {
         WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
 
         try {
@@ -461,15 +462,24 @@ public class ShipmentAddDialog extends SimpleDialog {
         AttachmentFolder[] folders = _attachmentFolders.getResults();
         AttachmentFolder miscFolder = null;
         for (AttachmentFolder folder : folders) {
-            if (folder.getType() == AttachmentFolder.TypeEnum.SLOT && folder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
+            if (folder.getType() == AttachmentFolder.TypeEnum.SLOT) {
                 miscFolder = folder;
                 if (folder.getName().equals("Misc"))
                     break;
             }
         }
         if (miscFolder != null) {
-            String fileName = FileUtils.getFileNameFromUri(App.get(), _scannedImageUri);
-            WorkorderClient.uploadDeliverable(App.get(), _workOrderId, miscFolder.getId(), fileName, _scannedImageUri);
+            try {
+                String fileName = FileUtils.getFileNameFromUri(App.get(), _scannedImageUri);
+
+                Attachment attachment = new Attachment();
+                attachment.folderId(miscFolder.getId())
+                        .file(new com.fieldnation.v2.data.model.File().name(fileName));
+
+                AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fileName, _scannedImageUri);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
     }

@@ -273,10 +273,6 @@
         </service>
 
         <service
-            android:name=".gcm.RegistrationIntentService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".fnpigeon.TopicService"
             android:exported="false"
             android:process=":frontside" />
@@ -288,7 +284,6 @@
             android:name=".service.data.payment.PaymentService"
             android:exported="false"
             android:process=":frontside" />
-
         <service
             android:name=".service.GpsTrackingService"
             android:exported="false"

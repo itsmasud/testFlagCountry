@@ -78,8 +78,8 @@ public class ClosingNotesDialog extends SimpleDialog {
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
-        if (savedState.containsKey("notes")) {
-            _notes = savedState.getString("notes");
+        if (savedState.containsKey(STATE_NOTES)) {
+            _notes = savedState.getString(STATE_NOTES);
             _editText.setText(_notes);
         }
     }

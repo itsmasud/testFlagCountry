@@ -332,7 +332,6 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
-                    if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
                         try {
                             WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                         } catch (Exception ex) {
@@ -347,7 +346,7 @@ public class TasksDialog extends FullScreenDialog {
                                 callIntent.setData(Uri.parse(phNum));
                                 ActivityClient.startActivity(callIntent);
                             } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(App.get());
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                                 builder.setMessage(R.string.dialog_no_number_message);
                                 builder.setTitle(R.string.dialog_no_number_title);
                                 builder.setPositiveButton(R.string.btn_ok, null);
@@ -355,7 +354,7 @@ public class TasksDialog extends FullScreenDialog {
                             }
 
                         } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(App.get());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                             builder.setMessage(R.string.dialog_no_number_message);
                             builder.setTitle(R.string.dialog_no_number_title);
                             builder.setPositiveButton(R.string.btn_ok, null);

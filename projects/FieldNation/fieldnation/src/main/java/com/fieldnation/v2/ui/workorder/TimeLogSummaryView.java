@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 import com.fieldnation.v2.ui.dialog.TimeLogListDialog;
@@ -47,6 +48,7 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
             return;
 
         _summaryView = findViewById(R.id.summary_view);
+        setVisibility(GONE);
     }
 
     @Override
@@ -60,12 +62,16 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
 
         if (_workOrder == null) return;
 
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)
+            return;
+
 
         if (_workOrder.getTimeLogs().getHours() == null) {
-            setVisibility(GONE);
             return;
         } else {
-            _summaryView.set(_summaryView.getContext().getString(R.string.time_logged), String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
+            _summaryView.set(
+                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged),
+                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? String.valueOf(_workOrder.getPay().getNumberOfDevices()) : String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
             setVisibility(VISIBLE);
         }
 

@@ -248,7 +248,7 @@ public class TaskRowView extends RelativeLayout {
                     break;
 
                 case PHONE: // phone
-                    _keyTextView.setText("Call " + _task.getPhone());
+                    _keyTextView.setText("Call " + (_task.getPhone() == null ? "" : _task.getPhone()));
                     _rightValueTextView.setVisibility(GONE);
 
                     if (misc.isEmptyOrNull(_task.getLabel())) {
