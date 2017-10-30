@@ -251,13 +251,6 @@ public class TaskRowView extends RelativeLayout {
                     _keyTextView.setText("Call " + (_task.getPhone() == null ? "" : _task.getPhone()));
                     _rightValueTextView.setVisibility(GONE);
 
-                    // support for classic web
-                    if (_task.getPhone() == null) {
-                        _valueTextView.setVisibility(VISIBLE);
-                        _valueTextView.setText("No number associated");
-                        break;
-                    }
-
                     if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
                     } else {
