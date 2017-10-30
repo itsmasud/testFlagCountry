@@ -1,9 +1,7 @@
 package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
-import android.os.Build;
 
-import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;

@@ -19,9 +19,12 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -32,6 +35,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -219,11 +223,14 @@ public class TasksDialog extends FullScreenDialog {
 
     private void startAppPickerDialog() {
         if (checkMedia()) {
-            // TODO UUID
-            // TODO analytics
             UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
-            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO,
-                    DeliverableTracker.Location.TASKS_DIALOG);
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Get File Dialog"))
+                    .build());
+
             GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
         } else {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
@@ -245,8 +252,11 @@ public class TasksDialog extends FullScreenDialog {
                 if (fui.uri != null) {
                     PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    // TODO show a toast?
-                    // TODO analytics
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(fui.uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Tasks Dialog, no uri"))
+                            .build());
                 }
                 return;
             }
@@ -258,6 +268,9 @@ public class TasksDialog extends FullScreenDialog {
                                 .category("AttachmentUpload")
                                 .label("WorkOrderScreen - multiple")
                                 .action("start")
+                                .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog Upload"))
                                 .build());
 
                 try {
@@ -346,11 +359,11 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
-                        try {
-                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
 
                     try {
                         if (task.getPhone() != null) {

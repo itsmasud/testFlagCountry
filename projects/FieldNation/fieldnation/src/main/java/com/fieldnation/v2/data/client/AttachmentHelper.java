@@ -1,6 +1,5 @@
 package com.fieldnation.v2.data.client;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,12 +7,17 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.v2.data.model.Attachment;
 
 /**
@@ -42,12 +46,17 @@ public class AttachmentHelper {
 
     public static void addAttachment(Context context, UUIDGroup uuid, int workOrderId, Attachment attachment, String filename, Uri uri) {
         Log.v(TAG, "addAttachment");
-        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.ATTACHMENT_HELPER);
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Attachment Helper"))
+                .build());
 
         new AddAttachmentTask().executeEx(context, workOrderId, attachment, filename, uri, uuid);
     }
 
-    private static class AddAttachmentTask extends AsyncTaskEx<Object, Object, Object>{
+    private static class AddAttachmentTask extends AsyncTaskEx<Object, Object, Object> {
         @Override
         protected Object doInBackground(Object... objects) {
             Context context = (Context) objects[0];
@@ -74,9 +83,19 @@ public class AttachmentHelper {
                                 context.getContentResolver().openInputStream(uri), filename);
                     }
                     WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
-                    DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.ATTACHMENT_HELPER);
+
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Attachment Helper"))
+                            .build());
+
                 } catch (Exception ex) {
-                    DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.FAIL, DeliverableTracker.Location.ATTACHMENT_HELPER);
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Attachment Helper"))
+                            .build());
                     Log.v(TAG, ex);
                 }
             }

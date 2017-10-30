@@ -14,12 +14,17 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -230,8 +235,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 FileCacheClient.cacheFileUpload(uuid, uri.toString(), uri);
                 ProfilePhotoClient.upload(App.get(), uuid, uri);
             } else {
-                // TODO need to show a toast?
-                // TODO analytics
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(uuid))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Profile Dialog, no uri"))
+                        .build());
             }
         }
     };
@@ -264,8 +272,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
                     ProfileClient.uploadProfilePhoto(App.get(), fui.uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
             } else {
-                // TODO analytics
-                // TODO toast?
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(new UUIDGroup(null, UUID.randomUUID().toString())))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Profile Dialog"))
+                        .build());
             }
         }
     };
@@ -273,10 +284,13 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO UUID
-            // TODO analytics
             UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
-            DeliverableTracker.onEvent(App.get(), uuid, DeliverableTracker.Action.INFO, DeliverableTracker.Location.PROFILE_DIALOG);
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Profile Dialog"))
+                    .build());
             GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
         }
     };

@@ -62,7 +62,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Defines some global values that will be shared between all objects.

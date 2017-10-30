@@ -23,7 +23,6 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -299,8 +298,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
                     PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId, _selectedFolder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    // TODO show a toast?
-                    // TODO analytics
                     Tracker.event(App.get(), new CustomEvent.Builder()
                             .addContext(new SpTracingContext(fui.uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))

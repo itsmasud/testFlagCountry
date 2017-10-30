@@ -2,7 +2,6 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
-import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;

@@ -32,7 +32,6 @@ import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 public class LocationViewMapBox extends LinearLayout {
     private static final String TAG = "LocationViewMapBox";

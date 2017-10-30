@@ -4,16 +4,12 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayIncreases;
-import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 

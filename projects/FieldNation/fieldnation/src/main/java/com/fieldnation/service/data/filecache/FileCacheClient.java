@@ -1,6 +1,5 @@
 package com.fieldnation.service.data.filecache;
 
-import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.os.Bundle;
 

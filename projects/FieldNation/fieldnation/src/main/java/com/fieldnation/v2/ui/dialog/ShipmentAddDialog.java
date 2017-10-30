@@ -22,17 +22,22 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
@@ -44,7 +49,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
@@ -168,8 +172,11 @@ public class ShipmentAddDialog extends SimpleDialog {
         _attachmentFolders = payload.getParcelable("attachmentFolders");
         _myUUID = payload.getString("uuid");
 
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
-                DeliverableTracker.Action.START, DeliverableTracker.Location.SHIPMENT_DIALOG);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Shipment Dialog"))
+                .build());
 
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
 
@@ -227,8 +234,11 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
-                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.SHIPMENT_DIALOG);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Shipment Dialog"))
+                .build());
 
         _permissionsListener.unsub();
         super.onStop();

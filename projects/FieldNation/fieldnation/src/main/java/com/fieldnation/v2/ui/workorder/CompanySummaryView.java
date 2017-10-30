@@ -14,7 +14,6 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverallPercentApproval;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
  * Created by Michael Carver on 5/22/2015.

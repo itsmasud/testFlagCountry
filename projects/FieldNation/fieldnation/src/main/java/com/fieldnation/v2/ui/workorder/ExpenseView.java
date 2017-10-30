@@ -12,7 +12,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategories;
 import com.fieldnation.v2.data.model.ExpenseCategory;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ExpenseView extends LinearLayout {
     private static final String TAG = "ExpenseView";

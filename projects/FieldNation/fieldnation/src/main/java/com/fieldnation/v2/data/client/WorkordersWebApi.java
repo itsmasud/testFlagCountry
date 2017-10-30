@@ -6,9 +6,12 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
-import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
@@ -20,6 +23,7 @@ import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
@@ -295,7 +299,12 @@ public abstract class WorkordersWebApi extends Pigeon {
             Context context, UUIDGroup uuid, Integer workOrderId, Integer folderId,
             Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
 
-        DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.START, DeliverableTracker.Location.WORKORDER_WEB_API);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Work Order Web API"))
+                .build());
+
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")
                 .label(workOrderId + "")
@@ -344,7 +353,11 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
-            DeliverableTracker.onEvent(context, uuid, DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.WORKORDER_WEB_API);
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Work Order Web API"))
+                    .build());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
