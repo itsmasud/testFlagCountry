@@ -17,15 +17,18 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.CheckInOut;
+import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.TimeLogsAdapter;
+
+import java.util.Calendar;
 
 /**
  * Created by Shoaib on 10/20/17.
@@ -35,6 +38,7 @@ public class TimeLogListDialog extends FullScreenDialog {
     private static final String TAG = "TimeLogListDialog";
 
     private static final String DIALOG_DELETE_WORKLOG = TAG + ".deleteWorkLogDialog";
+    private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
 
     // Ui
     private Toolbar _toolbar;
@@ -81,6 +85,8 @@ public class TimeLogListDialog extends FullScreenDialog {
         _workOrdersApi.sub();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteTimelog);
+        WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
+
     }
 
     @Override
@@ -104,6 +110,7 @@ public class TimeLogListDialog extends FullScreenDialog {
     public void onStop() {
         _workOrdersApi.unsub();
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteTimelog);
+        WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
         super.onStop();
     }
 
@@ -125,7 +132,7 @@ public class TimeLogListDialog extends FullScreenDialog {
             } catch (Exception ex) {
             }
 
-            WorkLogDialog.show(App.get(), null, null, showdevice);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, showdevice);
             return false;
         }
     };
@@ -149,7 +156,7 @@ public class TimeLogListDialog extends FullScreenDialog {
             }
 
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), null, timeLog, showdevices);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, timeLog, showdevices);
         }
     };
 
@@ -162,10 +169,35 @@ public class TimeLogListDialog extends FullScreenDialog {
         }
     };
 
+    private final WorkLogDialog.OnOkListener _worklogDialog_listener = new WorkLogDialog.OnOkListener() {
+        @Override
+        public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
+            AppMessagingClient.setLoading(true);
+            TimeLog newTimeLog = new TimeLog();
+            try {
+                newTimeLog.in(new CheckInOut().created(new Date(start)));
+                newTimeLog.out(new CheckInOut().created(new Date(end)));
+                if (deviceCount > 0)
+                    newTimeLog.devices((double) deviceCount);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (timeLog == null) {
+                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                WorkordersWebApi.addTimeLog(App.get(), _workOrderId, newTimeLog, App.get().getSpUiContext());
+
+            } else {
+                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
+            }
+        }
+    };
+
+
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.toLowerCase().contains("workorder");
+            return methodName.toLowerCase().contains("workorder") || methodName.contains("TimeLog");
         }
 
         @Override
