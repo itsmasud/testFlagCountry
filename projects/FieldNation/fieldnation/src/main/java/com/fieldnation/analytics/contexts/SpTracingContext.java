@@ -113,11 +113,11 @@ public class SpTracingContext implements EventContext, SpContext {
         }
 
         if (!misc.isEmptyOrNull(parentUUID) && parentUUID.length() > 12) {
-            str += "P:" + parentUUID.substring(parentUUID.length() - 12);
+            str += "P:" + parentUUID.substring(parentUUID.length() - 12) + " ";
         }
 
         if (!misc.isEmptyOrNull(uuid) && uuid.length() > 12) {
-            str += " U:" + uuid.substring(uuid.length() - 12);
+            str += "U:" + uuid.substring(uuid.length() - 12);
         }
 
         return str;
