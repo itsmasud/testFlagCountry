@@ -18,7 +18,11 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
@@ -27,6 +31,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -68,10 +73,10 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Data
     private AttachmentFolders folders = null;
-    private AttachedFilesAdapter adapter = null;
-    private int _workOrderId;
     private AttachmentFolder _selectedFolder = null;
+    private AttachedFilesAdapter adapter = null;
     private Attachment _selectedAttachment = null;
+    private int _workOrderId;
     private long _selectedTransactionId;
     private String _myUUID;
 
@@ -128,8 +133,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
         _workOrderId = payload.getInt("workOrderId");
         _myUUID = payload.getString("uuid");
 
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
-                DeliverableTracker.Action.START, DeliverableTracker.Location.FILES_DIALOG);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Files Dialog"))
+                .build());
 
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
         AppMessagingClient.setLoading(true);
@@ -179,8 +187,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
-        DeliverableTracker.onEvent(App.get(), new UUIDGroup(null, _myUUID),
-                DeliverableTracker.Action.COMPLETE, DeliverableTracker.Location.FILES_DIALOG);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Files Dialog"))
+                .build());
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
@@ -290,6 +301,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 } else {
                     // TODO show a toast?
                     // TODO analytics
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(fui.uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Files Dialog, no uri"))
+                            .build());
                 }
                 return;
             }
@@ -301,6 +317,9 @@ public class AttachedFilesDialog extends FullScreenDialog {
                                 .category("AttachmentUpload")
                                 .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
                                 .action("start")
+                                .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Files Dialog Upload"))
                                 .build());
                 Attachment attachment = new Attachment();
                 try {

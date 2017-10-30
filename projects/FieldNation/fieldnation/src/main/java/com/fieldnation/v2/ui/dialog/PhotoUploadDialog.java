@@ -26,7 +26,12 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.DeliverableTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -37,6 +42,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
@@ -270,9 +276,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         _uuid = payload.getParcelable("uuid");
 
-        DeliverableTracker.onEvent(App.get(), _uuid, DeliverableTracker.Action.START,
-                DeliverableTracker.Location.PHOTO_UPLOAD_DIALOG);
-
         if (payload.containsKey("webTransactionId")) {
             try {
                 _mode = MODE_RETRY;
@@ -280,6 +283,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _transactionParams = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
                 _methodParams = new JsonObject(_transactionParams.methodParams);
                 _httpBuilder = new JsonObject(_webTransaction.getRequestString());
+                _uuid = _webTransaction.getUUID();
 
                 _originalFileName = _methodParams.getString("attachment.file.name");
                 _description = _methodParams.has("attachment.notes") ? _methodParams.getString("attachment.notes") : "";
@@ -295,6 +299,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 if (_cacheSize > 100000000) {
                     ToastClient.toast(App.get(), "File is over 100mb limit. Cannot upload.", Toast.LENGTH_SHORT);
                 }
+
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(_uuid))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.START, "Photo Upload Dialog - Retry"))
+                        .addContext(new SpFileContext.Builder().name(_originalFileName).size((int) _cacheSize).build())
+                        .build());
 
                 setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
             } catch (Exception ex) {
@@ -318,6 +329,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 Log.v(TAG, "uri: " + _sourceUri);
                 FileCacheClient.cacheFileUpload(_uuid, _sourceUri.toString(), _sourceUri);
             }
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(_uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.START, "Photo Upload Dialog - New"))
+                    .addContext(new SpFileContext.Builder().name(_originalFileName).size(0).build())
+                    .build());
         }
         populateUi();
     }
@@ -381,8 +399,12 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
-        DeliverableTracker.onEvent(App.get(), _uuid, DeliverableTracker.Action.COMPLETE,
-                DeliverableTracker.Location.PHOTO_UPLOAD_DIALOG);
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(_uuid))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Photo Upload Dialog"))
+                .addContext(new SpFileContext.Builder().name(_originalFileName).size(0).build())
+                .build());
         super.onStop();
     }
 
@@ -493,6 +515,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .category("AttachmentRetry")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
+                                    .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Retry"))
+                                    .addContext(new SpFileContext.Builder().name(_newFileName).size((int) _cacheSize).build())
                                     .build());
 
                     Attachment attachment = Attachment.fromJson(_methodParams.getJsonObject("attachment"));
@@ -520,6 +546,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
+                                    .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Task"))
+                                    .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
                                     .build());
                     try {
                         Attachment attachment = new Attachment();
@@ -540,6 +570,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
                                     .action("start")
+                                    .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Slot"))
+                                    .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
                                     .build());
 
                     try {
