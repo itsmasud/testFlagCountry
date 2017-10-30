@@ -286,6 +286,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .addContext(new SpTracingContext(null, _myUUID))
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Slot Selected"))
+                                .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).build())
                                 .build());
 
                 try {
@@ -334,7 +335,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .addContext(new SpTracingContext(file.getUUID()))
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Send Files"))
-                                .addContext(new SpFileContext.Builder().)
+                                .addContext(new SpFileContext.Builder().name(file.getFileName()).build())
                                 .build());
 
                 try {
