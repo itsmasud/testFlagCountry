@@ -213,7 +213,7 @@
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
 
-    <string name="dialog_no_number_title">No number found</string>
+    <string name="dialog_no_number_title">No number associated</string>
     <string name="dialog_no_number_message">Please check the work order details for a phone number.\r\nThis task will be marked complete.</string>
 
     <string name="dialog_decline_title">Not interested</string>
