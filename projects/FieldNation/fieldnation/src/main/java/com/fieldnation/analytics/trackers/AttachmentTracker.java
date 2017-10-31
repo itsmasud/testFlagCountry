@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.CustomEvent;
-import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
@@ -88,7 +87,7 @@ public class AttachmentTracker {
 
         if (!parentExists(uuidGroup.parentUUID)) {
             Tracker.event(context, new CustomEvent.Builder()
-                    .addContext(new SpTracingContext(uuidGroup))
+                    .addContext(new SpTracingContext("AttachmentTracker", uuidGroup))
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.START, "Start"))
                     .build());
@@ -105,7 +104,7 @@ public class AttachmentTracker {
 
         if (!parentExists(uuidGroup.parentUUID)) {
             Tracker.event(context, new CustomEvent.Builder()
-                    .addContext(new SpTracingContext(uuidGroup))
+                    .addContext(new SpTracingContext("AttachmentTracker", uuidGroup))
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "All Complete"))
                     .build());
