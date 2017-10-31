@@ -4,7 +4,7 @@ package com.fieldnation.service.data.documents;
  * Created by Michael Carver on 5/28/2015.
  */
 public interface DocumentConstants {
-    String TOPIC_ID_DOWNLOAD_DOCUMENT = "DocumentConstants:TOPIC_ID_DOWNLOAD_DOCUMENT";
+    String ADDRESS_DOWNLOAD_DOCUMENT = "DocumentConstants:ADDRESS_DOWNLOAD_DOCUMENT";
 
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_DOWNLOAD_DOCUMENT = "PARAM_ACTION_DOWNLOAD_DOCUMENT";

@@ -6,13 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.Pigeon;
+import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 
 import java.io.File;
@@ -20,18 +23,8 @@ import java.io.File;
 /**
  * Created by Michael Carver on 5/28/2015.
  */
-public class DocumentClient extends TopicClient implements DocumentConstants {
-    private static final String STAG = "DocumentClient";
-    private final String TAG = UniqueTag.makeTag(STAG);
-
-    public DocumentClient(Listener listener) {
-        super(listener);
-    }
-
-    @Override
-    public String getUserTag() {
-        return TAG;
-    }
+public abstract class DocumentClient extends Pigeon implements DocumentConstants {
+    private static final String TAG = "DocumentClient";
 
     public static void downloadDocument(Context context, long documentId, String url, String filename, boolean isSync) {
         if (misc.isEmptyOrNull(url)) {
@@ -43,7 +36,7 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 context.startActivity(intent);
             } catch (Exception ex) {
-                Log.v(STAG, ex);
+                Log.v(TAG, ex);
 
                 ToastClient.toast(context, "URL copied to clipboard. Could not download or view " + url, Toast.LENGTH_LONG);
 
@@ -51,51 +44,70 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
                 clip.setPrimaryClip(ClipData.newRawUri("file download", Uri.parse(url)));
             }
         } else {
-            Intent intent = new Intent(context, DocumentService.class);
-            intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DOCUMENT);
-            intent.putExtra(PARAM_DOCUMENT_ID, documentId);
-            intent.putExtra(PARAM_URL, url);
-            intent.putExtra(PARAM_IS_SYNC, isSync);
-            intent.putExtra(PARAM_FILE_NAME, filename);
-            context.startService(intent);
+            new AsyncTaskEx<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    long documentId = (Long) params[0];
+                    String url = (String) params[1];
+                    boolean isSync = (Boolean) params[2];
+                    String filename = (String) params[3];
+
+                    StoredObject obj = StoredObject.get(App.get(), App.getProfileId(), PSO_DOCUMENT, documentId);
+                    if (obj != null) {
+                        try {
+
+                            Uri uri = obj.getUri();
+                            String name = FileUtils.getFileNameFromUri(App.get(), uri);
+                            File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
+                            if (!dlFolder.exists())
+                                FileUtils.writeStream(App.get().getContentResolver().openInputStream(uri), dlFolder);
+
+                            DocumentDispatch.download(App.get(), documentId, dlFolder, PARAM_STATE_FINISH, isSync);
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
+                    } else {
+                        DocumentTransactionBuilder.download(App.get(), documentId, url, filename, isSync);
+                    }
+                    return null;
+                }
+            }.executeEx(documentId, url, isSync, filename);
         }
     }
 
-    public boolean subDocument() {
-        return subDocument(0);
+    public void sub() {
+        PigeonRoost.sub(this, ADDRESS_DOWNLOAD_DOCUMENT);
     }
 
-    public boolean subDocument(long documentId) {
-        String topicId = TOPIC_ID_DOWNLOAD_DOCUMENT;
-
-        if (documentId > 0) {
-            topicId += "/" + documentId;
-        }
-
-        return register(topicId);
+    public void unsub() {
+        PigeonRoost.unsub(this, ADDRESS_DOWNLOAD_DOCUMENT);
     }
 
-    public static abstract class Listener extends TopicClient.Listener {
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            if (topicId.startsWith(TOPIC_ID_DOWNLOAD_DOCUMENT)) {
-                Log.v(STAG, "preOnDownload: " + topicId);
-                preOnDownload((Bundle) payload);
+    @Override
+    public void onMessage(String address, Object message) {
+        Bundle bundle = (Bundle) message;
+
+        if (address.startsWith(ADDRESS_DOWNLOAD_DOCUMENT)) {
+            if (processDownload(bundle.getLong(PARAM_DOCUMENT_ID))) {
+                Log.v(TAG, "preOnDownload: " + address);
+                preOnDownload(bundle);
             }
         }
+    }
 
-        private void preOnDownload(Bundle bundle) {
-            File file = null;
-            int state = bundle.getInt(PARAM_STATE);
+    public abstract boolean processDownload(long documentId);
 
-            if (bundle.containsKey(PARAM_FILE))
-                file = (File) bundle.getSerializable(PARAM_FILE);
+    private void preOnDownload(Bundle bundle) {
+        File file = null;
+        int state = bundle.getInt(PARAM_STATE);
 
-            onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
-                    file, state);
-        }
+        if (bundle.containsKey(PARAM_FILE))
+            file = (File) bundle.getSerializable(PARAM_FILE);
 
-        public void onDownload(long documentId, File file, int state) {
-        }
+        onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
+                file, state);
+    }
+
+    public void onDownload(long documentId, File file, int state) {
     }
 }

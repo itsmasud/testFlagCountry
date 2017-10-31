@@ -169,7 +169,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private PopupMenu _morePopup;
 
     // Data
-    private DocumentClient _docClient;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
@@ -381,12 +380,11 @@ public class WorkOrderScreen extends RelativeLayout {
     }
 
     public void onResume() {
-        _docClient = new DocumentClient(_documentClient_listener);
-        _docClient.connect(App.get());
+        _documentClient.sub();
     }
 
     public void onPause() {
-        if (_docClient != null) _docClient.disconnect(App.get());
+        _documentClient.unsub();
     }
 
     public void onStop() {
@@ -1139,14 +1137,14 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
+    private final DocumentClient _documentClient = new DocumentClient() {
         @Override
-        public void onConnected() {
-            _docClient.subDocument();
+        public boolean processDownload(long documentId) {
+            return true;
         }
 
         @Override
-        public void onDownload(long documentId, final File file, int state) {
+        public void onDownload(long documentId, File file, int state) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
