@@ -504,6 +504,12 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    _floatingActionButton.setEnabled(false);
+                }
+            }, 500);
             misc.hideKeyboard(v);
             _bottomSheetBackground.clearAnimation();
             _bottomSheetBackground.startAnimation(_fadeIn);
@@ -517,6 +523,12 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    _floatingActionButton.setEnabled(true);
+                }
+            }, 500);
             _bottomSheetBackground.clearAnimation();
             _bottomSheetBackground.startAnimation(_fadeOut);
             _bottomSheet.clearAnimation();
