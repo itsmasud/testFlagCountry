@@ -60,10 +60,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
 
-    // Services
-    private DocumentClient _docClient;
-    private WorkordersWebApi _workOrderClient;
-
     // Data
     private AttachmentFolders folders = null;
     private AttachedFilesAdapter adapter = null;
@@ -113,9 +109,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         _workOrdersApi.sub();
         _appClient.subNetworkState();
-
-        _docClient = new DocumentClient(_documentClient_listener);
-        _docClient.connect(App.get());
+        _documentClient.sub();
     }
 
     @Override
@@ -162,7 +156,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         Log.v(TAG, "onPause");
-        if (_docClient != null) _docClient.disconnect(App.get());
+        _documentClient.unsub();
         _workOrdersApi.unsub();
         _appClient.unsubNetworkState();
 
@@ -329,14 +323,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
     };
 
-    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
+    private final DocumentClient _documentClient = new DocumentClient() {
         @Override
-        public void onConnected() {
-            _docClient.subDocument();
+        public boolean processDownload(long documentId) {
+            return true;
         }
 
         @Override
-        public void onDownload(long documentId, final File file, int state) {
+        public void onDownload(long documentId, File file, int state) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)

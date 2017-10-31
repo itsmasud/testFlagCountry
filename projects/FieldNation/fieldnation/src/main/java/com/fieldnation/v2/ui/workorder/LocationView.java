@@ -77,7 +77,6 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
 
     // Services
-    private GmapsClient _gmapsClient = null;
     private SimpleGps _simpleGps;
 
 	/*-*************************************-*/
@@ -122,8 +121,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         _noteTextView.setOnLongClickListener(_notes_onLongClick);
         _noteDivider = findViewById(R.id.note_divider);
 
-        _gmapsClient = new GmapsClient(_gmapsClient_listener);
-        _gmapsClient.connect(App.get());
+        _gmapsClient.subStaticMapClassic();
+        _gmapsClient.subDirections();
 
         _simpleGps = new SimpleGps(getContext())
                 .updateListener(_gpsListener)
@@ -132,6 +131,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         setVisibility(View.GONE);
 
         getViewTreeObserver().addOnGlobalLayoutListener(_layoutObserver);
+
+        lookupMap();
     }
 
     private final ViewTreeObserver.OnGlobalLayoutListener _layoutObserver = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -145,7 +146,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_gmapsClient != null) _gmapsClient.disconnect(App.get());
+        _gmapsClient.unsubDirections();
+        _gmapsClient.unsubStaticMapClassic();
         _simpleGps.stop();
         super.onDetachedFromWindow();
     }
@@ -153,11 +155,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
 
-        if (_gmapsClient != null && _gmapsClient.isConnected()) {
-            _gmapsClient.subStaticMapClassic(_workOrder.getId());
-            _gmapsClient.subDirections(_workOrder.getId());
-            lookupMap();
-        }
+        lookupMap();
         populateUi();
     }
 
@@ -332,23 +330,19 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
     private void lookupMap() {
         Log.v(TAG, "lookupMap");
-//        if (_invalidAddress) return;
-        if (_gmapsClient == null || !_gmapsClient.isConnected())
-            return;
 
-        Log.v(TAG, "lookupMap - 1");
         if (_workOrder == null)
             return;
 
-        Log.v(TAG, "lookupMap - 2");
+        Log.v(TAG, "lookupMap - 1");
         if (_userLocation == null)
             return;
 
-        Log.v(TAG, "lookupMap - 3");
+        Log.v(TAG, "lookupMap - 2");
         if (_mapImageView == null || _mapLayout.getVisibility() == GONE)
             return;
 
-        Log.v(TAG, "lookupMap - 4");
+        Log.v(TAG, "lookupMap - 3");
         if ((_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0)
                 && (_workOrder != null && _workOrder.getLocation().getMode() != null)) {
             postDelayed(new Runnable() {
@@ -360,7 +354,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
             return;
         }
 
-        Log.v(TAG, "lookupMap - 5");
+        Log.v(TAG, "lookupMap - 4");
         Marker start = new Marker(_userLocation.getLatitude(), _userLocation.getLongitude(),
                 getContext().getString(R.string.gmap_startMarkerUrl));
         Position startPos = new Position(_userLocation.getLatitude(), _userLocation.getLongitude());
@@ -488,18 +482,14 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         }
     };
 
-    private final GmapsClient.Listener _gmapsClient_listener = new GmapsClient.Listener() {
+    private final GmapsClient _gmapsClient = new GmapsClient() {
         @Override
-        public void onConnected() {
-            if (_workOrder != null) {
-                _gmapsClient.subStaticMapClassic(_workOrder.getId());
-                _gmapsClient.subDirections(_workOrder.getId());
-                lookupMap();
-            }
+        public boolean continueProcessing(int workOrderId) {
+            return _workOrder != null && workOrderId == _workOrder.getId();
         }
 
         @Override
-        public void onStaticMapClassic(long workorderId, Bitmap bitmap, boolean failed) {
+        public void onStaticMapClassic(int workOrderId, Bitmap bitmap, boolean failed) {
             Log.v(TAG, "onStaticMapClassic");
             if (bitmap == null || failed) {
                 _map = null;
@@ -512,7 +502,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         }
 
         @Override
-        public void onDirections(long workorderId, GmapsDirections directions) {
+        public void onDirections(int workOrderId, GmapsDirections directions) {
             Log.v(TAG, "onDirections");
 
             if (directions != null && directions.getCode().equals("Ok")) {

@@ -16,10 +16,10 @@ import java.text.ParseException;
 public class GmapsTransactionListener extends WebTransactionListener implements GmapsConstants {
     private static final String TAG = "GmapsTransactionListener";
 
-    public static byte[] pDirections(long workorderId) {
+    public static byte[] pDirections(int workOrderId) {
         try {
             JsonObject obj = new JsonObject("action", "pDirections");
-            obj.put("workorderId", workorderId);
+            obj.put("workOrderId", workOrderId);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -27,10 +27,10 @@ public class GmapsTransactionListener extends WebTransactionListener implements 
         }
     }
 
-    public static byte[] pStaticMapClassic(long workorderId) {
+    public static byte[] pStaticMapClassic(int workOrderId) {
         try {
             JsonObject obj = new JsonObject("action", "pStaticMapClassic");
-            obj.put("workorderId", workorderId);
+            obj.put("workOrderId", workOrderId);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -59,7 +59,7 @@ public class GmapsTransactionListener extends WebTransactionListener implements 
     private Result onDirections(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onDirections");
         if (result == Result.CONTINUE) {
-            GmapsDispatch.directions(context, params.getLong("workorderId"), httpResult.getByteArray());
+            GmapsDispatch.directions(context, params.getInt("workOrderId"), httpResult.getByteArray());
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
@@ -72,11 +72,11 @@ public class GmapsTransactionListener extends WebTransactionListener implements 
 
     private Result onStaticMapClassic(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         if (result == Result.CONTINUE) {
-            GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), httpResult.getByteArray(), false);
+            GmapsDispatch.staticMapClassic(context, params.getInt("workOrderId"), httpResult.getByteArray(), false);
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
+            GmapsDispatch.staticMapClassic(context, params.getInt("workOrderId"), null, true);
             return Result.DELETE;
 
         } else {

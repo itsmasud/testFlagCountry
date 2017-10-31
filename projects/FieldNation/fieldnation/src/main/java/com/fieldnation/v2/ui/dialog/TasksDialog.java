@@ -71,9 +71,6 @@ public class TasksDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
 
-    // Services
-    private DocumentClient _docClient;
-
     // Data
     private int _workOrderId = 0;
     private WorkOrder _workOrder;
@@ -130,9 +127,7 @@ public class TasksDialog extends FullScreenDialog {
         super.onResume();
 
         _workOrdersApi.sub();
-
-        _docClient = new DocumentClient(_documentClient_listener);
-        _docClient.connect(App.get());
+        _documentClient.sub();
     }
 
     @Override
@@ -161,7 +156,7 @@ public class TasksDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         _workOrdersApi.unsub();
-        if (_docClient != null) _docClient.disconnect(App.get());
+        _documentClient.unsub();
         super.onPause();
     }
 
@@ -559,15 +554,14 @@ public class TasksDialog extends FullScreenDialog {
         }
     };
 
-
-    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
+    private final DocumentClient _documentClient = new DocumentClient() {
         @Override
-        public void onConnected() {
-            _docClient.subDocument();
+        public boolean processDownload(long documentId) {
+            return true;
         }
 
         @Override
-        public void onDownload(long documentId, final File file, int state) {
+        public void onDownload(long documentId, File file, int state) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
@@ -577,7 +571,6 @@ public class TasksDialog extends FullScreenDialog {
             _adapter.downloadComplete((int) documentId);
         }
     };
-
 
     /**
      * @param context
