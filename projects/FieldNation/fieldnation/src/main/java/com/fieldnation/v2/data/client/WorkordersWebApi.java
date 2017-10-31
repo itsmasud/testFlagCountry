@@ -300,6 +300,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
 
         // TODO increment parent uuid child count?
+        // See transactionListener (171)
 
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")
