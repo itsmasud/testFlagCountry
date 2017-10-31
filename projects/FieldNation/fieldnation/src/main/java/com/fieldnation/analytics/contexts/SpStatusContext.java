@@ -2,6 +2,8 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -34,8 +36,7 @@ public class SpStatusContext implements EventContext, SpContext {
     public String message;
 
     static {
-        // TODO uncomment to enable
-        //SnowplowWrapper.registerContext(TAG, SpStatusContext.class);
+        SnowplowWrapper.registerContext(TAG, SpStatusContext.class);
     }
 
     public SpStatusContext() {
@@ -72,8 +73,7 @@ public class SpStatusContext implements EventContext, SpContext {
         if (code != null)
             dataMap.put("code", code);
 
-        // TODO Schema needed
-        return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
+        return new SelfDescribingJson(context.getString(R.string.sp_status_context_schema_uri), dataMap);
     }
 
     @Override

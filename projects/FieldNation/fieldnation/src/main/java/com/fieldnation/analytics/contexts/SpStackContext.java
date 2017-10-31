@@ -2,6 +2,8 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -33,8 +35,7 @@ public class SpStackContext implements EventContext, SpContext {
     public String trace;
 
     static {
-        // FIXME uncomment to enable
-        //SnowplowWrapper.registerContext(TAG, SpStackContext.class);
+        SnowplowWrapper.registerContext(TAG, SpStackContext.class);
     }
 
     public SpStackContext() {
@@ -68,8 +69,7 @@ public class SpStackContext implements EventContext, SpContext {
         if (!misc.isEmptyOrNull(trace))
             dataMap.put("trace", trace);
 
-        // FIXME need schema
-        return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
+        return new SelfDescribingJson(context.getString(R.string.sp_stack_context_schema_uri), dataMap);
     }
 
     @Override

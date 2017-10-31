@@ -2,6 +2,8 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
@@ -32,8 +34,7 @@ public class SpTracingContext implements EventContext, SpContext {
     public String parentUUID;
 
     static {
-        // FIXME enable
-        // SnowplowWrapper.registerContext(TAG, SpTracingContext.class);
+        SnowplowWrapper.registerContext(TAG, SpTracingContext.class);
     }
 
     public SpTracingContext() {
@@ -81,8 +82,7 @@ public class SpTracingContext implements EventContext, SpContext {
         if (!misc.isEmptyOrNull(name))
             dataMap.put("name", name);
 
-        // FIXME need schema
-        return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
+        return new SelfDescribingJson(context.getString(R.string.sp_tracing_context_schema_uri), dataMap);
     }
 
     @Override

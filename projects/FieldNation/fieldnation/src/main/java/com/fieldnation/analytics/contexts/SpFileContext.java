@@ -2,6 +2,8 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -32,8 +34,7 @@ public class SpFileContext implements EventContext, SpContext {
     public Long createdAt;
 
     static {
-        // FIXME uncomment to enable
-        //SnowplowWrapper.registerContext(TAG, SpFileContext.class);
+        SnowplowWrapper.registerContext(TAG, SpFileContext.class);
     }
 
     public SpFileContext() {
@@ -61,8 +62,7 @@ public class SpFileContext implements EventContext, SpContext {
         dataMap.put("name", name);
         dataMap.put("size", size);
 
-        // FIXME need schema
-        return new SelfDescribingJson("TODO SCHEMA NEEDED", dataMap);
+        return new SelfDescribingJson(context.getString(R.string.sp_file_context_schema_uri), dataMap);
     }
 
     @Override
