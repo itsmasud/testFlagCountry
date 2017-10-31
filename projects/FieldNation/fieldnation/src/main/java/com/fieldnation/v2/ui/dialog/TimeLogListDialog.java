@@ -14,9 +14,16 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -51,6 +58,7 @@ public class TimeLogListDialog extends FullScreenDialog {
     private String _dialogTitle;
     private WorkOrder _workOrder;
     private TimeLogsAdapter _adapter = new TimeLogsAdapter();
+    private String _uiUUID = null;
 
     public TimeLogListDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -95,6 +103,14 @@ public class TimeLogListDialog extends FullScreenDialog {
         super.show(params, animate);
         _workOrderId = params.getInt("workOrderId");
         _dialogTitle = params.getString("dialogTitle");
+        _uiUUID = params.getString("uiUUID");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "TimeLog ListDialog"))
+                .build());
+
         AppMessagingClient.setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
@@ -114,6 +130,12 @@ public class TimeLogListDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "TimeLog ListDialog"))
+                .build());
+
         _workOrdersApi.unsub();
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteTimelog);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
@@ -190,7 +212,7 @@ public class TimeLogListDialog extends FullScreenDialog {
             }
             if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrderId, newTimeLog, App.get().getSpUiContext());
+                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(null, _uiUUID), _workOrderId, newTimeLog, App.get().getSpUiContext());
 
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
@@ -221,10 +243,11 @@ public class TimeLogListDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, String dialogTitle) {
+    public static void show(Context context, String uid, String uiUUID, int workOrderId, String dialogTitle) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("dialogTitle", dialogTitle);
+        params.putString("uiUUID", uiUUID);
 
         Controller.show(context, uid, TimeLogListDialog.class, params);
     }

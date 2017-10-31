@@ -314,7 +314,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .value(folderId)
                 .addContext(new SpTracingContext(uuid))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Work Order Web API"))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "addAttachment API"))
                 .build()
         );
 
@@ -358,7 +358,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                    .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Work Order Web API"))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "addAttachment API"))
                     .build());
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -1700,13 +1700,16 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param workOrderId ID of work order
      * @param timeLog     Check in information
      */
-    public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog, EventContext uiContext) {
+    public static void addTimeLog(Context context, UUIDGroup uuid, Integer workOrderId, TimeLog timeLog, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addTimeLogByWorkOrder")
                 .label(workOrderId + "")
                 .category("workorder")
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .addContext(new SpTracingContext(uuid))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "addTimeLog API"))
                 .build()
         );
 
@@ -1714,6 +1717,8 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .header("X-App-UUID", uuid.uuid)
+                    .header("X-App-PARENT-UUID", uuid.parentUUID)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/time_logs");
 
             if (timeLog != null)
@@ -1733,9 +1738,15 @@ public abstract class WorkordersWebApi extends Pigeon {
                                     WorkordersWebApi.class, "addTimeLog", methodParams))
                     .useAuth(true)
                     .request(builder)
+                    .uuid(uuid)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "addTimeLog API"))
+                    .build());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

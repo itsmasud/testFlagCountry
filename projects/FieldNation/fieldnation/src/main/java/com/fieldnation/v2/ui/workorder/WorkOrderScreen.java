@@ -1062,7 +1062,7 @@ public class WorkOrderScreen extends RelativeLayout {
             }
             if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrderId, newTimeLog, App.get().getSpUiContext());
+                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(null, _myUUID), _workOrderId, newTimeLog, App.get().getSpUiContext());
 
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
@@ -1092,9 +1092,9 @@ public class WorkOrderScreen extends RelativeLayout {
         public void addTimeLog() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
             if (_workOrder.getPay() != null && _workOrder.getPay().getType() != null)
-                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
+                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _myUUID, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
             else
-                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, false);
+                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _myUUID, null, false);
         }
 
         @Override
