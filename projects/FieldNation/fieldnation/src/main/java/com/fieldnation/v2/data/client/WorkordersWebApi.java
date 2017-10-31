@@ -12,6 +12,7 @@ import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.analytics.trackers.AttachmentTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
@@ -301,6 +302,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
         // TODO increment parent uuid child count?
         // See transactionListener (171)
+        AttachmentTracker.start(context, uuid);
 
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("addAttachmentByWorkOrderAndFolder")

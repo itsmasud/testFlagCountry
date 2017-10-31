@@ -11,6 +11,7 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.AttachmentTracker;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
@@ -170,6 +171,9 @@ public class TransactionListener extends WebTransactionListener {
 
                 // TODO decrement parent uuid child count?
                 // See workorderswebapi (303)
+                if (transaction.getUUID() != null)
+                    AttachmentTracker.complete(context, transaction.getUUID());
+
 
                 SimpleEvent.Builder se = new SimpleEvent.Builder()
                         .tag(AnswersWrapper.TAG)

@@ -23,6 +23,7 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.AttachmentTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -266,7 +267,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             TwoButtonDialog.show(App.get(), DIALOG_YES_NO_FAILED,
                     "Cancel Upload", "Are you sure you want to cancel this upload?",
                     getView().getResources().getString(R.string.btn_yes),
-                    getView().getResources().getString(R.string.btn_no), true, null);
+                    getView().getResources().getString(R.string.btn_no), true, webTransaction);
         }
     };
 
@@ -337,6 +338,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimaryFailed = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
+            AttachmentTracker.complete(getContext(), ((WebTransaction) extraData).getUUID());
+
             WebTransaction.delete(_selectedTransactionId);
             populateUi();
             // Todo, this is to force the WoD to update after the transaction is deleted

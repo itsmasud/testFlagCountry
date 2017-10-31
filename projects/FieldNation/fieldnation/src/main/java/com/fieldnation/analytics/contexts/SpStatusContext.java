@@ -23,7 +23,10 @@ public class SpStatusContext implements EventContext, SpContext {
     public static final String TAG = "SpStatusContext";
 
     public enum Status {
-        START, INFO, COMPLETE, FAIL,;
+        @Json(name = "START")START,
+        @Json(name = "INFO")INFO,
+        @Json(name = "COMPLETE")COMPLETE,
+        @Json(name = "FAIL")FAIL,;
     }
 
     @Json
