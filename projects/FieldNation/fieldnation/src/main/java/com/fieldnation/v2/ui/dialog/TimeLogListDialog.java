@@ -17,6 +17,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -47,6 +48,7 @@ public class TimeLogListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
+    private String _dialogTitle;
     private WorkOrder _workOrder;
     private TimeLogsAdapter _adapter = new TimeLogsAdapter();
 
@@ -61,7 +63,6 @@ public class TimeLogListDialog extends FullScreenDialog {
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setTitle(getContext().getString(R.string.time_logged));
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
@@ -93,6 +94,7 @@ public class TimeLogListDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
         _workOrderId = params.getInt("workOrderId");
+        _dialogTitle = params.getString("dialogTitle");
         AppMessagingClient.setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
@@ -101,6 +103,10 @@ public class TimeLogListDialog extends FullScreenDialog {
         _finishMenu.setVisibility(View.GONE);
         if (_list == null) return;
         if (_workOrder == null) return;
+
+        if (!misc.isEmptyOrNull(_dialogTitle))
+            _toolbar.setTitle(_dialogTitle);
+
         if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);
         }
@@ -215,9 +221,10 @@ public class TimeLogListDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId) {
+    public static void show(Context context, String uid, int workOrderId, String dialogTitle) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
+        params.putString("dialogTitle", dialogTitle);
 
         Controller.show(context, uid, TimeLogListDialog.class, params);
     }
