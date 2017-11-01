@@ -495,6 +495,10 @@ public class WorkOrderTracker {
         onActionButtonEvent(context, null, actionButton, action, workOrderId);
     }
 
+    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Integer workOrderId, EventContext[] eventContexts) {
+        onActionButtonEvent(context, null, actionButton, action, workOrderId, eventContexts);
+    }
+
     public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton, Action action, Integer workOrderId) {
         Identity identity = actionButton.getIdentity();
         if (identity != null) {

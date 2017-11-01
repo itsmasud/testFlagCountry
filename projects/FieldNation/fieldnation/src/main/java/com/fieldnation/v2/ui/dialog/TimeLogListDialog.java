@@ -38,6 +38,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.TimeLogsAdapter;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 10/20/17.
@@ -245,7 +246,8 @@ public class TimeLogListDialog extends FullScreenDialog {
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - add")
                         }
                 );
-                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(null, _uiUUID), _workOrderId, newTimeLog, App.get().getSpUiContext());
+                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(_uiUUID, UUID.randomUUID().toString()),
+                        _workOrderId, newTimeLog, App.get().getSpUiContext());
 
             } else {
                 WorkOrderTracker.onEditEvent(
@@ -257,11 +259,11 @@ public class TimeLogListDialog extends FullScreenDialog {
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - edit")
                         }
                 );
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
+                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(null, _uiUUID),
+                        _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
         }
     };
-
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override

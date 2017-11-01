@@ -37,6 +37,7 @@ import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -108,6 +109,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 public class WorkOrderScreen extends RelativeLayout {
     private static final String TAG = "WorkOrderScreen";
@@ -663,21 +665,46 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onCheckOut() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
-                    null, _workOrderId);
+                    null,
+                    _workOrderId,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             doCheckOut();
         }
 
         @Override
         public void onCheckIn() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(),
+                    WorkOrderTracker.ActionButton.CHECK_IN,
+                    null,
+                    _workOrderId,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             doCheckin();
         }
 
         @Override
         public void onCheckInAgain() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(),
+                    WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
+                    null,
+                    _workOrderId,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             doCheckin();
         }
 
@@ -1063,12 +1090,29 @@ public class WorkOrderScreen extends RelativeLayout {
                 ex.printStackTrace();
             }
             if (timeLog == null) {
-                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(null, _myUUID), _workOrderId, newTimeLog, App.get().getSpUiContext());
+                WorkOrderTracker.onAddEvent(
+                        App.get(),
+                        WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                        new EventContext[]{
+                                new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpStackContext(DebugUtils.getStackTraceElement()),
+                                new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                        }
+                );
+                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(_myUUID, UUID.randomUUID().toString()),
+                        _workOrderId, newTimeLog, App.get().getSpUiContext());
 
             } else {
-                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
+                WorkOrderTracker.onEditEvent(
+                        App.get(),
+                        WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                        new EventContext[]{
+                                new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpStackContext(DebugUtils.getStackTraceElement()),
+                                new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                        }
+                );
+                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(null, _myUUID), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
             setLoading(true);
         }
@@ -1092,7 +1136,15 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addTimeLog() {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            WorkOrderTracker.onAddEvent(
+                    App.get(),
+                    WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             if (_workOrder.getPay() != null && _workOrder.getPay().getType() != null)
                 WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _myUUID, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
             else

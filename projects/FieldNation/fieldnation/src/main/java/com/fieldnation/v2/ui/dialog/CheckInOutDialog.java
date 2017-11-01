@@ -58,6 +58,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 10/28/2016.
@@ -435,7 +436,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                     AppMessagingClient.setLoading(true);
 
-                    WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(null, _uiUUID), _workOrderId, new TimeLog().in(cio), uiContext);
+                    WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(_uiUUID, UUID.randomUUID().toString()), _workOrderId, new TimeLog().in(cio), uiContext);
 
                     GpsTrackingService.stop(App.get());
 
@@ -478,7 +479,8 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                             AppMessagingClient.setLoading(true);
 
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), timeLog, uiContext);
+                            WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(null, _uiUUID),
+                                    _workOrderId, timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
                         }
