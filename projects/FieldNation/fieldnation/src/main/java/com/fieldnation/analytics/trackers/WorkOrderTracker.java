@@ -6,9 +6,12 @@ import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.TaskType;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -454,9 +457,14 @@ public class WorkOrderTracker {
     }
 
     public static void onShow(Context context, Tab tab, int workOrderId) {
-        TrackerBase.show(context, tab.tab, new SpWorkOrderContext.Builder()
-                .workOrderId(workOrderId)
-                .build());
+        TrackerBase.show(
+                context,
+                tab.tab,
+                new EventContext[]{
+                        new SpWorkOrderContext.Builder()
+                                .workOrderId(workOrderId)
+                                .build()
+                });
     }
 
     public static void onTabSwitchEvent(Context context, final Tab currentTab, final Tab newTab) {
@@ -501,10 +509,30 @@ public class WorkOrderTracker {
         }
     }
 
+    public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton, Action action, Integer workOrderId, EventContext[] eventContexts) {
+        Identity identity = actionButton.getIdentity();
+        if (identity != null) {
+            if (action != null && workOrderId != null) {
+                onEvent(context, identity, action, workOrderId);
+            } else {
+                if (misc.isEmptyOrNull(searchTitle))
+                    navigationEvent(context, Tab.DETAILS, identity, eventContexts);
+                else
+                    navigationEvent(context, searchTitle, identity, eventContexts);
+            }
+        }
+    }
+
     public static void onAddEvent(Context context, WorkOrderDetailsSection section) {
         Identity identity = section.getAddIdentity();
         if (identity != null)
             navigationEvent(context, Tab.DETAILS, identity);
+    }
+
+    public static void onAddEvent(Context context, WorkOrderDetailsSection section, EventContext[] eventContexts) {
+        Identity identity = section.getAddIdentity();
+        if (identity != null)
+            navigationEvent(context, Tab.DETAILS, identity, eventContexts);
     }
 
     public static void onEditEvent(Context context, WorkOrderDetailsSection section) {
@@ -513,10 +541,22 @@ public class WorkOrderTracker {
             navigationEvent(context, Tab.DETAILS, identity);
     }
 
+    public static void onEditEvent(Context context, WorkOrderDetailsSection section, EventContext[] eventContexts) {
+        Identity identity = section.getEditIdentity();
+        if (identity != null)
+            navigationEvent(context, Tab.DETAILS, identity, eventContexts);
+    }
+
     public static void onDeleteEvent(Context context, WorkOrderDetailsSection section) {
         Identity identity = section.getDeleteIdentity();
         if (identity != null)
             navigationEvent(context, Tab.DETAILS, identity);
+    }
+
+    public static void onDeleteEvent(Context context, WorkOrderDetailsSection section, EventContext[] eventContexts) {
+        Identity identity = section.getDeleteIdentity();
+        if (identity != null)
+            navigationEvent(context, Tab.DETAILS, identity, eventContexts);
     }
 
     public static void onDescriptionModalEvent(Context context, ModalType modalType) {
@@ -531,6 +571,17 @@ public class WorkOrderTracker {
                 onEvent(context, identity, Action.UNIQUE_TASK, workOrderId);
             } else {
                 navigationEvent(context, Tab.DETAILS, identity);
+            }
+        }
+    }
+
+    public static void onTaskEvent(Context context, TaskType taskType, Integer workOrderId, EventContext[] eventContexts) {
+        Identity identity = Identity.fromTaskType(taskType);
+        if (identity != null) {
+            if (taskType.getId() == 10 && workOrderId != null) {
+                onEvent(context, identity, Action.UNIQUE_TASK, workOrderId, eventContexts);
+            } else {
+                navigationEvent(context, Tab.DETAILS, identity, eventContexts);
             }
         }
     }
@@ -565,22 +616,54 @@ public class WorkOrderTracker {
         TrackerBase.unstructuredEvent(context, hijacked);
     }
 
+    private static void navigationEvent(Context context, Tab tab, Identity identity, EventContext[] eventContexts) {
+        Identity hijacked = identity.clone();
+        hijacked._page = tab.tab;
+        TrackerBase.unstructuredEvent(context, hijacked, eventContexts);
+    }
+
     private static void navigationEvent(Context context, String page, Identity identity) {
         Identity hijacked = identity.clone();
         hijacked._page = page;
         TrackerBase.unstructuredEvent(context, hijacked);
     }
 
+    private static void navigationEvent(Context context, String page, Identity identity, EventContext[] eventContexts) {
+        Identity hijacked = identity.clone();
+        hijacked._page = page;
+        TrackerBase.unstructuredEvent(context, hijacked, eventContexts);
+    }
+
 
     public static void onEvent(Context context, Identity identity, Action action, int workOrderId) {
-        TrackerBase.event(context,
+        TrackerBase.event(
+                context,
                 identity,
                 action,
                 "workorder_id",
                 workOrderId + "",
-                new SpWorkOrderContext.Builder()
-                        .workOrderId(workOrderId)
-                        .build());
+                new EventContext[]{
+                        new SpWorkOrderContext.Builder()
+                                .workOrderId(workOrderId)
+                                .build()
+                });
+    }
+
+    public static void onEvent(Context context, Identity identity, Action action, int workOrderId, EventContext[] eventContexts) {
+        List<EventContext> list = new LinkedList<>();
+        list.addAll(Arrays.asList(eventContexts));
+        list.add(new SpWorkOrderContext.Builder()
+                .workOrderId(workOrderId)
+                .build());
+
+        TrackerBase.event(
+                context,
+                identity,
+                action,
+                "workorder_id",
+                workOrderId + "",
+                list.toArray(new EventContext[list.size()])
+        );
     }
 
     public static void test(Context context) {

@@ -322,8 +322,8 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .header("X-App-UUID", uuid.uuid)
-                    .header("X-App-PARENT-UUID", uuid.parentUUID)
+                    .header("X-App-Uuid", uuid.uuid)
+                    .header("X-App-Parent-Uuid", uuid.parentUUID)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);
@@ -1717,8 +1717,8 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .header("X-App-UUID", uuid.uuid)
-                    .header("X-App-PARENT-UUID", uuid.parentUUID)
+                    .header("X-App-Uuid", uuid.uuid)
+                    .header("X-App-Parent-Uuid", uuid.parentUUID)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/time_logs");
 
             if (timeLog != null)

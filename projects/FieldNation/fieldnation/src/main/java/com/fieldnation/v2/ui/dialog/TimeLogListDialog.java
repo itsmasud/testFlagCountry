@@ -20,6 +20,7 @@ import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -108,7 +109,7 @@ public class TimeLogListDialog extends FullScreenDialog {
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                .addContext(new SpStatusContext(SpStatusContext.Status.START, "TimeLog ListDialog"))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Time Log List Dialog"))
                 .build());
 
         AppMessagingClient.setLoading(true);
@@ -133,7 +134,7 @@ public class TimeLogListDialog extends FullScreenDialog {
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "TimeLog ListDialog"))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Time Log List Dialog"))
                 .build());
 
         _workOrdersApi.unsub();
@@ -152,7 +153,15 @@ public class TimeLogListDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            WorkOrderTracker.onAddEvent(
+                    App.get(),
+                    WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - add")
+                    }
+            );
 
             boolean showdevice = false;
             try {
@@ -160,7 +169,7 @@ public class TimeLogListDialog extends FullScreenDialog {
             } catch (Exception ex) {
             }
 
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, showdevice);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _uiUUID, null, showdevice);
             return false;
         }
     };
@@ -183,8 +192,16 @@ public class TimeLogListDialog extends FullScreenDialog {
             } catch (Exception ex) {
             }
 
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, timeLog, showdevices);
+            WorkOrderTracker.onEditEvent(
+                    App.get(),
+                    WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - edit")
+                    }
+            );
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _uiUUID, timeLog, showdevices);
         }
     };
 
@@ -192,7 +209,15 @@ public class TimeLogListDialog extends FullScreenDialog {
         @Override
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setLoading(true);
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            WorkOrderTracker.onDeleteEvent(
+                    App.get(),
+                    WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - delete")
+                    }
+            );
             WorkordersWebApi.deleteTimeLog(App.get(), _workOrderId, ((TimeLog) extraData).getId(), App.get().getSpUiContext());
         }
     };
@@ -211,11 +236,27 @@ public class TimeLogListDialog extends FullScreenDialog {
                 ex.printStackTrace();
             }
             if (timeLog == null) {
-                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                WorkOrderTracker.onAddEvent(
+                        App.get(),
+                        WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                        new EventContext[]{
+                                new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                new SpStackContext(DebugUtils.getStackTraceElement()),
+                                new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - add")
+                        }
+                );
                 WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(null, _uiUUID), _workOrderId, newTimeLog, App.get().getSpUiContext());
 
             } else {
-                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                WorkOrderTracker.onEditEvent(
+                        App.get(),
+                        WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                        new EventContext[]{
+                                new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                new SpStackContext(DebugUtils.getStackTraceElement()),
+                                new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - edit")
+                        }
+                );
                 WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
         }

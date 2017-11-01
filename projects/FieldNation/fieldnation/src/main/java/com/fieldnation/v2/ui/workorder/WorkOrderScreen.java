@@ -423,6 +423,8 @@ public class WorkOrderScreen extends RelativeLayout {
 
         _failedUploads.setUUID(_myUUID);
         _attachmentSummaryView.setUUID(_myUUID);
+        _timeLogSummaryView.setUUID(_myUUID);
+        _taskWidget.setUUID(_myUUID);
     }
 
     private void populateUi() {
@@ -506,7 +508,7 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-*********************************************-*/
     private void doCheckin() {
         App.get().analActionTitle = null;
-        CheckInOutDialog.show(App.get(), null, _workOrderId,
+        CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
@@ -525,10 +527,10 @@ public class WorkOrderScreen extends RelativeLayout {
         App.get().analActionTitle = null;
 
         if (_deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), null, _workOrderId,
+            CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                     _workOrder.getTimeLogs(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), null, _workOrderId,
+            CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                     _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
