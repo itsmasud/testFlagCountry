@@ -62,11 +62,16 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
 
         if (_workOrder == null) return;
 
-        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)
+        if (_workOrder.getTimeLogs() == null
+                || _workOrder.getTimeLogs().getResults() == null
+                || _workOrder.getTimeLogs().getResults().length == 0) {
+            setVisibility(GONE);
             return;
+        }
 
 
         if (_workOrder.getTimeLogs().getHours() == null) {
+            setVisibility(GONE);
             return;
         } else {
             _summaryView.set(
@@ -81,7 +86,8 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            TimeLogListDialog.show(App.get(), null, _workOrder.getId());
+            final String dialogTitle = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged);
+            TimeLogListDialog.show(App.get(), null, _workOrder.getId(), dialogTitle);
         }
     };
 

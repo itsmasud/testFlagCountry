@@ -3,8 +3,8 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
-import com.fieldnation.fnpigeon.TopicService;
 
 import java.io.File;
 
@@ -23,14 +23,6 @@ public class DocumentDispatch implements DocumentConstants {
         if (file != null)
             bundle.putSerializable(PARAM_FILE, file);
 
-        String topicId = TOPIC_ID_DOWNLOAD_DOCUMENT;
-
-        if (isSync) {
-            topicId += "_SYNC";
-        }
-
-        topicId += "/" + documentId;
-
-        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
+        PigeonRoost.sendMessage(ADDRESS_DOWNLOAD_DOCUMENT, bundle, Sticky.NONE);
     }
 }

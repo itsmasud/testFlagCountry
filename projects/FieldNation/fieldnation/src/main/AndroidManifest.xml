@@ -232,10 +232,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
         <service
-            android:name=".service.GpsTrackingService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.auth.AuthService"
             android:exported="true"
             android:process=":frontside">
@@ -260,30 +256,6 @@
                 android:resource="@xml/syncadapter" />
         </service>
         <service
-            android:name=".fnpigeon.TopicService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.AnalyticsPassThroughService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.data.workorder.WorkorderService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.data.payment.PaymentService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.data.documents.DocumentService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
-            android:name=".service.crawler.WebCrawlerService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".gcm.MyGcmListenerService"
             android:exported="false"
             android:process=":frontside">
@@ -299,8 +271,29 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
+
         <service
-            android:name=".service.tracker.UploadTrackerService"
+            android:name=".fnpigeon.TopicService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.data.workorder.WorkorderService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.data.payment.PaymentService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.GpsTrackingService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.crawler.WebCrawlerService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.AnalyticsPassThroughService"
             android:exported="false"
             android:process=":frontside" />
 
