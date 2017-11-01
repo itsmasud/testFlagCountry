@@ -29,7 +29,6 @@ public class AttachmentHelper {
 
     public static void addAttachment(final Context context, final UUIDGroup uuid, final int workOrderId, final Attachment attachment, Intent data) {
         Log.v(TAG, "addAttachment");
-        // TODO analytics
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
             public void fromUri(String filename, Uri uri) {

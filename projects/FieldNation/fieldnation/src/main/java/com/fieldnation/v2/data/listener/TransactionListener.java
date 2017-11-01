@@ -169,8 +169,6 @@ public class TransactionListener extends WebTransactionListener {
                     UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
                 }
 
-                // TODO decrement parent uuid child count?
-                // See workorderswebapi (303)
                 if (transaction.getUUID() != null)
                     AttachmentTracker.complete(context, transaction.getUUID());
 

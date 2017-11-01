@@ -268,8 +268,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .header("X-App-UUID", uuid.uuid)
-                    .header("X-App-PARENT-UUID", uuid.parentUUID)
+                    .header("X-App-Uuid", uuid.uuid)
+                    .header("X-App-Parent-Uuid", uuid.parentUUID)
                     .path("/api/rest/v2/users/" + profileId + "/profile/avatar")
                     .multipartFile("file", filename, upFile)
                     .doNotRead();

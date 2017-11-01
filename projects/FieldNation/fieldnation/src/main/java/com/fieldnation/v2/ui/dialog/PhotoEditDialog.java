@@ -87,7 +87,6 @@ public class PhotoEditDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
-        // TODO analytics
         _uuid = params.getParcelable("uuid");
 
         if (params.containsKey("uri")) {
@@ -164,7 +163,6 @@ public class PhotoEditDialog extends FullScreenDialog {
     private final BitmapCropCallback _cropCallBack = new BitmapCropCallback() {
         @Override
         public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY, int imageWidth, int imageHeight) {
-            // TODO analytics
             _onSaveDispatcher.dispatch(getUid(), _uuid, _name, resultUri);
             ((Activity) getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
             Controller.dismiss(App.get(), getUid());

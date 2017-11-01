@@ -271,8 +271,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
-        // TODO analytics
-
         _uuid = payload.getParcelable("uuid");
 
         if (payload.containsKey("webTransactionId")) {
@@ -554,7 +552,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                         Attachment attachment = new Attachment();
                         attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                        // TODO: API cant take notes with the attachment
                         AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
                     } catch (Exception e) {
                         Log.v(TAG, e);

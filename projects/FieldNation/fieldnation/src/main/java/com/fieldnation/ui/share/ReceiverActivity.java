@@ -161,7 +161,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
         _loadingTextView.setText(getString(R.string.preparing_files_num, 1, 1));
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
-            // TODO, the parent ID needs to be something else?
             _sharedFiles[0] = new SharedFile(_myUUID, fileName, fileUri);
 
             Tracker.event(App.get(), new CustomEvent.Builder()
@@ -202,7 +201,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
-                // TODO, the parent ID needs to be something else?
                 _sharedFiles[i] = new SharedFile(_myUUID, fileName, fileUris.get(i));
 
                 Tracker.event(App.get(), new CustomEvent.Builder()
