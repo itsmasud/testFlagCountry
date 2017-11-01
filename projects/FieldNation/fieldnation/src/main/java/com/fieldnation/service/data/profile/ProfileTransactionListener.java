@@ -254,7 +254,6 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         long providerId = params.getLong("profileId");
         String filename = params.getString("filename");
 
-        // TODO analytics
         if (result == Result.CONTINUE) {
             ProfileDispatch.uploadProfilePhoto(transaction.getUUID(), filename, true, false);
             ProfileClient.get(context, false);

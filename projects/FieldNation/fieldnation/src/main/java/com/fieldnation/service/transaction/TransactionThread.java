@@ -142,7 +142,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
 
         WebTransaction trans = null;
-        // TODO analytics
         try {
             trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
                     _syncThread ? Priority.LOW : Priority.NORMAL);
@@ -298,7 +297,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "3");
                 generateNotification(notifId, notifRetry);
                 trans.requeue(getRetry());
-
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
 

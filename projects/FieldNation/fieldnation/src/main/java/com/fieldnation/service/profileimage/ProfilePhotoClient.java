@@ -51,7 +51,6 @@ public abstract class ProfilePhotoClient extends Pigeon implements ProfilePhotoC
      * @param uri
      */
     public static void upload(Context context, UUIDGroup uuid, Uri uri) {
-        // TODO analytics
         ProfilePhotoSystem.getInstance().upload(context, uuid, uri);
     }
 

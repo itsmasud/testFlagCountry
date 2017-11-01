@@ -231,7 +231,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     public static void uploadProfilePhoto(Context context, UUIDGroup uuid, StoredObject upFile, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto uri");
 
-        // TODO analytics
         if (upFile == null) {
             ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
             Log.logException(new Exception("PA-332 - UpFile is null"));

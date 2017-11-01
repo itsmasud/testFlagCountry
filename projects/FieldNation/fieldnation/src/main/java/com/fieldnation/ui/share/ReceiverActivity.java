@@ -130,7 +130,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
         String action = intent.getAction();
         Log.v(TAG, intent.toString());
 
-        // TODO analytics
         if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
             loadMultipleFiles(intent);
         } else if (action.equals(Intent.ACTION_SEND)) {
@@ -401,5 +400,4 @@ public class ReceiverActivity extends AuthSimpleActivity {
             view.clearAnimation();
         }
     }
-
 }
