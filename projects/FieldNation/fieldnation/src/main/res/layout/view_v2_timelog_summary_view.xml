@@ -9,8 +9,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <View
-        style="@style/DividerFull"
-        android:layout_below="@+id/count_textview" />
-
 </RelativeLayout>
