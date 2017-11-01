@@ -408,6 +408,12 @@ public class CounterOfferDialog extends FullScreenDialog {
             outState.putString("_reason", _reason);
     }
 
+    private void setEnableBottomSheet(boolean isEnable){
+        for (int i = 0; i<_bottomSheet.getChildCount(); i++){
+            _bottomSheet.getChildAt(i).setEnabled(isEnable);
+        }
+    }
+
     private void populateUi() {
         if (_payLayout == null)
             return;
@@ -507,7 +513,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    _floatingActionButton.setEnabled(false);
+                    setEnableBottomSheet(true);
                 }
             }, 500);
             misc.hideKeyboard(v);
@@ -523,12 +529,6 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _floatingActionButton.setEnabled(true);
-                }
-            }, 500);
             _bottomSheetBackground.clearAnimation();
             _bottomSheetBackground.startAnimation(_fadeOut);
             _bottomSheet.clearAnimation();
@@ -636,6 +636,13 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setEnableBottomSheet(false);
+                }
+            }, 100);
+
             PayDialog.show(App.get(), DIALOG_UID_PAY, R.string.change_pay, R.string.btn_ok, _pay != null ? _pay : _woPay, false);
             getView().postDelayed(new Runnable() {
                 @Override
@@ -693,6 +700,13 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setEnableBottomSheet(false);
+                }
+            }, 100);
+
             ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _woSchedule);
             getView().postDelayed(new Runnable() {
                 @Override
@@ -758,6 +772,13 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setEnableBottomSheet(false);
+                }
+            }, 100);
+
             _expenseMenuClickedView = null;
             ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, _workOrderId, true, false);
             getView().postDelayed(new Runnable() {
@@ -823,6 +844,13 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _addExpirationButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setEnableBottomSheet(false);
+                }
+            }, 100);
+
             ExpireDialog.show(getContext(), DIALOG_UID_EXPIRE);
             getView().postDelayed(new Runnable() {
                 @Override
@@ -939,6 +967,13 @@ public class CounterOfferDialog extends FullScreenDialog {
     private View.OnClickListener _addReasonButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setEnableBottomSheet(false);
+                }
+            }, 100);
+
             _reasonLayout.setVisibility(View.VISIBLE);
             _reasonTextView.setVisibility(View.GONE);
             _reasonEditText.setVisibility(View.VISIBLE);
