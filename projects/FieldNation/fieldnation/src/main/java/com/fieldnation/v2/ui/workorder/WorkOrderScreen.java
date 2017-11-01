@@ -1112,7 +1112,7 @@ public class WorkOrderScreen extends RelativeLayout {
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                         }
                 );
-                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(null, _myUUID), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
+                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(_myUUID, UUID.randomUUID().toString()), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
             setLoading(true);
         }

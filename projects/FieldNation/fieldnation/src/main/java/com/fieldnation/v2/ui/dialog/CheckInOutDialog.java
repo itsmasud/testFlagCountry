@@ -479,7 +479,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                             AppMessagingClient.setLoading(true);
 
-                            WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(null, _uiUUID),
+                            WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(_uiUUID, UUID.randomUUID().toString()),
                                     _workOrderId, timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;

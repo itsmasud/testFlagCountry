@@ -259,7 +259,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - edit")
                         }
                 );
-                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(null, _uiUUID),
+                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(_uiUUID, UUID.randomUUID().toString()),
                         _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
         }
