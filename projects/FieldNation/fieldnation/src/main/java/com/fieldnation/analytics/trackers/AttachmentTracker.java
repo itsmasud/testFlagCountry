@@ -100,6 +100,9 @@ public class AttachmentTracker {
         if (misc.isEmptyOrNull(uuidGroup.parentUUID))
             return; // not a child process
 
+        if (!parentExists(uuidGroup.parentUUID))
+            return; // parent doesn't exist already
+
         removeChild(uuidGroup);
 
         if (!parentExists(uuidGroup.parentUUID)) {
