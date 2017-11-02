@@ -31,6 +31,8 @@ import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 import com.fieldnation.v2.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.v2.ui.workorder.WorkOrderCard;
 
+import java.util.UUID;
+
 /**
  * Created by Michael on 7/27/2016.
  */
@@ -55,6 +57,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
     private ListEnvelope _envelope = null;
+    private String _myUUID = UUID.randomUUID().toString();
 
     public ConfirmResultScreen(Context context) {
         super(context);
@@ -292,7 +295,7 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
-            v.setData(object, _location, _savedList.getLabel());
+            v.setData(_myUUID, object, _location, _savedList.getLabel());
         }
 
         @Override

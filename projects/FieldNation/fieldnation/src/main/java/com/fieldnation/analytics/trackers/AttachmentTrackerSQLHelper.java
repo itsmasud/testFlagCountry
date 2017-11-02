@@ -1,4 +1,4 @@
-package com.fieldnation.service.transaction;
+package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,38 +11,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by Michael Carver on 2/27/2015.
+ * Created by mc on 10/31/17.
  */
-public class WebTransactionSqlHelper extends SQLiteOpenHelper {
-    private static final String TAG = "WebTransactionSqlHelper";
-    // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 7; // last update: 9-20-2017 MAR-525
-    public static final String TABLE_NAME = "transactions";
 
-    private static WebTransactionSqlHelper _instance = null;
+public class AttachmentTrackerSQLHelper extends SQLiteOpenHelper {
+    private static final String TAG = "AttachmentTrackerSQLHelper";
+
+    private static final int TABLE_VER = 1;
+    public static final String TABLE_NAME = "attachment_trackers";
+
+    private static AttachmentTrackerSQLHelper _instance = null;
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        LISTENER(1, "listener", "text"),
-        LISTENER_PARAMS(2, "listener_params", "blob"),
-        USE_AUTH(3, "use_auth", "integer not null"),
-        IS_SYNC(4, "is_sync", "integer not null"),
-        STATE(5, "state", "integer not null", true),
-        REQUEST(6, "request", "text"),
-        PRIORITY(7, "priority", "integer not null", true),
-        KEY(8, "key", "text", true),
-        QUEUE_TIME(9, "queue_time", "integer not null", true),
-        WIFI_REQUIRED(10, "wifi_req", "integer not null", true),
-        TRACK(11, "track", "integer not null"),
-        TRACK_TYPE(12, "track_type", "integer not null"),
-        TIMING_KEY(13, "timing_key", "text"),
-        WAS_ZOMBIE(14, "was_zombie", "integer not null", true),
-        UUID(15, "uuid", "text"),
-        NOTIF_ID(16, "notif_id", "integer"),
-        NOTIF_START(17, "notif_start", "integer"),
-        NOTIF_SUCCESS(18, "notif_success", "integer"),
-        NOTIF_FAILED(19, "notif_failed", "integer"),
-        NOTIF_RETRY(20, "notif_retry", "integer"),;
+        PARENT_UUID(1, "parent_uuid", "text", true),
+        UUID(2, "uuid", "text", true);
 
         private final int _index;
         private final String _name;
@@ -95,14 +78,14 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    private WebTransactionSqlHelper(Context context) {
+    private AttachmentTrackerSQLHelper(Context context) {
         super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
     }
 
-    public static WebTransactionSqlHelper getInstance(Context context) {
+    public static AttachmentTrackerSQLHelper getInstance(Context context) {
         synchronized (TAG) {
             if (_instance == null) {
-                _instance = new WebTransactionSqlHelper(context.getApplicationContext());
+                _instance = new AttachmentTrackerSQLHelper(context.getApplicationContext());
             }
             return _instance;
         }
@@ -175,7 +158,6 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
 
             } while (allRows.moveToNext());
         }
-
         return tableString;
     }
 }

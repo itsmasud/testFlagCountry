@@ -34,7 +34,7 @@ public class TrackerBase {
         String category();
     }
 
-    public static void show(Context context, String name, EventContext extraContext) {
+    public static void show(Context context, String name, EventContext[] extraContext) {
         Screen.Builder builder = new Screen.Builder()
                 .tag(SnowplowWrapper.TAG)
                 .name(name)
@@ -42,13 +42,15 @@ public class TrackerBase {
                         .page(name)
                         .build());
 
-        if (extraContext != null)
-            builder.addContext(extraContext);
+        if (extraContext != null && extraContext.length > 0) {
+            for (EventContext eventContext : extraContext)
+                builder.addContext(eventContext);
+        }
 
         Tracker.screen(context, builder.build());
     }
 
-    public static void event(Context context, Identity identity, Action action, String property, String label, EventContext extraContext) {
+    public static void event(Context context, Identity identity, Action action, String property, String label, EventContext[] extraContext) {
         SimpleEvent.Builder builder = new SimpleEvent.Builder()
                 .action(action.action())
                 .category(action.category())
@@ -61,8 +63,10 @@ public class TrackerBase {
                         .elementAction(identity.elementAction().elementAction)
                         .build());
 
-        if (extraContext != null)
-            builder.addContext(extraContext);
+        if (extraContext != null && extraContext.length > 0) {
+            for (EventContext eventContext : extraContext)
+                builder.addContext(eventContext);
+        }
 
         Tracker.event(context, builder.build());
     }

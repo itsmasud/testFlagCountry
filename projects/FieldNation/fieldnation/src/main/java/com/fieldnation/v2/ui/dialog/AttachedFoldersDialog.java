@@ -12,11 +12,17 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -49,6 +55,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     private AttachmentFolders _folders = null;
     private int _workOrderId;
     private AttachmentFolder _currentFolder;
+    private String _uiUUID;
 
     /*-*********----------**********-*/
     /*-         Life Cycle          -*/
@@ -95,8 +102,17 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "show");
         super.show(params, animate);
+
         _workOrderId = params.getInt("workOrderId");
+        _uiUUID = params.getString("uiUUID");
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Folders Dialog"))
+                .build());
+
         populateUi();
     }
 
@@ -133,6 +149,12 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Folders Dialog"))
+                .build());
+
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUpload_onOk);
         super.onStop();
@@ -147,7 +169,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     };
 
     private void startAppPickerDialog() {
-        GetFileDialog.show(getContext(), DIALOG_GET_FILE);
+        GetFileDialog.show(getContext(), DIALOG_GET_FILE, _uiUUID);
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -167,9 +189,14 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(fui.uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Folders Dialog, no uri"))
+                            .build());
                 }
                 return;
             }
@@ -181,19 +208,22 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                                 .category("AttachmentUpload")
                                 .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
                                 .action("start")
+                                .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Folders Dialog Upload"))
                                 .build());
 
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentFolder.getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
             }
             _currentFolder = null;
             dismiss(true);
-            AttachedFilesDialog.show(App.get(), null, _workOrderId);
+            AttachedFilesDialog.show(App.get(), null, _uiUUID, _workOrderId);
         }
     };
 
@@ -201,7 +231,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         @Override
         public void onOk() {
             dismiss(false);
-            AttachedFilesDialog.show(App.get(), null, _workOrderId);
+            AttachedFilesDialog.show(App.get(), null, _uiUUID, _workOrderId);
         }
     };
 
@@ -220,11 +250,11 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId) {
+    public static void show(Context context, String uid, String uiUUID, int workOrderId) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
+        params.putString("uiUUID", uiUUID);
 
         Controller.show(context, uid, AttachedFoldersDialog.class, params);
     }
-
 }

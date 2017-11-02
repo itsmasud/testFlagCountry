@@ -5,6 +5,7 @@ import android.content.Context;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -32,6 +33,10 @@ public class SpUIContext implements EventContext, SpContext, Cloneable {
     public String elementAction;
     @Json
     public String elementIdentity;
+
+    static {
+        SnowplowWrapper.registerContext(TAG, SpUIContext.class);
+    }
 
     public SpUIContext() {
     }

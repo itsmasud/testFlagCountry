@@ -33,6 +33,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
     // Data
     private WorkOrder _workOrder;
+    private String _myUUID;
 
     public TaskSummaryView(Context context) {
         super(context);
@@ -80,6 +81,10 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
+    }
+
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
     }
 
     private void populateUi() {
@@ -196,7 +201,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void onClick(View v) {
             Group group = (Group) v.getTag();
-            TasksDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
+            TasksDialog.show(App.get(), null, _myUUID, _workOrder.getId(), group.id, group.name);
         }
     };
 

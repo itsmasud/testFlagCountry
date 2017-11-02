@@ -255,7 +255,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         String filename = params.getString("filename");
 
         if (result == Result.CONTINUE) {
-            ProfileDispatch.uploadProfilePhoto(filename, true, false);
+            ProfileDispatch.uploadProfilePhoto(transaction.getUUID(), filename, true, false);
             ProfileClient.get(context, false);
             UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
             return Result.CONTINUE;
@@ -270,7 +270,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             } else {
                 ToastClient.toast(context, "Failed to upload file. " + filename + " Please try again", Toast.LENGTH_LONG);
             }
-            ProfileDispatch.uploadProfilePhoto(filename, false, true);
+            ProfileDispatch.uploadProfilePhoto(transaction.getUUID(), filename, false, true);
             return Result.DELETE;
 
         } else {

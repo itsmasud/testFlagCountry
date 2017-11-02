@@ -37,6 +37,7 @@ import com.fieldnation.v2.ui.workorder.WorkOrderCard;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Michael on 7/27/2016.
@@ -62,6 +63,7 @@ public class PickerResultScreen extends RelativeLayout {
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
     private ListEnvelope _envelope = null;
+    private String _myUUID = UUID.randomUUID().toString();
 
     public PickerResultScreen(Context context) {
         super(context);
@@ -310,7 +312,7 @@ public class PickerResultScreen extends RelativeLayout {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
-            v.setData(object, _location, _savedList.getLabel());
+            v.setData(_myUUID, object, _location, _savedList.getLabel());
         }
 
         @Override

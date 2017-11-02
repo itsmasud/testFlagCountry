@@ -19,6 +19,7 @@ import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
 
 import java.util.List;
+import java.util.UUID;
 
 public class WorkOrderActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkOrderActivity";
@@ -27,6 +28,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_WORKORDER_ID = TAG + ".workOrderId";
     public static final String INTENT_FIELD_WORKORDER = TAG + ".workOrder";
     public static final String INTENT_FIELD_ACTION = TAG + ".action";
+    public static final String INTENT_UI_UUID = TAG + ".uuid";
     public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
@@ -41,6 +43,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private boolean _attachmentsShown = false;
     private boolean _showMessages = false;
     private boolean _messagesShown = false;
+    private String _myUUID;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -64,6 +67,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         if (intent != null) {
             if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
                 _workOrderId = intent.getIntExtra(INTENT_FIELD_WORKORDER_ID, 0);
+            }
+
+            if (intent.hasExtra(INTENT_UI_UUID)) {
+                _myUUID = intent.getStringExtra(INTENT_UI_UUID);
             }
 
             // taking a link from e-mail/browser
@@ -97,6 +104,9 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (savedInstanceState.containsKey("messagesShown")) {
                 _messagesShown = savedInstanceState.getBoolean("messagesShown");
             }
+            if (savedInstanceState.containsKey("uuid")) {
+                _myUUID = savedInstanceState.getString("uuid");
+            }
         }
 
         if (_workOrderId == 0) {
@@ -117,6 +127,9 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 // TODO handle confirm
             }
         }
+
+        if (_myUUID == null)
+            _myUUID = UUID.randomUUID().toString();
     }
 
     @Override
@@ -137,6 +150,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
         outState.putBoolean("attachmentsShown", _attachmentsShown);
         outState.putBoolean("messagesShown", _messagesShown);
+        outState.putString("uuid", _myUUID);
 
         super.onSaveInstanceState(outState);
     }
@@ -148,6 +162,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        _workOrderScreen.setUUID(_myUUID);
         _workOrderScreen.onStart();
     }
 
@@ -202,7 +217,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     _workOrder = workOrder;
 
                     if (_showAttachments && !_attachmentsShown) {
-                        AttachedFilesDialog.show(App.get(), null, _workOrder.getId());
+                        AttachedFilesDialog.show(App.get(), null, _myUUID, _workOrder.getId());
                         _showAttachments = false;
                         _attachmentsShown = true;
                     }
@@ -235,13 +250,14 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         ActivityClient.startActivity(intent);
     }
 
-    public static Intent makeIntentAttachments(Context context, int workOrderId) {
+    public static Intent makeIntentAttachments(Context context, int workOrderId, String uuid) {
         Log.v(TAG, "makeIntentAttachments");
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_ATTACHMENTS);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        intent.putExtra(INTENT_UI_UUID, uuid);
         return intent;
     }
 

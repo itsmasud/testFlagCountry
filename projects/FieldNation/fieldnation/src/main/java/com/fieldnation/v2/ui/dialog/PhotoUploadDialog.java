@@ -26,7 +26,13 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -35,6 +41,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
@@ -100,6 +107,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private TransactionParams _transactionParams;
     private JsonObject _methodParams;
     private JsonObject _httpBuilder;
+    private UUIDGroup _uuid;
 
 
     private static int getIcon(String ext) {
@@ -263,6 +271,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
+        _uuid = payload.getParcelable("uuid");
 
         if (payload.containsKey("webTransactionId")) {
             try {
@@ -271,6 +280,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _transactionParams = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
                 _methodParams = new JsonObject(_transactionParams.methodParams);
                 _httpBuilder = new JsonObject(_webTransaction.getRequestString());
+                _uuid = _webTransaction.getUUID();
 
                 _originalFileName = _methodParams.getString("attachment.file.name");
                 _description = _methodParams.has("attachment.notes") ? _methodParams.getString("attachment.notes") : "";
@@ -286,6 +296,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 if (_cacheSize > 100000000) {
                     ToastClient.toast(App.get(), "File is over 100mb limit. Cannot upload.", Toast.LENGTH_SHORT);
                 }
+
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(_uuid))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.START, "Photo Upload Dialog - Retry"))
+                        .addContext(new SpFileContext.Builder().name(_originalFileName).size((int) _cacheSize).build())
+                        .build());
 
                 setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
             } catch (Exception ex) {
@@ -307,8 +324,15 @@ public class PhotoUploadDialog extends FullScreenDialog {
             if (payload.containsKey("uri")) {
                 _sourceUri = payload.getParcelable("uri");
                 Log.v(TAG, "uri: " + _sourceUri);
-                FileCacheClient.cacheFileUpload(_sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_uuid, _sourceUri.toString(), _sourceUri);
             }
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(_uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.START, "Photo Upload Dialog - New"))
+                    .addContext(new SpFileContext.Builder().name(_originalFileName).size(0).build())
+                    .build());
         }
         populateUi();
     }
@@ -368,6 +392,17 @@ public class PhotoUploadDialog extends FullScreenDialog {
     public void onPause() {
         _fileCacheClient.unsub();
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(_uuid))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Photo Upload Dialog"))
+                .addContext(new SpFileContext.Builder().name(_originalFileName).size(0).build())
+                .build());
+        super.onStop();
     }
 
     public void setPhoto(Bitmap bitmap) {
@@ -477,6 +512,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .category("AttachmentRetry")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
+                                    .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Retry"))
+                                    .addContext(new SpFileContext.Builder().name(_newFileName).size((int) _cacheSize).build())
                                     .build());
 
                     Attachment attachment = Attachment.fromJson(_methodParams.getJsonObject("attachment"));
@@ -504,13 +543,16 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
+                                    .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Task"))
+                                    .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
                                     .build());
                     try {
                         Attachment attachment = new Attachment();
                         attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                        // TODO: API cant take notes with the attachment
-                        AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                        AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
                     } catch (Exception e) {
                         Log.v(TAG, e);
                     }
@@ -524,13 +566,17 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
                                     .action("start")
+                                    .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Slot"))
+                                    .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
                                     .build());
 
                     try {
                         Attachment attachment = new Attachment();
                         attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                        AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
+                        AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
                     } catch (Exception e) {
                         Log.v(TAG, e);
                     }
@@ -613,7 +659,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             Log.v(TAG, "onFileCacheEnd tag: " + tag);
             Log.v(TAG, "onFileCacheEnd uri: " + uri);
             if (!tag.equals(_sourceUri.toString())) {
@@ -635,29 +681,32 @@ public class PhotoUploadDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, Task task, String fileName, Uri uri) {
+    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, Task task, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("task", task);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
+    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
         params.putParcelable("slot", slot);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, long webTransactionId) {
+    public static void show(Context context, String uid, UUIDGroup uuid, long webTransactionId) {
         Bundle params = new Bundle();
         params.putLong("webTransactionId", webTransactionId);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }

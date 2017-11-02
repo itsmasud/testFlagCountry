@@ -19,17 +19,24 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -49,6 +56,7 @@ import com.fieldnation.v2.ui.TasksAdapter;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 09/10/17.
@@ -78,7 +86,7 @@ public class TasksDialog extends FullScreenDialog {
     private String _dialogTitle;
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
-
+    private String _uiUUID = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -116,6 +124,12 @@ public class TasksDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Tasks Dialog"))
+                .build());
+
         super.onStop();
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
@@ -136,6 +150,14 @@ public class TasksDialog extends FullScreenDialog {
         _workOrderId = params.getInt(PARAM_WORK_ORDER_ID);
         _dialogTitle = params.getString(PARAM_DIALOG_TITLE);
         _groupId = params.getString(PARAM_GROUP_ID);
+        _uiUUID = params.getString("uiUUID");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Tasks Dialog"))
+                .build());
+
         populateUi();
 
         AppMessagingClient.setLoading(true);
@@ -182,7 +204,7 @@ public class TasksDialog extends FullScreenDialog {
     /*-*********************************************-*/
     private void doCheckin() {
         App.get().analActionTitle = null;
-        CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+        CheckInOutDialog.show(App.get(), null, _uiUUID, _workOrder.getId(),
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
@@ -201,17 +223,25 @@ public class TasksDialog extends FullScreenDialog {
         App.get().analActionTitle = null;
 
         if (deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+            CheckInOutDialog.show(App.get(), null, _uiUUID, _workOrder.getId(),
                     _workOrder.getTimeLogs(), deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+            CheckInOutDialog.show(App.get(), null, _uiUUID, _workOrder.getId(),
                     _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
 
     private void startAppPickerDialog() {
         if (checkMedia()) {
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+            UUIDGroup uuid = new UUIDGroup(null, _uiUUID);
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog, start get file"))
+                    .build());
+
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
         } else {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
         }
@@ -230,9 +260,13 @@ public class TasksDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    // TODO show a toast?
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(fui.uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Tasks Dialog, no uri"))
+                            .build());
                 }
                 return;
             }
@@ -244,12 +278,15 @@ public class TasksDialog extends FullScreenDialog {
                                 .category("AttachmentUpload")
                                 .label("WorkOrderScreen - multiple")
                                 .action("start")
+                                .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog Upload"))
                                 .build());
 
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -270,7 +307,15 @@ public class TasksDialog extends FullScreenDialog {
     private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
         @Override
         public void onDelete(int workOrderId, Shipment shipment) {
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkOrderTracker.onDeleteEvent(
+                    App.get(),
+                    WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog")
+                    }
+            );
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Task Shipment Add Dialog";
@@ -292,7 +337,15 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
         @Override
         public void onTaskClick(View view, Task task) {
-            WorkOrderTracker.onTaskEvent(App.get(), task.getType(), _workOrder.getId());
+            WorkOrderTracker.onTaskEvent(
+                    App.get(),
+                    task.getType(),
+                    _workOrder.getId(),
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog")
+                    });
 
             switch (getType(task)) {
 
@@ -332,11 +385,11 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
-                        try {
-                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
 
                     try {
                         if (task.getPhone() != null) {
@@ -579,11 +632,12 @@ public class TasksDialog extends FullScreenDialog {
      * @param groupId
      * @param dialogTitle
      */
-    public static void show(Context context, String uid, int workOrderId, String groupId, String dialogTitle) {
+    public static void show(Context context, String uid, String uiUUID, int workOrderId, String groupId, String dialogTitle) {
         Bundle params = new Bundle();
         params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
         params.putString(PARAM_GROUP_ID, groupId);
         params.putString(PARAM_DIALOG_TITLE, dialogTitle);
+        params.putString("uiUUID", uiUUID);
 
         Controller.show(context, uid, TasksDialog.class, params);
     }

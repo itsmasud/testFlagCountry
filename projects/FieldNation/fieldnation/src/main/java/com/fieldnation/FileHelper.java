@@ -24,7 +24,7 @@ public class FileHelper {
     private static final String TAG = "FileHelper";
 
     public static void getFileFromActivityResult(Context context, Intent data, Listener listener) {
-
+        // TODO this might need to be in an asynctask
         if (data == null) {
             listener.fail("No data available");
             return;

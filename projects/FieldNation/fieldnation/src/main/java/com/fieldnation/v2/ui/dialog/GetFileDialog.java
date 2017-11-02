@@ -23,15 +23,22 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -46,6 +53,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class GetFileDialog extends SimpleDialog {
     private static final String TAG = "GetFileDialog";
@@ -68,6 +76,7 @@ public class GetFileDialog extends SimpleDialog {
     private Hashtable<String, UriIntent> caching = new Hashtable<>();
     private List<UriIntent> cached = new LinkedList<>();
     private Hashtable<String, Long> progress = new Hashtable<>();
+    private String _uiUUID = null;
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -113,6 +122,14 @@ public class GetFileDialog extends SimpleDialog {
             for (Parcelable parcelable : intents) {
                 addIntent((GetFileIntent) parcelable);
             }
+
+        _uiUUID = payload.getString("uiUUID");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Get File Dialog"))
+                .build());
 
         super.show(payload, animate);
     }
@@ -214,6 +231,13 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void onStop() {
         Log.v(TAG, "onStop");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Get File Dialog"))
+                .build());
+
         _permissionsListener.unsub();
         _activityResultListener.unsub();
         _fileCacheClient.unsub();
@@ -291,7 +315,7 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid) {
+    public static void show(Context context, String uid, String uiUUID) {
         Intent intent = new Intent();
         intent.setType("*/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -306,16 +330,17 @@ public class GetFileDialog extends SimpleDialog {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(App.get(), uid, new GetFileIntent[]{intent1, intent2});
+            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1, intent2});
         } else {
-            GetFileDialog.show(App.get(), uid, new GetFileIntent[]{intent1});
+            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1});
         }
     }
 
-    private static void show(Context context, String uid, GetFileIntent[] intents) {
+    private static void show(Context context, String uid, String uiUUID, GetFileIntent[] intents) {
         Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelableArray("intents", intents);
+        params.putString("uiUUID", uiUUID);
 
         Controller.show(context, uid, GetFileDialog.class, params);
     }
@@ -341,7 +366,6 @@ public class GetFileDialog extends SimpleDialog {
     };
 
     private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
-
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
@@ -359,7 +383,7 @@ public class GetFileDialog extends SimpleDialog {
 
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
-                    fileUris.add(new UriIntent(_sourceUri));
+                    fileUris.add(new UriIntent(_uiUUID, _sourceUri));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();
@@ -371,22 +395,23 @@ public class GetFileDialog extends SimpleDialog {
 
                             if (count == 1) {
                                 _sourceUri = null;// TODO not sure this is corrects
-                                fileUris.add(new UriIntent(data.getData()));
+                                fileUris.add(new UriIntent(_uiUUID, data.getData()));
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
-                                    fileUris.add(new UriIntent(new Intent().setData(uri)));
+                                    fileUris.add(new UriIntent(_uiUUID, new Intent().setData(uri)));
                                 }
                             }
                         } else {
                             Log.v(TAG, "Single local/ non-local file upload");
                             if (data.getData() != null) _sourceUri = data.getData();
-                            if (_sourceUri != null) fileUris.add(new UriIntent(_sourceUri));
+                            if (_sourceUri != null)
+                                fileUris.add(new UriIntent(_uiUUID, _sourceUri));
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         if (data.getData() != null) _sourceUri = data.getData();
-                        if (_sourceUri != null) fileUris.add(new UriIntent(_sourceUri));
+                        if (_sourceUri != null) fileUris.add(new UriIntent(_uiUUID, _sourceUri));
                     }
                 }
 
@@ -405,10 +430,10 @@ public class GetFileDialog extends SimpleDialog {
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
                         caching.put(ui.uri.toString(), ui);
-                        FileCacheClient.cacheFileUpload(ui.uri.toString(), ui.uri);
+                        FileCacheClient.cacheFileUpload(ui.uuid, ui.uri.toString(), ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
                         caching.put(ui.intent.getData().toString(), ui);
-                        FileCacheClient.cacheFileUpload(ui.intent.getData().toString(), ui.intent.getData());
+                        FileCacheClient.cacheFileUpload(ui.uuid, ui.intent.getData().toString(), ui.intent.getData());
                     }
                 }
             } catch (Exception ex) {
@@ -422,24 +447,33 @@ public class GetFileDialog extends SimpleDialog {
     public static class UriIntent implements Parcelable {
         public Uri uri = null;
         public Intent intent = null;
+        public UUIDGroup uuid = null;
 
-        private UriIntent(Uri uri) {
+        private UriIntent(String parentUUID, Uri uri) {
             this.uri = uri;
+            this.uuid = new UUIDGroup(parentUUID, UUID.randomUUID().toString());
         }
 
-        private UriIntent(Intent intent) {
+        private UriIntent(String parentUUID, Intent intent) {
             this.intent = intent;
+            this.uuid = new UUIDGroup(parentUUID, UUID.randomUUID().toString());
+        }
+
+        private UriIntent(Bundle bundle) {
+            this.uri = bundle.getParcelable("uri");
+            this.intent = bundle.getParcelable("intent");
+            this.uuid = bundle.getParcelable("uuid");
         }
 
         public static final Parcelable.Creator<UriIntent> CREATOR = new Parcelable.Creator<UriIntent>() {
             @Override
             public UriIntent createFromParcel(Parcel source) {
-                Parcelable p = source.readParcelable(Parcelable.class.getClassLoader());
-                if (p instanceof Uri)
-                    return new UriIntent((Uri) p);
-                else if (p instanceof Intent)
-                    return new UriIntent((Intent) p);
-
+                try {
+                    Bundle bundle = source.readBundle(getClass().getClassLoader());
+                    return new UriIntent(bundle);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
                 return null;
             }
 
@@ -456,17 +490,18 @@ public class GetFileDialog extends SimpleDialog {
 
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            if (uri != null)
-                dest.writeParcelable(uri, flags);
-            else if (intent != null)
-                dest.writeParcelable(intent, flags);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("uri", uri);
+            bundle.putParcelable("intent", intent);
+            bundle.putParcelable("uuid", uuid);
+            dest.writeBundle(bundle);
         }
     }
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
 
         @Override
-        public void onFileCacheProgress(String tag, long size) {
+        public void onFileCacheProgress(UUIDGroup uuid, String tag, long size) {
             progress.put(tag, size);
 
             long sum = 0;
@@ -479,7 +514,7 @@ public class GetFileDialog extends SimpleDialog {
         }
 
         @Override
-        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             if (caching.containsKey(tag)) {
                 cached.add(caching.remove(tag));
 

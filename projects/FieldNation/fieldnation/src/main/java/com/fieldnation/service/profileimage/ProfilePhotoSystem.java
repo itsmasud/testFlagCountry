@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
@@ -50,9 +51,9 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
         }
     }
 
-    public void upload(Context context, Uri uri) {
+    public void upload(Context context, UUIDGroup uuid, Uri uri) {
         _currentProfileImage = uri;
-        ProfileClient.uploadProfilePhoto(context, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
+        ProfileClient.uploadProfilePhoto(context, uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
         ProfilePhotoClient.dispatchGet(context, _currentProfileImage);
     }
 

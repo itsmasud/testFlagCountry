@@ -22,10 +22,17 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fngps.SimpleGps;
@@ -33,6 +40,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
@@ -50,6 +58,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 10/28/2016.
@@ -92,6 +101,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private int _workOrderId;
     private int _maxDevice;
     private TimeLogs _timeLogs;
+    private String _uiUUID = null;
 
     // User data
     private Calendar _startCalendar;
@@ -172,6 +182,14 @@ public class CheckInOutDialog extends FullScreenDialog {
         _dialogType = params.getString("dialogType");
         _workOrderId = params.getInt("workOrderId");
         _timeLogs = params.getParcelable("timeLogs");
+        _uiUUID = params.getString("uiUUID");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Check In Out Dialog"))
+                .build());
+
         if (params.containsKey("deviceCount") &&
                 _dialogType.equals(CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT)) {
             _deviceNumberLayout.setVisibility(View.VISIBLE);
@@ -231,6 +249,12 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Check In Out Dialog"))
+                .build());
+
         if (_simpleGps != null && _simpleGps.isRunning())
             _simpleGps.stop();
         super.onStop();
@@ -412,13 +436,22 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                     AppMessagingClient.setLoading(true);
 
-                    WorkordersWebApi.addTimeLog(App.get(), _workOrderId, new TimeLog().in(cio), uiContext);
+                    WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(_uiUUID, UUID.randomUUID().toString()), _workOrderId, new TimeLog().in(cio), uiContext);
 
                     GpsTrackingService.stop(App.get());
 
-                    WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
-                            WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN,
-                            _workOrderId);
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(),
+                            App.get().analActionTitle,
+                            WorkOrderTracker.ActionButton.CHECK_IN,
+                            WorkOrderTracker.Action.CHECK_IN,
+                            _workOrderId,
+                            new EventContext[]{
+                                    new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                    new SpStackContext(DebugUtils.getStackTraceElement()),
+                                    new SpStatusContext(SpStatusContext.Status.INFO, "Check In Out Dialog"),
+                            }
+                    );
 
                 } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                     boolean callMade = false;
@@ -446,7 +479,8 @@ public class CheckInOutDialog extends FullScreenDialog {
 
                             AppMessagingClient.setLoading(true);
 
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), timeLog, uiContext);
+                            WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(_uiUUID, UUID.randomUUID().toString()),
+                                    _workOrderId, timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
                         }
@@ -456,8 +490,18 @@ public class CheckInOutDialog extends FullScreenDialog {
                         Log.v(TAG, "break!");
                     }
 
-                    WorkOrderTracker.onActionButtonEvent(App.get(), App.get().analActionTitle,
-                            WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, _workOrderId);
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(),
+                            App.get().analActionTitle,
+                            WorkOrderTracker.ActionButton.CHECK_OUT,
+                            WorkOrderTracker.Action.CHECK_OUT,
+                            _workOrderId,
+                            new EventContext[]{
+                                    new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                    new SpStackContext(DebugUtils.getStackTraceElement()),
+                                    new SpStatusContext(SpStatusContext.Status.INFO, "Check In Out Dialog"),
+                            }
+                    );
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -512,20 +556,24 @@ public class CheckInOutDialog extends FullScreenDialog {
     };
 
     // with max device
-    public static void show(Context context, String uid, int workOrderId, TimeLogs timeLogs, int maxDevice, String dialogType) {
+    public static void show(Context context, String uid, String uiUUID, int workOrderId, TimeLogs timeLogs, int maxDevice, String dialogType) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("dialogType", dialogType);
         params.putParcelable("timeLogs", timeLogs);
         params.putInt("deviceCount", maxDevice);
+        params.putString("uiUUID", uiUUID);
+
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
 
-    public static void show(Context context, String uid, int workOrderId, TimeLogs timeLogs, String dialogType) {
+    public static void show(Context context, String uid, String uiUUID, int workOrderId, TimeLogs timeLogs, String dialogType) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putParcelable("timeLogs", timeLogs);
         params.putString("dialogType", dialogType);
+        params.putString("uiUUID", uiUUID);
+
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
 

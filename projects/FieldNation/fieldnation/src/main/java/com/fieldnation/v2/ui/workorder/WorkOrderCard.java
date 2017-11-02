@@ -65,6 +65,7 @@ import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -101,6 +102,7 @@ public class WorkOrderCard extends RelativeLayout {
     private Location _location;
     private String _savedSearchTitle;
     private OnActionListener _onActionListener;
+    private String _myUUID;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -170,7 +172,8 @@ public class WorkOrderCard extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setData(WorkOrder workOrder, Location location, String savedSearchTitle) {
+    public void setData(String uuid, WorkOrder workOrder, Location location, String savedSearchTitle) {
+        _myUUID = uuid;
         _workOrder = workOrder;
         _location = location;
         _savedSearchTitle = savedSearchTitle;
@@ -663,11 +666,11 @@ public class WorkOrderCard extends RelativeLayout {
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                CheckInOutDialog.show(App.get(), null, _myUUID, _workOrder.getId(),
                         _workOrder.getTimeLogs(), _workOrder.getPay().getBase().getUnits().intValue(),
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                CheckInOutDialog.show(App.get(), null, _myUUID, _workOrder.getId(),
                         _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             }
         }
@@ -680,11 +683,11 @@ public class WorkOrderCard extends RelativeLayout {
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                CheckInOutDialog.show(App.get(), null, _myUUID, _workOrder.getId(),
                         _workOrder.getTimeLogs(), _workOrder.getPay().getBase().getUnits().intValue(),
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                CheckInOutDialog.show(App.get(), null, _myUUID, _workOrder.getId(),
                         _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             }
         }
@@ -697,11 +700,11 @@ public class WorkOrderCard extends RelativeLayout {
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                CheckInOutDialog.show(App.get(), null, _myUUID, _workOrder.getId(),
                         _workOrder.getTimeLogs(), _workOrder.getPay().getBase().getUnits().intValue(),
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(),
+                CheckInOutDialog.show(App.get(), null, _myUUID, _workOrder.getId(),
                         _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         }

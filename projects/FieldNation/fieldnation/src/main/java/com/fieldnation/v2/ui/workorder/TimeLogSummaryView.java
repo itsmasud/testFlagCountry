@@ -25,6 +25,7 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
 
     // Data
     private WorkOrder _workOrder;
+    private String _myUUID;
 
     public TimeLogSummaryView(Context context) {
         super(context);
@@ -57,6 +58,10 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         populateUi();
     }
 
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
+    }
+
     private void populateUi() {
         if (_summaryView == null) return;
 
@@ -87,7 +92,7 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         @Override
         public void onClick(View view) {
             final String dialogTitle = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged);
-            TimeLogListDialog.show(App.get(), null, _workOrder.getId(), dialogTitle);
+            TimeLogListDialog.show(App.get(), null, _myUUID, _workOrder.getId(), dialogTitle);
         }
     };
 

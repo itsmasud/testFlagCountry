@@ -18,13 +18,20 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.AttachmentTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -62,11 +69,12 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Data
     private AttachmentFolders folders = null;
-    private AttachedFilesAdapter adapter = null;
-    private int _workOrderId;
     private AttachmentFolder _selectedFolder = null;
+    private AttachedFilesAdapter adapter = null;
     private Attachment _selectedAttachment = null;
+    private int _workOrderId;
     private long _selectedTransactionId;
+    private String _myUUID;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -117,6 +125,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
         Log.v(TAG, "show");
         super.show(payload, animate);
         _workOrderId = payload.getInt("workOrderId");
+        _myUUID = payload.getString("uuid");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "Files Dialog"))
+                .build());
+
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
         AppMessagingClient.setLoading(true);
     }
@@ -165,6 +181,12 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Files Dialog"))
+                .build());
+
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
@@ -189,7 +211,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Utils
     private void startAppPickerDialog() {
-        GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+        GetFileDialog.show(App.get(), DIALOG_GET_FILE, _myUUID);
     }
 
     private boolean checkMedia() {
@@ -236,7 +258,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onFailedClick(WebTransaction webTransaction) {
-            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, webTransaction.getId());
+            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, webTransaction.getUUID(), webTransaction.getId());
         }
 
         @Override
@@ -245,7 +267,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             TwoButtonDialog.show(App.get(), DIALOG_YES_NO_FAILED,
                     "Cancel Upload", "Are you sure you want to cancel this upload?",
                     getView().getResources().getString(R.string.btn_yes),
-                    getView().getResources().getString(R.string.btn_no), true, null);
+                    getView().getResources().getString(R.string.btn_no), true, webTransaction);
         }
     };
 
@@ -269,10 +291,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _selectedFolder,
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId, _selectedFolder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    // TODO show a toast?
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(fui.uuid))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Files Dialog, no uri"))
+                            .build());
                 }
                 return;
             }
@@ -284,11 +310,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
                                 .category("AttachmentUpload")
                                 .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
                                 .action("start")
+                                .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Files Dialog Upload"))
                                 .build());
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_selectedFolder.getId());
-                    AttachmentHelper.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -309,6 +338,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimaryFailed = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
+            AttachmentTracker.complete(getContext(), ((WebTransaction) extraData).getUUID());
+
             WebTransaction.delete(_selectedTransactionId);
             populateUi();
             // Todo, this is to force the WoD to update after the transaction is deleted
@@ -468,9 +499,10 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId) {
+    public static void show(Context context, String uid, String uuid, int workOrderId) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
+        params.putString("uuid", uuid);
 
         Controller.show(context, uid, AttachedFilesDialog.class, params);
     }
