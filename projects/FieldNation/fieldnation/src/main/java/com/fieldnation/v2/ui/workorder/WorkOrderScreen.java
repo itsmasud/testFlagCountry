@@ -479,6 +479,8 @@ public class WorkOrderScreen extends RelativeLayout {
             menu.add(0, 4, 300, "Rate Buyer");
         }
 
+        menu.add(0, 5, 300, "Send Debug Log");
+
         if (menu.size() == 0) {
             _moreMenuButton.setVisibility(GONE);
         } else {
@@ -647,14 +649,30 @@ public class WorkOrderScreen extends RelativeLayout {
                         DeclineDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany().getId(), true);
                     }
                     break;
-                case 3: // print
+                case 3: { // print
                     String url = "https://" + getContext().getString(R.string.web_fn_hostname) + "/marketplace/wo_print.php?workorder_id=" + _workOrderId;
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     ActivityClient.startActivity(intent);
                     break;
+                }
                 case 4: // rate buyer
                     RateBuyerDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
                     break;
+                case 5: { // send debug log
+                    File tempfile = DebugUtils.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("plain/text");
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+                    intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
+                    intent.putExtra(Intent.EXTRA_STREAM, App.getUriFromFile(tempfile));
+                    if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                        getContext().startActivity(intent);
+                    } else {
+                        Toast.makeText(getContext(), R.string.no_email_app_is_available, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }
             }
 
             return true;

@@ -114,7 +114,6 @@ public class PigeonRoost {
      * @param sticky
      */
     public static void sendMessage(String address, Object message, Sticky sticky) {
-        Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "sendMessage " + address);
         List<Pigeon> pigeonList = new LinkedList<>();
         List<Object> objectList = new LinkedList<>();
@@ -155,7 +154,6 @@ public class PigeonRoost {
             }
         }
         getMainHandler().post(MessagesRunnable.getInstance(pigeonList, addressList, objectList));
-        Log.v(TAG, "sendMessage time: " + stopwatch.finish());
     }
 
     public static void clearAddressCache(String address) {
