@@ -149,6 +149,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private LocationView _locView;
     private ContactSummaryView _contactSummaryView;
     private TextView _bundleWarningTextView;
+    private RequestNewPayView _requestNewPayView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WodBottomSheetView _bottomsheetView;
@@ -232,6 +233,9 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _scheduleView = findViewById(R.id.schedule_view);
         _renderers.add(_scheduleView);
+
+        _requestNewPayView = findViewById(R.id.requestNewPay_view);
+        _renderers.add(_requestNewPayView);
 
         _paymentSectionView = findViewById(R.id.paymentSectionView);
         _renderers.add(_paymentSectionView);

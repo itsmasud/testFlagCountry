@@ -44,7 +44,6 @@ public class PaymentSectionView extends LinearLayout implements WorkOrderRendere
 
         if (isInEditMode()) return;
 
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.requestNewPay_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.payment_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.timelogSummary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.counterOfferSummary_view));

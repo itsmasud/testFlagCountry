@@ -9,11 +9,6 @@
         android:layout_height="wrap_content"
         android:text="Payments" />
 
-    <com.fieldnation.v2.ui.workorder.RequestNewPayView
-        android:id="@+id/requestNewPay_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
     <com.fieldnation.ui.workorder.detail.PaymentView
         android:id="@+id/payment_view"
         android:layout_width="match_parent"
