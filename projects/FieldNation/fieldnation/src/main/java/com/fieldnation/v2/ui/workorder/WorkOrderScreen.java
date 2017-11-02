@@ -116,7 +116,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     // Dialog tags
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
-    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
@@ -150,8 +149,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private LocationView _locView;
     private ContactSummaryView _contactSummaryView;
     private TextView _bundleWarningTextView;
-    private TaskSummaryView _taskWidget;
-    private ClosingNotesView _closingNotes;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WodBottomSheetView _bottomsheetView;
@@ -161,6 +158,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private AdditionalInfoSectionView _additionalInfoSectionView;
     private PaymentSectionView _paymentSectionView;
+    private TaskSectionView _taskSectionView;
 
     // Data
     private WorkOrder _workOrder;
@@ -250,12 +248,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         _scrollView = findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _taskWidget = findViewById(R.id.taskwidget_view);
-        _renderers.add(_taskWidget);
-
-        _closingNotes = findViewById(R.id.closingnotes_view);
-        _closingNotes.setListener(_closingNotesView_listener);
-        _renderers.add(_closingNotes);
+        _taskSectionView = findViewById(R.id.taskSectionView);
+        _renderers.add(_taskSectionView);
 
         _bottomsheetView = findViewById(R.id.bottomsheet_view);
         _bottomsheetView.setListener(_bottomsheetView_listener);
@@ -327,7 +321,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
 
-        ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -357,7 +350,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     public void onStop() {
         Log.v(TAG, "onStop");
-        ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -850,7 +842,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, null, _workOrderId);
 
-            showClosingNotesDialog();
+            if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
+                ClosingNotesDialog.show(App.get(), _workOrderId, _workOrder.getClosingNotes());
         }
 
         @Override
@@ -894,14 +887,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
     };
 
-    private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
-        @Override
-        public void onChangeClosingNotes(String closingNotes) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            showClosingNotesDialog();
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteSignature = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
@@ -921,20 +906,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
-    private void showClosingNotesDialog() {
-        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
-            ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrderId, _workOrder.getClosingNotes());
-    }
-
-    private final ClosingNotesDialog.OnOkListener _closingNotes_onOk = new ClosingNotesDialog.OnOkListener() {
-        @Override
-        public void onOk(String message) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            setLoading(true);
-        }
-    };
-
     private final MarkCompleteDialog.OnSignatureClickListener _markCompleteDialog_onSignature = new MarkCompleteDialog.OnSignatureClickListener() {
         @Override
         public void onSignatureClick() {

@@ -17,40 +17,35 @@ import java.util.List;
  * Created by mc on 11/2/17.
  */
 
-public class PaymentSectionView extends LinearLayout implements WorkOrderRenderer, UUIDView {
-    private static final String TAG = "PaymentSectionView";
+public class TaskSectionView extends LinearLayout implements WorkOrderRenderer, UUIDView {
+    private static final String TAG = "TaskSectionView";
 
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WorkOrder _workOrder;
     private String _uiUUID;
 
-    public PaymentSectionView(Context context) {
+    public TaskSectionView(Context context) {
         super(context);
         init();
     }
 
-    public PaymentSectionView(Context context, @Nullable AttributeSet attrs) {
+    public TaskSectionView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public PaymentSectionView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public TaskSectionView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_section_payments, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_section_tasks, this, true);
 
         if (isInEditMode()) return;
 
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.requestNewPay_view));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.payment_view));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.timelogSummary_view));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.counterOfferSummary_view));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.expensesSummaryView));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.discountSummaryView));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.expected_pay_view));
+        _renderers.add((WorkOrderRenderer) findViewById(R.id.taskwidget_view));
+        _renderers.add((WorkOrderRenderer) findViewById(R.id.closingnotes_view));
     }
 
     @Override

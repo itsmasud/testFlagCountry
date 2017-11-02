@@ -89,23 +89,10 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Tasks to be completed -->
-                <com.fieldnation.v2.ui.workorder.WodHeader
+                <com.fieldnation.v2.ui.workorder.TaskSectionView
+                    android:id="@+id/taskSectionView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Tasks to be Completed" />
-
-                <com.fieldnation.v2.ui.workorder.TaskSummaryView
-                    android:id="@+id/taskwidget_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.ClosingNotesView
-                    android:id="@+id/closingnotes_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
+                    android:layout_height="wrap_content" />
 
                 <!-- Buyer information -->
                 <com.fieldnation.v2.ui.workorder.WodHeader
