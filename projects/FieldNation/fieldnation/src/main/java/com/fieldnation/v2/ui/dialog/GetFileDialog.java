@@ -510,7 +510,7 @@ public class GetFileDialog extends SimpleDialog {
             }
 
             _loadingBytesTextView.setVisibility(View.VISIBLE);
-            _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " bytes copied...");
+            _loadingBytesTextView.setText(misc.humanReadableBytes(sum) + " copied...");
         }
 
         @Override
