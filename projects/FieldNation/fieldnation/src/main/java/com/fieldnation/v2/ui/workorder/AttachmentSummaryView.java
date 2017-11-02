@@ -17,7 +17,7 @@ import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
  * Created by shoaib.ahmed on 08/02/2017.
  */
 
-public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "AttachmentSummaryView";
 
     // Ui
@@ -63,6 +63,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         populateUi();
     }
 
+    @Override
     public void setUUID(String uuid) {
         _myUUID = uuid;
     }

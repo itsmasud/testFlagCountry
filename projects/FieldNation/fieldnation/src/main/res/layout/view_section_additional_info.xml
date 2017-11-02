@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.fieldnation.v2.ui.workorder.WodHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/additional_information" />
+
+    <com.fieldnation.v2.ui.workorder.SignatureSummaryView
+        android:id="@+id/signaturesSummaryView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.fieldnation.v2.ui.workorder.ShipmentSummaryView
+        android:id="@+id/shipmentSummaryView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.fieldnation.v2.ui.workorder.AttachmentSummaryView
+        android:id="@+id/attachment_summary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+</LinearLayout>

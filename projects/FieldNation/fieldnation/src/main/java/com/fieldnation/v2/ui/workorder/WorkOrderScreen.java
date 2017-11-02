@@ -111,7 +111,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-public class WorkOrderScreen extends RelativeLayout {
+public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private static final String TAG = "WorkOrderScreen";
 
     // Dialog tags
@@ -121,7 +121,6 @@ public class WorkOrderScreen extends RelativeLayout {
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
-    private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
@@ -150,25 +149,18 @@ public class WorkOrderScreen extends RelativeLayout {
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
     private ContactSummaryView _contactSummaryView;
-    private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
     private TaskSummaryView _taskWidget;
-    private ShipmentSummaryView _shipmentSummaryView;
     private ClosingNotesView _closingNotes;
-    private RequestNewPayView _requestNewPayView;
-    private TimeLogSummaryView _timeLogSummaryView;
-    private PaymentView _payView;
-    private CounterOfferSummaryView _coSummaryView;
-    private ExpensesSummaryView _expensesSummaryView;
-    private SignatureSummaryView _signaturesSummaryView;
-    private DiscountSummaryView _discountSummaryView;
-    private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WodBottomSheetView _bottomsheetView;
     private MessagesMenuButton _messagesMenuButton;
     private MoreMenuButton _moreMenuButton;
     private PopupMenu _morePopup;
+
+    private AdditionalInfoSectionView _additionalInfoSectionView;
+    private PaymentSectionView _paymentSectionView;
 
     // Data
     private WorkOrder _workOrder;
@@ -243,31 +235,11 @@ public class WorkOrderScreen extends RelativeLayout {
         _scheduleView = findViewById(R.id.schedule_view);
         _renderers.add(_scheduleView);
 
-        _requestNewPayView = findViewById(R.id.requestNewPay_view);
-        _renderers.add(_requestNewPayView);
+        _paymentSectionView = findViewById(R.id.paymentSectionView);
+        _renderers.add(_paymentSectionView);
 
-        _timeLogSummaryView = findViewById(R.id.timelogSummary_view);
-        _renderers.add(_timeLogSummaryView);
-
-        _payView = findViewById(R.id.payment_view);
-        _payView.setListener(_paymentView_listener);
-        _renderers.add(_payView);
-
-        _coSummaryView = findViewById(R.id.counterOfferSummary_view);
-        _coSummaryView.setListener(_coSummary_listener);
-        _renderers.add(_coSummaryView);
-
-        _expensesSummaryView = findViewById(R.id.expensesSummaryView);
-        _renderers.add(_expensesSummaryView);
-
-        _signaturesSummaryView = findViewById(R.id.signaturesSummaryView);
-        _renderers.add(_signaturesSummaryView);
-
-        _discountSummaryView = findViewById(R.id.discountSummaryView);
-        _renderers.add(_discountSummaryView);
-
-        _exView = findViewById(R.id.expected_pay_view);
-        _renderers.add(_exView);
+        _additionalInfoSectionView = findViewById(R.id.additionalInfoSeciontView);
+        _renderers.add(_additionalInfoSectionView);
 
         _bundleWarningTextView = findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -278,18 +250,12 @@ public class WorkOrderScreen extends RelativeLayout {
         _scrollView = findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipmentSummaryView = findViewById(R.id.shipmentSummaryView);
-        _renderers.add(_shipmentSummaryView);
-
         _taskWidget = findViewById(R.id.taskwidget_view);
         _renderers.add(_taskWidget);
 
         _closingNotes = findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
-
-        _attachmentSummaryView = findViewById(R.id.attachment_summary_view);
-        _renderers.add(_attachmentSummaryView);
 
         _bottomsheetView = findViewById(R.id.bottomsheet_view);
         _bottomsheetView.setListener(_bottomsheetView_listener);
@@ -423,10 +389,11 @@ public class WorkOrderScreen extends RelativeLayout {
     public void setUUID(String uuid) {
         _myUUID = uuid;
 
-        _failedUploads.setUUID(_myUUID);
-        _attachmentSummaryView.setUUID(_myUUID);
-        _timeLogSummaryView.setUUID(_myUUID);
-        _taskWidget.setUUID(_myUUID);
+        for (WorkOrderRenderer workOrderRenderer : _renderers) {
+            if (workOrderRenderer instanceof UUIDView) {
+                ((UUIDView) workOrderRenderer).setUUID(_myUUID);
+            }
+        }
     }
 
     private void populateUi() {
@@ -940,20 +907,6 @@ public class WorkOrderScreen extends RelativeLayout {
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
             WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
-    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
-        @Override
-        public void onShowTerms(WorkOrder workOrder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));
-        }
-    };
-
-    private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
-        @Override
-        public void onCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
         }
     };
 
