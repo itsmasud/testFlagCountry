@@ -78,11 +78,19 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getTimeLogs().getHours() == null) {
             setVisibility(GONE);
             return;
-        } else {
+        } else if (_workOrder.getPay() != null
+                && _workOrder.getPay().getType() != null) {
             _summaryView.set(
-                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged),
-                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? String.valueOf(_workOrder.getPay().getNumberOfDevices()) : String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
+                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)
+                            ? _summaryView.getContext().getString(R.string.devices_complete)
+                            : _summaryView.getContext().getString(R.string.time_logged),
+
+                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)
+                            ? String.valueOf(_workOrder.getPay().getNumberOfDevices())
+                            : String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
             setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
         }
 
         setOnClickListener(_this_onClick);
