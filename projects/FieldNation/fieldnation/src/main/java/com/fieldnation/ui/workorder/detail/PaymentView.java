@@ -93,7 +93,6 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-
     private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
