@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 public class PaymentView extends LinearLayout implements WorkOrderRenderer {
@@ -22,7 +24,6 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
 
     // Data
     private WorkOrder _workOrder;
-    private Listener _listener;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -54,10 +55,6 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
@@ -96,12 +93,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onShowTerms(_workOrder);
+            TermsDialog.show(App.get(), null, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));
         }
     };
-
-    public interface Listener {
-        void onShowTerms(WorkOrder workOrder);
-    }
 }

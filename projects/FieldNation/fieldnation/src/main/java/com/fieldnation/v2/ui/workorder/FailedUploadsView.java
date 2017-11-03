@@ -22,7 +22,7 @@ import java.util.List;
  * Created by mc on 5/24/17.
  */
 
-public class FailedUploadsView extends RelativeLayout implements WorkOrderRenderer {
+public class FailedUploadsView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "FailedUploadsView";
 
     // Ui

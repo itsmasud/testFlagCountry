@@ -24,7 +24,7 @@ import java.util.List;
  * Created by Shoaib on 09/24/17.
  */
 
-public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "TaskSummaryView";
 
     // Ui

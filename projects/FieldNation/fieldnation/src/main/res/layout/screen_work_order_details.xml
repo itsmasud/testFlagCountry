@@ -88,66 +88,16 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Payment -->
-                <com.fieldnation.v2.ui.workorder.WodHeader
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Payments" />
-
-                <com.fieldnation.ui.workorder.detail.PaymentView
-                    android:id="@+id/payment_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.TimeLogSummaryView
-                    android:id="@+id/timelogSummary_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"/>
-
-
-                <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
-                    android:id="@+id/counterOfferSummary_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.ExpensesSummaryView
-                    android:id="@+id/expensesSummaryView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.DiscountSummaryView
-                    android:id="@+id/discountSummaryView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
-                    android:id="@+id/expected_pay_view"
+                <com.fieldnation.v2.ui.workorder.PaymentSectionView
+                    android:id="@+id/paymentSectionView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-
                 <!-- Tasks to be completed -->
-                <com.fieldnation.v2.ui.workorder.WodHeader
+                <com.fieldnation.v2.ui.workorder.TaskSectionView
+                    android:id="@+id/taskSectionView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Tasks to be Completed" />
-
-                <com.fieldnation.v2.ui.workorder.TaskSummaryView
-                    android:id="@+id/taskwidget_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.ClosingNotesView
-                    android:id="@+id/closingnotes_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
+                    android:layout_height="wrap_content" />
 
                 <!-- Buyer information -->
                 <com.fieldnation.v2.ui.workorder.WodHeader
@@ -168,29 +118,10 @@
                     android:visibility="gone" />
 
                 <!-- Additional information -->
-
-                <com.fieldnation.v2.ui.workorder.WodHeader
+                <com.fieldnation.v2.ui.workorder.AdditionalInfoSectionView
+                    android:id="@+id/additionalInfoSeciontView"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/additional_information" />
-
-                <com.fieldnation.v2.ui.workorder.SignatureSummaryView
-                    android:id="@+id/signaturesSummaryView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.ShipmentSummaryView
-                    android:id="@+id/shipmentSummaryView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.AttachmentSummaryView
-                    android:id="@+id/attachment_summary_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/bundlewarning2_textview"

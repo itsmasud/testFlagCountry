@@ -196,7 +196,7 @@ public class TasksDialog extends FullScreenDialog {
 
     private void showClosingNotesDialog() {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
-            ClosingNotesDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getClosingNotes());
+            ClosingNotesDialog.show(App.get(), _workOrder.getId(), _workOrder.getClosingNotes());
     }
 
     /*-*********************************************-*/

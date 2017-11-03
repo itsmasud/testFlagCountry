@@ -17,7 +17,7 @@ import com.fieldnation.v2.ui.dialog.TimeLogListDialog;
  * Created by Shoaib on 10/20/17.
  */
 
-public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "TimeLogSummaryView";
 
     // Ui
