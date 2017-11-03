@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -26,6 +27,10 @@ public class SpScreenDisplayUiContext implements EventContext, SpContext {
     public String tag = TAG;
     @Json
     public String page;
+
+    static {
+        SnowplowWrapper.registerContext(TAG, SpScreenDisplayUiContext.class);
+    }
 
     public SpScreenDisplayUiContext() {
     }

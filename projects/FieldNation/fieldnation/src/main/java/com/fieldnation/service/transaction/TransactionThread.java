@@ -15,6 +15,10 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.fnanalytics.Timing;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
@@ -24,6 +28,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
@@ -150,6 +155,14 @@ class TransactionThread extends ThreadManager.ManagedThread {
             return false;
         }
 
+        if (trans.getUUID() != null) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(trans.getUUID()))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.START, "Transaction Processing"))
+                    .build());
+        }
+
         // debug if have key, output
         //if (!misc.isEmptyOrNull(trans.getKey())) {
         //Log.v(TAG, "Key: " + trans.getKey());
@@ -270,6 +283,13 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransaction.delete(trans.getId());
                 break;
             case CONTINUE:
+                if (trans.getUUID() != null) {
+                    Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpTracingContext(trans.getUUID()))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Transaction Processing"))
+                            .build());
+                }
                 generateNotification(notifId, notifSuccess);
                 WebTransaction.delete(trans.getId());
                 break;

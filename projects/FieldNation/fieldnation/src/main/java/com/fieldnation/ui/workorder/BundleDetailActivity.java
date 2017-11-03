@@ -42,6 +42,8 @@ import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 import com.fieldnation.v2.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.v2.ui.workorder.WorkOrderCard;
 
+import java.util.UUID;
+
 public class BundleDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "BundleDetailActivity";
 
@@ -64,6 +66,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private int _bundleId = 0;
     private Location _location;
     private WorkOrders _workOrders;
+    private String _myUUID = UUID.randomUUID().toString();
 
     // Services
     private SimpleGps _simpleGps;
@@ -394,7 +397,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard view = h.getView();
-            view.setData(object, _location, "Bundle List");
+            view.setData(_myUUID, object, _location, "Bundle List");
         }
 
         @Override

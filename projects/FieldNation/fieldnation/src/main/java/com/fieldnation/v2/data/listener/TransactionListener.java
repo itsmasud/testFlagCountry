@@ -8,6 +8,10 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.AttachmentTracker;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
@@ -15,6 +19,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.UploadTrackerClient;
@@ -82,12 +87,18 @@ public class TransactionListener extends WebTransactionListener {
                 UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
             }
 
-            Tracker.event(App.get(),
-                    new SimpleEvent.Builder()
-                            .tag(AnswersWrapper.TAG)
-                            .category(params.apiFunction)
-                            .action("START")
-                            .build());
+            SimpleEvent.Builder se = new SimpleEvent.Builder()
+                    .tag(AnswersWrapper.TAG)
+                    .category(params.apiFunction)
+                    .action("START");
+
+            if (transaction.getUUID() != null) {
+                se.addContext(new SpTracingContext(transaction.getUUID()))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.START, "Transaction Listener"));
+            }
+
+            Tracker.event(App.get(), se.build());
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -158,12 +169,20 @@ public class TransactionListener extends WebTransactionListener {
                     UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
                 }
 
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category(params.apiFunction)
-                                .action("COMPLETE")
-                                .build());
+                if (transaction.getUUID() != null)
+                    AttachmentTracker.complete(context, transaction.getUUID());
+
+
+                SimpleEvent.Builder se = new SimpleEvent.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category(params.apiFunction)
+                        .action("COMPLETE");
+                if (transaction.getUUID() != null) {
+                    se.addContext(new SpTracingContext(transaction.getUUID()))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Transaction Listener"));
+                }
+                Tracker.event(App.get(), se.build());
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET") && !misc.isEmptyOrNull(transaction.getKey())) {
@@ -217,22 +236,31 @@ public class TransactionListener extends WebTransactionListener {
 
                     Log.v(TAG, "Saving zombie transaction");
                     if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
-                        Tracker.event(App.get(),
-                                new SimpleEvent.Builder()
-                                        .tag(AnswersWrapper.TAG)
-                                        .category(params.apiFunction)
-                                        .action("ZOMBIE")
-                                        .build());
+
+                        SimpleEvent.Builder se = new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category(params.apiFunction)
+                                .action("ZOMBIE");
+                        if (transaction.getUUID() != null) {
+                            se.addContext(new SpTracingContext(transaction.getUUID()))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Transaction Listener - Zombie"));
+                        }
+                        Tracker.event(App.get(), se.build());
 
                         return Result.ZOMBIE;
                     }
 
-                    Tracker.event(App.get(),
-                            new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
-                                    .category(params.apiFunction)
-                                    .action("FAIL")
-                                    .build());
+                    SimpleEvent.Builder se = new SimpleEvent.Builder()
+                            .tag(AnswersWrapper.TAG)
+                            .category(params.apiFunction)
+                            .action("FAIL");
+                    if (transaction.getUUID() != null) {
+                        se.addContext(new SpTracingContext(transaction.getUUID()))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Transaction Listener"));
+                    }
+                    Tracker.event(App.get(), se.build());
 
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -262,24 +290,33 @@ public class TransactionListener extends WebTransactionListener {
                             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
                         }
                     }
-                    Tracker.event(App.get(),
-                            new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
-                                    .category(params.apiFunction)
-                                    .action("ZOMBIE")
-                                    .build());
+
+                    SimpleEvent.Builder se = new SimpleEvent.Builder()
+                            .tag(AnswersWrapper.TAG)
+                            .category(params.apiFunction)
+                            .action("ZOMBIE");
+                    if (transaction.getUUID() != null) {
+                        se.addContext(new SpTracingContext(transaction.getUUID()))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Transaction Listener - Zombie"));
+                    }
+                    Tracker.event(App.get(), se.build());
 
                     return Result.ZOMBIE;
                 } else if (transaction.isTracked()) {
                     UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
                 }
 
-                Tracker.event(App.get(),
-                        new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
-                                .category(params.apiFunction)
-                                .action("RETRY")
-                                .build());
+                SimpleEvent.Builder se = new SimpleEvent.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category(params.apiFunction)
+                        .action("RETRY");
+                if (transaction.getUUID() != null) {
+                    se.addContext(new SpTracingContext(transaction.getUUID()))
+                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                            .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Transaction Listener - Retry"));
+                }
+                Tracker.event(App.get(), se.build());
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);

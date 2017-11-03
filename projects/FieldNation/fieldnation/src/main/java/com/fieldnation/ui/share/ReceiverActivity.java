@@ -13,12 +13,19 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -30,6 +37,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * Created by Michael on 9/27/2016.
@@ -52,6 +60,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     private AttachmentFolder _selectedUploadSlot;
     private SharedFile[] _sharedFiles;
     private int _remainingCacheItems = 0;
+    private String _myUUID = UUID.randomUUID().toString();
 
     // Animations
     private Animation _slideInLeft;
@@ -151,9 +160,23 @@ public class ReceiverActivity extends AuthSimpleActivity {
         _loadingTextView.setText(getString(R.string.preparing_files_num, 1, 1));
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
-            _sharedFiles[0] = new SharedFile(fileName, fileUri);
-            FileCacheClient.cacheFileUpload(fileUri.toString(), fileUri);
+            _sharedFiles[0] = new SharedFile(_myUUID, fileName, fileUri);
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(_sharedFiles[0].getUUID()))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.START, "Single File"))
+                    .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).size(0).build())
+                    .build());
+
+            FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri.toString(), fileUri);
         } else {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Single File"))
+                    .build());
+
             Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -177,10 +200,24 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
-                _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
-                FileCacheClient.cacheFileUpload(fileUris.get(i).toString(), fileUris.get(i));
+                _sharedFiles[i] = new SharedFile(_myUUID, fileName, fileUris.get(i));
+
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(_sharedFiles[i].getUUID()))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.START, "Multiple Files"))
+                        .addContext(new SpFileContext.Builder().name(_sharedFiles[i].getFileName()).size(0).build())
+                        .build());
+
+                FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i).toString(), fileUris.get(i));
             }
         } else {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Multiple Files"))
+                    .build());
+
             Toast.makeText(this, "Cannot upload files", Toast.LENGTH_LONG).show();
             finish();
         }
@@ -195,6 +232,16 @@ public class ReceiverActivity extends AuthSimpleActivity {
         } else if (_filePicker.getVisibility() == View.VISIBLE) {
             animateSwap(_slotPicker, _filePicker, true);
         }
+    }
+
+    @Override
+    public void finish() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Leaving Receiver"))
+                .build());
+        super.finish();
     }
 
     private void animateSwap(View inView, View outView, boolean backwards) {
@@ -217,6 +264,12 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Workorder Selected"))
+                    .build());
+
             _selectedWorkOrder = workOrder;
             _slotPicker.setWorkOrderId(workOrder.getId());
             animateSwap(_slotPicker, _workOrderPicker, false);
@@ -241,13 +294,17 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - single")
                                 .action("start")
+                                .addContext(new SpTracingContext(null, _myUUID))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Slot Selected"))
+                                .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).size(0).build())
                                 .build());
 
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(_sharedFiles[0].getFileName()));
 
-                    AttachmentHelper.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
+                    AttachmentHelper.addAttachment(App.get(), _sharedFiles[0].getUUID(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -284,13 +341,17 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - multiple")
                                 .action("start")
+                                .addContext(new SpTracingContext(file.getUUID()))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Send Files"))
+                                .addContext(new SpFileContext.Builder().name(file.getFileName()).size(0).build())
                                 .build());
 
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(file.getFileName()));
 
-                    AttachmentHelper.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
+                    AttachmentHelper.addAttachment(App.get(), file.getUUID(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -301,13 +362,13 @@ public class ReceiverActivity extends AuthSimpleActivity {
     };
 
     private void startWorkOrderDetails() {
-        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId()));
+        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId(), _myUUID));
         finish();
     }
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             _remainingCacheItems--;
 
             _loadingProgress.setProgress(_sharedFiles.length - _remainingCacheItems);
@@ -325,10 +386,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public View view;
 
         @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
-        @Override
         public void onAnimationEnd(Animation animation) {
             view.clearAnimation();
             view.setVisibility(View.GONE);
@@ -337,10 +394,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     private static class AnimationInListener extends DefaultAnimationListener {
         public View view;
-
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
 
         @Override
         public void onAnimationEnd(Animation animation) {

@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
@@ -19,13 +20,13 @@ import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * Created by Michael Carver on 6/5/2015.
@@ -43,7 +44,6 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
     // Data
     private WorkOrder _workOrder;
-    private Listener _listener;
 
     public CounterOfferSummaryView(Context context) {
         super(context);
@@ -80,10 +80,6 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     private void populateUi() {
@@ -236,12 +232,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
     private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onCounterOffer();
+            CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
         }
     };
-
-    public interface Listener {
-        void onCounterOffer();
-    }
 }

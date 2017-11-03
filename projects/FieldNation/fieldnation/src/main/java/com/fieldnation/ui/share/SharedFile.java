@@ -5,24 +5,36 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnlog.Log;
+
+import java.util.UUID;
 
 public class SharedFile implements Parcelable {
     private static final String TAG = "SharedFile";
 
     private String _fileName;
     private Uri _uri;
+    private UUIDGroup _uuid;
 
     public SharedFile() {
     }
 
-    public SharedFile(String fileName) {
+    public SharedFile(String parentUUID, String fileName) {
+        _uuid = new UUIDGroup(parentUUID, UUID.randomUUID().toString());
         _fileName = fileName;
     }
 
-    public SharedFile(String fileName, Uri uri) {
+    public SharedFile(String parentUUID, String fileName, Uri uri) {
+        _uuid = new UUIDGroup(parentUUID, UUID.randomUUID().toString());
         _fileName = fileName;
         _uri = uri;
+    }
+
+    private SharedFile(Bundle bundle) {
+        _uuid = bundle.getParcelable("uuid");
+        _fileName = bundle.getString("fileName");
+        _uri = bundle.getParcelable("uri");
     }
 
 
@@ -34,6 +46,10 @@ public class SharedFile implements Parcelable {
         return _uri;
     }
 
+    public UUIDGroup getUUID() {
+        return _uuid;
+    }
+
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
@@ -43,7 +59,7 @@ public class SharedFile implements Parcelable {
         public SharedFile createFromParcel(Parcel source) {
             try {
                 Bundle bundle = source.readBundle(getClass().getClassLoader());
-                return new SharedFile(bundle.getString("fileName"), (Uri) bundle.getParcelable("uri"));
+                return new SharedFile(bundle);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -66,6 +82,7 @@ public class SharedFile implements Parcelable {
         Bundle bundle = new Bundle();
         bundle.putString("fileName", _fileName);
         bundle.putParcelable("uri", _uri);
+        bundle.putParcelable("uuid", _uuid);
         dest.writeBundle(bundle);
     }
 }

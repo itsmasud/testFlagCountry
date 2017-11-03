@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -45,6 +46,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     private Uri _sourceUri;
     private Uri _cachedUri;
     private String _name;
+    private UUIDGroup _uuid;
 
     public PhotoEditDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -85,12 +87,14 @@ public class PhotoEditDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
+        _uuid = params.getParcelable("uuid");
+
         if (params.containsKey("uri")) {
             _sourceUri = params.getParcelable("uri");
 
             if (getSavedState() == null
                     || !getSavedState().containsKey("_cachedUri"))
-                FileCacheClient.cacheFileUpload(_sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_uuid, _sourceUri.toString(), _sourceUri);
         }
         _name = params.getString("name");
 
@@ -159,7 +163,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     private final BitmapCropCallback _cropCallBack = new BitmapCropCallback() {
         @Override
         public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY, int imageWidth, int imageHeight) {
-            _onSaveDispatcher.dispatch(getUid(), _name, resultUri);
+            _onSaveDispatcher.dispatch(getUid(), _uuid, _name, resultUri);
             ((Activity) getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
             Controller.dismiss(App.get(), getUid());
         }
@@ -184,14 +188,13 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     @Override
     public void cancel() {
-        _onCancelDispatcher.dispatch(getUid(), _name, _cachedUri);
+        _onCancelDispatcher.dispatch(getUid(), _uuid, _name, _cachedUri);
         super.cancel();
     }
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(String tag, Uri uri, long size, boolean success) {
-
+        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
             if (!tag.equals(_sourceUri.toString())) {
                 Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
                 return;
@@ -202,10 +205,11 @@ public class PhotoEditDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, Uri uri, String name) {
+    public static void show(Context context, String uid, UUIDGroup uuid, Uri uri, String name) {
         Bundle params = new Bundle();
         params.putParcelable("uri", uri);
         params.putString("name", name);
+        params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoEditDialog.class, params);
     }
@@ -214,13 +218,13 @@ public class PhotoEditDialog extends FullScreenDialog {
     /*-         Save            -*/
     /*-*************************-*/
     public interface OnSaveListener {
-        void onSave(String name, Uri uri);
+        void onSave(UUIDGroup uuid, String name, Uri uri);
     }
 
     private static KeyedDispatcher<OnSaveListener> _onSaveDispatcher = new KeyedDispatcher<OnSaveListener>() {
         @Override
         public void onDispatch(OnSaveListener listener, Object... parameters) {
-            listener.onSave((String) parameters[0], (Uri) parameters[1]);
+            listener.onSave((UUIDGroup) parameters[0], (String) parameters[1], (Uri) parameters[2]);
         }
     };
 
@@ -240,13 +244,13 @@ public class PhotoEditDialog extends FullScreenDialog {
     /*-         Cancel          -*/
     /*-*************************-*/
     public interface OnCancelListener {
-        void onCancel(String name, Uri uri);
+        void onCancel(UUIDGroup uuid, String name, Uri uri);
     }
 
     private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
         @Override
         public void onDispatch(OnCancelListener listener, Object... parameters) {
-            listener.onCancel((String) parameters[0], (Uri) parameters[1]);
+            listener.onCancel((UUIDGroup) parameters[0], (String) parameters[1], (Uri) parameters[2]);
         }
     };
 

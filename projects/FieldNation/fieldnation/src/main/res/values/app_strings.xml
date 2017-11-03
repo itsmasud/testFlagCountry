@@ -301,7 +301,7 @@
         from a computer and follow the instructions.</string>
 
     <string name="dialog_terms_title">Terms and Conditions</string>
-    <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10\% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
+    <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10\u0025 service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
     <string name="dialog_report_problem_spinner_1">What\'s the problem?</string>
     <string name="hint_how_late">How Late?</string>
     <string name="dialog_introduction_text">We\'re actively trying to improve the Field Nation App to better cater to your needs.</string>
@@ -755,7 +755,7 @@
     <string name="there_is_a_problem">There\'s a problem</string>
     <string name="time_late">%1$s late</string>
     <string name="time_logged">Time Logged</string>
-    <string name="devices_complete">Device Complete</string>
+    <string name="devices_complete">Devices Complete</string>
     <string name="time_to_approval">Time to approval</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>

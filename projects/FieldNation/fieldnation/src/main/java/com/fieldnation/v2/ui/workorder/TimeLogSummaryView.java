@@ -17,7 +17,7 @@ import com.fieldnation.v2.ui.dialog.TimeLogListDialog;
  * Created by Shoaib on 10/20/17.
  */
 
-public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "TimeLogSummaryView";
 
     // Ui
@@ -25,6 +25,7 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
 
     // Data
     private WorkOrder _workOrder;
+    private String _myUUID;
 
     public TimeLogSummaryView(Context context) {
         super(context);
@@ -57,6 +58,10 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         populateUi();
     }
 
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
+    }
+
     private void populateUi() {
         if (_summaryView == null) return;
 
@@ -73,11 +78,19 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getTimeLogs().getHours() == null) {
             setVisibility(GONE);
             return;
-        } else {
+        } else if (_workOrder.getPay() != null
+                && _workOrder.getPay().getType() != null) {
             _summaryView.set(
-                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged),
-                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? String.valueOf(_workOrder.getPay().getNumberOfDevices()) : String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
+                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)
+                            ? _summaryView.getContext().getString(R.string.devices_complete)
+                            : _summaryView.getContext().getString(R.string.time_logged),
+
+                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)
+                            ? String.valueOf(_workOrder.getPay().getNumberOfDevices())
+                            : String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
             setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
         }
 
         setOnClickListener(_this_onClick);
@@ -87,7 +100,7 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         @Override
         public void onClick(View view) {
             final String dialogTitle = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged);
-            TimeLogListDialog.show(App.get(), null, _workOrder.getId(), dialogTitle);
+            TimeLogListDialog.show(App.get(), null, _myUUID, _workOrder.getId(), dialogTitle);
         }
     };
 

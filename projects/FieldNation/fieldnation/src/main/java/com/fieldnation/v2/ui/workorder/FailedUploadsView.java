@@ -22,7 +22,7 @@ import java.util.List;
  * Created by mc on 5/24/17.
  */
 
-public class FailedUploadsView extends RelativeLayout implements WorkOrderRenderer {
+public class FailedUploadsView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "FailedUploadsView";
 
     // Ui
@@ -31,6 +31,7 @@ public class FailedUploadsView extends RelativeLayout implements WorkOrderRender
 
     // Data
     private WorkOrder _workOrder;
+    private String _uiUUID;
 
     public FailedUploadsView(Context context) {
         super(context);
@@ -69,6 +70,10 @@ public class FailedUploadsView extends RelativeLayout implements WorkOrderRender
         populateUi();
     }
 
+    public void setUUID(String uuid) {
+        _uiUUID = uuid;
+    }
+
     private void populateUi() {
         if (_workOrder == null)
             return;
@@ -78,7 +83,7 @@ public class FailedUploadsView extends RelativeLayout implements WorkOrderRender
 
         if (_workOrder.getAttachments() != null)
             WebTransaction.cleanZombies(_workOrder.getAttachments());
-        
+
         List<WebTransaction> zombies = WebTransaction.getZombies();
 
         int count = 0;
@@ -109,7 +114,7 @@ public class FailedUploadsView extends RelativeLayout implements WorkOrderRender
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AttachedFilesDialog.show(App.get(), null, _workOrder.getId());
+            AttachedFilesDialog.show(App.get(), null, _uiUUID, _workOrder.getId());
         }
     };
 }

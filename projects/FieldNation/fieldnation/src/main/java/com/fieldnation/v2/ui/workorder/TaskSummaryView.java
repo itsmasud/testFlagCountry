@@ -24,7 +24,7 @@ import java.util.List;
  * Created by Shoaib on 09/24/17.
  */
 
-public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "TaskSummaryView";
 
     // Ui
@@ -33,6 +33,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
     // Data
     private WorkOrder _workOrder;
+    private String _myUUID;
 
     public TaskSummaryView(Context context) {
         super(context);
@@ -82,6 +83,10 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         populateUi();
     }
 
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
+    }
+
     private void populateUi() {
         if (_workOrder == null)
             return;
@@ -123,7 +128,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             view.setTag(group);
             view.setOnClickListener(_task_onClick);
 
-            if (_workOrder.getStatus().getId() == 2) {
+            if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
                 view.setCount(String.valueOf(group.total));
                 view.setCountBg(R.drawable.round_rect_gray);
             } else if (_workOrder.getStatus().getId() == 3) {
@@ -196,7 +201,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void onClick(View v) {
             Group group = (Group) v.getTag();
-            TasksDialog.show(App.get(), null, _workOrder.getId(), group.id, group.name);
+            TasksDialog.show(App.get(), null, _myUUID, _workOrder.getId(), group.id, group.name);
         }
     };
 

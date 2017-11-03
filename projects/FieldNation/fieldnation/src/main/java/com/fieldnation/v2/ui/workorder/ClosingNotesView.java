@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 
 public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ClosingNotesView";
@@ -20,7 +22,6 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
 
     // Data
     private WorkOrder _workOrder;
-    private Listener _listener;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -41,10 +42,6 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         setOnClickListener(_notes_onClick);
 
         setVisibility(View.GONE);
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     @Override
@@ -80,13 +77,10 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
     private final View.OnClickListener _notes_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
-                _listener.onChangeClosingNotes(_workOrder.getClosingNotes());
-            }
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
+            if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
+                ClosingNotesDialog.show(App.get(), _workOrder.getId(), _workOrder.getClosingNotes());
         }
     };
 
-    public interface Listener {
-        void onChangeClosingNotes(String closingNotes);
-    }
 }

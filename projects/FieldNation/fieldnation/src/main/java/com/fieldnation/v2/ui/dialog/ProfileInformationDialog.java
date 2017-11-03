@@ -14,10 +14,17 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -27,6 +34,7 @@ import com.fieldnation.ui.ProfilePicView;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Shoaib on 13/01/2016.
@@ -222,19 +230,23 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     private final PhotoEditDialog.OnSaveListener _photoEdit_onSave = new PhotoEditDialog.OnSaveListener() {
         @Override
-        public void onSave(String name, Uri uri) {
+        public void onSave(UUIDGroup uuid, String name, Uri uri) {
             if (uri != null) {
-                FileCacheClient.cacheFileUpload(uri.toString(), uri);
-                ProfilePhotoClient.upload(App.get(), uri);
+                FileCacheClient.cacheFileUpload(uuid, uri.toString(), uri);
+                ProfilePhotoClient.upload(App.get(), uuid, uri);
             } else {
-                // TODO need to show a toast?
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(uuid))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Profile Dialog, no uri"))
+                        .build());
             }
         }
     };
 
     private final PhotoEditDialog.OnCancelListener _photoEdit_onCancel = new PhotoEditDialog.OnCancelListener() {
         @Override
-        public void onCancel(String name, Uri uri) {
+        public void onCancel(UUIDGroup uuid, String name, Uri uri) {
         }
     };
 
@@ -254,13 +266,17 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
                 String mime = App.get().getContentResolver().getType(fui.uri);
                 if (mime != null && mime.contains("image")) {
-                    PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
+                    PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uuid, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
                 } else {
-                    FileCacheClient.cacheFileUpload(fui.uri.toString(), fui.uri);
-                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    FileCacheClient.cacheFileUpload(fui.uuid, fui.uri.toString(), fui.uri);
+                    ProfileClient.uploadProfilePhoto(App.get(), fui.uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
             } else {
-                // TODO toast?
+                Tracker.event(App.get(), new CustomEvent.Builder()
+                        .addContext(new SpTracingContext(new UUIDGroup(null, UUID.randomUUID().toString())))
+                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Profile Dialog"))
+                        .build());
             }
         }
     };
@@ -268,7 +284,14 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE);
+            UUIDGroup uuid = new UUIDGroup(null, UUID.randomUUID().toString());
+
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Profile Dialog"))
+                    .build());
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
         }
     };
 

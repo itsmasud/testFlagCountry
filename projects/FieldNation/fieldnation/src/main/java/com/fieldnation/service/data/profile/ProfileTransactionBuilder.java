@@ -4,6 +4,7 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -211,36 +212,36 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     }
 
     // returns the deliverable details
-    public static void uploadProfilePhoto(Context context, String filename, String filePath, long profileId) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto file");
         try {
             StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new FileInputStream(new File(filePath)), "uploadTemp.dat");
-            uploadProfilePhoto(context, upFile, filename, filePath, profileId);
+            uploadProfilePhoto(context, uuid, upFile, filename, filePath, profileId);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
     }
 
-    public static void uploadProfilePhoto(Context context, InputStream inputStream, String filename, String filePath, long profileId) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, InputStream inputStream, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto uri");
         StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, inputStream, "uploadTemp.dat");
-        uploadProfilePhoto(context, upFile, filename, filePath, profileId);
+        uploadProfilePhoto(context, uuid, upFile, filename, filePath, profileId);
     }
 
-    public static void uploadProfilePhoto(Context context, StoredObject upFile, String filename, String filePath, long profileId) {
+    public static void uploadProfilePhoto(Context context, UUIDGroup uuid, StoredObject upFile, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto uri");
 
         if (upFile == null) {
             ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
             Log.logException(new Exception("PA-332 - UpFile is null"));
-            ProfileDispatch.uploadProfilePhoto(filePath, false, true);
+            ProfileDispatch.uploadProfilePhoto(uuid, filePath, false, true);
             return;
         }
 
         if (upFile.size() > 100000000) { // 100 MB?
             StoredObject.delete(context, upFile);
             ToastClient.toast(context, "File is too long: " + filePath, Toast.LENGTH_LONG);
-            ProfileDispatch.uploadProfilePhoto(filePath, false, true);
+            ProfileDispatch.uploadProfilePhoto(uuid, filePath, false, true);
             return;
         }
 
@@ -266,6 +267,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .header("X-App-Uuid", uuid.uuid)
+                    .header("X-App-Parent-Uuid", uuid.parentUUID)
                     .path("/api/rest/v2/users/" + profileId + "/profile/avatar")
                     .multipartFile("file", filename, upFile)
                     .doNotRead();
@@ -280,6 +283,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .setWifiRequired(App.get().onlyUploadWithWifi())
                     .setTrack(true)
                     .setTrackType(TrackerEnum.PHOTOS)
+                    .uuid(uuid)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);

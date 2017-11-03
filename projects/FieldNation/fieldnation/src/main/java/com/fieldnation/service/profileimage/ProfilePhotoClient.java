@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -49,8 +50,8 @@ public abstract class ProfilePhotoClient extends Pigeon implements ProfilePhotoC
      * @param context
      * @param uri
      */
-    public static void upload(Context context, Uri uri) {
-        ProfilePhotoSystem.getInstance().upload(context, uri);
+    public static void upload(Context context, UUIDGroup uuid, Uri uri) {
+        ProfilePhotoSystem.getInstance().upload(context, uuid, uri);
     }
 
     static void dispatchGet(Context context, Uri uri) {

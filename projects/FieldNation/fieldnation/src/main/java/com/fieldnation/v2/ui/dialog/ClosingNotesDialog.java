@@ -15,11 +15,12 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -123,7 +124,10 @@ public class ClosingNotesDialog extends SimpleDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            _onOkDispatcher.dispatch(getUid(), _editText.getText().toString());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
+            AppMessagingClient.setLoading(true);
+
             dismiss(true);
         }
     };
@@ -132,68 +136,15 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
-            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, String notes) {
+    public static void show(Context context, int workOrderId, String notes) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("notes", notes);
 
-        Controller.show(context, uid, ClosingNotesDialog.class, params);
-    }
-
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
-    public interface OnOkListener {
-        void onOk(String message);
-    }
-
-    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
-        @Override
-        public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((String) parameters[0]);
-        }
-    };
-
-    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.add(uid, onOkListener);
-    }
-
-    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.remove(uid, onOkListener);
-    }
-
-    public static void removeAllOnOkListener(String uid) {
-        _onOkDispatcher.removeAll(uid);
-    }
-
-    /*-**************************-*/
-    /*-         Cancel           -*/
-    /*-**************************-*/
-    public interface OnCancelListener {
-        void onCancel();
-    }
-
-    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
-        @Override
-        public void onDispatch(OnCancelListener listener, Object... parameters) {
-            listener.onCancel();
-        }
-    };
-
-    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
-        _onCancelDispatcher.add(uid, onCancelListener);
-    }
-
-    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
-        _onCancelDispatcher.remove(uid, onCancelListener);
-    }
-
-    public static void removeAllOnCancelListener(String uid) {
-        _onCancelDispatcher.removeAll(uid);
+        Controller.show(context, null, ClosingNotesDialog.class, params);
     }
 }
 

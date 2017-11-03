@@ -17,7 +17,7 @@ import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
  * Created by shoaib.ahmed on 08/02/2017.
  */
 
-public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRenderer, UUIDView {
     private static final String TAG = "AttachmentSummaryView";
 
     // Ui
@@ -26,6 +26,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
 
     // Data
     private WorkOrder _workOrder;
+    private String _myUUID;
 
     public AttachmentSummaryView(Context context) {
         super(context);
@@ -62,6 +63,10 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         populateUi();
     }
 
+    @Override
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
+    }
 
     private void populateUi() {
         if (_workOrder == null)
@@ -92,7 +97,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AttachedFilesDialog.show(App.get(), "", _workOrder.getId());
+            AttachedFilesDialog.show(App.get(), null, _myUUID, _workOrder.getId());
         }
     };
 

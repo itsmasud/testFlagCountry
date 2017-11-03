@@ -4,10 +4,6 @@ import android.content.Context;
 
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpContext;
-import com.fieldnation.analytics.contexts.SpScreenDisplayUiContext;
-import com.fieldnation.analytics.contexts.SpSearchContext;
-import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.TrackerWrapper;
@@ -37,11 +33,8 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     private static Hashtable<String, Class<? extends SpContext>> contexts = new Hashtable<>();
 
-    static {
-        contexts.put(SpUIContext.TAG, SpUIContext.class);
-        contexts.put(SpScreenDisplayUiContext.TAG, SpScreenDisplayUiContext.class);
-        contexts.put(SpSearchContext.TAG, SpSearchContext.class);
-        contexts.put(SpWorkOrderContext.TAG, SpWorkOrderContext.class);
+    public static void registerContext(String tag, Class<? extends SpContext> contextClass) {
+        contexts.put(tag, contextClass);
     }
 
     private static Tracker _tracker = null;
@@ -141,6 +134,9 @@ public class SnowplowWrapper implements TrackerWrapper {
     }
 
     private void event(Context context, CustomEvent event, List<SelfDescribingJson> customContext) {
+        if (customContext.size() == 0)
+            return;
+
         SelfDescribingJson sdj = customContext.remove(0);
         Tracker t = getTracker(context);
         t.track(SelfDescribing.builder()

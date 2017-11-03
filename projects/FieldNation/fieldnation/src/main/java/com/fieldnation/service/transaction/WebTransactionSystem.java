@@ -5,7 +5,13 @@ import android.os.Handler;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
@@ -164,10 +170,26 @@ public class WebTransactionSystem implements WebTransactionConstants {
     protected static final List<WebTransaction> TRANSACTION_QUEUE = new LinkedList<>();
 
     public static void queueTransaction(Context context, WebTransaction transaction) {
+        if (transaction.getUUID() != null) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(transaction.getUUID()))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.START, "Web Transaction Queue System"))
+                    .build());
+        }
+
         synchronized (TRANSACTION_QUEUE) {
             TRANSACTION_QUEUE.add(transaction);
         }
         getInstance()._manager.wakeUp();
+
+        if (transaction.getUUID() != null) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(transaction.getUUID()))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Web Transaction Queue System"))
+                    .build());
+        }
     }
 }
 

@@ -27,15 +27,23 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -101,18 +109,17 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.UUID;
 
-public class WorkOrderScreen extends RelativeLayout {
+public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private static final String TAG = "WorkOrderScreen";
 
     // Dialog tags
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
-    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
-    private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
@@ -141,25 +148,18 @@ public class WorkOrderScreen extends RelativeLayout {
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
     private ContactSummaryView _contactSummaryView;
-    private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
-    private TaskSummaryView _taskWidget;
-    private ShipmentSummaryView _shipmentSummaryView;
-    private ClosingNotesView _closingNotes;
     private RequestNewPayView _requestNewPayView;
-    private TimeLogSummaryView _timeLogSummaryView;
-    private PaymentView _payView;
-    private CounterOfferSummaryView _coSummaryView;
-    private ExpensesSummaryView _expensesSummaryView;
-    private SignatureSummaryView _signaturesSummaryView;
-    private DiscountSummaryView _discountSummaryView;
-    private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
     private WodBottomSheetView _bottomsheetView;
     private MessagesMenuButton _messagesMenuButton;
     private MoreMenuButton _moreMenuButton;
     private PopupMenu _morePopup;
+
+    private AdditionalInfoSectionView _additionalInfoSectionView;
+    private PaymentSectionView _paymentSectionView;
+    private TaskSectionView _taskSectionView;
 
     // Data
     private WorkOrder _workOrder;
@@ -169,6 +169,7 @@ public class WorkOrderScreen extends RelativeLayout {
     private boolean _locationFailed = false;
     private int _workOrderId;
     private SimpleGps _simpleGps;
+    private String _myUUID;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -236,28 +237,11 @@ public class WorkOrderScreen extends RelativeLayout {
         _requestNewPayView = findViewById(R.id.requestNewPay_view);
         _renderers.add(_requestNewPayView);
 
-        _timeLogSummaryView = findViewById(R.id.timelogSummary_view);
-        _renderers.add(_timeLogSummaryView);
+        _paymentSectionView = findViewById(R.id.paymentSectionView);
+        _renderers.add(_paymentSectionView);
 
-        _payView = findViewById(R.id.payment_view);
-        _payView.setListener(_paymentView_listener);
-        _renderers.add(_payView);
-
-        _coSummaryView = findViewById(R.id.counterOfferSummary_view);
-        _coSummaryView.setListener(_coSummary_listener);
-        _renderers.add(_coSummaryView);
-
-        _expensesSummaryView = findViewById(R.id.expensesSummaryView);
-        _renderers.add(_expensesSummaryView);
-
-        _signaturesSummaryView = findViewById(R.id.signaturesSummaryView);
-        _renderers.add(_signaturesSummaryView);
-
-        _discountSummaryView = findViewById(R.id.discountSummaryView);
-        _renderers.add(_discountSummaryView);
-
-        _exView = findViewById(R.id.expected_pay_view);
-        _renderers.add(_exView);
+        _additionalInfoSectionView = findViewById(R.id.additionalInfoSeciontView);
+        _renderers.add(_additionalInfoSectionView);
 
         _bundleWarningTextView = findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -268,18 +252,8 @@ public class WorkOrderScreen extends RelativeLayout {
         _scrollView = findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipmentSummaryView = findViewById(R.id.shipmentSummaryView);
-        _renderers.add(_shipmentSummaryView);
-
-        _taskWidget = findViewById(R.id.taskwidget_view);
-        _renderers.add(_taskWidget);
-
-        _closingNotes = findViewById(R.id.closingnotes_view);
-        _closingNotes.setListener(_closingNotesView_listener);
-        _renderers.add(_closingNotes);
-
-        _attachmentSummaryView = findViewById(R.id.attachment_summary_view);
-        _renderers.add(_attachmentSummaryView);
+        _taskSectionView = findViewById(R.id.taskSectionView);
+        _renderers.add(_taskSectionView);
 
         _bottomsheetView = findViewById(R.id.bottomsheet_view);
         _bottomsheetView.setListener(_bottomsheetView_listener);
@@ -351,7 +325,6 @@ public class WorkOrderScreen extends RelativeLayout {
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
 
-        ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -381,7 +354,6 @@ public class WorkOrderScreen extends RelativeLayout {
 
     public void onStop() {
         Log.v(TAG, "onStop");
-        ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -408,6 +380,16 @@ public class WorkOrderScreen extends RelativeLayout {
         _workOrder = workOrder;
         _workOrderId = workOrder.getId();
         populateUi();
+    }
+
+    public void setUUID(String uuid) {
+        _myUUID = uuid;
+
+        for (WorkOrderRenderer workOrderRenderer : _renderers) {
+            if (workOrderRenderer instanceof UUIDView) {
+                ((UUIDView) workOrderRenderer).setUUID(_myUUID);
+            }
+        }
     }
 
     private void populateUi() {
@@ -460,6 +442,8 @@ public class WorkOrderScreen extends RelativeLayout {
             menu.add(0, 4, 300, "Rate Buyer");
         }
 
+        menu.add(0, 5, 300, "Send Debug Log");
+
         if (menu.size() == 0) {
             _moreMenuButton.setVisibility(GONE);
         } else {
@@ -491,7 +475,7 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-*********************************************-*/
     private void doCheckin() {
         App.get().analActionTitle = null;
-        CheckInOutDialog.show(App.get(), null, _workOrderId,
+        CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
     }
 
@@ -510,10 +494,10 @@ public class WorkOrderScreen extends RelativeLayout {
         App.get().analActionTitle = null;
 
         if (_deviceCount > -1) {
-            CheckInOutDialog.show(App.get(), null, _workOrderId,
+            CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                     _workOrder.getTimeLogs(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         } else {
-            CheckInOutDialog.show(App.get(), null, _workOrderId,
+            CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                     _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
     }
@@ -628,14 +612,30 @@ public class WorkOrderScreen extends RelativeLayout {
                         DeclineDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany().getId(), true);
                     }
                     break;
-                case 3: // print
+                case 3: { // print
                     String url = "https://" + getContext().getString(R.string.web_fn_hostname) + "/marketplace/wo_print.php?workorder_id=" + _workOrderId;
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     ActivityClient.startActivity(intent);
                     break;
+                }
                 case 4: // rate buyer
                     RateBuyerDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
                     break;
+                case 5: { // send debug log
+                    File tempfile = DebugUtils.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("plain/text");
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+                    intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
+                    intent.putExtra(Intent.EXTRA_STREAM, App.getUriFromFile(tempfile));
+                    if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                        getContext().startActivity(intent);
+                    } else {
+                        Toast.makeText(getContext(), R.string.no_email_app_is_available, Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                }
             }
 
             return true;
@@ -646,21 +646,46 @@ public class WorkOrderScreen extends RelativeLayout {
         @Override
         public void onCheckOut() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
-                    null, _workOrderId);
+                    null,
+                    _workOrderId,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             doCheckOut();
         }
 
         @Override
         public void onCheckIn() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(),
+                    WorkOrderTracker.ActionButton.CHECK_IN,
+                    null,
+                    _workOrderId,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             doCheckin();
         }
 
         @Override
         public void onCheckInAgain() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
-                    null, _workOrderId);
+            WorkOrderTracker.onActionButtonEvent(
+                    App.get(),
+                    WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
+                    null,
+                    _workOrderId,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             doCheckin();
         }
 
@@ -839,7 +864,8 @@ public class WorkOrderScreen extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, null, _workOrderId);
 
-            showClosingNotesDialog();
+            if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
+                ClosingNotesDialog.show(App.get(), _workOrderId, _workOrder.getClosingNotes());
         }
 
         @Override
@@ -883,33 +909,11 @@ public class WorkOrderScreen extends RelativeLayout {
         }
     };
 
-    private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
-        @Override
-        public void onChangeClosingNotes(String closingNotes) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            showClosingNotesDialog();
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteSignature = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
             WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
-    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
-        @Override
-        public void onShowTerms(WorkOrder workOrder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));
-        }
-    };
-
-    private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
-        @Override
-        public void onCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
         }
     };
 
@@ -924,20 +928,6 @@ public class WorkOrderScreen extends RelativeLayout {
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
-    private void showClosingNotesDialog() {
-        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
-            ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrderId, _workOrder.getClosingNotes());
-    }
-
-    private final ClosingNotesDialog.OnOkListener _closingNotes_onOk = new ClosingNotesDialog.OnOkListener() {
-        @Override
-        public void onOk(String message) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            setLoading(true);
-        }
-    };
-
     private final MarkCompleteDialog.OnSignatureClickListener _markCompleteDialog_onSignature = new MarkCompleteDialog.OnSignatureClickListener() {
         @Override
         public void onSignatureClick() {
@@ -1046,12 +1036,29 @@ public class WorkOrderScreen extends RelativeLayout {
                 ex.printStackTrace();
             }
             if (timeLog == null) {
-                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrderId, newTimeLog, App.get().getSpUiContext());
+                WorkOrderTracker.onAddEvent(
+                        App.get(),
+                        WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                        new EventContext[]{
+                                new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpStackContext(DebugUtils.getStackTraceElement()),
+                                new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                        }
+                );
+                WorkordersWebApi.addTimeLog(App.get(), new UUIDGroup(_myUUID, UUID.randomUUID().toString()),
+                        _workOrderId, newTimeLog, App.get().getSpUiContext());
 
             } else {
-                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
+                WorkOrderTracker.onEditEvent(
+                        App.get(),
+                        WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                        new EventContext[]{
+                                new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpStackContext(DebugUtils.getStackTraceElement()),
+                                new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                        }
+                );
+                WorkordersWebApi.updateTimeLog(App.get(), new UUIDGroup(_myUUID, UUID.randomUUID().toString()), _workOrderId, timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
             setLoading(true);
         }
@@ -1075,11 +1082,19 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addTimeLog() {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            WorkOrderTracker.onAddEvent(
+                    App.get(),
+                    WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
+                    new EventContext[]{
+                            new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpStackContext(DebugUtils.getStackTraceElement()),
+                            new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
+                    }
+            );
             if (_workOrder.getPay() != null && _workOrder.getPay().getType() != null)
-                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
+                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _myUUID, null, _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE);
             else
-                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, false);
+                WorkLogDialog.show(App.get(), DIALOG_WORKLOG, _myUUID, null, false);
         }
 
         @Override
@@ -1108,7 +1123,14 @@ public class WorkOrderScreen extends RelativeLayout {
 
         @Override
         public void addAttachment() {
-            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _workOrderId);
+            UUIDGroup uuid = new UUIDGroup(null, _myUUID);
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "WoD BottomSheet Add Attachment"))
+                    .build());
+
+            AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _myUUID, _workOrderId);
         }
     };
 

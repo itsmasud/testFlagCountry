@@ -3,6 +3,7 @@ package com.fieldnation.analytics.contexts;
 import android.content.Context;
 
 import com.fieldnation.R;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -21,13 +22,16 @@ import java.util.Map;
 public class SpSearchContext implements EventContext, SpContext {
     public static final String TAG = "SpSearchContext";
 
-
     @Json
     public String tag = TAG;
     @Json
     public String name;
     @Json
     public String value;
+
+    static {
+        SnowplowWrapper.registerContext(TAG, SpSearchContext.class);
+    }
 
     public SpSearchContext() {
     }

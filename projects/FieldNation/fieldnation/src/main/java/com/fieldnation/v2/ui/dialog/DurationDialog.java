@@ -14,9 +14,9 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by Michael on 10/11/2016.

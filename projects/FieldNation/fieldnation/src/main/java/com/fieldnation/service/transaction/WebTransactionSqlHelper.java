@@ -37,11 +37,12 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         TRACK_TYPE(12, "track_type", "integer not null"),
         TIMING_KEY(13, "timing_key", "text"),
         WAS_ZOMBIE(14, "was_zombie", "integer not null", true),
-        NOTIF_ID(15, "notif_id", "integer"),
-        NOTIF_START(16, "notif_start", "integer"),
-        NOTIF_SUCCESS(17, "notif_success", "integer"),
-        NOTIF_FAILED(18, "notif_failed", "integer"),
-        NOTIF_RETRY(19, "notif_retry", "integer"),;
+        UUID(15, "uuid", "text"),
+        NOTIF_ID(16, "notif_id", "integer"),
+        NOTIF_START(17, "notif_start", "integer"),
+        NOTIF_SUCCESS(18, "notif_success", "integer"),
+        NOTIF_FAILED(19, "notif_failed", "integer"),
+        NOTIF_RETRY(20, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;

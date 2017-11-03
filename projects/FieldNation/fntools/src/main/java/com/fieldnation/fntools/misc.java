@@ -28,12 +28,13 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 
 public final class misc {
     private static final String HEXES = "0123456789ABCDEF";
-    private static final NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
+    private static final NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance(Locale.US);
     private static final NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
     private static final NumberFormat _maxOneDecimal = new DecimalFormat("#.#");
 

@@ -11,11 +11,19 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpStackContext;
+import com.fieldnation.analytics.contexts.SpStatusContext;
+import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.dialog.DatePickerDialog;
@@ -51,6 +59,7 @@ public class WorkLogDialog extends SimpleDialog {
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
     private String _deviceNumber;
+    private String _uiUUID = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -99,6 +108,13 @@ public class WorkLogDialog extends SimpleDialog {
         super.show(payload, animate);
         _timeLog = payload.getParcelable("timeLog");
         _showDevicesCount = payload.getBoolean("showDeviceCount");
+        _uiUUID = payload.getString("uiUUID");
+
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.START, "WorkLog Dialog"))
+                .build());
 
         populateUi();
     }
@@ -170,6 +186,17 @@ public class WorkLogDialog extends SimpleDialog {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+    }
+
+    @Override
+    public void onStop() {
+        Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "WorkLog Dialog"))
+                .build());
+
+        super.onStop();
     }
 
     /*-*********************************-*/
@@ -253,10 +280,12 @@ public class WorkLogDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, TimeLog timeLog, boolean showDeviceCount) {
+    public static void show(Context context, String uid, String uiUUID, TimeLog timeLog, boolean showDeviceCount) {
         Bundle params = new Bundle();
         params.putParcelable("timeLog", timeLog);
         params.putBoolean("showDeviceCount", showDeviceCount);
+        params.putString("uiUUID", uiUUID);
+
         Controller.show(context, uid, WorkLogDialog.class, params);
     }
 
