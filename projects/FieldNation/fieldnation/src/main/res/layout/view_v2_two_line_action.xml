@@ -20,7 +20,6 @@
 
     <TextView
         android:id="@+id/key"
-        style="@style/Text_Body_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -28,7 +27,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/key_iconView"
-        android:text="Key" />
+        android:text="Key"
+        android:textColor="@color/fn_dark_text"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/value"
