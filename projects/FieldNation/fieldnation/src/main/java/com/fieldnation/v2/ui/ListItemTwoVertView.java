@@ -80,7 +80,7 @@ public class ListItemTwoVertView extends RelativeLayout {
 
     public void setActionString(String action) {
         _action = action;
-
+        _actionVisible = true;
         populateUi();
     }
 
@@ -149,6 +149,7 @@ public class ListItemTwoVertView extends RelativeLayout {
                 _actionTextView.setText(R.string.icon_x);
             } else {
                 _actionTextView.setText(_action);
+                _actionTextView.setVisibility(VISIBLE);
             }
         } else {
             _actionTextView.setVisibility(GONE);
