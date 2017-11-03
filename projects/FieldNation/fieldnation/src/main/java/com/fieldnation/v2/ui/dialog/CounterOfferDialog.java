@@ -502,7 +502,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final ApatheticOnClickListener _fab_onClick = new ApatheticOnClickListener() {
+    private final ApatheticOnClickListener _fab_onClick = new View.OnClickListener() {
         @Override
         public void onSingleClick(View v) {
             misc.hideKeyboard(v);
@@ -622,7 +622,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _changePay_onClick = new ApatheticOnClickListener() {
+    private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
         @Override
         public void onSingleClick(final View v) {
             PayDialog.show(App.get(), DIALOG_UID_PAY, R.string.change_pay, R.string.btn_ok, _pay != null ? _pay : _woPay, false);
@@ -744,7 +744,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     /*-         Expense         -*/
     /*-*************************-*/
 
-    private final View.OnClickListener _addExpense_onClick = new ApatheticOnClickListener() {
+    private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
         @Override
         public void onSingleClick(final View v) {
             _expenseMenuClickedView = null;
