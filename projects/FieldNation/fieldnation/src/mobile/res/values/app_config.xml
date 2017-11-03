@@ -24,6 +24,8 @@
     <!--<string name="auth_default_password">service.company.provider</string>-->
     <!--<string name="auth_default_username">service.company.provider2</string>-->
     <!--<string name="auth_default_password">service.company.provider2</string>-->
+    <!--<string name="auth_default_username">vendor.company.provider</string>-->
+    <!--<string name="auth_default_password">vendor.company.provider</string>-->
     <!--<string name="auth_default_username">vendor.company.admin</string>-->
     <!--<string name="auth_default_password">vendor.company.admin</string>-->
 
