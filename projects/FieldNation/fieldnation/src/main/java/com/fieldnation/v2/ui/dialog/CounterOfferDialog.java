@@ -39,6 +39,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -408,12 +409,6 @@ public class CounterOfferDialog extends FullScreenDialog {
             outState.putString("_reason", _reason);
     }
 
-    private void setEnableBottomSheet(boolean isEnable){
-        for (int i = 0; i<_bottomSheet.getChildCount(); i++){
-            _bottomSheet.getChildAt(i).setEnabled(isEnable);
-        }
-    }
-
     private void populateUi() {
         if (_payLayout == null)
             return;
@@ -507,15 +502,9 @@ public class CounterOfferDialog extends FullScreenDialog {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
+    private final ApatheticOnClickListener _fab_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setEnableBottomSheet(true);
-                }
-            }, 500);
+        public void onSingleClick(View v) {
             misc.hideKeyboard(v);
             _bottomSheetBackground.clearAnimation();
             _bottomSheetBackground.startAnimation(_fadeIn);
@@ -633,21 +622,14 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _changePay_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setEnableBottomSheet(false);
-                }
-            }, 100);
-
+        public void onSingleClick(final View v) {
             PayDialog.show(App.get(), DIALOG_UID_PAY, R.string.change_pay, R.string.btn_ok, _pay != null ? _pay : _woPay, false);
             getView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    _bottomSheet_onCancel.onClick(view);
+                    _bottomSheet_onCancel.onClick(v);
                 }
             }, 500);
         }
@@ -700,13 +682,6 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setEnableBottomSheet(false);
-                }
-            }, 100);
-
             ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _woSchedule);
             getView().postDelayed(new Runnable() {
                 @Override
@@ -769,27 +744,19 @@ public class CounterOfferDialog extends FullScreenDialog {
     /*-         Expense         -*/
     /*-*************************-*/
 
-    private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addExpense_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setEnableBottomSheet(false);
-                }
-            }, 100);
-
+        public void onSingleClick(final View v) {
             _expenseMenuClickedView = null;
             ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, _workOrderId, true, false);
             getView().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    _bottomSheet_onCancel.onClick(view);
+                    _bottomSheet_onCancel.onClick(v);
                 }
             }, 500);
         }
     };
-
 
     private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
@@ -844,13 +811,6 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _addExpirationButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(final View view) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setEnableBottomSheet(false);
-                }
-            }, 100);
-
             ExpireDialog.show(getContext(), DIALOG_UID_EXPIRE);
             getView().postDelayed(new Runnable() {
                 @Override
@@ -967,13 +927,6 @@ public class CounterOfferDialog extends FullScreenDialog {
     private View.OnClickListener _addReasonButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setEnableBottomSheet(false);
-                }
-            }, 100);
-
             _reasonLayout.setVisibility(View.VISIBLE);
             _reasonTextView.setVisibility(View.GONE);
             _reasonEditText.setVisibility(View.VISIBLE);
