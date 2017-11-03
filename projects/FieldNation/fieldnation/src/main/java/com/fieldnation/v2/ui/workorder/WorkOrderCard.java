@@ -27,6 +27,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.gmaps.Position;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -627,9 +628,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
-    private final OnClickListener _viewPayment_onClick = new OnClickListener() {
+    private final OnClickListener _viewPayment_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
                     WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getId());
             PaymentListActivity.startNew(App.get());
@@ -659,9 +660,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _checkInAgain_onClick = new OnClickListener() {
+    private final View.OnClickListener _checkInAgain_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN_AGAIN, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
@@ -676,9 +677,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _checkIn_onClick = new OnClickListener() {
+    private final OnClickListener _checkIn_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
@@ -693,9 +694,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _checkOut_onClick = new OnClickListener() {
+    private final OnClickListener _checkOut_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
@@ -749,9 +750,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _eta_onClick = new OnClickListener() {
+    private final OnClickListener _eta_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ETA, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
             EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
@@ -870,9 +871,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _withdraw_onClick = new OnClickListener() {
+    private final OnClickListener _withdraw_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
             WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getId(), 0, _workOrder.getRequests().getOpenRequest().getId());
         }

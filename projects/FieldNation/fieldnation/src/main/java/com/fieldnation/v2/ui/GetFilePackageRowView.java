@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.ui.ApatheticOnClickListener;
 
 public class GetFilePackageRowView extends RelativeLayout {
     private ImageView _icon;
@@ -57,9 +58,9 @@ public class GetFilePackageRowView extends RelativeLayout {
         _listener = listener;
     }
 
-    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) {
                 Intent src = _pack.intent;
                 ResolveInfo info = _pack.resolveInfo;
