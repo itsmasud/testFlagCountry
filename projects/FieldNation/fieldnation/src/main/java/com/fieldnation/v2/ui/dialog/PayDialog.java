@@ -22,6 +22,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.v2.data.model.Pay;
@@ -395,17 +397,17 @@ public class PayDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             dismiss(true);
             _onNothingDispatcher.dispatch(getUid());
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             try {
                 _onCompleteDispatcher.dispatch(getUid(), makePay(), _explanationEditText.getText().toString());
             } catch (Exception ex) {
