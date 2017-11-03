@@ -18,10 +18,10 @@ We have completed our first phase of the work order details redesign and will co
 &lt;b&gt;What we changed:&lt;/b&gt;
 &lt;ul&gt;
 &lt;li&gt;More design updates to the work order details&lt;/li&gt;
-&lt;li&gt;Renamed Custom Fields to Fields to Enter&lt;/li&gt;
+&lt;li&gt;Renamed Additional Fields to Fields to Enter&lt;/li&gt;
 &lt;li&gt;Removed unneeded background processes&lt;/li&gt;
 &lt;li&gt;Improved work order performance by giving Tasks and Fields to Enter their own subsection&lt;/li&gt;
-&lt;li&gt;Persistent data input on the following dialogs: Request New Pay, Custom Fields, Time Logs, Closing Notes, Expenses, and work order list filters.&lt;/li&gt;
+&lt;li&gt;Persistent data input on the following dialogs: Request New Pay, Additional Fields, Time Logs, Closing Notes, Expenses, and work order list filters.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
