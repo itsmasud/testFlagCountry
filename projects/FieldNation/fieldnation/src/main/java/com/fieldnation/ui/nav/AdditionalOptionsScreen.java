@@ -257,7 +257,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
+    private final View.OnClickListener _profileExpandButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _activated = !_activated;

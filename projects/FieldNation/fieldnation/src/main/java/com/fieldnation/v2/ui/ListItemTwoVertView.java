@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontTextView;
 
 /**
@@ -186,9 +187,9 @@ public class ListItemTwoVertView extends RelativeLayout {
             _keyIconView.setTextColor(_iconTextColor);
     }
 
-    private final OnClickListener _action_onClick = new OnClickListener() {
+    private final OnClickListener _action_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             if (_actionOnclickListener != null)
                 _actionOnclickListener.onClick(ListItemTwoVertView.this, view);
         }

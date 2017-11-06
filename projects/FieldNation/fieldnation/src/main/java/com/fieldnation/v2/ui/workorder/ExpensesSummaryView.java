@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ExpenseListDialog;
 
@@ -51,7 +52,7 @@ public class ExpensesSummaryView extends RelativeLayout implements WorkOrderRend
         _countTextView.setBackgroundResource(R.drawable.round_rect_gray);
 
         setVisibility(GONE);
-        
+
         populateUi();
     }
 
@@ -80,9 +81,9 @@ public class ExpensesSummaryView extends RelativeLayout implements WorkOrderRend
         setOnClickListener(_this_onClick);
     }
 
-    private final View.OnClickListener _this_onClick = new OnClickListener() {
+    private final View.OnClickListener _this_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             ExpenseListDialog.show(App.get(), null, _workOrder.getId());
         }
     };

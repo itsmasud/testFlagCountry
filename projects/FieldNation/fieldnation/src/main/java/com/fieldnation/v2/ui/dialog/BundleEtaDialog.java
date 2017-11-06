@@ -19,6 +19,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -238,9 +239,9 @@ public class BundleEtaDialog extends FullScreenDialog {
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             ETA[] etaAll = _etaList.values().toArray(new ETA[_etaList.size()]);
             WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
             _onAcceptedDispatcher.dispatch(getUid(), _bundleId);

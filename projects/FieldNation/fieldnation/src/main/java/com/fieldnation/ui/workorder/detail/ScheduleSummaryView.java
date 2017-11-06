@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Schedule;
@@ -185,17 +186,17 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         }
     }
 
-    private final View.OnClickListener _editEta_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _editEta_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
         }
     };
 
-    private final View.OnClickListener _setEta_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _setEta_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }

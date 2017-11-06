@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
@@ -39,9 +40,9 @@ public abstract class AttachedFoldersAdapter extends RecyclerView.Adapter<Attach
     public void onBindViewHolder(AttachedFoldersViewHolder holder, final int position) {
         ListItemLinkView v = (ListItemLinkView) holder.itemView;
         v.setTitle(_folders.get(position).getName());
-        v.setOnClickListener(new View.OnClickListener() {
+        v.setOnClickListener(new ApatheticOnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onSingleClick(View view) {
                 preOnItemClick(position);
             }
         });

@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ExpenseCounterOfferView;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Pay;
@@ -229,9 +230,9 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         return new String[]{line1, line2};
     }
 
-    private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
+    private final View.OnClickListener _counterOffer_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             CounterOfferDialog.show(App.get(), _workOrder.getId(), _workOrder.getPay(), _workOrder.getSchedule());
         }
     };

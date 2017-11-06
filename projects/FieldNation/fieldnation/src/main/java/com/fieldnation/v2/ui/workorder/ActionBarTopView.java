@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.ETA;
@@ -286,7 +287,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
+    private final View.OnClickListener _reportProblem_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -304,7 +305,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
+    private final View.OnClickListener _onMyWay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -312,7 +313,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
+    private final View.OnClickListener _viewBundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE,
@@ -330,7 +331,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
+    private final View.OnClickListener _runningLate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
@@ -350,16 +351,16 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final OnClickListener _eta_onClick = new OnClickListener() {
+    private final OnClickListener _eta_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) _listener.onEta();
         }
     };
 
-    private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _accept_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) _listener.onAccept();
         }
     };
@@ -399,23 +400,23 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _checkin_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) _listener.onCheckIn();
         }
     };
 
-    private final View.OnClickListener _checkinAgain_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _checkinAgain_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) _listener.onCheckInAgain();
         }
     };
 
-    private final View.OnClickListener _checkout_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _checkout_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) _listener.onCheckOut();
         }
     };
@@ -434,9 +435,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _viewPayment_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _viewPayment_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (_listener != null) _listener.onViewPayment();
         }
     };

@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
 /**
@@ -122,16 +123,16 @@ public class ExpireDialog extends FullScreenDialog {
     /*-*************************-*/
     /*-         Events          -*/
     /*-*************************-*/
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             dismiss(true);
         }
     };
 
-    private final View.OnClickListener _item_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _item_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             int index = (Integer) view.getTag();
             _onOkDispatcher.dispatch(getUid(), _titles[index], _values[index] * 1000);
             dismiss(true);

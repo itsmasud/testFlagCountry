@@ -13,6 +13,8 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.ui.ApatheticOnClickListener;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.ScheduleCoView;
 import com.fieldnation.v2.data.model.Schedule;
 
@@ -66,18 +68,18 @@ public class ScheduleDialog extends FullScreenDialog {
         }
     }
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             _onCompleteDispatcher.dispatch(getUid(), _scheduleCoView.getSchedule());
             dismiss(true);
             return true;
         }
     };
 
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             dismiss(true);
         }
     };

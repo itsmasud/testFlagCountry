@@ -343,25 +343,25 @@ public class ScheduleCoView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _dateTimeButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _dateTimeButton_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _datePicker.setTag("start");
             _datePicker.show();
         }
     };
 
-    private final View.OnClickListener _startDateButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _startDateButton_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _datePicker.setTag("start");
             _datePicker.show();
         }
     };
 
-    private final View.OnClickListener _endDateButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _endDateButton_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _datePicker.setTag("end");
             _datePicker.show();
         }

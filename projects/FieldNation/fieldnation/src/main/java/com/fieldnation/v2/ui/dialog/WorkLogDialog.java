@@ -26,6 +26,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -202,17 +203,17 @@ public class WorkLogDialog extends SimpleDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _start_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _start_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _datePicker.setTag("start");
             _datePicker.show();
         }
     };
 
-    private final View.OnClickListener _end_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _end_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _datePicker.setTag("end");
             _datePicker.show();
         }
@@ -254,9 +255,9 @@ public class WorkLogDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             int deviceCount = -1;
             try {
                 deviceCount = (int) Double.parseDouble(_devicesEditText.getText().toString());
@@ -272,9 +273,9 @@ public class WorkLogDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             dismiss(true);
             _onCancelDispatcher.dispatch(getUid());
         }
