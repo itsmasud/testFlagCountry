@@ -175,7 +175,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
                 time = DateUtils.formatTime(cal, false);
 
-                String msg = "Between " + dayDate + " @ " + time + "\nand";
+                String msg = "Between " + dayDate + " @ " + time + "\nand ";
 
                 Calendar cal2 = schedule.getServiceWindow().getEnd().getCalendar();
 
