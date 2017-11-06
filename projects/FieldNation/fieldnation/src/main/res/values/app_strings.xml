@@ -689,6 +689,8 @@
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
 
+    <string name="qualifications">Qualifications</string>
+
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="rate_us">Rate Us</string>
     <string name="reason">Reason</string>
