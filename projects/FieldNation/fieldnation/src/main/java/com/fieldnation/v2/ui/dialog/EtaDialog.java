@@ -38,6 +38,8 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
@@ -612,9 +614,9 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _etaStartDate_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _etaStartDate_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _etaStartDatePicker.show();
         }
     };
@@ -657,9 +659,9 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _etaStartTime_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _etaStartTime_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _etaStartTimePicker.show();
         }
     };
@@ -681,9 +683,9 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _duration_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _duration_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             misc.hideKeyboard(_noteEditText);
             DurationPickerDialog.show(App.get(), UID_DURATION_DIALOG);
         }
@@ -729,25 +731,25 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _expires_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _expires_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (!_expiresCheckBox.isChecked()) {
                 _expiringDurationSeconds = INVALID_NUMBER;
             }
         }
     };
 
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             dismiss(true);
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             // only do eta checks if switch is on
             if (_etaSwitch.isChecked()) {
                 if (!isValidEta(_etaStart)) {

@@ -44,6 +44,8 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
+import com.fieldnation.ui.ApatheticOnClickListener;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
@@ -360,9 +362,9 @@ public class CheckInOutDialog extends FullScreenDialog {
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
-    private final View.OnClickListener startDate_onClick = new View.OnClickListener() {
+    private final View.OnClickListener startDate_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _startDatePicker.show();
         }
     };
@@ -384,9 +386,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener startTime_onClick = new View.OnClickListener() {
+    private final View.OnClickListener startTime_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _startTimePicker.show();
         }
     };
@@ -408,16 +410,16 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             dismiss(true);
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             try {
                 setLoading(true);
                 if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {

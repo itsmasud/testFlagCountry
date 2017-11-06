@@ -26,6 +26,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -151,9 +152,9 @@ public class TimeLogListDialog extends FullScreenDialog {
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public boolean onMenuItemClick(MenuItem item) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             WorkOrderTracker.onAddEvent(
                     App.get(),
                     WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,

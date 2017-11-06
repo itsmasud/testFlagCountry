@@ -22,6 +22,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 
@@ -204,17 +205,17 @@ public class RequestBundleDialog extends SimpleDialog {
         _onCanceledDispatcher.dispatch(getUid(), _workOrderId);
     }
 
-    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             cancel();
             dismiss(true);
         }
     };
 
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             switch (_type) {
 //                case TYPE_ACCEPT:
 //                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
@@ -246,9 +247,9 @@ public class RequestBundleDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _expires_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _expires_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             _expires = _expiresCheckBox.isChecked();
 
             if (!_expires) {

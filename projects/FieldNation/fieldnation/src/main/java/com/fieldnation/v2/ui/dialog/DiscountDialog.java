@@ -23,6 +23,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.PayModifier;
 
@@ -108,9 +109,9 @@ public class DiscountDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _okButton_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
                 ToastClient.toast(App.get(), R.string.toast_missing_description, Toast.LENGTH_SHORT);
@@ -141,9 +142,9 @@ public class DiscountDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancelButton_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             dismiss(true);
             _onCancelDispatcher.dispatch(getUid());
         }

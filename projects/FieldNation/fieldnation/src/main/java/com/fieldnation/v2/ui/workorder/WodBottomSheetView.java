@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.PayIncreases;
@@ -285,80 +286,80 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final View.OnClickListener _fab_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _fab_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             misc.hideKeyboard(v);
             animateIn();
         }
     };
 
-    private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
+    private final View.OnClickListener _bottomSheet_onCancel = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             animateOut();
         }
     };
 
-    private final View.OnClickListener _addCounterOffer_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addCounterOffer_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addCounterOffer();
         }
     };
 
-    private final View.OnClickListener _addRequestNewPay_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addRequestNewPay_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addRequestNewPay();
         }
     };
 
-    private final View.OnClickListener _addTimeLog_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addTimeLog_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addTimeLog();
         }
     };
 
-    private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addExpense_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addExpense();
         }
     };
 
-    private final View.OnClickListener _addDiscount_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addDiscount_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addDiscount();
         }
     };
 
-    private final View.OnClickListener _addSignature_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addSignature_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addSignature();
         }
     };
 
-    private final View.OnClickListener _addShipment_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addShipment_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addShipment();
         }
     };
 
-    private final View.OnClickListener _addAttachment_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addAttachment_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(final View view) {
+        public void onSingleClick(final View view) {
             animateOut();
             if (_listener != null) _listener.addAttachment();
         }

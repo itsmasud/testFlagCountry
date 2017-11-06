@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
@@ -96,9 +97,9 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         setOnClickListener(_this_onClick);
     }
 
-    private final View.OnClickListener _this_onClick = new OnClickListener() {
+    private final View.OnClickListener _this_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             final String dialogTitle = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged);
             TimeLogListDialog.show(App.get(), null, _myUUID, _workOrder.getId(), dialogTitle);
         }
