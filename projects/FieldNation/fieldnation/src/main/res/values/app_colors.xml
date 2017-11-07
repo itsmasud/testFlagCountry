@@ -107,7 +107,7 @@
     <!--<color name="fn_grad_end">#FFFFFF00</color>-->
 
 
-    <color name="fn_divider">#FFCCCCCC</color>
+    <color name="fn_divider">#FFDBDBDB</color>
 
     <color name="fn_white_text">#FFFFFFFF</color>
     <color name="fn_white_text_80">#CCFFFFFF</color>
@@ -127,6 +127,7 @@
     <color name="fn_dark_text_25">#3F333333</color>
     <color name="fn_dark_text_0">#00333333</color>
 
+    <color name="fn_gray_lighter">#FFAAAAAA</color>
     <color name="fn_gray_dark">#FF333333</color>
     <color name="fn_gray_light">#FF555555</color>
 
