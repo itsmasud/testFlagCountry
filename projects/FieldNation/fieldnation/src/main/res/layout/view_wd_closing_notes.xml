@@ -7,14 +7,16 @@
 
     <TextView
         android:id="@+id/title_textview"
+        style="@style/Text_Body_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:text="@string/closing_notes"
-        android:textSize="16sp" />
+        android:textColor="@color/fn_dark_text" />
 
     <TextView
         android:id="@+id/notes_textview"
+        style="@style/Text_Subhead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
@@ -24,7 +26,7 @@
         android:ellipsize="end"
         android:maxLines="2"
         android:text="@string/placeholder_paragraph"
-        android:textColor="@color/fn_dark_text_50"
+        android:textColor="@color/fn_light_text"
         android:visibility="visible" />
 
     <View

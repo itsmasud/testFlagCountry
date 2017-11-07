@@ -12,6 +12,7 @@
 
         <TextView
             android:id="@+id/companyName_textview"
+            style="@style/Text_Body_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -26,6 +27,7 @@
 
         <TextView
             android:id="@+id/companyNotes_textview"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -36,7 +38,7 @@
             android:layout_toLeftOf="@+id/star_rating"
             android:gravity="left"
             android:text="Value"
-            android:textColor="@color/fn_dark_text_50"
+            android:textColor="@color/fn_light_text"
             android:textSize="16sp" />
 
         <com.fieldnation.ui.StarView
@@ -76,6 +78,7 @@
 
         <TextView
             android:id="@+id/ttaTitle_textview"
+            style="@style/Text_Body_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -85,11 +88,11 @@
             android:layout_marginTop="16dp"
             android:layout_toLeftOf="@+id/ttaDays_textview"
             android:text="Time to Approval"
-            android:textColor="@color/fn_dark_text"
-            android:textSize="16sp" />
+            android:textColor="@color/fn_dark_text" />
 
         <TextView
             android:id="@+id/ttaNotes_textview"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -100,19 +103,18 @@
             android:layout_toLeftOf="@+id/ttaDays_textview"
             android:gravity="left"
             android:text="Value"
-            android:textColor="@color/fn_dark_text_50"
-            android:textSize="16sp" />
+            android:textColor="@color/fn_light_text" />
 
         <TextView
             android:id="@+id/ttaDays_textview"
+            style="@style/Text_Subhead"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:text="10 days"
-            android:textColor="@color/fn_dark_text_50"
-            android:textSize="16sp" />
+            android:textColor="@color/fn_light_text" />
 
         <View
             style="@style/DividerFull"

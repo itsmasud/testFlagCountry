@@ -20,6 +20,7 @@
 
     <TextView
         android:id="@+id/key"
+        style="@style/Text_Body_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -28,11 +29,11 @@
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/key_iconView"
         android:text="Key"
-        android:textColor="@color/fn_dark_text"
-        android:textSize="16sp" />
+        android:textColor="@color/fn_dark_text" />
 
     <TextView
         android:id="@+id/value"
+        style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/key"
@@ -41,8 +42,7 @@
         android:layout_marginRight="16dp"
         android:gravity="left"
         android:text="Value"
-        android:textColor="@color/fn_dark_text_50"
-        android:textSize="16sp" />
+        android:textColor="@color/fn_light_text" />
 
     <ProgressBar
         android:id="@+id/progressBar"

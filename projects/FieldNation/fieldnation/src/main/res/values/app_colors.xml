@@ -107,19 +107,19 @@
     <!--<color name="fn_grad_end">#FFFFFF00</color>-->
 
 
-    <color name="fn_divider">#3F989898</color>
+    <color name="fn_divider">#FFCCCCCC</color>
 
     <color name="fn_white_text">#FFFFFFFF</color>
     <color name="fn_white_text_80">#CCFFFFFF</color>
     <color name="fn_white_text_50">#80FFFFFF</color>
     <color name="fn_white_text_30">#4CFFFFFF</color>
 
-    <color name="fn_light_text">#FF989898</color>
-    <color name="fn_light_text_80">#CC989898</color>
-    <color name="fn_light_text_50">#80989898</color>
-    <color name="fn_light_text_25">#3F989898</color>
-    <color name="fn_light_text_10">#19989898</color>
-    <color name="fn_light_text_0">#00989898</color>
+    <color name="fn_light_text">#FF555555</color>
+    <color name="fn_light_text_80">#CC555555</color>
+    <color name="fn_light_text_50">#80555555</color>
+    <color name="fn_light_text_25">#3F555555</color>
+    <color name="fn_light_text_10">#19555555</color>
+    <color name="fn_light_text_0">#00555555</color>
 
     <color name="fn_dark_text">#FF333333</color>
     <color name="fn_dark_text_80">#CC333333</color>

@@ -7,7 +7,7 @@
     <!--pre visit-->
     <TextView
         android:id="@+id/title_textview"
-        style="@style/Text_Subhead"
+        style="@style/Text_Body_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/count_textview"
@@ -15,7 +15,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_toLeftOf="@+id/count_textview"
-        android:text="Title" />
+        android:text="Title"
+        android:textColor="@color/fn_dark_text" />
 
     <TextView
         android:id="@+id/count_textview"
