@@ -72,6 +72,11 @@
                                     android:text="Details" />
                 -->
 
+                <com.fieldnation.v2.ui.workorder.QualificationsSummaryView
+                    android:id="@+id/qualificationsSummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
                     android:id="@+id/schedule_view"
                     android:layout_width="match_parent"

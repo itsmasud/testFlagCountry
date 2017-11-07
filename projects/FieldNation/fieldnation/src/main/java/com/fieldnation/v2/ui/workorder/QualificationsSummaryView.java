@@ -5,14 +5,11 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.v2.data.model.Qualifications;
+import com.fieldnation.v2.data.model.SelectionRuleCriteria;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemSummaryView;
-import com.fieldnation.v2.ui.dialog.ExpenseListDialog;
 
 /**
  * Created by Shoaib on 11/06/17.
@@ -74,6 +71,18 @@ public class QualificationsSummaryView extends RelativeLayout implements WorkOrd
 
         setVisibility(VISIBLE);
         _summaryView.setTitle(_summaryView.getResources().getString(R.string.qualifications));
+
+        int totalQualifications = _workOrder.getQualifications().getSelectionRule().getResults().length;
+        int numberMatched = 0;
+
+        for (SelectionRuleCriteria criteria : _workOrder.getQualifications().getSelectionRule().getResults()) {
+            if (criteria.getStatus() != null && criteria.getStatus().equals(SelectionRuleCriteria.StatusEnum.MATCH))
+                numberMatched++;
+        }
+
+        _summaryView.setCount(String.valueOf(numberMatched) + "/" + String.valueOf(totalQualifications));
+        _summaryView.setCountBg(numberMatched == totalQualifications ? R.drawable.round_rect_green : R.drawable.round_rect_red);
+
         setOnClickListener(_this_onClick);
     }
 
