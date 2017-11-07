@@ -9,6 +9,8 @@
         android:layout_marginTop="16dp"
         android:text="Expected Payment" />
 
+    <View style="@style/DividerFull" />
+
     <RelativeLayout
         style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
@@ -158,4 +160,6 @@
 
         </LinearLayout>
     </RelativeLayout>
+
+    <View style="@style/DividerFull" />
 </LinearLayout>
