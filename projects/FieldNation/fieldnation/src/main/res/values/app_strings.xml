@@ -934,6 +934,7 @@
     <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
 
     <!-- legal section -->
+    <string name="fieldnation_legal">Field Nation Legal</string>
     <string name="pref_string_data_settings_legal">Legal</string>
     <string name="pref_string_user_agreement">User Agreement</string>
     <string name="pref_string_tc_title">Terms and Conditions</string>

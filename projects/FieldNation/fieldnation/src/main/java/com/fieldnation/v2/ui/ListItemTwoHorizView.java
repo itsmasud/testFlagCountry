@@ -7,6 +7,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by mc on 6/29/17.
@@ -69,12 +70,12 @@ public class ListItemTwoHorizView extends RelativeLayout {
         if (_valueTextView == null || _keyTextView == null)
             return;
 
-        if (_key == null)
+        if (misc.isEmptyOrNull(_key))
             _keyTextView.setText("");
         else
             _keyTextView.setText(_key);
 
-        if (_value == null)
+        if (misc.isEmptyOrNull(_value))
             _valueTextView.setText("");
         else
             _valueTextView.setText(_value);
