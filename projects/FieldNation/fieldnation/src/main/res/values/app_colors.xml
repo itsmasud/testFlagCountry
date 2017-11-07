@@ -40,10 +40,10 @@
     10% - 19
     -->
 
-    <color name="fn_primary">#FF1D1D1D</color>
-    <color name="fn_primary_dark">#FF000000</color>
+    <color name="fn_primary">#FF333333</color>
+    <color name="fn_primary_dark">#FF333333</color>
     <!--<color name="fn_toolbar_menu_bg">#F81D1D1D</color>--> <!-- 97% -->
-    <color name="fn_toolbar_menu_bg">#E61D1D1D</color>
+    <color name="fn_toolbar_menu_bg">#E6333333</color>
 
     <color name="fn_primary_bg">#FFFAFAFA</color>
     <color name="fn_primary_bg_medium">#FFd9d9d2</color>
@@ -121,11 +121,11 @@
     <color name="fn_light_text_10">#19989898</color>
     <color name="fn_light_text_0">#00989898</color>
 
-    <color name="fn_dark_text">#FF1e1e1e</color>
-    <color name="fn_dark_text_80">#CC1e1e1e</color>
-    <color name="fn_dark_text_50">#801e1e1e</color>
-    <color name="fn_dark_text_25">#3F1e1e1e</color>
-    <color name="fn_dark_text_0">#001e1e1e</color>
+    <color name="fn_dark_text">#FF333333</color>
+    <color name="fn_dark_text_80">#CC333333</color>
+    <color name="fn_dark_text_50">#80333333</color>
+    <color name="fn_dark_text_25">#3F333333</color>
+    <color name="fn_dark_text_0">#00333333</color>
 
     <color name="fn_gray_dark">#FF333333</color>
     <color name="fn_gray_light">#FF555555</color>
