@@ -133,7 +133,6 @@ public class PenaltyListDialog extends FullScreenDialog {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            Log.e(TAG, "onComplete");
             if (successObject != null && successObject instanceof Pay) {
                 PayModifiers penalties = ((Pay) successObject).getPenalties();
                 _penalties = penalties;
