@@ -25,6 +25,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
     // UI
     private TextView _bundleWarningTextView;
+    private View _bundleWarningLayout;
 
     private LinearLayout _descriptionContainer;
     private WebView _descriptionWebView;
@@ -81,6 +82,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         _bundleWarningTextView = findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
+        _bundleWarningLayout = findViewById(R.id.bundlewarning_layout);
 
         _readMoreButton = findViewById(R.id.readMore_button);
         _readMoreButton.setOnClickListener(_readMore_onClick);
@@ -104,8 +106,10 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);
+            _bundleWarningLayout.setVisibility(VISIBLE);
         } else {
             _bundleWarningTextView.setVisibility(View.GONE);
+            _bundleWarningLayout.setVisibility(GONE);
         }
 
         if (misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
