@@ -41,8 +41,6 @@
         android:text="@string/view_field_nation_terms"
         android:textSize="14sp" />
 
-    <View
-        style="@style/DividerFull"
-        android:layout_marginTop="16dp" />
+    <View style="@style/DividerFull" />
 
 </LinearLayout>

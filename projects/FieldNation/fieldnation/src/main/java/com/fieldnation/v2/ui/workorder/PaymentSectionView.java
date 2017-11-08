@@ -61,6 +61,8 @@ public class PaymentSectionView extends LinearLayout implements WorkOrderRendere
                 ((UUIDView) workOrderRenderer).setUUID(_uiUUID);
             }
         }
+
+        populateUi();
     }
 
     @Override
@@ -69,6 +71,11 @@ public class PaymentSectionView extends LinearLayout implements WorkOrderRendere
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             workOrderRenderer.setWorkOrder(workOrder);
         }
+        populateUi();
+    }
+
+    private void populateUi() {
+        setVisibility(VISIBLE);
 
         boolean visible = false;
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
@@ -78,9 +85,7 @@ public class PaymentSectionView extends LinearLayout implements WorkOrderRendere
             }
         }
 
-        if (visible) {
-            setVisibility(VISIBLE);
-        } else {
+        if (!visible) {
             setVisibility(GONE);
         }
     }
