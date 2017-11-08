@@ -89,7 +89,7 @@ public class BuyerCustomFieldView extends RelativeLayout implements WorkOrderRen
             }
         }
 
-        if (getChildCount() == 0) {
+        if (_list.getChildCount() == 0) {
             setVisibility(GONE);
         } else {
             setVisibility(VISIBLE);
