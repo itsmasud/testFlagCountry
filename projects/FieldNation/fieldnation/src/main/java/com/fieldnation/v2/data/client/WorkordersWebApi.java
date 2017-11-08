@@ -324,8 +324,8 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .header("X-App-Parent-Uuid", uuid.parentUUID)
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .multipartField("attachment", attachment.getJson(), "application/json")
-                    .multipartField("force_upload", true)
-                    .multipartFile("file", filename, storedObject);
+                    .multipartFile("file", filename, storedObject)
+                    .multipartField("force_upload", "1");
 
             attachment.getFile().setMime(FileUtils.guessContentTypeFromName(filename));
 
