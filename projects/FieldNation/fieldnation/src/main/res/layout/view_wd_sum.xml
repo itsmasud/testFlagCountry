@@ -117,8 +117,8 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/link_divider"
         style="@style/DividerFull"
-        android:layout_width="match_parent"
-        android:layout_marginBottom="16dp" />
+        android:layout_width="match_parent" />
 
 </LinearLayout>

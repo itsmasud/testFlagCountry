@@ -5,8 +5,10 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -22,8 +24,11 @@ import com.fieldnation.v2.ui.ListItemTwoVertView;
  * Created by mc on 9/28/17.
  */
 
-public class BuyerCustomFieldView extends LinearLayout implements WorkOrderRenderer {
+public class BuyerCustomFieldView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "BuyerCustomFieldView";
+
+    // Ui
+    private LinearLayout _list;
 
     // Data
     private WorkOrder _workOrder;
@@ -44,7 +49,11 @@ public class BuyerCustomFieldView extends LinearLayout implements WorkOrderRende
     }
 
     private void init() {
-        setOrientation(VERTICAL);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_buyer_custom_field_list, this, true);
+
+        if (isInEditMode()) return;
+
+        _list = findViewById(R.id.buyerCustomFieldList);
 
         populateUi();
     }
@@ -59,7 +68,7 @@ public class BuyerCustomFieldView extends LinearLayout implements WorkOrderRende
         if (_workOrder == null)
             return;
 
-        removeAllViews();
+        _list.removeAllViews();
         StringBuilder sb = new StringBuilder();
         if (_workOrder.getCustomFields().getResults().length > 0) {
             // we have fields, find the buyer fields
@@ -73,7 +82,7 @@ public class BuyerCustomFieldView extends LinearLayout implements WorkOrderRende
                             view.setOnLongClickListener(_this_onLongClick);
                             view.set(field.getName(), field.getValue());
                             view.setActionVisible(false);
-                            addView(view);
+                            _list.addView(view);
                         }
                     }
                 }

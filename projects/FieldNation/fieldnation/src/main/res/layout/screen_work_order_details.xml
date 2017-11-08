@@ -38,8 +38,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <View style="@style/DividerFull" />
-
                 <com.fieldnation.v2.ui.workorder.ProblemSummaryView
                     android:id="@+id/problemsummary_view"
                     android:layout_width="match_parent"

@@ -35,6 +35,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
     private TextView _standardInstructionTextView;
+    private View _divider;
 
     private Button _readMoreButton;
 
@@ -79,6 +80,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         _standardInstructionTextView = findViewById(R.id.standardInstructions_textview);
         _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
+
+        _divider = findViewById(R.id.link_divider);
 
         _bundleWarningTextView = findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -140,6 +143,14 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _standardInstructionTextView.setVisibility(GONE);
         } else {
             _standardInstructionTextView.setVisibility(VISIBLE);
+        }
+
+        if (_standardInstructionTextView.getVisibility() == GONE
+                && _confidentialTextView.getVisibility() == GONE
+                && _policiesTextView.getVisibility() == GONE) {
+            _divider.setVisibility(GONE);
+        } else {
+            _divider.setVisibility(VISIBLE);
         }
     }
 
