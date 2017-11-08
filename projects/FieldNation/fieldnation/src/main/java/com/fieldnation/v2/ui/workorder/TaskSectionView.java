@@ -57,6 +57,7 @@ public class TaskSectionView extends LinearLayout implements WorkOrderRenderer, 
                 ((UUIDView) workOrderRenderer).setUUID(_uiUUID);
             }
         }
+        populateUi();
     }
 
     @Override
@@ -65,19 +66,16 @@ public class TaskSectionView extends LinearLayout implements WorkOrderRenderer, 
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             workOrderRenderer.setWorkOrder(workOrder);
         }
+        populateUi();
+    }
 
-        boolean visible = false;
+    private void populateUi() {
+        setVisibility(VISIBLE);
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             if (((View) workOrderRenderer).getVisibility() == VISIBLE) {
-                visible = true;
                 return;
             }
         }
-
-        if (visible) {
-            setVisibility(VISIBLE);
-        } else {
-            setVisibility(GONE);
-        }
+        setVisibility(GONE);
     }
 }
