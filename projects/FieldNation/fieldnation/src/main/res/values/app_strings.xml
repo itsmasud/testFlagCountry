@@ -130,6 +130,8 @@
     <string name="complete">Complete</string>
     <string name="reasons">Reasons</string>
 
+    <string name="penalty_statement">This work order has possible penalty charges. If you are assigned to this work order you agree to be charged any of the following penalties if the conditions are met.</string>
+
     <string name="toast_bundle_withdrawn_success">Bundle withdrawn</string>
     <string name="toast_bundle_declined_success">Bundle declined</string>
     <string name="toast_bundle_accepted">Bundle accepted</string>

@@ -6,12 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemSummaryView;
-
-import java.util.LinkedList;
-import java.util.List;
+import com.fieldnation.v2.ui.dialog.PenaltyListDialog;
 
 /**
  * Created by shoaib.ahmed on 11/07/2017.
@@ -65,7 +64,6 @@ public class PenaltySummaryView extends RelativeLayout implements WorkOrderRende
         _myUUID = uuid;
     }
 
-
     private void populateUi() {
         if (_workOrder == null || _summaryView == null)
             return;
@@ -82,7 +80,7 @@ public class PenaltySummaryView extends RelativeLayout implements WorkOrderRende
         _summaryView.setTitle(_summaryView.getResources().getString(R.string.penalties));
 
         _summaryView.setCount(String.valueOf(_workOrder.getPay().getPenalties().getResults().length));
-        _summaryView.setCountBg( R.drawable.round_rect_gray);
+        _summaryView.setCountBg(R.drawable.round_rect_gray);
 
         setOnClickListener(_this_onClick);
     }
@@ -90,7 +88,7 @@ public class PenaltySummaryView extends RelativeLayout implements WorkOrderRende
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-//            PenaltyDialog.show(App.get(), null, _workOrder.getId());
+            PenaltyListDialog.show(App.get(), null, _workOrder.getId());
         }
     };
 }
