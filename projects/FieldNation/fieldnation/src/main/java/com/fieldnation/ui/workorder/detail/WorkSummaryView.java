@@ -90,7 +90,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         setVisibility(View.GONE);
     }
 
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
@@ -142,7 +141,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         } else {
             _standardInstructionTextView.setVisibility(VISIBLE);
         }
-
     }
 
     /*-*********************************-*/
