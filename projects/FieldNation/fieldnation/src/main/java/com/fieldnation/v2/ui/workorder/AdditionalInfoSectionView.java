@@ -50,12 +50,12 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
 
     public void setUUID(String uuid) {
         _uiUUID = uuid;
-
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             if (workOrderRenderer instanceof UUIDView) {
                 ((UUIDView) workOrderRenderer).setUUID(_uiUUID);
             }
         }
+        populateUi();
     }
 
     @Override
@@ -63,19 +63,16 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             workOrderRenderer.setWorkOrder(workOrder);
         }
+        populateUi();
+    }
 
-        boolean visible = false;
+    private void populateUi() {
+        setVisibility(VISIBLE);
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             if (((View) workOrderRenderer).getVisibility() == VISIBLE) {
-                visible = true;
                 return;
             }
         }
-
-        if (visible) {
-            setVisibility(VISIBLE);
-        } else {
-            setVisibility(GONE);
-        }
+        setVisibility(GONE);
     }
 }
