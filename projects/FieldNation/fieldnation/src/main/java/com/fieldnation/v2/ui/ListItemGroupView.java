@@ -23,8 +23,11 @@ public class ListItemGroupView extends RelativeLayout {
 
     // Data
     private String _title;
+    private int _titleGragity = -1;
+    private int _titleTextColor = -1;
     private String _iconText = null;
     private int _iconTextColor = -1;
+
 
     public ListItemGroupView(Context context) {
         super(context);
@@ -59,6 +62,14 @@ public class ListItemGroupView extends RelativeLayout {
         populateUi();
     }
 
+    public void setTitle(String title, int titleGragity, int titleTextColor) {
+        _title = title;
+        _titleGragity = titleGragity;
+        _titleTextColor = titleTextColor;
+
+        populateUi();
+    }
+
     public void setIcon(String iconText, int iconTextColor) {
         _iconText = iconText;
         _iconTextColor = iconTextColor;
@@ -75,6 +86,14 @@ public class ListItemGroupView extends RelativeLayout {
             _titleTextView.setText("");
         else
             _titleTextView.setText(_title);
+
+        if (_titleGragity != -1) {
+            _titleTextView.setGravity(_titleGragity);
+        }
+
+        if (_titleTextColor != -1) {
+            _titleTextView.setTextColor(_titleTextColor);
+        }
 
         if (misc.isEmptyOrNull(_iconText))
             _iconView.setVisibility(GONE);

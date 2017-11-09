@@ -13,10 +13,16 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
+import com.fieldnation.v2.ui.workorder.UUIDView;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "PaymentView";
+
+    private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // UI
     private TextView _payTextView;
@@ -47,6 +53,8 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
 
         _payTextView = findViewById(R.id.pay_textview);
         _termsTextView = findViewById(R.id.terms_textview);
+        _renderers.add((WorkOrderRenderer) findViewById(R.id.penalty_summary_view));
+
         _termsTextView.setOnClickListener(_terms_onClick);
 
         setVisibility(View.GONE);
@@ -58,6 +66,10 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
+        for (WorkOrderRenderer workOrderRenderer : _renderers) {
+            workOrderRenderer.setWorkOrder(workOrder);
+        }
+
         refresh();
     }
 
