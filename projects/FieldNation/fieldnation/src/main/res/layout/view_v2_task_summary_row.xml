@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
     android:background="@color/fn_clickable_bg">
 
     <!--pre visit-->
@@ -26,7 +27,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
         android:background="@drawable/round_rect_red"
         android:gravity="center"
         android:paddingBottom="2dp"
@@ -38,6 +38,6 @@
 
     <View
         style="@style/DividerFull"
-        android:layout_below="@+id/count_textview" />
+        android:layout_below="@+id/title_textview" />
 
 </RelativeLayout>
