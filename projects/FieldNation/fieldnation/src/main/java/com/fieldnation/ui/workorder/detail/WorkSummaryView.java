@@ -25,6 +25,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
     // UI
     private TextView _bundleWarningTextView;
+    private View _bundleWarningLayout;
 
     private LinearLayout _descriptionContainer;
     private WebView _descriptionWebView;
@@ -34,6 +35,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
     private TextView _standardInstructionTextView;
+    private View _divider;
 
     private Button _readMoreButton;
 
@@ -79,15 +81,17 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _standardInstructionTextView = findViewById(R.id.standardInstructions_textview);
         _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
+        _divider = findViewById(R.id.link_divider);
+
         _bundleWarningTextView = findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
+        _bundleWarningLayout = findViewById(R.id.bundlewarning_layout);
 
         _readMoreButton = findViewById(R.id.readMore_button);
         _readMoreButton.setOnClickListener(_readMore_onClick);
 
         setVisibility(View.GONE);
     }
-
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -104,8 +108,10 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);
+            _bundleWarningLayout.setVisibility(VISIBLE);
         } else {
             _bundleWarningTextView.setVisibility(View.GONE);
+            _bundleWarningLayout.setVisibility(GONE);
         }
 
         if (misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
@@ -139,6 +145,13 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _standardInstructionTextView.setVisibility(VISIBLE);
         }
 
+        if (_standardInstructionTextView.getVisibility() == GONE
+                && _confidentialTextView.getVisibility() == GONE
+                && _policiesTextView.getVisibility() == GONE) {
+            _divider.setVisibility(GONE);
+        } else {
+            _divider.setVisibility(VISIBLE);
+        }
     }
 
     /*-*********************************-*/

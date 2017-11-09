@@ -19,10 +19,10 @@
     </style>
 
     <style name="OptionsTitle" parent="@style/Text_Body_1">
-        <item name="android:layout_marginBottom">10dp</item>
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginTop">10dp</item>
-        <item name="android:textColor">?attr/colorAccent</item>
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:layout_marginLeft">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textColor">@color/fn_light_text</item>
         <item name="android:textStyle">bold</item>
     </style>
 

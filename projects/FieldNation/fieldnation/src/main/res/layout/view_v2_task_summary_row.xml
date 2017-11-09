@@ -15,7 +15,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_toLeftOf="@+id/count_textview"
-        android:text="Title" />
+        android:text="Title"
+        android:textColor="@color/fn_dark_text" />
 
     <TextView
         android:id="@+id/count_textview"

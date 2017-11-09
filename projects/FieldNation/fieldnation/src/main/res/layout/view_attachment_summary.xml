@@ -23,7 +23,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
             android:layout_toLeftOf="@+id/count_textview"
-            android:text="@string/attached_files" />
+            android:text="@string/attached_files"
+            android:textColor="@color/fn_dark_text" />
 
         <TextView
             android:id="@+id/count_textview"
