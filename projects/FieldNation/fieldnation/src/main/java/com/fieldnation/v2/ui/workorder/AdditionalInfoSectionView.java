@@ -59,7 +59,6 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
 
     public void setUUID(String uuid) {
         _uiUUID = uuid;
-
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             if (workOrderRenderer instanceof UUIDView) {
                 ((UUIDView) workOrderRenderer).setUUID(_uiUUID);
@@ -72,6 +71,7 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             workOrderRenderer.setWorkOrder(workOrder);
         }
+
         _legalView.set(getResources().getString(R.string.fieldnation_legal), null);
     }
 
