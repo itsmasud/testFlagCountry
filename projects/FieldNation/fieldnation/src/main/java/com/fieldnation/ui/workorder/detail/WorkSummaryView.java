@@ -29,8 +29,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
     private LinearLayout _descriptionContainer;
     private WebView _descriptionWebView;
-    private RelativeLayout _descriptionShortLayout;
-    private TextView _descriptionShortTextView;
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
@@ -67,10 +65,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _descriptionContainer = findViewById(R.id.description_container);
 
         _descriptionWebView = findViewById(R.id.description_webview);
-
-        _descriptionShortLayout = findViewById(R.id.descriptionShort_layout);
-        _descriptionShortTextView = findViewById(R.id.descriptionShort_textview);
-        _descriptionShortTextView.setOnLongClickListener(_editMode_listener);
 
         _confidentialTextView = findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
@@ -114,18 +108,18 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _bundleWarningLayout.setVisibility(GONE);
         }
 
+/*
         if (misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
             _descriptionContainer.setVisibility(GONE);
         } else {
-            _descriptionContainer.setVisibility(VISIBLE);
-            int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
-            WebSettings _webSettings = _descriptionWebView.getSettings();
-            _webSettings.setDefaultFontSize(fontSize);
+*/
+        _descriptionContainer.setVisibility(VISIBLE);
+        int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
+        WebSettings _webSettings = _descriptionWebView.getSettings();
+        _webSettings.setDefaultFontSize(fontSize);
 
-            _descriptionWebView.loadData(_workOrder.getDescription().getHtml(), "text/html", "utf-8");
-            _descriptionShortTextView.setText(misc.linkifyHtml(_workOrder.getDescription().getHtml().trim(), Linkify.ALL));
-            _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        }
+        _descriptionWebView.loadData(_workOrder.getDescription().getHtml(), "text/html", "utf-8");
+//        }
 
         if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesTextView.setVisibility(View.GONE);
@@ -160,6 +154,19 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) _descriptionWebView.getLayoutParams();
+
+            if (layoutParams.height == 200) {
+                layoutParams.height = LayoutParams.WRAP_CONTENT;
+                _readMoreButton.setText(R.string.btn_read_less);
+            } else {
+                _readMoreButton.setText(R.string.btn_read_more);
+                layoutParams.height = 200;
+            }
+            _descriptionWebView.setLayoutParams(layoutParams);
+            _descriptionWebView.requestLayout();
+
+/*
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
                 _descriptionWebView.setVisibility(View.VISIBLE);
                 _descriptionShortLayout.setVisibility(View.GONE);
@@ -169,6 +176,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
                 _descriptionShortLayout.setVisibility(View.VISIBLE);
                 _readMoreButton.setText(R.string.btn_read_more);
             }
+*/
         }
     };
 
@@ -200,18 +208,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         public void onClick(View v) {
             if (_listener != null)
                 _listener.showStandardInstructions(_workOrder.getStandardInstructions().getHtml());
-        }
-    };
-
-    private final OnLongClickListener _editMode_listener = new OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (_descriptionShortLayout.getVisibility() == VISIBLE) {
-                _descriptionWebView.setVisibility(View.VISIBLE);
-                _descriptionShortLayout.setVisibility(View.GONE);
-                _readMoreButton.setText(R.string.btn_read_less);
-            }
-            return true;
         }
     };
 
