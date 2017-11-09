@@ -14,8 +14,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:text="Add New..."
-        android:textColor="@color/fn_clickable_text"
-        android:textSize="16sp" />
+        android:textColor="@color/fn_clickable_text" />
 
     <View
         style="@style/DividerFull"

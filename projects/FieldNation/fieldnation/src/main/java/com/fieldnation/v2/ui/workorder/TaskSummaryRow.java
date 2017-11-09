@@ -76,8 +76,9 @@ public class TaskSummaryRow extends RelativeLayout {
         }
 
         if (misc.isEmptyOrNull(_count)) {
-            _countTextView.setText("");
+            _countTextView.setVisibility(GONE);
         } else {
+            _countTextView.setVisibility(VISIBLE);
             _countTextView.setText(_count);
         }
 

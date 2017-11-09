@@ -180,6 +180,11 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         _customFieldsView.setTitle(getResources().getString(R.string.fields_to_enter));
 
+        if (fteRequired == 0) {
+            _customFieldsView.setOnClickListener(_fte_onClick);
+            return;
+        }
+
         if (_workOrder.getStatus().getId() == 2) {
             _customFieldsView.setCountBg(R.drawable.round_rect_gray);
             _customFieldsView.setCount(String.valueOf(fteTotal));

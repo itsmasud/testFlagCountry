@@ -65,13 +65,6 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Details -->
-                <!-- Commented out until we redesign the schedule views
-                                <TextView
-                                    android:id="@+id/details_textview"
-                                    style="@style/WoDV2.Header"
-                                    android:text="Details" />
-                -->
-
                 <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
                     android:id="@+id/schedule_view"
                     android:layout_width="match_parent"
@@ -127,8 +120,7 @@
                     android:id="@+id/bundlewarning2_textview"
                     style="@style/TextViewLink"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="48dp"
                     android:gravity="center"
                     android:text="@string/view_bundle_details"
                     android:visibility="gone" />

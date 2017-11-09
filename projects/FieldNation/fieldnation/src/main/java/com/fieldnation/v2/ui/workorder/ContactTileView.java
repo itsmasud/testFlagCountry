@@ -1,6 +1,8 @@
 package com.fieldnation.v2.ui.workorder;
 
 import android.Manifest;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,6 +21,7 @@ import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 
 import java.net.URLEncoder;
 
@@ -63,6 +66,7 @@ public class ContactTileView extends RelativeLayout {
         _titleTextView = findViewById(R.id.title_textview);
 
         setOnClickListener(_this_onClick);
+        setOnLongClickListener(_this_onLongClick);
     }
 
     public void setData(String name, String phone, String phoneExt, String title) {
@@ -102,9 +106,9 @@ public class ContactTileView extends RelativeLayout {
         }
     }
 
-    private final View.OnClickListener _this_onClick = new OnClickListener() {
+    private final View.OnClickListener _this_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onSingleClick(View v) {
             if (!misc.isEmptyOrNull(_phone)) {
                 try {
                     int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
@@ -120,15 +124,10 @@ public class ContactTileView extends RelativeLayout {
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
 
                     String phone = _phone;
-                    if (!misc.isEmptyOrNull(_phoneExt)){
-                        _phone += "," + _phoneExt;
+                    if (!misc.isEmptyOrNull(_phoneExt)) {
+                        phone += "," + _phoneExt;
                     }
                     callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(phone, "UTF-8")));
-
-                    /*
-                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                    callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(_phone, "UTF-8")));
-                    */
 
                     if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
                         getContext().startActivity(callIntent);
@@ -159,4 +158,21 @@ public class ContactTileView extends RelativeLayout {
             }
         }
     };
+
+    private final OnLongClickListener _this_onLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            String phone = _phone;
+            if (!misc.isEmptyOrNull(_phoneExt)) {
+                phone += "," + _phoneExt;
+            }
+
+            ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = android.content.ClipData.newPlainText(_name, phone);
+            clipboard.setPrimaryClip(clip);
+            ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
+            return true;
+        }
+    };
+
 }

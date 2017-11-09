@@ -92,27 +92,31 @@
                 android:layout_below="@+id/profile_divider"
                 android:orientation="vertical">
 
-                <RelativeLayout
+                <LinearLayout
                     android:id="@+id/payments_menu"
-                    style="@style/OptionsMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
-                    <com.fieldnation.ui.IconFontTextView
-                        android:id="@+id/payment_iconfont"
-                        style="@style/OptionsMenuIcon"
-                        android:background="@drawable/circle_menu_payment"
-                        android:text="@string/icon_circle_dollar_solid" />
+                    <RelativeLayout
+                        style="@style/OptionsMenu"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <TextView
-                        style="@style/OptionsMenuTitle"
-                        android:layout_toRightOf="@+id/payment_iconfont"
-                        android:text="@string/payments" />
-                </RelativeLayout>
+                        <com.fieldnation.ui.IconFontTextView
+                            android:id="@+id/payment_iconfont"
+                            style="@style/OptionsMenuIcon"
+                            android:background="@drawable/circle_menu_payment"
+                            android:text="@string/icon_circle_dollar_solid" />
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                        <TextView
+                            style="@style/OptionsMenuTitle"
+                            android:layout_toRightOf="@+id/payment_iconfont"
+                            android:text="@string/payments" />
+                    </RelativeLayout>
+
+                    <View style="@style/DividerFull" />
+                </LinearLayout>
 
                 <RelativeLayout
                     android:id="@+id/settings_menu"
@@ -132,9 +136,7 @@
                         android:text="@string/settings" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <RelativeLayout
                     android:id="@+id/logout_menu"
@@ -154,9 +156,7 @@
                         android:text="@string/log_out" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <TextView
                     style="@style/OptionsTitle"
@@ -164,9 +164,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/support" />
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <RelativeLayout
                     android:id="@+id/contact_menu"
@@ -186,9 +184,7 @@
                         android:text="@string/contact_us" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <RelativeLayout
                     android:id="@+id/debug_menu"
@@ -208,9 +204,7 @@
                         android:text="@string/send_debug_log" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <RelativeLayout
                     android:id="@+id/legal_menu"
@@ -230,9 +224,7 @@
                         android:text="@string/legal" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <RelativeLayout
                     android:id="@+id/version_menu"
@@ -267,9 +259,7 @@
                     </LinearLayout>
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
+                <View style="@style/DividerFull" />
 
                 <RelativeLayout
                     android:id="@+id/touchMe_menu"
@@ -314,10 +304,7 @@
                         android:text="@string/rate_us" />
                 </RelativeLayout>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/profile_view" />
-
+                <View style="@style/DividerFull" />
 
             </LinearLayout>
         </RelativeLayout>
