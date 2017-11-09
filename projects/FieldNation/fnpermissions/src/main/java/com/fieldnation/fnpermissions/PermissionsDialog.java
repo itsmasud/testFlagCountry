@@ -89,6 +89,12 @@ public class PermissionsDialog extends FullScreenDialog {
                 _descriptionTextView.setText(misc.htmlify(getContext().getString(R.string.dialog_camera_body)));
                 break;
 
+            case Manifest.permission.CALL_PHONE:
+                _imageView.setImageResource(R.drawable.phone);
+                _titleTextView.setText(R.string.dialog_phone_title);
+                _descriptionTextView.setText(misc.htmlify(getContext().getString(R.string.dialog_phone_body)));
+                break;
+
             default:
                 Log.v(TAG, "Permission " + _permissionTuple.permission + " not supported by this dialog!");
                 break;
