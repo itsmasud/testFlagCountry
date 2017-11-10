@@ -36,31 +36,31 @@
         </LinearLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/description_container"
             style="@style/Tile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
             <WebView
                 android:id="@+id/description_webview"
                 android:layout_width="match_parent"
                 android:layout_height="200px"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="12dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/readMore_button"
                 android:visibility="visible" />
 
-            <Button
+            <com.fieldnation.ui.IconFontTextView
                 android:id="@+id/readMore_button"
                 style="?attr/buttonFlatStyle"
-                android:layout_width="match_parent"
-                android:text="@string/btn_read_more" />
-        </LinearLayout>
+                android:layout_width="48dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/icon_chevron_down"
+                android:textColor="@color/fn_dark_text" />
+        </RelativeLayout>
 
         <View style="@style/DividerFull" />
 
