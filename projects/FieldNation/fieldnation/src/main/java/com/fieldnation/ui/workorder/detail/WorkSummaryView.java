@@ -33,7 +33,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
-    private TextView _standardInstructionTextView;
     private View _divider;
 
     private IconFontTextView _readMoreButton;
@@ -77,8 +76,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _policiesTextView = findViewById(R.id.policies_textview);
         _policiesTextView.setOnClickListener(_policies_onClick);
 
-        _standardInstructionTextView = findViewById(R.id.standardInstructions_textview);
-        _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
         _divider = findViewById(R.id.link_divider);
 
@@ -135,11 +132,12 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         }
 
         if (misc.isEmptyOrNull(_workOrder.getStandardInstructions().getHtml())) {
-            _standardInstructionTextView.setVisibility(GONE);
+//            _standardInstructionTextView.setVisibility(GONE);
         } else {
-            _standardInstructionTextView.setVisibility(VISIBLE);
+//            _standardInstructionTextView.setVisibility(VISIBLE);
         }
 
+/*
         if (_standardInstructionTextView.getVisibility() == GONE
                 && _confidentialTextView.getVisibility() == GONE
                 && _policiesTextView.getVisibility() == GONE) {
@@ -147,6 +145,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         } else {
             _divider.setVisibility(VISIBLE);
         }
+*/
     }
 
     /*-*********************************-*/

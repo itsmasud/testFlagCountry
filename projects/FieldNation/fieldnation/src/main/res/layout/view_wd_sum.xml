@@ -35,7 +35,6 @@
             <View style="@style/DividerFull" />
         </LinearLayout>
 
-
         <RelativeLayout
             android:id="@+id/description_container"
             style="@style/Tile"
@@ -64,15 +63,9 @@
 
         <View style="@style/DividerFull" />
 
-        <TextView
-            android:id="@+id/standardInstructions_textview"
-            style="@style/TextViewLink"
+        <com.fieldnation.v2.ui.ListItemWebView
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="@string/view_standard_instructions"
-            android:textSize="14sp" />
+            android:layout_height="match_parent" />
 
         <TextView
             android:id="@+id/policies_textview"
