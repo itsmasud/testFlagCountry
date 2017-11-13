@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -49,7 +50,7 @@ public class TimeLogsAdapter extends RecyclerView.Adapter<TimeLogViewHolder> {
 
     @Override
     public int getItemCount() {
-        if (_workOrder == null || _workOrder.getTimeLogs()==null ||_workOrder.getTimeLogs().getResults() == null)
+        if (_workOrder == null || _workOrder.getTimeLogs() == null || _workOrder.getTimeLogs().getResults() == null)
             return 0;
         return _workOrder.getTimeLogs().getResults().length;
     }
@@ -67,9 +68,9 @@ public class TimeLogsAdapter extends RecyclerView.Adapter<TimeLogViewHolder> {
         }
     };
 
-    private final View.OnClickListener _timelog_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _timelog_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             TimeLog timelog = (TimeLog) view.getTag();
             if (_listener != null
                     && timelog.getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {

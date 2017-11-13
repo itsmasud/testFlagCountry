@@ -2,11 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="16dp"
     android:orientation="vertical">
 
-    <TextView
-        style="@style/WoDV2.Header"
+    <com.fieldnation.v2.ui.workorder.WodHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="Counter Offer" />
 
     <RelativeLayout
@@ -78,8 +78,12 @@
                 android:orientation="vertical">
 
             </LinearLayout>
+
+
         </LinearLayout>
     </RelativeLayout>
+
+    <View style="@style/DividerFull" />
 
     <Button
         android:id="@+id/counterOffer_button"

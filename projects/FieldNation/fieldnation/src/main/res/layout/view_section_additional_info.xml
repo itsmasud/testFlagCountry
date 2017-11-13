@@ -26,4 +26,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
+
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
+        android:id="@+id/legal_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
 </LinearLayout>

@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
@@ -79,15 +80,15 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
             setVisibility(GONE);
             return;
         } else if (_workOrder.getPay() != null
-                && _workOrder.getPay().getType() != null) {
-            _summaryView.set(
-                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)
-                            ? _summaryView.getContext().getString(R.string.devices_complete)
-                            : _summaryView.getContext().getString(R.string.time_logged),
-
-                    _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)
-                            ? String.valueOf(_workOrder.getPay().getNumberOfDevices())
-                            : String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
+                && _workOrder.getPay().getType() != null
+                && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
+            _summaryView.set(_summaryView.getContext().getString(R.string.devices_complete),
+                    String.valueOf(_workOrder.getPay().getNumberOfDevices()));
+            setVisibility(VISIBLE);
+        } else if (_workOrder.getTimeLogs() != null
+                && _workOrder.getTimeLogs().getHours() != null) {
+            _summaryView.set(_summaryView.getContext().getString(R.string.time_logged),
+                    String.format("%.2f", _workOrder.getTimeLogs().getHours()) + " hrs");
             setVisibility(VISIBLE);
         } else {
             setVisibility(GONE);
@@ -96,11 +97,18 @@ public class TimeLogSummaryView extends RelativeLayout implements WorkOrderRende
         setOnClickListener(_this_onClick);
     }
 
-    private final View.OnClickListener _this_onClick = new OnClickListener() {
+    private final View.OnClickListener _this_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
-            final String dialogTitle = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE) ? _summaryView.getContext().getString(R.string.devices_complete) : _summaryView.getContext().getString(R.string.time_logged);
-            TimeLogListDialog.show(App.get(), null, _myUUID, _workOrder.getId(), dialogTitle);
+        public void onSingleClick(View view) {
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getType() != null
+                    && _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)) {
+                final String dialogTitle = _summaryView.getContext().getString(R.string.devices_complete);
+                TimeLogListDialog.show(App.get(), null, _myUUID, _workOrder.getId(), dialogTitle);
+            } else {
+                final String dialogTitle = _summaryView.getContext().getString(R.string.time_logged);
+                TimeLogListDialog.show(App.get(), null, _myUUID, _workOrder.getId(), dialogTitle);
+            }
         }
     };
 

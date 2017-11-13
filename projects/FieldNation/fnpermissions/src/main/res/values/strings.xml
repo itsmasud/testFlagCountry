@@ -9,4 +9,7 @@
 
     <string name="dialog_camera_title">Device camera</string>
     <string name="dialog_camera_body">&lt;center&gt;We would like access to your camera so you can take photos or videos to upload to your work orders.&lt;/center&gt;</string>
+
+    <string name="dialog_phone_title">Phone calls</string>
+    <string name="dialog_phone_body">&lt;center&gt;We would like access to your phone to allow you to make phone calls via your work orders.&lt;/center&gt;</string>
 </resources>

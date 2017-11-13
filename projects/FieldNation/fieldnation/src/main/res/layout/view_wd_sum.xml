@@ -18,74 +18,57 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/bundlewarning_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/bundlewarning_textview"
                 style="@style/TextViewLink"
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
+                android:layout_marginLeft="16dp"
                 android:text="View Bundle Details"
                 android:textSize="14sp" />
 
+            <View style="@style/DividerFull" />
         </LinearLayout>
 
-        <LinearLayout
+
+        <RelativeLayout
             android:id="@+id/description_container"
             style="@style/Tile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:id="@+id/descriptionShort_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/descriptionShort_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="5"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="16dp"
-                    android:text="@string/placeholder_phrase" />
-            </RelativeLayout>
+            android:layout_height="match_parent">
 
             <WebView
                 android:id="@+id/description_webview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="12dp"
-                android:paddingBottom="4dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
-                android:visibility="gone" />
+                android:layout_height="200px"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/readMore_button"
+                android:visibility="visible" />
 
-            <Button
+            <com.fieldnation.ui.IconFontTextView
                 android:id="@+id/readMore_button"
                 style="?attr/buttonFlatStyle"
-                android:layout_width="match_parent"
-                android:text="@string/btn_read_more" />
+                android:layout_width="48dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/icon_chevron_down"
+                android:textColor="@color/fn_dark_text" />
+        </RelativeLayout>
 
-        </LinearLayout>
+        <View style="@style/DividerFull" />
 
         <TextView
             android:id="@+id/standardInstructions_textview"
             style="@style/TextViewLink"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="@string/view_standard_instructions"
@@ -95,7 +78,7 @@
             android:id="@+id/policies_textview"
             style="@style/TextViewLink"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="@string/view_company_policies_and_procedures"
@@ -105,7 +88,7 @@
             android:id="@+id/confidential_textview"
             style="@style/TextViewLink"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="48dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:text="@string/view_confidential_information"
@@ -114,8 +97,8 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/link_divider"
         style="@style/DividerFull"
-        android:layout_width="match_parent"
-        android:layout_marginTop="16dp" />
+        android:layout_width="match_parent" />
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.CustomFields;
@@ -107,9 +108,9 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
         return dataHolders.get(position).type;
     }
 
-    private final View.OnClickListener _customField_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _customField_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             onCustomFieldClicked((CustomField) view.getTag());
         }
     };

@@ -34,7 +34,7 @@ public class SpStatusContext implements EventContext, SpContext {
     @Json
     public Integer code;
     @Json
-    public Status status;
+    public Status name;
     @Json
     public String message;
 
@@ -47,20 +47,20 @@ public class SpStatusContext implements EventContext, SpContext {
 
     public SpStatusContext(Builder builder) {
         this.code = builder.code;
-        this.status = builder.status;
+        this.name = builder.name;
         this.message = builder.message;
 
         Log.v(TAG, toString());
     }
 
-    public SpStatusContext(Status status) {
-        this.status = status;
+    public SpStatusContext(Status name) {
+        this.name = name;
 
         Log.v(TAG, toString());
     }
 
-    public SpStatusContext(Status status, String message) {
-        this.status = status;
+    public SpStatusContext(Status name, String message) {
+        this.name = name;
         this.message = message;
 
         Log.v(TAG, toString());
@@ -70,7 +70,7 @@ public class SpStatusContext implements EventContext, SpContext {
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        dataMap.put("status", status.name());
+        dataMap.put("name", name.name());
         dataMap.put("message", message);
 
         if (code != null)
@@ -105,14 +105,14 @@ public class SpStatusContext implements EventContext, SpContext {
         if (code != null)
             str += "c: " + code + " ";
 
-        str += "S: " + status.name() + " M: " + message;
+        str += "S: " + name.name() + " M: " + message;
 
         return str;
     }
 
     public static class Builder {
         private int code;
-        private Status status;
+        private Status name;
         private String message;
 
         public Builder() {
@@ -127,8 +127,8 @@ public class SpStatusContext implements EventContext, SpContext {
             return this;
         }
 
-        public Builder status(Status status) {
-            this.status = status;
+        public Builder status(Status name) {
+            this.name = name;
             return this;
         }
 

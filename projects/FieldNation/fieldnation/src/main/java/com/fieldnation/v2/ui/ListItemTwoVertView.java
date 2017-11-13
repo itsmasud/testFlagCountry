@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontTextView;
 
 /**
@@ -80,7 +81,7 @@ public class ListItemTwoVertView extends RelativeLayout {
 
     public void setActionString(String action) {
         _action = action;
-
+        _actionVisible = true;
         populateUi();
     }
 
@@ -149,6 +150,7 @@ public class ListItemTwoVertView extends RelativeLayout {
                 _actionTextView.setText(R.string.icon_x);
             } else {
                 _actionTextView.setText(_action);
+                _actionTextView.setVisibility(VISIBLE);
             }
         } else {
             _actionTextView.setVisibility(GONE);
@@ -185,9 +187,9 @@ public class ListItemTwoVertView extends RelativeLayout {
             _keyIconView.setTextColor(_iconTextColor);
     }
 
-    private final OnClickListener _action_onClick = new OnClickListener() {
+    private final OnClickListener _action_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             if (_actionOnclickListener != null)
                 _actionOnclickListener.onClick(ListItemTwoVertView.this, view);
         }

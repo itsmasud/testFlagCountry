@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
@@ -472,9 +473,9 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     }
 
-    private final View.OnClickListener _attachment_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _attachment_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             ListItemTwoVertView v = (ListItemTwoVertView) view;
             Attachment a = (Attachment) v.getTag();
             if (a.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
@@ -484,9 +485,9 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     };
 
-    private final View.OnClickListener _failed_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _failed_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             ListItemTwoVertView v = (ListItemTwoVertView) view;
             WebTransaction webTransaction = (WebTransaction) view.getTag();
             if (_listener != null)
@@ -521,9 +522,9 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     };
 
-    private final View.OnClickListener _addNew_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addNew_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onClick(View view) {
+        public void onSingleClick(View view) {
             if (_listener != null)
                 _listener.onAdd((AttachmentFolder) view.getTag());
         }

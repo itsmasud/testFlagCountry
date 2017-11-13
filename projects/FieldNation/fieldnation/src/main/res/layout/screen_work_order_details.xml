@@ -132,8 +132,7 @@
                     android:id="@+id/bundlewarning2_textview"
                     style="@style/TextViewLink"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_height="48dp"
                     android:gravity="center"
                     android:text="@string/view_bundle_details"
                     android:visibility="gone" />
