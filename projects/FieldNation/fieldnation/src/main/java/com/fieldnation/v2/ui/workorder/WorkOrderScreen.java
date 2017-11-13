@@ -206,7 +206,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         _renderers.add(_topBar);
 
         _sumView = findViewById(R.id.summary_view);
-        _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
 
         _failedUploads = findViewById(R.id.failedUploads_view);
@@ -870,29 +869,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, null, _workOrderId);
 
             MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder.getSignatures().getResults().length > 0);
-        }
-    };
-
-    private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
-        @Override
-        public void showConfidentialInfo(String body) {
-            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_confidential_information_title),
-                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
-        }
-
-        @Override
-        public void showCustomerPolicies(String body) {
-            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_policy_title),
-                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
-        }
-
-        @Override
-        public void showStandardInstructions(String body) {
-            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_standard_instruction_title),
-                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
     };
 
