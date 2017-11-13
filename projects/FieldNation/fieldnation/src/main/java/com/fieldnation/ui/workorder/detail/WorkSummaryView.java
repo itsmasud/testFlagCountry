@@ -1,11 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.text.method.LinkMovementMethod;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
@@ -27,22 +28,24 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private TextView _bundleWarningTextView;
     private View _bundleWarningLayout;
 
-    private LinearLayout _descriptionContainer;
+    private View _descriptionContainer;
     private WebView _descriptionWebView;
-    private RelativeLayout _descriptionShortLayout;
-    private TextView _descriptionShortTextView;
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
     private TextView _standardInstructionTextView;
     private View _divider;
 
-    private Button _readMoreButton;
+    private IconFontTextView _readMoreButton;
 
     // Data
     private Listener _listener;
     private WorkOrder _workOrder;
     private Boolean _isEllipsis = null;
+
+    // Animations
+    private Animation _ccw;
+    private Animation _cw;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -68,10 +71,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         _descriptionWebView = findViewById(R.id.description_webview);
 
-        _descriptionShortLayout = findViewById(R.id.descriptionShort_layout);
-        _descriptionShortTextView = findViewById(R.id.descriptionShort_textview);
-        _descriptionShortTextView.setOnLongClickListener(_editMode_listener);
-
         _confidentialTextView = findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
 
@@ -89,6 +88,9 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         _readMoreButton = findViewById(R.id.readMore_button);
         _readMoreButton.setOnClickListener(_readMore_onClick);
+
+        _ccw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_ccw);
+        _cw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_cw);
 
         setVisibility(View.GONE);
     }
@@ -114,18 +116,11 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _bundleWarningLayout.setVisibility(GONE);
         }
 
-        if (misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
-            _descriptionContainer.setVisibility(GONE);
-        } else {
-            _descriptionContainer.setVisibility(VISIBLE);
-            int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
-            WebSettings _webSettings = _descriptionWebView.getSettings();
-            _webSettings.setDefaultFontSize(fontSize);
-
-            _descriptionWebView.loadData(_workOrder.getDescription().getHtml(), "text/html", "utf-8");
-            _descriptionShortTextView.setText(misc.linkifyHtml(_workOrder.getDescription().getHtml().trim(), Linkify.ALL));
-            _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        }
+        _descriptionContainer.setVisibility(VISIBLE);
+        int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
+        WebSettings _webSettings = _descriptionWebView.getSettings();
+        _webSettings.setDefaultFontSize(fontSize);
+        _descriptionWebView.loadData(_workOrder.getDescription().getHtml(), "text/html", "utf-8");
 
         if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesTextView.setVisibility(View.GONE);
@@ -160,15 +155,17 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_descriptionShortLayout.getVisibility() == VISIBLE) {
-                _descriptionWebView.setVisibility(View.VISIBLE);
-                _descriptionShortLayout.setVisibility(View.GONE);
-                _readMoreButton.setText(R.string.btn_read_less);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) _descriptionWebView.getLayoutParams();
+
+            if (layoutParams.height == 200) {
+                layoutParams.height = LayoutParams.WRAP_CONTENT;
+                _readMoreButton.startAnimation(_cw);
             } else {
-                _descriptionWebView.setVisibility(View.GONE);
-                _descriptionShortLayout.setVisibility(View.VISIBLE);
-                _readMoreButton.setText(R.string.btn_read_more);
+                _readMoreButton.startAnimation(_ccw);
+                layoutParams.height = 200;
             }
+            _descriptionWebView.setLayoutParams(layoutParams);
+            _descriptionWebView.requestLayout();
         }
     };
 
@@ -200,18 +197,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         public void onClick(View v) {
             if (_listener != null)
                 _listener.showStandardInstructions(_workOrder.getStandardInstructions().getHtml());
-        }
-    };
-
-    private final OnLongClickListener _editMode_listener = new OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (_descriptionShortLayout.getVisibility() == VISIBLE) {
-                _descriptionWebView.setVisibility(View.VISIBLE);
-                _descriptionShortLayout.setVisibility(View.GONE);
-                _readMoreButton.setText(R.string.btn_read_less);
-            }
-            return true;
         }
     };
 
