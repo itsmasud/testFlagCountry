@@ -66,7 +66,6 @@ import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * Created by Michael on 7/26/2016.
