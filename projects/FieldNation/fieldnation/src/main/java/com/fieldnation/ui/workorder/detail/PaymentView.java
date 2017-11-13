@@ -54,6 +54,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         _payTextView = findViewById(R.id.pay_textview);
         _termsTextView = findViewById(R.id.terms_textview);
         _renderers.add((WorkOrderRenderer) findViewById(R.id.penalty_summary_view));
+        _renderers.add((WorkOrderRenderer) findViewById(R.id.bonus_summary_view));
 
         _termsTextView.setOnClickListener(_terms_onClick);
 
