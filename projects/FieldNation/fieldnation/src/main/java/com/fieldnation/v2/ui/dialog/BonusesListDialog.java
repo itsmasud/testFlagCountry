@@ -16,7 +16,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -25,14 +24,14 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.ui.PenaltyAdapter;
+import com.fieldnation.v2.ui.BonusesAdapter;
 
 /**
- * Created by Shoaib on 11/07/17.
+ * Created by Shoaib on 11/13/17.
  */
 
-public class PenaltyListDialog extends FullScreenDialog {
-    private static final String TAG = "PenaltyListDialog";
+public class BonusesListDialog extends FullScreenDialog {
+    private static final String TAG = "BonusesListDialog";
 
 
     // Ui
@@ -43,21 +42,21 @@ public class PenaltyListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
-    private PayModifiers _penalties;
-    private PenaltyAdapter _adapter = new PenaltyAdapter();
+    private PayModifiers _bonuses;
+    private BonusesAdapter _adapter = new BonusesAdapter();
 
-    public PenaltyListDialog(Context context, ViewGroup container) {
+    public BonusesListDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_v2_penalty_list, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_bonus_list, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setTitle(v.getResources().getString(R.string.penalties));
+        _toolbar.setTitle(v.getResources().getString(R.string.bonuses));
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setVisibility(View.GONE);
@@ -95,10 +94,10 @@ public class PenaltyListDialog extends FullScreenDialog {
         if (_list == null)
             return;
 
-        if (_penalties == null || _penalties.getResults() == null)
+        if (_bonuses == null || _bonuses.getResults() == null)
             return;
 
-        _adapter.setPenalties(_penalties.getResults());
+        _adapter.setBonuses(_bonuses.getResults());
     }
 
     @Override
@@ -123,8 +122,8 @@ public class PenaltyListDialog extends FullScreenDialog {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof Pay) {
-                PayModifiers penalties = ((Pay) successObject).getPenalties();
-                _penalties = penalties;
+                PayModifiers bonuses = ((Pay) successObject).getBonuses();
+                _bonuses = bonuses;
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
@@ -137,6 +136,6 @@ public class PenaltyListDialog extends FullScreenDialog {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
 
-        Controller.show(context, uid, PenaltyListDialog.class, params);
+        Controller.show(context, uid, BonusesListDialog.class, params);
     }
 }
