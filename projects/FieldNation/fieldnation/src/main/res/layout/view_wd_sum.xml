@@ -36,51 +36,31 @@
         </LinearLayout>
 
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/description_container"
             style="@style/Tile"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:id="@+id/descriptionShort_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/descriptionShort_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:maxLines="5"
-                    android:paddingBottom="4dp"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="16dp"
-                    android:text="@string/placeholder_phrase" />
-            </RelativeLayout>
+            android:layout_height="match_parent">
 
             <WebView
                 android:id="@+id/description_webview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="12dp"
-                android:paddingBottom="4dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
-                android:visibility="gone" />
+                android:layout_height="200px"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="4dp"
+                android:layout_marginTop="10dp"
+                android:layout_toLeftOf="@+id/readMore_button"
+                android:visibility="visible" />
 
-            <Button
+            <com.fieldnation.ui.IconFontTextView
                 android:id="@+id/readMore_button"
                 style="?attr/buttonFlatStyle"
-                android:layout_width="match_parent"
-                android:text="@string/btn_read_more" />
-        </LinearLayout>
+                android:layout_width="48dp"
+                android:layout_alignParentRight="true"
+                android:text="@string/icon_chevron_down"
+                android:textColor="@color/fn_dark_text" />
+        </RelativeLayout>
 
         <View style="@style/DividerFull" />
 
