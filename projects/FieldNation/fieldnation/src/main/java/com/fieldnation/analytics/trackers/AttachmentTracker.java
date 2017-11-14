@@ -10,11 +10,11 @@ import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.trackers.AttachmentTrackerSQLHelper.Column;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.analytics.trackers.AttachmentTrackerSQLHelper.Column;
 
 /**
  * Created by mc on 10/31/17.

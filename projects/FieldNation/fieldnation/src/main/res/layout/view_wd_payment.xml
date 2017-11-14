@@ -38,6 +38,11 @@
         android:layout_height="wrap_content"
         android:visibility="visible" />
 
+    <com.fieldnation.v2.ui.workorder.BonusSummaryView
+        android:id="@+id/bonus_summary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/terms_textview"
