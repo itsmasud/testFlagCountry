@@ -98,8 +98,14 @@ public abstract class WebTransactionListener {
                 // need to report this
                 // need to re-auth?
                 if (httpResult.getResponseMessage().contains("Bad Request")) {
-                    return Result.DELETE;
-
+                    if (httpResult.getString() != null
+                            && httpResult.getString().toLowerCase().contains("invalid user")) {
+                        AuthClient.removeCommand();
+                        ToastClient.toast(context, "Invalid User, Cannot login", Toast.LENGTH_LONG);
+                        return Result.DELETE;
+                    } else {
+                        return Result.DELETE;
+                    }
                 } else {
                     Log.v(TAG, "1");
                     AuthClient.invalidateCommand();
