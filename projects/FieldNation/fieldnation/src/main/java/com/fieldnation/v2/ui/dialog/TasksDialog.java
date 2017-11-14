@@ -56,7 +56,6 @@ import com.fieldnation.v2.ui.TasksAdapter;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Shoaib on 09/10/17.

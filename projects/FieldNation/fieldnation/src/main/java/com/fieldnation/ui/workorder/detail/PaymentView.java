@@ -13,7 +13,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
-import com.fieldnation.v2.ui.workorder.UUIDView;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.LinkedList;

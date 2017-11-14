@@ -1,14 +1,15 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,6 +24,8 @@ import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "WorkSummaryView";
+
+    private static final int DESCRIPTION_HEIGHT = 250;
 
     // UI
     private TextView _bundleWarningTextView;
@@ -42,6 +45,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private Listener _listener;
     private WorkOrder _workOrder;
     private Boolean _isEllipsis = null;
+    private boolean _collapsed = true;
 
     // Animations
     private Animation _ccw;
@@ -70,6 +74,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _descriptionContainer = findViewById(R.id.description_container);
 
         _descriptionWebView = findViewById(R.id.description_webview);
+        getViewTreeObserver().addOnGlobalLayoutListener(_globalListener);
 
         _confidentialTextView = findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
@@ -94,6 +99,43 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         setVisibility(View.GONE);
     }
+
+    private final ViewTreeObserver.OnGlobalLayoutListener _globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) _descriptionWebView.getLayoutParams();
+
+            // when wrap_content
+            if (_collapsed) {
+                if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
+                    if (_descriptionWebView.getHeight() < DESCRIPTION_HEIGHT) {
+                        _readMoreButton.setVisibility(GONE);
+                    } else {
+                        _readMoreButton.setVisibility(VISIBLE);
+                        layoutParams.height = DESCRIPTION_HEIGHT;
+                        _descriptionWebView.setLayoutParams(layoutParams);
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _readMoreButton.startAnimation(_ccw);
+                            }
+                        });
+                    }
+                }
+            } else {
+                if (layoutParams.height != LayoutParams.WRAP_CONTENT) {
+                    layoutParams.height = LayoutParams.WRAP_CONTENT;
+                    _descriptionWebView.setLayoutParams(layoutParams);
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _readMoreButton.startAnimation(_cw);
+                        }
+                    });
+                }
+            }
+        }
+    };
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -155,16 +197,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) _descriptionWebView.getLayoutParams();
-
-            if (layoutParams.height == 200) {
-                layoutParams.height = LayoutParams.WRAP_CONTENT;
-                _readMoreButton.startAnimation(_cw);
-            } else {
-                _readMoreButton.startAnimation(_ccw);
-                layoutParams.height = 200;
-            }
-            _descriptionWebView.setLayoutParams(layoutParams);
+            _collapsed = !_collapsed;
             _descriptionWebView.requestLayout();
         }
     };

@@ -11,7 +11,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.TaskType;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 

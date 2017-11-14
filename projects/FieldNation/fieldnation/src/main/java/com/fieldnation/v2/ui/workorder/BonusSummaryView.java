@@ -11,7 +11,6 @@ import com.fieldnation.R;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemSummaryView;
 import com.fieldnation.v2.ui.dialog.BonusesListDialog;
-import com.fieldnation.v2.ui.dialog.PenaltyListDialog;
 
 /**
  * Created by shoaib.ahmed on 11/13/2017.
