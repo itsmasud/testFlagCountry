@@ -80,7 +80,7 @@ public class BonusSummaryView extends RelativeLayout implements WorkOrderRendere
         setVisibility(VISIBLE);
         _summaryView.setTitle(_summaryView.getResources().getString(R.string.bonuses));
 
-        _summaryView.setCount(String.valueOf(_workOrder.getPay().getPenalties().getResults().length));
+        _summaryView.setCount(String.valueOf(_workOrder.getPay().getBonuses().getResults().length));
         _summaryView.setCountBg(R.drawable.round_rect_gray);
 
         setOnClickListener(_this_onClick);
