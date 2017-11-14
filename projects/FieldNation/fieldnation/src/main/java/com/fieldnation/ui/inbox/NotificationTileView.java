@@ -64,6 +64,7 @@ public class NotificationTileView extends RelativeLayout {
         _timeTextView = findViewById(R.id.time_textview);
         _workorderTextView = findViewById(R.id.workorder_textview);
         _messageBodyTextView = findViewById(R.id.messagebody_textview);
+        _messageBodyTextView.setOnClickListener(_this_onClick);
 
         setOnClickListener(_this_onClick);
 
