@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.PayModifier;
 
 import java.util.LinkedList;
@@ -85,8 +86,9 @@ public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
                 PayModifier bonus = (PayModifier) dataHolders.get(position).object;
 
                 v.setTag(bonus);
-                _valueTitle = "+$" + String.valueOf(bonus.getAmount());
-                _valueDescription = bonus.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ? null : (bonus.getModifier() + "% of labor");
+                _valueTitle = "+" + misc.toCurrency(bonus.getAmount());
+                _valueDescription = bonus.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
+                        null : (misc.to2Decimal(bonus.getModifier()) + "% of labor");
                 v.set(bonus.getName(), bonus.getDescription(), _valueTitle, _valueDescription);
                 break;
             }
