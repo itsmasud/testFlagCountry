@@ -128,6 +128,9 @@
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
     <string name="complete">Complete</string>
+    <string name="qualifications_missing">Qualification Missing</string>
+    <string name="qualifications_met">Qualification Met</string>
+    <string name="qualifications_statement">Increase your chances of being assigned to this work order by meeting all provider qualifications.</string>
     <string name="reasons">Reasons</string>
 
     <string name="penalty_statement">This work order has possible penalty charges. If you are assigned to this work order you agree to be charged any of the following penalties if the conditions are met.</string>

@@ -6,10 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.SelectionRuleCriteria;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemSummaryView;
+import com.fieldnation.v2.ui.dialog.QualificationsDialog;
 
 /**
  * Created by Shoaib on 11/06/17.
@@ -89,7 +91,7 @@ public class QualificationsSummaryView extends RelativeLayout implements WorkOrd
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-//            QualificationsDialog.show(App.get(), null, _workOrder.getId());
+            QualificationsDialog.show(App.get(), null, _workOrder.getId());
         }
     };
 }
