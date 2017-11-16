@@ -81,7 +81,7 @@ public class BonusesListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getPay(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getBonuses(App.get(), _workOrderId, true, false);
         populateUi();
     }
 
@@ -113,18 +113,18 @@ public class BonusesListDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.toLowerCase().contains("pay");
+            return methodName.toLowerCase().contains("bonus");
         }
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject != null && successObject instanceof Pay) {
-                PayModifiers bonuses = ((Pay) successObject).getBonuses();
+            if (successObject != null && successObject instanceof PayModifiers) {
+                PayModifiers bonuses = (PayModifiers) successObject;
                 _bonuses = bonuses;
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
-                WorkordersWebApi.getPay(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getBonuses(App.get(), _workOrderId, true, false);
             }
         }
     };

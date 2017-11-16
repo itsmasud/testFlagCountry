@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
@@ -20,13 +21,9 @@ public class QualificationsAdapter extends RecyclerView.Adapter<QualificationsVi
     private static final String TAG = "QualificationsAdapter";
 
     private SelectionRuleCriteria[] _qualifications;
-    private String _valueTitle;
-    private String _valueDescription;
-
-
     private List<DataHolder> dataHolders = new LinkedList<>();
 
-    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_DISCLAIMER = 0;
     private static final int TYPE_MATCHED_GROUP = 1;
     private static final int TYPE_UNMATCHED_GROUP = 2;
     private static final int TYPE_QUALIFICATION = 3;
@@ -63,7 +60,7 @@ public class QualificationsAdapter extends RecyclerView.Adapter<QualificationsVi
         }
 
 
-        dataHolders.add(new DataHolder(TYPE_HEADER, App.get().getResources().getString(R.string.qualifications_statement)));
+        dataHolders.add(new DataHolder(TYPE_DISCLAIMER, App.get().getResources().getString(R.string.qualifications_statement)));
 
         if (unmatchedQualifications.size() != 0)
             dataHolders.add(new DataHolder(TYPE_UNMATCHED_GROUP, App.get().getResources().getString(R.string.qualifications_missing)));
@@ -87,7 +84,7 @@ public class QualificationsAdapter extends RecyclerView.Adapter<QualificationsVi
     public QualificationsViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         QualificationsViewHolder holder = null;
         switch (viewType) {
-            case TYPE_HEADER: {
+            case TYPE_DISCLAIMER: {
                 ListItemGroupView view = new ListItemGroupView(parent.getContext());
                 return new QualificationsViewHolder(view);
             }
@@ -111,20 +108,21 @@ public class QualificationsAdapter extends RecyclerView.Adapter<QualificationsVi
     @Override
     public void onBindViewHolder(QualificationsViewHolder holder, int position) {
         switch (getItemViewType(position)) {
-            case TYPE_HEADER: {
+            case TYPE_DISCLAIMER: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 view.setTitle((String) dataHolders.get(position).object, Gravity.LEFT, ContextCompat.getColor(App.get(), R.color.fn_dark_text));
+                view.setDividerVisiblity(View.GONE);
                 break;
             }
             case TYPE_UNMATCHED_GROUP: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
-                view.setTitle((String) dataHolders.get(position).object);
+                view.setTitle((String) dataHolders.get(position).object, Gravity.LEFT, ContextCompat.getColor(App.get(), R.color.fn_light_text_80));
                 view.setIcon(App.get().getResources().getString(R.string.icon_x), ContextCompat.getColor(App.get(), R.color.fn_red));
                 break;
             }
             case TYPE_MATCHED_GROUP: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
-                view.setTitle((String) dataHolders.get(position).object);
+                view.setTitle((String) dataHolders.get(position).object, Gravity.LEFT, ContextCompat.getColor(App.get(), R.color.fn_light_text_80));
                 view.setIcon(App.get().getResources().getString(R.string.icon_checkmark), ContextCompat.getColor(App.get(), R.color.fn_accent_color_medium));
                 break;
             }
