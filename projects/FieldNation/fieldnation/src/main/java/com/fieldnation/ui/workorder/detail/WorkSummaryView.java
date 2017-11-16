@@ -88,7 +88,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _policiesView.setVisibility(View.GONE);
         } else {
             _policiesView.setVisibility(View.VISIBLE);
-            _policiesView.setTitle("Policies And Procedures");
+            _policiesView.setTitle("Policies and Procedures");
             _policiesView.setData(_workOrder.getPolicyAndProcedures().getHtml());
         }
 
