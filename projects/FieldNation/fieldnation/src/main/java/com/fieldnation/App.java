@@ -459,6 +459,10 @@ public class App extends Application {
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");
 
+            if (profile == null) {
+                return;
+            }
+
             // had no profile previously, or new profile, then request new token
             if (_profile == null || !_profile.getUserId().equals(profile.getUserId())) {
                 deviceToken = null;
