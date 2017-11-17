@@ -208,6 +208,10 @@ public class AuthSystem implements AuthTopicConstants {
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
         Log.v(TAG, "onNeedUserNameAndPassword");
+        // toggling cause we may never get a response from the UI here, but we don't want
+        // to notify eveybody that we're not authed.
+        _state = AuthState.NOT_AUTHENTICATED;
+        Log.v(TAG, "NOT_AUTHENTICATED");
         AuthClient.needUsernameAndPassword(authenticatorResponse);
     }
 
