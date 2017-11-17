@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.fieldnation.v2.ui.workorder.WodHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Buyer Information" />
+
+    <com.fieldnation.v2.ui.workorder.CompanySummaryView
+        android:id="@+id/companySummary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+    <com.fieldnation.v2.ui.workorder.ContactSummaryView
+        android:id="@+id/contactSummary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
+</LinearLayout>
