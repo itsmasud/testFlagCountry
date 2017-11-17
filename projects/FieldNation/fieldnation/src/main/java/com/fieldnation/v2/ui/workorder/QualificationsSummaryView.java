@@ -17,7 +17,7 @@ import com.fieldnation.v2.ui.dialog.QualificationsDialog;
  * Created by Shoaib on 11/06/17.
  */
 
-public class QualificationsSummaryView extends RelativeLayout implements WorkOrderRenderer {
+public class QualificationsSummaryView extends RelativeLayout {
     private static final String TAG = "QualificationsSummaryView";
 
     // Ui
@@ -53,7 +53,6 @@ public class QualificationsSummaryView extends RelativeLayout implements WorkOrd
         populateUi();
     }
 
-    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();

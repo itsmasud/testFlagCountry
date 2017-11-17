@@ -13,6 +13,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemWebView;
+import com.fieldnation.v2.ui.workorder.QualificationsSummaryView;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
@@ -23,6 +24,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private View _bundleWarningLayout;
 
     private ListItemWebView _descriptionView;
+    private QualificationsSummaryView _qualificationsSummaryView;
 
     private ListItemWebView _standardInstructionsView;
     private ListItemWebView _policiesView;
@@ -53,6 +55,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             return;
 
         _descriptionView = findViewById(R.id.descriptionView);
+        _qualificationsSummaryView = findViewById(R.id.qualificationsSummary_view);
+
         _standardInstructionsView = findViewById(R.id.standardInstructionsView);
 
         _confidentialInformationView = findViewById(R.id.confidentialInformationView);
@@ -83,6 +87,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         }
 
         _descriptionView.setData(_workOrder.getDescription().getHtml());
+        _qualificationsSummaryView.setWorkOrder(_workOrder);
+
 
         if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesView.setVisibility(View.GONE);

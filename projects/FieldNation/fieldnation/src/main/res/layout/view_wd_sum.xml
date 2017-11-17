@@ -30,6 +30,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <com.fieldnation.v2.ui.workorder.QualificationsSummaryView
+        android:id="@+id/qualificationsSummary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <com.fieldnation.v2.ui.ListItemWebView
         android:id="@+id/standardInstructionsView"
         android:layout_width="match_parent"

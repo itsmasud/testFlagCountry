@@ -11,8 +11,6 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +44,6 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -97,7 +94,6 @@ import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
-import com.fieldnation.v2.ui.dialog.WebViewDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 
@@ -140,7 +136,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private ProblemSummaryView _problemSummaryView;
     private BuyerCustomFieldView _buyerCustomFieldView;
     private WorkSummaryView _sumView;
-    private QualificationsSummaryView _qualificationsSummaryView;
     private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
@@ -208,9 +203,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _sumView = findViewById(R.id.summary_view);
         _renderers.add(_sumView);
-
-        _qualificationsSummaryView = findViewById(R.id.qualificationsSummary_view);
-        _renderers.add(_qualificationsSummaryView);
 
         _failedUploads = findViewById(R.id.failedUploads_view);
         _renderers.add(_failedUploads);
