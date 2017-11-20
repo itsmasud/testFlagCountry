@@ -274,8 +274,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     try {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
-
-                        AppMessagingClient.networkConnected();
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
@@ -327,6 +325,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
                         Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
                     }
+
+                    AppMessagingClient.networkConnected();
                 }
             }.executeEx(_username, _password);
 

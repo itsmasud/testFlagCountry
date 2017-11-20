@@ -255,7 +255,7 @@ public class AuthSystem implements AuthTopicConstants {
             //TODO  always gets the first account, should probably present a picker of some kind
             // have an account, now ask for the auth token
             _account = accounts[0];
-            requestAuthTokenFromAccountManager();
+                requestAuthTokenFromAccountManager();
         }
     }
 
