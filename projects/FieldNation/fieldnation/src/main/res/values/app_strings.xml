@@ -368,6 +368,7 @@
     <string name="accept_penalty_and_cancel">Accept penalty and cancel job</string>
     <string name="penalties">Penalties</string>
     <string name="bonuses">Bonuses</string>
+    <string name="earned_pay">Earned Pay</string>
     <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
