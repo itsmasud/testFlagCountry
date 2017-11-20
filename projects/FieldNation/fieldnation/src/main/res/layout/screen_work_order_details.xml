@@ -65,6 +65,11 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Details -->
+                <com.fieldnation.v2.ui.workorder.WodHeader
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Details" />
+
                 <com.fieldnation.ui.workorder.detail.ScheduleSummaryView
                     android:id="@+id/schedule_view"
                     android:layout_width="match_parent"
