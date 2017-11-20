@@ -105,22 +105,10 @@
                     android:layout_height="wrap_content" />
 
                 <!-- Buyer information -->
-                <com.fieldnation.v2.ui.workorder.WodHeader
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Buyer Information" />
-
-                <com.fieldnation.v2.ui.workorder.CompanySummaryView
-                    android:id="@+id/companySummary_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
-                <com.fieldnation.v2.ui.workorder.ContactSummaryView
-                    android:id="@+id/contactSummary_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
+                <com.fieldnation.v2.ui.workorder.BuyerInfoSectionView
+                    android:id="@+id/buyerInfoSectionView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
                 <!-- Additional information -->
                 <com.fieldnation.v2.ui.workorder.AdditionalInfoSectionView

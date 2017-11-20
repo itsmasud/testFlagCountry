@@ -50,10 +50,12 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
         _renderers.add((WorkOrderRenderer) findViewById(R.id.signaturesSummaryView));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.shipmentSummaryView));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.attachment_summary_view));
+
         _legalView = findViewById(R.id.legal_view);
         _legalView.setOnClickListener(_legal_onClick);
-        setVisibility(VISIBLE);
+        _legalView.set(getResources().getString(R.string.fieldnation_legal), null);
 
+        setVisibility(GONE);
     }
 
     public void setUUID(String uuid) {
@@ -70,8 +72,7 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
         for (WorkOrderRenderer workOrderRenderer : _renderers) {
             workOrderRenderer.setWorkOrder(workOrder);
         }
-
-        _legalView.set(getResources().getString(R.string.fieldnation_legal), null);
+        setVisibility(VISIBLE);
     }
 
 

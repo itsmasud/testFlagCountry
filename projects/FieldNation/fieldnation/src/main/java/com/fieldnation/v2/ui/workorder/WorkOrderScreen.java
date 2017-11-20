@@ -136,10 +136,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private ProblemSummaryView _problemSummaryView;
     private BuyerCustomFieldView _buyerCustomFieldView;
     private WorkSummaryView _sumView;
-    private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
-    private ContactSummaryView _contactSummaryView;
     private TextView _bundleWarningTextView;
     private RequestNewPayView _requestNewPayView;
     private RefreshView _refreshView;
@@ -152,6 +150,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private AdditionalInfoSectionView _additionalInfoSectionView;
     private PaymentSectionView _paymentSectionView;
     private TaskSectionView _taskSectionView;
+    private BuyerInfoSectionView _buyerInfoSectionView;
 
     // Data
     private WorkOrder _workOrder;
@@ -213,11 +212,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         _buyerCustomFieldView = findViewById(R.id.buyerCustomField_view);
         _renderers.add(_buyerCustomFieldView);
 
-        _companySummaryView = findViewById(R.id.companySummary_view);
-        _renderers.add(_companySummaryView);
-
-        _contactSummaryView = findViewById(R.id.contactSummary_view);
-        _renderers.add(_contactSummaryView);
+        _buyerInfoSectionView = findViewById(R.id.buyerInfoSectionView);
+        _renderers.add(_buyerInfoSectionView);
 
         _locView = findViewById(R.id.location_view);
         _renderers.add(_locView);

@@ -53,8 +53,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_company_summary, this);
 
-        Log.v(TAG, "Init");
-
         if (isInEditMode())
             return;
 
@@ -69,7 +67,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _ttaDaysTextView = findViewById(R.id.ttaDays_textview);
 
         setVisibility(GONE);
-
         populateUi();
     }
 
@@ -80,7 +77,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     }
 
     public void populateUi() {
-
         if (_ttaDaysTextView == null)
             return;
 
