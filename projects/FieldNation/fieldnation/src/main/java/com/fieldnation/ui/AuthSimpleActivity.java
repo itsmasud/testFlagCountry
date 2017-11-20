@@ -24,6 +24,7 @@ import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
@@ -55,6 +56,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AuthSystem.start();
         setContentView(getLayoutResource());
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
