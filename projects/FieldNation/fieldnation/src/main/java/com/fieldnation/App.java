@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.content.ComponentCallbacks2;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -152,6 +153,7 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+        ContentResolver.setMasterSyncAutomatically(true);
 
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);

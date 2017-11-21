@@ -17,8 +17,13 @@
     <!-- Phone -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+    <!-- Calendar -->
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+
     <!-- Currently Not dangerous permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -254,6 +259,18 @@
             <meta-data
                 android:name="android.content.SyncAdapter"
                 android:resource="@xml/syncadapter" />
+        </service>
+        <service
+            android:name=".CalendarSyncService"
+            android:exported="true"
+            android:process=":frontside">
+            <intent-filter>${applicationId}.service
+                <action android:name="android.content.SyncAdapter" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.content.SyncAdapter"
+                android:resource="@xml/calendarsyncadapter" />
         </service>
         <service
             android:name=".gcm.MyGcmListenerService"
