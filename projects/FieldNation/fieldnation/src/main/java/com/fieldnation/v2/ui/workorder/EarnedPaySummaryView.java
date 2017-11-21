@@ -2,14 +2,17 @@ package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
+import com.fieldnation.v2.ui.dialog.EarnedPayDialog;
 
 /**
  * Created by shoaib.ahmed on 11/20/2017.
@@ -68,8 +71,7 @@ public class EarnedPaySummaryView extends RelativeLayout implements WorkOrderRen
             return;
 
         if (_workOrder.getPay() == null
-                || _workOrder.getPay().getTotal() == null
-                || _workOrder.getPay().getTotal() == 0) {
+                || _workOrder.getPay().getTotal() == null) {
             setVisibility(GONE);
             return;
         }
@@ -83,7 +85,7 @@ public class EarnedPaySummaryView extends RelativeLayout implements WorkOrderRen
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-//            EarnedPayDialog.show(App.get(), null, _workOrder.getId());
+            EarnedPayDialog.show(App.get(), null, _workOrder.getId());
         }
     };
 }
