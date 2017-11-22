@@ -331,7 +331,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     if (db != null) db.close();
                 }
             }
-            if (isWriting(obj._id)) {
+            if (obj != null && isWriting(obj._id)) {
                 Log.v(TAG, "get redo, still writing...");
                 waitWriting(obj._id);
 
