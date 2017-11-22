@@ -153,7 +153,6 @@ public class App extends Application {
 //        }
 
         super.onCreate();
-        ContentResolver.setMasterSyncAutomatically(true);
 
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);
@@ -337,6 +336,9 @@ public class App extends Application {
         public void onAuthenticated(OAuth oauth) {
             _isConnected = true;
             setAuth(oauth);
+
+            // FIXME this tells the OS that we are syncable
+            ContentResolver.setMasterSyncAutomatically(true);
         }
 
         @Override
