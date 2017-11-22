@@ -351,6 +351,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+            Log.v(TAG, "AuthActivity.startNewWithResponse");
             AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);
         }
     };
