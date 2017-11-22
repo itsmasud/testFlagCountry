@@ -97,8 +97,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private Bitmap _bitmap;
     private boolean _hideImageView = false;
     private int _workOrderId = 0;
-    private Task _task;
-    private AttachmentFolder _slot;
+    private boolean _isTask;
+    private int _folderId;
     private Uri _sourceUri;
     private Uri _cachedUri = null;
     private long _cacheSize = 0;
@@ -316,10 +316,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
             }
 
-            if (payload.containsKey("task"))
-                _task = payload.getParcelable("task");
-            if (payload.containsKey("slot"))
-                _slot = payload.getParcelable("slot");
+            _isTask = payload.getBoolean("isTask");
+            _folderId = payload.getInt("folderId");
 
             if (payload.containsKey("uri")) {
                 _sourceUri = payload.getParcelable("uri");
@@ -536,7 +534,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 }
 
             } else if (_mode == MODE_NORMAL) {
-                if (_task != null) {
+                if (_isTask) {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
@@ -548,18 +546,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Task"))
                                     .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
                                     .build());
-                    try {
-                        Attachment attachment = new Attachment();
-                        attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
-
-                        AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
-                    } catch (Exception e) {
-                        Log.v(TAG, e);
-                    }
-                }
-
-                if (_slot != null) {
-                    Log.v(TAG, getUid() + " slot attached");
+                } else {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
@@ -571,15 +558,16 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Slot"))
                                     .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
                                     .build());
+                }
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_folderId);
+                    attachment.notes(_description);
+                    attachment.file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    try {
-                        Attachment attachment = new Attachment();
-                        attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
-
-                        AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
-                    } catch (Exception e) {
-                        Log.v(TAG, e);
-                    }
+                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
+                } catch (Exception e) {
+                    Log.v(TAG, e);
                 }
             }
             _onOkDispatcher.dispatch(getUid());
@@ -681,23 +669,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, Task task, String fileName, Uri uri) {
+    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, int folderId, boolean isTask, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
-        params.putParcelable("task", task);
-        params.putParcelable("uuid", uuid);
-
-        Controller.show(context, uid, PhotoUploadDialog.class, params);
-    }
-
-    public static void show(Context context, String uid, UUIDGroup uuid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
-        Bundle params = new Bundle();
-        params.putInt("workOrderId", workOrderId);
-        params.putString("fileName", fileName);
-        params.putParcelable("uri", uri);
-        params.putParcelable("slot", slot);
+        params.putBoolean("isTask", isTask);
+        params.putInt("folderId", folderId);
         params.putParcelable("uuid", uuid);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
