@@ -50,7 +50,6 @@ public class PaymentSectionView extends LinearLayout implements WorkOrderRendere
         _renderers.add((WorkOrderRenderer) findViewById(R.id.expensesSummaryView));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.discountSummaryView));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.expected_pay_view));
-        _renderers.add((WorkOrderRenderer) findViewById(R.id.fnServiceFeeSummaryView));
     }
 
     @Override

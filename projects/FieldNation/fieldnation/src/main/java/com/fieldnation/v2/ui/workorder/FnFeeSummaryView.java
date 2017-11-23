@@ -75,7 +75,6 @@ public class FnFeeSummaryView extends RelativeLayout implements WorkOrderRendere
             return;
         }
 
-
         PayModifier[] fees = _workOrder.getPay().getFees();
         if (fees != null) {
             for (PayModifier fee : fees) {
@@ -83,15 +82,12 @@ public class FnFeeSummaryView extends RelativeLayout implements WorkOrderRendere
                         && fee.getName().equals("provider")
                         && fee.getAmount() != null
                         && fee.getModifier() != null) {
-                    _summaryView.set(String.format(App.get().getString(R.string.fieldnation_expected_fee_percentage),
-                            String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0))), "-" + misc.toCurrency(fee.getAmount())));
+                    _summaryView.set(App.get().getString(R.string.fieldnation_fee_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))+ "%");
+                    setVisibility(VISIBLE);
                     break;
                 }
             }
         }
 
-        setVisibility(VISIBLE);
-        _summaryView.set(_summaryView.getResources().getString(R.string.earned_pay), misc.toCurrency(_workOrder.getPay().getTotal()));
     }
-
 }

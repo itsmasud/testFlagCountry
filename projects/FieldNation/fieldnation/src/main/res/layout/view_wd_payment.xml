@@ -44,6 +44,12 @@
         android:layout_height="wrap_content"
         android:visibility="visible" />
 
+    <com.fieldnation.v2.ui.workorder.FnFeeSummaryView
+        android:id="@+id/fnServiceFeeSummaryView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <TextView
         android:id="@+id/terms_textview"
         style="@style/TextViewLink"

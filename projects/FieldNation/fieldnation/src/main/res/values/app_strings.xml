@@ -202,6 +202,7 @@
     <!--<string name="notification_uploading_dot">Uploading…</string>-->
     <!--<string name="notification_success">Success!</string>-->
 
+    <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
     <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
     <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
     <string name="fields_to_enter">Fields to Enter</string>
