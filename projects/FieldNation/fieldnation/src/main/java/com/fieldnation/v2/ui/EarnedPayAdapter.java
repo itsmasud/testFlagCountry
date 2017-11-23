@@ -57,8 +57,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
 
     public void setPay(Pay pay) {
         dataHolders.clear();
-//        dataHolders.add(new DataHolder(TYPE_HEADER, App.get().getResources().getString(R.string.bonuses_statement)));
-
 
         // earned pay
         if (pay.getTotal() != null) {
@@ -72,7 +70,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
         if (pay.getLaborSum() != null) {
             dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple(App.get().getString(R.string.labor_earnings), misc.toCurrency(pay.getLaborSum()))));
         }
-
 
         // bonus
         for (PayModifier bonus : pay.getBonuses().getResults()) {
@@ -100,14 +97,14 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                         && fee.getModifier() != null) {
 
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
-                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_insurance_percentage), String.valueOf((float) (fee.getModifier() * 100.0))),
+                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_insurance_percentage),  String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
                                     "-" + misc.toCurrency(fee.getAmount()))));
                 } else if (fee.getName() != null
                         && fee.getName().equals("provider")
                         && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
-                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_fee_percentage), String.valueOf((double) (fee.getModifier() * 100.0))),
+                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_fee_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
                                     "-" + misc.toCurrency(fee.getAmount()))));
 
                 }
