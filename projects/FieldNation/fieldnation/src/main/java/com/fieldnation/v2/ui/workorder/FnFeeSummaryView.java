@@ -5,8 +5,10 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
@@ -42,7 +44,7 @@ public class FnFeeSummaryView extends RelativeLayout implements WorkOrderRendere
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_v2_earned_pay_summary, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_v2_fn_service_fee_summary, this, true);
 
         if (isInEditMode()) return;
 
@@ -67,15 +69,29 @@ public class FnFeeSummaryView extends RelativeLayout implements WorkOrderRendere
             return;
 
         if (_workOrder.getPay() == null
-                || _workOrder.getPay().getTotal() == null) {
+                || _workOrder.getPay() == null
+                || _workOrder.getPay().getFees() == null) {
             setVisibility(GONE);
             return;
         }
 
+
+        PayModifier[] fees = _workOrder.getPay().getFees();
+        if (fees != null) {
+            for (PayModifier fee : fees) {
+                if (fee.getName() != null
+                        && fee.getName().equals("provider")
+                        && fee.getAmount() != null
+                        && fee.getModifier() != null) {
+                    _summaryView.set(String.format(App.get().getString(R.string.fieldnation_expected_fee_percentage),
+                            String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0))), "-" + misc.toCurrency(fee.getAmount())));
+                    break;
+                }
+            }
+        }
+
         setVisibility(VISIBLE);
         _summaryView.set(_summaryView.getResources().getString(R.string.earned_pay), misc.toCurrency(_workOrder.getPay().getTotal()));
-
-//        setOnClickListener(_this_onClick);
     }
 
 }

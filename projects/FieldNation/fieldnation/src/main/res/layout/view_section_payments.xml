@@ -39,8 +39,8 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <com.fieldnation.v2.ui.workorder.FieldNationFeeView
-        android:id="@+id/earnedPaySummaryView"
+    <com.fieldnation.v2.ui.workorder.FnFeeSummaryView
+        android:id="@+id/fnServiceFeeSummaryView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
