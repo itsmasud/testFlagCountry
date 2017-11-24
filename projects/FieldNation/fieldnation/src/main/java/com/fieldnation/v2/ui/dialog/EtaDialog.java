@@ -417,6 +417,11 @@ public class EtaDialog extends FullScreenDialog {
         } else {
             _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
         }
+
+        if (_dirty)
+            _finishMenu.setTextColor(getView().getResources().getColor(R.color.white));
+        else _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
+
     }
 
     private boolean isValidEta(final Calendar arrival) {
