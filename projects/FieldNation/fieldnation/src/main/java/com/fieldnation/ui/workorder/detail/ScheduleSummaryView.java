@@ -129,7 +129,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 ETA eta = _workOrder.getEta();
                 Calendar sCal = eta.getStart().getCalendar();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy\n@ h:mm a", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy @ h:mm a", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
 
                 _etaView.set("ETA", sdf.format(sCal.getTime()) + DateUtils.getDeviceTimezone(sCal));
@@ -164,7 +164,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
             } else { //if (schedule.getType() == Schedule.Type.EXACT) {
                 Calendar sCal = schedule.getServiceWindow().getStart().getCalendar();
 
-                SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM d, yyyy", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
 
                 _firstView.set("Date", sdf.format(sCal.getTime()));
