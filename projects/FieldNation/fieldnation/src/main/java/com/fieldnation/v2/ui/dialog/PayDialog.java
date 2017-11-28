@@ -351,7 +351,7 @@ public class PayDialog extends FullScreenDialog {
 
         setMode(_mode);
 
-        if (_pay == null)
+        if (_pay == null || _pay.getType() == null)
             return;
 
         switch (_pay.getType()) {

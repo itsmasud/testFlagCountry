@@ -3,11 +3,14 @@ package com.fieldnation.fnactivityresult;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ContextProvider;
 
 /**
  * Created by mc on 8/9/17.
@@ -58,7 +61,19 @@ public abstract class ActivityRequestHandler extends Pigeon implements ActivityR
         PigeonRoost.clearAddressCache(ADDRESS_START_ACTIVITY);
         Log.v(TAG, "startActivity " + getActivity().getClass().getSimpleName());
         Intent intent = payload.getParcelable(PARAM_INTENT);
-        getActivity().startActivity(intent);
+
+        if (intent.resolveActivity(ContextProvider.get().getPackageManager()) == null) {
+            ToastClient.toast(ContextProvider.get(), "Could not find requested app", Toast.LENGTH_LONG);
+            return;
+        }
+
+        try {
+            getActivity().startActivity(intent);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            ToastClient.toast(ContextProvider.get(), "An Unknown error occurred while starting app", Toast.LENGTH_LONG);
+            return;
+        }
 
         int start = R.anim.activity_slide_in_right;
         int end = R.anim.activity_slide_out_left;
@@ -81,7 +96,18 @@ public abstract class ActivityRequestHandler extends Pigeon implements ActivityR
         int requestCode = bundle.getInt(PARAM_REQUEST_CODE);
         Log.v(TAG, "startActivityForResult " + getActivity().getClass().getSimpleName() + " " + requestCode);
 
-        getActivity().startActivityForResult(intent, requestCode);
+        if (intent.resolveActivity(ContextProvider.get().getPackageManager()) == null) {
+            ToastClient.toast(ContextProvider.get(), "Could not find requested app", Toast.LENGTH_LONG);
+            return;
+        }
+
+        try {
+            getActivity().startActivityForResult(intent, requestCode);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            ToastClient.toast(ContextProvider.get(), "An Unknown error occurred while starting app", Toast.LENGTH_LONG);
+            return;
+        }
 
         int start = R.anim.activity_slide_in_right;
         int end = R.anim.activity_slide_out_left;
