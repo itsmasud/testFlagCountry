@@ -37,7 +37,7 @@
             android:layout_toLeftOf="@+id/star_rating"
             android:gravity="left"
             android:text="Value"
-            android:textColor="@color/fn_light_text" />
+            android:textColor="@color/fn_light_text_statefull" />
 
         <com.fieldnation.ui.StarView
             android:id="@+id/star_rating"
@@ -101,7 +101,7 @@
             android:layout_toLeftOf="@+id/ttaDays_textview"
             android:gravity="left"
             android:text="Value"
-            android:textColor="@color/fn_light_text" />
+            android:textColor="@color/fn_light_text_statefull" />
 
         <TextView
             android:id="@+id/ttaDays_textview"
@@ -112,7 +112,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
             android:text="10 days"
-            android:textColor="@color/fn_light_text" />
+            android:textColor="@color/fn_light_text_statefull" />
 
         <View
             style="@style/DividerFull"

@@ -29,7 +29,7 @@
         android:layout_marginRight="16dp"
         android:gravity="right"
         android:text="Value"
-        android:textColor="@color/fn_light_text" />
+        android:textColor="@color/fn_light_text_statefull" />
 
     <TextView
         android:id="@+id/category_textview"
@@ -44,7 +44,7 @@
         android:layout_toLeftOf="@+id/cost_textview"
         android:gravity="left"
         android:text="Value"
-        android:textColor="@color/fn_light_text" />
+        android:textColor="@color/fn_light_text_statefull" />
 
     <View
         style="@style/DividerFull"

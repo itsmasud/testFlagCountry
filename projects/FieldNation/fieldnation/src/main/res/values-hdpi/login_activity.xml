@@ -13,7 +13,7 @@
     <style name="Login.EditText" parent="@android:style/Widget.EditText">
         <item name="android:textColor">@color/fn_dark_text</item>
         <item name="android:background">@drawable/login_edittext_bg</item>
-        <item name="android:textColorHintInverse">@color/fn_light_text</item>
+        <item name="android:textColorHintInverse">@color/fn_light_text_statefull</item>
         <item name="android:ems">10</item>
         <item name="android:singleLine">true</item>
         <item name="android:maxLines">1</item>

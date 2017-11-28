@@ -90,7 +90,7 @@
                     android:layout_marginTop="12dp"
                     android:ellipsize="end"
                     android:hint="@string/place_holder_explanation"
-                    android:textColor="@color/fn_light_text" />
+                    android:textColor="@color/fn_light_text_statefull" />
 
                 <View
                     style="@style/DividerFull"

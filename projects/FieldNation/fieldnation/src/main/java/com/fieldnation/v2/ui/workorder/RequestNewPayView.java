@@ -93,7 +93,7 @@ public class RequestNewPayView extends RelativeLayout implements WorkOrderRender
                 case PENDING: // pending
                     setVisibility(VISIBLE);
                     _statusTextView.setText("PENDING");
-                    _statusTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
+                    _statusTextView.setTextColor(getResources().getColor(R.color.fn_light_text_statefull));
                     break;
                 case ACCEPTED: // approved
                     setVisibility(VISIBLE);

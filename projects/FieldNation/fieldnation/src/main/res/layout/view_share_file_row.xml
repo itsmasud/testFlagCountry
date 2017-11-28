@@ -27,6 +27,6 @@
         android:layout_toRightOf="@+id/icon_view"
         android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
-        android:textColor="@color/fn_light_text" />
+        android:textColor="@color/fn_light_text_statefull" />
 
 </RelativeLayout>

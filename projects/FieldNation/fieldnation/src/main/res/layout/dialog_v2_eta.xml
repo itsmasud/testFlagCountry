@@ -118,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="4dp"
                     android:text="@string/tv_date"
-                    android:textColor="@color/fn_light_text" />
+                    android:textColor="@color/fn_light_text_statefull" />
 
                 <Button
                     android:id="@+id/etaStartDate_button"
@@ -143,7 +143,7 @@
                     android:layout_below="@+id/etaStartDate_divider"
                     android:layout_marginLeft="4dp"
                     android:text="Time"
-                    android:textColor="@color/fn_light_text" />
+                    android:textColor="@color/fn_light_text_statefull" />
 
                 <Button
                     android:id="@+id/etaStartTime_button"
@@ -168,7 +168,7 @@
                     android:layout_below="@+id/etaStartTime_divider"
                     android:layout_marginLeft="4dp"
                     android:text="Duration"
-                    android:textColor="@color/fn_light_text" />
+                    android:textColor="@color/fn_light_text_statefull" />
 
                 <Button
                     android:id="@+id/duration_button"
@@ -193,7 +193,7 @@
                     android:layout_below="@+id/duration_divider"
                     android:layout_marginLeft="4dp"
                     android:text="Additional Details"
-                    android:textColor="@color/fn_light_text" />
+                    android:textColor="@color/fn_light_text_statefull" />
 
                 <EditText
                     android:id="@+id/note_edittext"

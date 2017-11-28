@@ -16,7 +16,7 @@
         android:minLines="1"
         android:paddingLeft="16dp"
         android:textColor="@color/fn_dark_text"
-        android:textColorHint="@color/fn_light_text"
+        android:textColorHint="@color/fn_light_text_statefull"
         android:theme="@style/Theme.AppCompat.NoActionBar" />
 
     <com.fieldnation.ui.IconFontButton

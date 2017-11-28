@@ -54,7 +54,7 @@ public class UploadSlotView extends RelativeLayout {
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
         _titleTextView = findViewById(R.id.name_textview);
-        _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
+        _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_statefull));
         _iconView = findViewById(R.id.icon_view);
 
         populateUi();
@@ -77,7 +77,7 @@ public class UploadSlotView extends RelativeLayout {
         } else {
             _iconView.setText(getResources().getString(R.string.icon_task));
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-            _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
+            _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_statefull));
             _checked = false;
         }
     }

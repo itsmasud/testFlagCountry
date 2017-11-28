@@ -11,7 +11,7 @@
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
         android:text="December"
-        android:textColor="@color/fn_light_text"
+        android:textColor="@color/fn_light_text_statefull"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -24,7 +24,7 @@
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
         android:text="2015"
-        android:textColor="@color/fn_light_text"
+        android:textColor="@color/fn_light_text_statefull"
         android:textSize="14sp"
         android:textStyle="bold" />
 

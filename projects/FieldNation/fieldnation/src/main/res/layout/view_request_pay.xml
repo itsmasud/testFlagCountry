@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="New pay request"
-            android:textColor="@color/fn_light_text"
+            android:textColor="@color/fn_light_text_statefull"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -25,7 +25,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:text="@string/btn_pending_approval"
-            android:textColor="@color/fn_light_text"
+            android:textColor="@color/fn_light_text_statefull"
             android:textSize="14sp" />
 
     </RelativeLayout>
