@@ -33,7 +33,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
     private static final int TYPE_BONUS = 2;
     private static final int TYPE_PENALTY = 3;
     private static final int TYPE_EXPENSE = 4;
-    private static final int TYPE_DISCOUNT = 5;
 
     private static class DataHolder {
         int type;
@@ -73,19 +72,29 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
 
         // bonus
         for (PayModifier bonus : pay.getBonuses().getResults()) {
+            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription()) || bonus.getCalculation() == null || bonus.getAmount() == null)
+                continue;
             dataHolders.add(new DataHolder(TYPE_BONUS, bonus));
         }
         // penalty
         for (PayModifier penalty : pay.getPenalties().getResults()) {
+            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription()) || penalty.getCalculation() == null || penalty.getAmount() == null)
+                continue;
             dataHolders.add(new DataHolder(TYPE_PENALTY, penalty));
         }
         // expenses
         for (Expense expense : pay.getExpenses().getResults()) {
+            if (expense == null || expense.getCategory() == null || misc.isEmptyOrNull(expense.getCategory().getName()) ||
+            misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null)
+            continue;
             dataHolders.add(new DataHolder(TYPE_EXPENSE, expense));
         }
         // discount
         for (PayModifier discount : pay.getDiscounts().getResults()) {
-            dataHolders.add(new DataHolder(TYPE_DISCOUNT, discount));
+            if (discount == null || discount.getName() == null || discount.getAmount() == null)
+                continue;
+            dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple(discount.getName(), "-" + misc.toCurrency(discount.getAmount()))));
+
         }
 
         PayModifier[] fees = pay.getFees();
@@ -97,7 +106,7 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                         && fee.getModifier() != null) {
 
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
-                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_insurance_percentage),  String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
+                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_insurance_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
                                     "-" + misc.toCurrency(fee.getAmount()))));
                 } else if (fee.getName() != null
                         && fee.getName().equals("provider")
@@ -141,10 +150,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
             case TYPE_EXPENSE: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
                 return new EarnedPayViewHolder(view);
-            }
-            case TYPE_DISCOUNT: {
-                ListItemTwoHorizView v = new ListItemTwoHorizView(parent.getContext());
-                return new EarnedPayViewHolder(v);
             }
         }
         return null;
@@ -191,18 +196,9 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                 Expense expense = (Expense) dataHolders.get(position).object;
                 v.setTag(expense);
                 _valueTitle = "+" + misc.toCurrency(expense.getAmount());
-                _valueDescription = "+" + misc.toCurrency(expense.getAmount());
                 v.set(expense.getDescription(), expense.getCategory().getName(), _valueTitle, null);
                 break;
             }
-            case TYPE_DISCOUNT: {
-                ListItemTwoHorizView v = (ListItemTwoHorizView) holder.itemView;
-                PayModifier discount = (PayModifier) dataHolders.get(position).object;
-                v.setTag(discount);
-                v.set(discount.getName(), "-" + misc.toCurrency(discount.getAmount()));
-                break;
-            }
-
         }
     }
 
