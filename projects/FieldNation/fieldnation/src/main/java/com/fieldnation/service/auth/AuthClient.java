@@ -136,7 +136,7 @@ public abstract class AuthClient extends Pigeon implements AuthTopicConstants {
                 Bundle bundle = (Bundle) message;
                 if (bundle.containsKey(PARAM_AUTHENTICATOR_RESPONSE)
                         && bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE) != null) {
-                    AuthClient.needUsernameAndPassword(null);
+                    PigeonRoost.clearAddressCache(ADDRESS_AUTH_COMMAND_NEED_PASSWORD);
                     onNeedUsernameAndPassword(bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE));
                 }
                 break;
