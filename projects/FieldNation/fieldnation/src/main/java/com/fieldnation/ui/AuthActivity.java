@@ -35,10 +35,12 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.auth.AuthTopicConstants;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileSystem;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
@@ -80,6 +82,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        PigeonRoost.clearAddressCache(AuthTopicConstants.ADDRESS_AUTH_COMMAND_NEED_PASSWORD);
+
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFormat(PixelFormat.UNKNOWN);
         setContentView(R.layout.activity_login);
@@ -250,8 +254,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "Login Button");
             misc.hideKeyboard(getCurrentFocus());
-            startService(new Intent(AuthActivity.this, ProfileSystem.class));
 
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
@@ -325,8 +329,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
                         Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
                     }
-
-                    AppMessagingClient.networkConnected();
                 }
             }.executeEx(_username, _password);
 
