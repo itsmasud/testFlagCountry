@@ -121,7 +121,7 @@ public class EtaDialog extends FullScreenDialog {
     private long _durationMilliseconds = INVALID_NUMBER;
     private long _expiringDurationSeconds = INVALID_NUMBER;
     private boolean _isSwitchOn = true;
-    private int _currentPosition = 1;
+    private int _currentPosition = INVALID_NUMBER;
     private int[] _durations;
     private boolean _dirty = false;
 
@@ -167,7 +167,7 @@ public class EtaDialog extends FullScreenDialog {
 
         _refreshView = v.findViewById(R.id.refresh_view);
 
-        _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.expire_duration_values);
+        _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.request_expire_duration_values);
 
         return v;
     }
@@ -194,7 +194,7 @@ public class EtaDialog extends FullScreenDialog {
 
         _expiresCheckBox.setOnClickListener(_expires_onClick);
         _expireSpinner.setOnItemSelectedListener(_expireSpinner_selected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(_expirationLayout.getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(_expirationLayout.getContext(), R.array.request_expire_duration_titles, R.layout.view_request_expiry_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _expireSpinner.setAdapter(adapter);
 
@@ -211,7 +211,8 @@ public class EtaDialog extends FullScreenDialog {
         if (_currentPosition != INVALID_NUMBER) {
             _expiringDurationSeconds = _durations[_currentPosition];
             _expireSpinner.setSelection(_currentPosition);
-        }
+        } else _expireSpinner.setSelection(0);
+
     }
 
     @Override
@@ -746,7 +747,7 @@ public class EtaDialog extends FullScreenDialog {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            _currentPosition = 1;
+            _currentPosition = INVALID_NUMBER;
             _dirty = true;
         }
     };

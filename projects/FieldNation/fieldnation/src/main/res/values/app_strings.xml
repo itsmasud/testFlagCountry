@@ -1055,6 +1055,32 @@
         <item>172800</item>
     </integer-array>
 
+    <string-array name="request_expire_duration_titles">
+        <item>NEVER</item>
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="request_expire_duration_values">
+        <item>-1</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
+
     <string-array name="co_expire_duration_titles">
         <item>NEVER</item>
         <item>15 mins</item>
