@@ -72,7 +72,7 @@
             android:paddingBottom="16dp"
             android:paddingTop="16dp"
             android:text="Associated Work Orders"
-            android:textColor="@color/fn_light_text_statefull"
+            android:textColor="@color/fn_light_text"
             android:textSize="14sp"
             android:textStyle="bold" />
 

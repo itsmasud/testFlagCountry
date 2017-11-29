@@ -32,7 +32,7 @@
     <color name="card_status_green_center">@color/fn_accent_color_0</color>
     <color name="card_status_green_bottom">@color/card_gradient_bottom</color>
 
-    <color name="card_status_gray_fill">@color/fn_light_text_statefull</color>
+    <color name="card_status_gray_fill">@color/fn_light_text</color>
     <color name="card_status_gray_top">@color/fn_light_text_80</color>
     <color name="card_status_gray_center">@color/fn_light_text_0</color>
     <color name="card_status_gray_bottom">@color/card_gradient_bottom</color>

@@ -27,7 +27,7 @@
 
     <style name="SignatureName">
         <item name="android:layout_marginBottom">5dp</item>
-        <item name="android:textColor">@color/fn_light_text_statefull</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
 </resources>

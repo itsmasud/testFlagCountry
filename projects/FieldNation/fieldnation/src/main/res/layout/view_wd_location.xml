@@ -44,7 +44,7 @@
             android:id="@+id/mapview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:background="@color/fn_light_text_statefull"
+            android:background="@color/fn_light_text"
             android:scaleType="centerCrop"
             android:src="@drawable/no_map" />
 

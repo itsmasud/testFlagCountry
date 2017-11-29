@@ -28,7 +28,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="10dp"
         android:text="Sept 12"
-        android:textColor="@color/fn_light_text_statefull"
+        android:textColor="@color/fn_light_text"
         android:textSize="14sp" />
 
     <TextView
@@ -39,7 +39,7 @@
         android:layout_below="@+id/schedule_textview"
         android:layout_marginLeft="10dp"
         android:text="901 S Marquette Ave, Suit 2300"
-        android:textColor="@color/fn_light_text_statefull"
+        android:textColor="@color/fn_light_text"
         android:textSize="14sp" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_below="@+id/address_textview"
         android:layout_marginLeft="10dp"
         android:text="Rancho Santa Margarita, CA"
-        android:textColor="@color/fn_light_text_statefull"
+        android:textColor="@color/fn_light_text"
         android:textSize="14sp" />
 
 

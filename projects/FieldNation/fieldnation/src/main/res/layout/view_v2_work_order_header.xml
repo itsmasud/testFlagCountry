@@ -26,7 +26,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:text="@string/placeholder_paragraph"
-        android:textColor="@color/fn_light_text_statefull"
+        android:textColor="@color/fn_light_text"
         android:textStyle="bold" />
 
     <View

@@ -32,7 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/icon_dollar"
-                    android:textColor="@color/fn_light_text_statefull"
+                    android:textColor="@color/fn_light_text"
                     android:textSize="32sp" />
 
                 <TextView
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="@string/icon_calendar"
-                    android:textColor="@color/fn_light_text_statefull"
+                    android:textColor="@color/fn_light_text"
                     android:textSize="32sp" />
 
                 <TextView

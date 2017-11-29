@@ -80,7 +80,7 @@
     <style name="DrawerItemSubtitle" parent="Text_Subhead">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/fn_light_text_statefull</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
     <style name="DrawerEsitmatedAmount">
@@ -116,7 +116,7 @@
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">@dimen/drawer_item_icon_paddingRight</item>
-        <item name="android:textColor">@color/fn_light_text_statefull</item>
+        <item name="android:textColor">@color/fn_light_text</item>
         <item name="android:textSize">32sp</item>
 
     </style>
