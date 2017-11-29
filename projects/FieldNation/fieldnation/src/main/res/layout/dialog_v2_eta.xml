@@ -27,13 +27,6 @@
                 android:background="@color/dialogBg_Material"
                 android:visibility="visible">
 
-
-                <!--<LinearLayout-->
-                <!--android:id="@+id/expiry_layout"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:orientation="horizontal">-->
-
                 <CheckBox
                     android:id="@+id/expires_checkbox"
                     style="?attr/tileCheckBoxStyle"
@@ -54,8 +47,6 @@
                     android:paddingRight="20dp"
                     android:visibility="visible" />
 
-                <!--</LinearLayout>-->
-
                 <View
                     android:id="@+id/divider_one"
                     style="@style/DividerFull"
@@ -67,8 +58,6 @@
                     style="@style/DividerFull"
                     android:layout_below="@+id/divider_one"
                     android:layout_marginTop="12dp" />
-
-
             </RelativeLayout>
 
             <com.fieldnation.v2.ui.ListItemTwoVertView
