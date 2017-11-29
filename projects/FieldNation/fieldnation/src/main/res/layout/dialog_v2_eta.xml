@@ -24,43 +24,42 @@
                 android:id="@+id/request_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
                 android:background="@color/dialogBg_Material"
                 android:visibility="visible">
 
 
-                <LinearLayout
-                    android:id="@+id/expiry_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="20dp"
+                <!--<LinearLayout-->
+                <!--android:id="@+id/expiry_layout"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="horizontal">-->
+
+                <CheckBox
+                    android:id="@+id/expires_checkbox"
+                    style="?attr/tileCheckBoxStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="20dp"
                     android:paddingRight="20dp"
-                    android:orientation="horizontal">
+                    android:text="@string/request_expires"
+                    android:visibility="visible" />
 
-                    <CheckBox
-                        android:id="@+id/expires_checkbox"
-                        style="?attr/tileCheckBoxStyle"
-                        android:layout_width="wrap_content"
-                        android:text="@string/request_expires"
-                        android:visibility="visible" />
+                <com.fieldnation.ui.HintSpinner
+                    android:id="@+id/expire_duration_spinner"
+                    style="@style/Widget.AppCompat.Spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@+id/expires_checkbox"
+                    android:hint="30 mins"
+                    android:paddingRight="20dp"
+                    android:visibility="visible" />
 
-                    <com.fieldnation.ui.HintSpinner
-                        android:id="@+id/expire_duration_spinner"
-                        style="@style/Widget.AppCompat.Spinner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="@+id/expires_checkbox"
-                        android:layout_gravity="center_vertical"
-                        android:gravity="right"
-                        android:hint="30 mins"
-                        android:visibility="visible" />
-
-                </LinearLayout>
+                <!--</LinearLayout>-->
 
                 <View
                     android:id="@+id/divider_one"
                     style="@style/DividerFull"
-                    android:layout_below="@+id/expiry_layout"
+                    android:layout_below="@+id/expire_duration_spinner"
                     android:layout_marginTop="12dp" />
 
                 <View
