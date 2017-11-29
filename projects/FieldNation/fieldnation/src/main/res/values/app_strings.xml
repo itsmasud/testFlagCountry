@@ -1056,7 +1056,7 @@
     </integer-array>
 
     <string-array name="request_expire_duration_titles">
-        <item>NEVER</item>
+        <item>Never</item>
         <item>15 mins</item>
         <item>30 mins</item>
         <item>1 hour</item>
