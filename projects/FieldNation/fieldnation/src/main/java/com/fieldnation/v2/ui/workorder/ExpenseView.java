@@ -10,8 +10,6 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.ExpenseCategories;
-import com.fieldnation.v2.data.model.ExpenseCategory;
 
 public class ExpenseView extends LinearLayout {
     private static final String TAG = "ExpenseView";
@@ -23,7 +21,6 @@ public class ExpenseView extends LinearLayout {
 
     // Data
     private Expense _expense = null;
-    private ExpenseCategory[] _categories;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -47,21 +44,7 @@ public class ExpenseView extends LinearLayout {
         _descriptionTextView = findViewById(R.id.description_textview);
         _categoryTextView = findViewById(R.id.category_textview);
         _costTextView = findViewById(R.id.cost_textview);
-
-        ExpenseCategories categories = new ExpenseCategories(getContext());
-        categories.setListener(_categoriesListener);
     }
-
-    /*-*********************************-*/
-    /*-				Event				-*/
-    /*-*********************************-*/
-    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
-        @Override
-        public void onHaveCategories(ExpenseCategory[] categories) {
-            _categories = categories;
-            refresh();
-        }
-    };
 
     /*-*************************************-*/
     /*-				Mutators				-*/
@@ -79,23 +62,15 @@ public class ExpenseView extends LinearLayout {
         if (_expense == null)
             return;
 
-        if (_categories == null)
-            return;
-
         if (_expense.getDescription() != null)
             _descriptionTextView.setText(_expense.getDescription());
         else
             _descriptionTextView.setText("NA");
 
         _categoryTextView.setVisibility(View.GONE);
-        if (_categories != null && _expense.getId() != null && _expense.getCategory().getId() != null) {
-            for (ExpenseCategory _category : _categories) {
-                if (_category.getId().equals(_expense.getCategory().getId())) {
-                    _categoryTextView.setText(_category.getName());
-                    _categoryTextView.setVisibility(View.VISIBLE);
-                    break;
-                }
-            }
+        if (_expense.getCategory() != null && _expense.getCategory().getName() != null) {
+            _categoryTextView.setText(_expense.getCategory().getName());
+            _categoryTextView.setVisibility(View.VISIBLE);
         }
         if (_expense.getAmount() != null)
             _costTextView.setText(misc.toCurrency(_expense.getAmount()));
