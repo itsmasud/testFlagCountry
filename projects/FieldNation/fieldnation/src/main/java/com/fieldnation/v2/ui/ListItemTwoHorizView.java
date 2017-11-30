@@ -66,6 +66,13 @@ public class ListItemTwoHorizView extends RelativeLayout {
         return _key;
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        _keyTextView.setEnabled(enabled);
+        _valueTextView.setEnabled(enabled);
+    }
+
     private void populateUi() {
         if (_valueTextView == null || _keyTextView == null)
             return;
