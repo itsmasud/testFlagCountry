@@ -34,8 +34,8 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="12dp"
                     android:paddingRight="20dp"
-                    android:textSize="16sp"
                     android:text="@string/request_expires"
+                    android:textSize="16sp"
                     android:visibility="visible" />
 
                 <com.fieldnation.ui.HintSpinner
@@ -43,11 +43,11 @@
                     style="@style/Widget.AppCompat.Spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:background="@android:color/white"
                     android:layout_alignBaseline="@+id/expires_textview"
-                    android:hint="30 mins"
+                    android:layout_alignParentRight="true"
                     android:layout_marginRight="10dp"
+                    android:background="@android:color/white"
+                    android:hint="30 mins"
                     android:visibility="visible" />
 
                 <View
@@ -74,12 +74,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/title"
+                android:layout_marginBottom="12dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:textSize="16sp"
-                android:layout_marginBottom="12dp"
                 android:layout_marginTop="10dp"
-                android:text="@string/switch_text_set_eta" />
+                android:text="@string/switch_text_set_eta"
+                android:textSize="16sp" />
 
             <Switch
                 android:id="@+id/eta_switch"
@@ -97,118 +97,125 @@
                 style="@style/DividerFull"
                 android:layout_below="@+id/switchLabel_textview" />
 
-            <com.fieldnation.v2.ui.workorder.WodHeader
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/etaSwitch_divider"
-                android:layout_marginBottom="16dp"
-                android:text="Estimated time of arrival (ETA)" />
-
             <RelativeLayout
                 android:id="@+id/eta_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/header"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_below="@+id/etaSwitch_divider"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:paddingBottom="8dp"
                 android:visibility="visible">
 
-                <TextView
-                    android:id="@+id/etaStartDate_textview"
-                    style="@style/Text_Caption"
+                <com.fieldnation.v2.ui.workorder.WodHeader
+                    android:id="@+id/header"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
-                    android:text="@string/tv_date"
-                    android:textColor="@color/fn_light_text" />
-
-                <Button
-                    android:id="@+id/etaStartDate_button"
-                    style="@style/SpinnerButton"
-                    android:layout_below="@+id/etaStartDate_textview"
-                    android:text="@string/placeholder_date_long" />
-
-                <View
-                    android:id="@+id/etaStartDate_divider"
-                    style="@style/DividerSpinnerFull"
-                    android:layout_below="@+id/etaStartDate_button"
                     android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text" />
+                    android:text="Estimated time of arrival (ETA)" />
 
-                <TextView
-                    android:id="@+id/etaStartTime_textview"
-                    style="@style/Text_Caption"
+                <RelativeLayout
+                    android:id="@+id/etaBody_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/etaStartDate_divider"
-                    android:layout_marginLeft="4dp"
-                    android:text="Time"
-                    android:textColor="@color/fn_light_text" />
+                    android:layout_below="@+id/header"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp">
 
-                <Button
-                    android:id="@+id/etaStartTime_button"
-                    style="@style/SpinnerButton"
-                    android:layout_below="@+id/etaStartTime_textview"
-                    android:text="@string/placeholder_time_long" />
+                    <TextView
+                        android:id="@+id/etaStartDate_textview"
+                        style="@style/Text_Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/tv_date"
+                        android:textColor="@color/fn_light_text" />
 
-                <View
-                    android:id="@+id/etaStartTime_divider"
-                    style="@style/DividerSpinnerFull"
-                    android:layout_below="@+id/etaStartTime_button"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text" />
+                    <Button
+                        android:id="@+id/etaStartDate_button"
+                        style="@style/SpinnerButton"
+                        android:layout_below="@+id/etaStartDate_textview"
+                        android:text="@string/placeholder_date_long" />
 
-                <TextView
-                    android:id="@+id/jobDuration_textview"
-                    style="@style/Text_Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/etaStartTime_divider"
-                    android:layout_marginLeft="4dp"
-                    android:text="Duration"
-                    android:textColor="@color/fn_light_text" />
+                    <View
+                        android:id="@+id/etaStartDate_divider"
+                        style="@style/DividerSpinnerFull"
+                        android:layout_below="@+id/etaStartDate_button"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@color/fn_dark_text" />
 
-                <Button
-                    android:id="@+id/duration_button"
-                    style="@style/SpinnerButton"
-                    android:layout_below="@+id/jobDuration_textview"
-                    android:text="" />
+                    <TextView
+                        android:id="@+id/etaStartTime_textview"
+                        style="@style/Text_Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/etaStartDate_divider"
+                        android:layout_marginLeft="4dp"
+                        android:text="Time"
+                        android:textColor="@color/fn_light_text" />
 
-                <View
-                    android:id="@+id/duration_divider"
-                    style="@style/DividerSpinnerFull"
-                    android:layout_below="@+id/duration_button"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text" />
+                    <Button
+                        android:id="@+id/etaStartTime_button"
+                        style="@style/SpinnerButton"
+                        android:layout_below="@+id/etaStartTime_textview"
+                        android:text="@string/placeholder_time_long" />
 
-                <TextView
-                    android:id="@+id/note_textview"
-                    style="@style/Text_Caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/duration_divider"
-                    android:layout_marginLeft="4dp"
-                    android:text="Additional Details"
-                    android:textColor="@color/fn_light_text" />
+                    <View
+                        android:id="@+id/etaStartTime_divider"
+                        style="@style/DividerSpinnerFull"
+                        android:layout_below="@+id/etaStartTime_button"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@color/fn_dark_text" />
 
-                <EditText
-                    android:id="@+id/note_edittext"
-                    style="@style/EditText"
-                    android:layout_width="match_parent"
-                    android:layout_below="@+id/note_textview"
-                    android:hint="@string/hint_text_additional_details"
-                    android:textSize="16dp"
-                    android:visibility="visible" />
+                    <TextView
+                        android:id="@+id/jobDuration_textview"
+                        style="@style/Text_Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/etaStartTime_divider"
+                        android:layout_marginLeft="4dp"
+                        android:text="Duration"
+                        android:textColor="@color/fn_light_text" />
+
+                    <Button
+                        android:id="@+id/duration_button"
+                        style="@style/SpinnerButton"
+                        android:layout_below="@+id/jobDuration_textview"
+                        android:text="" />
+
+                    <View
+                        android:id="@+id/duration_divider"
+                        style="@style/DividerSpinnerFull"
+                        android:layout_below="@+id/duration_button"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@color/fn_dark_text" />
+
+                    <TextView
+                        android:id="@+id/note_textview"
+                        style="@style/Text_Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/duration_divider"
+                        android:layout_marginLeft="4dp"
+                        android:text="Additional Details"
+                        android:textColor="@color/fn_light_text" />
+
+                    <EditText
+                        android:id="@+id/note_edittext"
+                        style="@style/EditText"
+                        android:layout_width="match_parent"
+                        android:layout_below="@+id/note_textview"
+                        android:hint="@string/hint_text_additional_details"
+                        android:textSize="16dp"
+                        android:visibility="visible" />
+
+                </RelativeLayout>
             </RelativeLayout>
 
             <TextView
