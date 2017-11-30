@@ -44,10 +44,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:layout_alignBaseline="@+id/expires_textview"
                     android:background="@android:color/white"
+                    android:layout_alignBaseline="@+id/expires_textview"
                     android:hint="30 mins"
-                    android:paddingRight="20dp"
+                    android:layout_marginRight="10dp"
                     android:visibility="visible" />
 
                 <View

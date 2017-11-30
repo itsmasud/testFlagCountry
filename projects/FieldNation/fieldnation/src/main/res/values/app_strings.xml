@@ -707,7 +707,7 @@
     <string name="report_issue">Report Issue</string>
     <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
-    <string name="request_expires">Request expires</string>
+    <string name="request_expires">Expire Request</string>
     <string name="request_new_pay">Request New Pay</string>
     <string name="request_reschedule">Request reschedule</string>
     <string name="request_workorder">Request Work Order</string>
