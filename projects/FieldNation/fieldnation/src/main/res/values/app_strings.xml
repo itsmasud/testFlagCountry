@@ -228,6 +228,7 @@
 
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
+    <string name="hint_text_additional_details">Additional Details (Optional)</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
@@ -706,7 +707,7 @@
     <string name="report_issue">Report Issue</string>
     <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
-    <string name="request_expires">Request expires</string>
+    <string name="request_expires">Expire Request</string>
     <string name="request_new_pay">Request New Pay</string>
     <string name="request_reschedule">Request reschedule</string>
     <string name="request_workorder">Request Work Order</string>
@@ -1057,6 +1058,32 @@
         <item>86400</item>
         <item>172800</item>
     </integer-array>
+
+    <string-array name="request_expire_duration_titles">
+        <item>Never</item>
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="request_expire_duration_values">
+        <item>-1</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
 
     <string-array name="co_expire_duration_titles">
         <item>NEVER</item>

@@ -90,7 +90,6 @@ public class EtaDialog extends FullScreenDialog {
 
     private TextView _termsWarningTextView;
     private RelativeLayout _expirationLayout;
-    private CheckBox _expiresCheckBox;
     private HintSpinner _expireSpinner;
 
     private ListItemTwoVertView _titleView;
@@ -121,7 +120,7 @@ public class EtaDialog extends FullScreenDialog {
     private long _durationMilliseconds = INVALID_NUMBER;
     private long _expiringDurationSeconds = INVALID_NUMBER;
     private boolean _isSwitchOn = true;
-    private int _currentPosition = 1;
+    private int _currentPosition = INVALID_NUMBER;
     private int[] _durations;
     private boolean _dirty = false;
 
@@ -150,7 +149,6 @@ public class EtaDialog extends FullScreenDialog {
 
         // Expiration stuff
         _expirationLayout = v.findViewById(R.id.request_layout); // expiration layout
-        _expiresCheckBox = v.findViewById(R.id.expires_checkbox);
         _expireSpinner = v.findViewById(R.id.expire_duration_spinner);
 
         // schedule description
@@ -167,7 +165,7 @@ public class EtaDialog extends FullScreenDialog {
 
         _refreshView = v.findViewById(R.id.refresh_view);
 
-        _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.expire_duration_values);
+        _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.request_expire_duration_values);
 
         return v;
     }
@@ -192,9 +190,8 @@ public class EtaDialog extends FullScreenDialog {
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
-        _expiresCheckBox.setOnClickListener(_expires_onClick);
         _expireSpinner.setOnItemSelectedListener(_expireSpinner_selected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(_expirationLayout.getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(_expirationLayout.getContext(), R.array.request_expire_duration_titles, R.layout.view_request_expiry_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _expireSpinner.setAdapter(adapter);
 
@@ -211,7 +208,8 @@ public class EtaDialog extends FullScreenDialog {
         if (_currentPosition != INVALID_NUMBER) {
             _expiringDurationSeconds = _durations[_currentPosition];
             _expireSpinner.setSelection(_currentPosition);
-        }
+        } else _expireSpinner.setSelection(0);
+
     }
 
     @Override
@@ -417,6 +415,11 @@ public class EtaDialog extends FullScreenDialog {
         } else {
             _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
         }
+
+        if (_dirty)
+            _finishMenu.setTextColor(getView().getResources().getColor(R.color.white));
+        else _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
+
     }
 
     private boolean isValidEta(final Calendar arrival) {
@@ -734,6 +737,10 @@ public class EtaDialog extends FullScreenDialog {
     private final AdapterView.OnItemSelectedListener _expireSpinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position == 0) {
+                _currentPosition = INVALID_NUMBER;
+                return;
+            }
             _currentPosition = position;
             _expiringDurationSeconds = _durations[position];
             _dirty = true;
@@ -741,18 +748,8 @@ public class EtaDialog extends FullScreenDialog {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            _currentPosition = 1;
+            _currentPosition = INVALID_NUMBER;
             _dirty = true;
-        }
-    };
-
-    private final View.OnClickListener _expires_onClick = new ApatheticOnClickListener() {
-        @Override
-        public void onSingleClick(View v) {
-            if (!_expiresCheckBox.isChecked()) {
-                _expiringDurationSeconds = INVALID_NUMBER;
-                _dirty = true;
-            }
         }
     };
 
@@ -808,7 +805,7 @@ public class EtaDialog extends FullScreenDialog {
 
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
-                        if (_expiresCheckBox.isChecked())
+                        if (_currentPosition != INVALID_NUMBER)
                             request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds * 1000));
 
                         if (_etaSwitch.isChecked()) {
