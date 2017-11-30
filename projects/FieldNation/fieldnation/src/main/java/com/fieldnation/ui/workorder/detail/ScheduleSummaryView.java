@@ -108,9 +108,11 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
             _editEtaButton.setOnClickListener(_setEta_onClick);
         } else*/
         if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+            _etaView.setEnabled(true);
             _etaView.setOnClickListener(_editEta_onClick);
         } else {
             _etaView.setOnClickListener(null);
+            _etaView.setEnabled(false);
         }
 
         Schedule schedule = _workOrder.getSchedule();
@@ -150,7 +152,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 SimpleDateFormat sdf3 = new SimpleDateFormat("h:mm a", Locale.getDefault());
                 sdf3.setDateFormatSymbols(symbols);
 
-                if (sCal.get(Calendar.YEAR) == eCal.get(Calendar.YEAR)){
+                if (sCal.get(Calendar.YEAR) == eCal.get(Calendar.YEAR)) {
                     _firstView.set("Between", sdf2.format(sCal.getTime()) + " - " + sdf1.format(eCal.getTime()));
                 } else {
                     _firstView.set("Between", sdf1.format(sCal.getTime()) + " - " + sdf1.format(eCal.getTime()));

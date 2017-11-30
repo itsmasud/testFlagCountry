@@ -202,8 +202,8 @@
     <!--<string name="notification_uploading_dot">Uploading…</string>-->
     <!--<string name="notification_success">Success!</string>-->
 
-    <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
-    <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
+    <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
+    <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
 
@@ -369,6 +369,9 @@
     <string name="accept_penalty_and_cancel">Accept penalty and cancel job</string>
     <string name="penalties">Penalties</string>
     <string name="bonuses">Bonuses</string>
+    <string name="earned_pay">Earned Pay</string>
+    <string name="payment_breakdown">Payment Breakdown</string>
+    <string name="labor_earnings">Labor Earnings</string>
     <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
