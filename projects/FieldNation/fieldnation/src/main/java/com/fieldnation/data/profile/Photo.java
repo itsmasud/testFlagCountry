@@ -21,6 +21,9 @@ public class Photo {
         if ("/images/missing.png".equals(_large))
             return null;
 
+        if ("/images/missing-profile.png".equals(_large))
+            return null;
+
         if ("https://app.fieldnation.com/images/missing.png".equals(_large))
             return null;
 
@@ -29,6 +32,9 @@ public class Photo {
 
     public String getThumb() {
         if ("/images/missing.png".equals(_thumb))
+            return null;
+
+        if ("/images/missing-profile.png".equals(_thumb))
             return null;
 
         if ("https://app.fieldnation.com/images/missing.png".equals(_thumb))
@@ -58,5 +64,4 @@ public class Photo {
             return null;
         }
     }
-
 }

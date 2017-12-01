@@ -83,17 +83,29 @@ public class User {
         if (misc.isEmptyOrNull(_photoThumbUrl))
             return null;
 
-        if (_photoThumbUrl.endsWith("/images/missing.png"))
+        if ("/images/missing.png".equals(_photoThumbUrl))
+            return null;
+
+        if ("https://app.fieldnation.com/images/missing.png".equals(_photoThumbUrl))
+            return null;
+
+        if ("/images/missing-profile.png".equals(_photoThumbUrl))
             return null;
 
         return _photoThumbUrl;
     }
 
     public String getPhotoUrl() {
-        if (misc.isEmptyOrNull(_photoThumbUrl))
+        if (misc.isEmptyOrNull(_photoUrl))
             return null;
 
-        if (_photoThumbUrl.endsWith("/images/missing.png"))
+        if ("/images/missing.png".equals(_photoUrl))
+            return null;
+
+        if ("https://app.fieldnation.com/images/missing.png".equals(_photoUrl))
+            return null;
+
+        if ("/images/missing-profile.png".equals(_photoUrl))
             return null;
 
         return _photoUrl;
