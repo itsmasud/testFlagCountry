@@ -88,7 +88,7 @@ public class NotificationTileView extends RelativeLayout {
             return;
 
         try {
-            _titleTextView.setText(_notification.getWorkorder().getTitle());
+            // _titleTextView.setText(_notification.getWorkorder().getTitle());
         } catch (Exception e) {
             Log.v(TAG, e);
         }
