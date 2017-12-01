@@ -72,26 +72,31 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
 
         // bonus
         for (PayModifier bonus : pay.getBonuses().getResults()) {
-            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription()) || bonus.getCalculation() == null || bonus.getAmount() == null)
+            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription()) || bonus.getCalculation() == null || bonus.getAmount() == null
+                    || bonus.getCharged() == null || bonus.getCharged() == false)
                 continue;
             dataHolders.add(new DataHolder(TYPE_BONUS, bonus));
         }
         // penalty
         for (PayModifier penalty : pay.getPenalties().getResults()) {
-            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription()) || penalty.getCalculation() == null || penalty.getAmount() == null)
+            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription()) || penalty.getCalculation() == null || penalty.getAmount() == null
+                    || penalty.getCharged() == null || penalty.getCharged() == false)
                 continue;
             dataHolders.add(new DataHolder(TYPE_PENALTY, penalty));
         }
         // expenses
         for (Expense expense : pay.getExpenses().getResults()) {
             if (expense == null || expense.getCategory() == null || misc.isEmptyOrNull(expense.getCategory().getName()) ||
-            misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null)
-            continue;
+                    misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null || expense.getStatus() == null
+                    || !expense.getStatus().equals(Expense.StatusEnum.APPROVED))
+                continue;
+
             dataHolders.add(new DataHolder(TYPE_EXPENSE, expense));
         }
         // discount
         for (PayModifier discount : pay.getDiscounts().getResults()) {
-            if (discount == null || discount.getName() == null || discount.getAmount() == null)
+            if (discount == null || discount.getName() == null || discount.getAmount() == null
+                    || discount.getCharged() == null || discount.getCharged() == false)
                 continue;
             dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple(discount.getName(), "-" + misc.toCurrency(discount.getAmount()))));
 
@@ -162,6 +167,7 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
             case TYPE_KEY_VALUE: {
                 ListItemTwoHorizView view = (ListItemTwoHorizView) holder.itemView;
                 view.set(((KeyValueTuple) (dataHolders.get(position).object)).key, ((KeyValueTuple) (dataHolders.get(position).object)).value);
+                view.setEnabled(false);
                 break;
             }
             case TYPE_HEADER: {
@@ -170,33 +176,36 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                 break;
             }
             case TYPE_BONUS: {
-                ListItemTwoHorizTwoVertView v = (ListItemTwoHorizTwoVertView) holder.itemView;
+                ListItemTwoHorizTwoVertView view = (ListItemTwoHorizTwoVertView) holder.itemView;
                 PayModifier bonus = (PayModifier) dataHolders.get(position).object;
 
-                v.setTag(bonus);
+                view.setTag(bonus);
                 _valueTitle = "+" + misc.toCurrency(bonus.getAmount());
                 _valueDescription = bonus.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
                         null : (misc.to2Decimal(bonus.getModifier()) + "% of labor");
-                v.set(bonus.getName(), bonus.getDescription(), _valueTitle, _valueDescription);
+                view.set(bonus.getName(), bonus.getDescription(), _valueTitle, _valueDescription);
+                view.setEnabled(false);
                 break;
             }
             case TYPE_PENALTY: {
-                ListItemTwoHorizTwoVertView v = (ListItemTwoHorizTwoVertView) holder.itemView;
+                ListItemTwoHorizTwoVertView view = (ListItemTwoHorizTwoVertView) holder.itemView;
                 PayModifier penalty = (PayModifier) dataHolders.get(position).object;
 
-                v.setTag(penalty);
+                view.setTag(penalty);
                 _valueTitle = "-" + misc.toCurrency(penalty.getAmount());
                 _valueDescription = penalty.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
                         null : (misc.to2Decimal(penalty.getModifier()) + "% of labor");
-                v.set(penalty.getName(), penalty.getDescription(), _valueTitle, _valueDescription);
+                view.set(penalty.getName(), penalty.getDescription(), _valueTitle, _valueDescription);
+                view.setEnabled(false);
                 break;
             }
             case TYPE_EXPENSE: {
-                ListItemTwoHorizTwoVertView v = (ListItemTwoHorizTwoVertView) holder.itemView;
+                ListItemTwoHorizTwoVertView view = (ListItemTwoHorizTwoVertView) holder.itemView;
                 Expense expense = (Expense) dataHolders.get(position).object;
-                v.setTag(expense);
+                view.setTag(expense);
                 _valueTitle = "+" + misc.toCurrency(expense.getAmount());
-                v.set(expense.getDescription(), expense.getCategory().getName(), _valueTitle, null);
+                view.set(expense.getDescription(), expense.getCategory().getName(), _valueTitle, null);
+                view.setEnabled(false);
                 break;
             }
         }

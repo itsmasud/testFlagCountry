@@ -57,6 +57,15 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
         populateUi();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        _keyTitleTextView.setEnabled(enabled);
+        _valueTitleTextView.setEnabled(enabled);
+        _keyDescriptionTextView.setEnabled(enabled);
+        _valueDescriptionTextView.setEnabled(enabled);
+    }
+
     public void set(String keyTitle, String keyDescription, String valueTitle, String valueDescription) {
         _keyTitle = keyTitle;
         _keyDescription = keyDescription;
