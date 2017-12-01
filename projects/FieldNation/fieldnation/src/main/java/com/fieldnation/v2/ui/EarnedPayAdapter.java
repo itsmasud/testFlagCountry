@@ -84,9 +84,8 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
         }
         // expenses
         for (Expense expense : pay.getExpenses().getResults()) {
-            if (expense == null || expense.getCategory() == null || misc.isEmptyOrNull(expense.getCategory().getName()) ||
-                    misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null || expense.getStatus() == null
-                    || !expense.getStatus().equals(Expense.StatusEnum.APPROVED))
+            if (expense == null || expense.getCategory() == null || misc.isEmptyOrNull(expense.getCategory().getName())
+                    || misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null)
                 continue;
 
             dataHolders.add(new DataHolder(TYPE_EXPENSE, expense));
