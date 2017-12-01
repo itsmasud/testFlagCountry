@@ -72,15 +72,13 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
 
         // bonus
         for (PayModifier bonus : pay.getBonuses().getResults()) {
-            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription()) || bonus.getCalculation() == null || bonus.getAmount() == null
-                    || bonus.getCharged() == null || bonus.getCharged() == false)
+            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription()) || bonus.getCalculation() == null || bonus.getAmount() == null)
                 continue;
             dataHolders.add(new DataHolder(TYPE_BONUS, bonus));
         }
         // penalty
         for (PayModifier penalty : pay.getPenalties().getResults()) {
-            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription()) || penalty.getCalculation() == null || penalty.getAmount() == null
-                    || penalty.getCharged() == null || penalty.getCharged() == false)
+            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription()) || penalty.getCalculation() == null || penalty.getAmount() == null)
                 continue;
             dataHolders.add(new DataHolder(TYPE_PENALTY, penalty));
         }
@@ -95,11 +93,9 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
         }
         // discount
         for (PayModifier discount : pay.getDiscounts().getResults()) {
-            if (discount == null || discount.getName() == null || discount.getAmount() == null
-                    || discount.getCharged() == null || discount.getCharged() == false)
+            if (discount == null || discount.getName() == null || discount.getAmount() == null)
                 continue;
             dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple(discount.getName(), "-" + misc.toCurrency(discount.getAmount()))));
-
         }
 
         PayModifier[] fees = pay.getFees();
@@ -167,7 +163,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
             case TYPE_KEY_VALUE: {
                 ListItemTwoHorizView view = (ListItemTwoHorizView) holder.itemView;
                 view.set(((KeyValueTuple) (dataHolders.get(position).object)).key, ((KeyValueTuple) (dataHolders.get(position).object)).value);
-                view.setEnabled(false);
                 break;
             }
             case TYPE_HEADER: {
@@ -184,7 +179,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                 _valueDescription = bonus.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
                         null : (misc.to2Decimal(bonus.getModifier()) + "% of labor");
                 view.set(bonus.getName(), bonus.getDescription(), _valueTitle, _valueDescription);
-                view.setEnabled(false);
                 break;
             }
             case TYPE_PENALTY: {
@@ -196,7 +190,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                 _valueDescription = penalty.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
                         null : (misc.to2Decimal(penalty.getModifier()) + "% of labor");
                 view.set(penalty.getName(), penalty.getDescription(), _valueTitle, _valueDescription);
-                view.setEnabled(false);
                 break;
             }
             case TYPE_EXPENSE: {
@@ -205,7 +198,6 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
                 view.setTag(expense);
                 _valueTitle = "+" + misc.toCurrency(expense.getAmount());
                 view.set(expense.getDescription(), expense.getCategory().getName(), _valueTitle, null);
-                view.setEnabled(false);
                 break;
             }
         }
