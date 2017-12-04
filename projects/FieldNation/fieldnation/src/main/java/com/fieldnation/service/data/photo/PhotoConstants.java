@@ -4,7 +4,7 @@ package com.fieldnation.service.data.photo;
  * Created by Michael Carver on 3/12/2015.
  */
 public interface PhotoConstants {
-    String ADDRESS_GET_PHOTO = "PhotoDataService:ADDRESS_GET_PHOTO";
+    String ADDRESS_GET_PHOTO = "PhotoConstants:ADDRESS_GET_PHOTO";
 
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_GET = "PARAM_ACTION_GET";

@@ -92,50 +92,57 @@ public abstract class PhotoClient extends Pigeon implements PhotoConstants {
             imageDownloaded(sourceUrl, localUri, isCircle, success);
 
             if (success && doGetImage(sourceUrl, isCircle)) {
-                new AsyncTaskEx<Object, Object, BitmapDrawable>() {
-                    String sourceUrl;
-                    Uri localUri;
-                    boolean isCircle;
-
-                    @Override
-                    protected BitmapDrawable doInBackground(Object... params) {
-                        try {
-                            sourceUrl = (String) params[0];
-                            localUri = (Uri) params[1];
-                            isCircle = (Boolean) params[2];
-
-                            String key = isCircle + ":" + sourceUrl;
-
-                            BitmapDrawable result = null;
-
-                            if (_pictureCache.containsKey(key)) {
-                                WeakReference<BitmapDrawable> wr = _pictureCache.get(key);
-
-                                if (wr == null || wr.get() == null) {
-                                    _pictureCache.remove(key);
-                                } else {
-                                    result = wr.get();
-                                }
-                            }
-
-                            if (result == null) {
-                                result = new BitmapDrawable(App.get().getResources(), App.get().getContentResolver().openInputStream(localUri));
-                                _pictureCache.put(key, new WeakReference<>(result));
-                            }
-
-                            return result;
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
-                        return null;
-                    }
-
-                    @Override
-                    protected void onPostExecute(BitmapDrawable bitmapDrawable) {
-                        onImageReady(sourceUrl, localUri, bitmapDrawable, isCircle, bitmapDrawable != null);
-                    }
-                }.executeEx(sourceUrl, localUri, isCircle);
+                new BitmapAsyncTask(this).executeEx(sourceUrl, localUri, isCircle);
             }
+        }
+    }
+
+    private static class BitmapAsyncTask extends AsyncTaskEx<Object, Object, BitmapDrawable> {
+        String sourceUrl;
+        Uri localUri;
+        boolean isCircle;
+        PhotoClient client;
+
+        public BitmapAsyncTask(PhotoClient client) {
+            this.client = client;
+        }
+
+        @Override
+        protected BitmapDrawable doInBackground(Object... params) {
+            try {
+                sourceUrl = (String) params[0];
+                localUri = (Uri) params[1];
+                isCircle = (Boolean) params[2];
+
+                String key = isCircle + ":" + sourceUrl;
+
+                BitmapDrawable result = null;
+
+                if (_pictureCache.containsKey(key)) {
+                    WeakReference<BitmapDrawable> wr = _pictureCache.get(key);
+
+                    if (wr == null || wr.get() == null) {
+                        _pictureCache.remove(key);
+                    } else {
+                        result = wr.get();
+                    }
+                }
+
+                if (result == null) {
+                    result = new BitmapDrawable(App.get().getResources(), App.get().getContentResolver().openInputStream(localUri));
+                    _pictureCache.put(key, new WeakReference<>(result));
+                }
+
+                return result;
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(BitmapDrawable bitmapDrawable) {
+            client.onImageReady(sourceUrl, localUri, bitmapDrawable, isCircle, bitmapDrawable != null);
         }
     }
 }
