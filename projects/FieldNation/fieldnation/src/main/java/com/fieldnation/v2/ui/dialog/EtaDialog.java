@@ -369,7 +369,6 @@ public class EtaDialog extends FullScreenDialog {
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
             _toolbar.setTitle(R.string.dialog_eta_title);
             _finishMenu.setText(App.get().getString(R.string.btn_submit));
-            _finishMenu.setEnabled(_dirty);
 
             _expirationLayout.setVisibility(View.GONE);
 
@@ -415,10 +414,7 @@ public class EtaDialog extends FullScreenDialog {
             _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
         }
 
-        if (_dirty)
-            _finishMenu.setTextColor(getView().getResources().getColor(R.color.white));
-        else _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
-
+        _finishMenu.setEnabled(_dirty);
     }
 
     private boolean isValidEta(final Calendar arrival) {
