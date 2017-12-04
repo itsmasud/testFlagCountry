@@ -122,7 +122,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             WebSettings _webSettings = _descriptionWebView.getSettings();
             _webSettings.setDefaultFontSize(fontSize);
 
-            _descriptionWebView.loadData(_workOrder.getDescription().getHtml(), "text/html", "utf-8");
+            _descriptionWebView.loadData("<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>" + _workOrder.getDescription().getHtml(), "text/html", "utf-8");
             _descriptionShortTextView.setText(misc.linkifyHtml(_workOrder.getDescription().getHtml().trim(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
