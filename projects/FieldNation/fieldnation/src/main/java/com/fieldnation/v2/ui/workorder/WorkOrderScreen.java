@@ -878,21 +878,24 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         public void showConfidentialInfo(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
             WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_confidential_information_title),
-                    Html.toHtml(misc.linkifyHtml("<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>" + body, Linkify.ALL)));
+                    "<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>"
+                            + Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
 
         @Override
         public void showCustomerPolicies(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
             WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_policy_title),
-                    Html.toHtml(misc.linkifyHtml("<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>" + body, Linkify.ALL)));
+                    "<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>"
+                            + Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
         }
 
         @Override
         public void showStandardInstructions(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
             WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_standard_instruction_title),
-                    Html.toHtml(misc.linkifyHtml"<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>" + (body, Linkify.ALL)))
+                    "<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>"
+                            + Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)))
             ;
         }
     };
