@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -308,7 +307,7 @@ public class EtaDialog extends FullScreenDialog {
         // Wod request work, Woc Request work
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
             _toolbar.setTitle("Request " + _workOrderId);
-            _finishMenu.setText(App.get().getString(R.string.btn_submit));
+            _finishMenu.setText(App.get().getString(R.string.btn_request));
 
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
@@ -615,13 +614,15 @@ public class EtaDialog extends FullScreenDialog {
     private final CompoundButton.OnCheckedChangeListener _switch_onChange = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                _isSwitchOn = true;
-                _etaLayout.setVisibility(View.VISIBLE);
-            } else {
-                _isSwitchOn = false;
-                _etaLayout.setVisibility(View.GONE);
-            }
+
+            _isSwitchOn = isChecked ? true : false;
+//            if (isChecked) {
+//                _isSwitchOn = true;
+//            } else {
+//                _isSwitchOn = false;
+//                _dirty = true;
+//            }
+            populateUi();
         }
     };
 
