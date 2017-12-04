@@ -72,45 +72,48 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
 
         // bonus
         for (PayModifier bonus : pay.getBonuses().getResults()) {
-            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription()) || bonus.getCalculation() == null || bonus.getAmount() == null)
+            if (bonus == null || misc.isEmptyOrNull(bonus.getName()) || misc.isEmptyOrNull(bonus.getDescription())
+                    || bonus.getCalculation() == null || bonus.getAmount() == null || !bonus.getCharged())
                 continue;
             dataHolders.add(new DataHolder(TYPE_BONUS, bonus));
         }
         // penalty
         for (PayModifier penalty : pay.getPenalties().getResults()) {
-            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription()) || penalty.getCalculation() == null || penalty.getAmount() == null)
+            if (penalty == null || misc.isEmptyOrNull(penalty.getName()) || misc.isEmptyOrNull(penalty.getDescription())
+                    || penalty.getCalculation() == null || penalty.getAmount() == null || !penalty.getCharged())
                 continue;
             dataHolders.add(new DataHolder(TYPE_PENALTY, penalty));
         }
         // expenses
-        for (Expense expense : pay.getExpenses().getResults()) {
-            if (expense == null || expense.getCategory() == null || misc.isEmptyOrNull(expense.getCategory().getName())
-                    || misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null)
-                continue;
+        if (pay.getExpenses() != null && pay.getExpenses().getResults() != null && pay.getExpenses().getResults().length != 0) {
+            for (Expense expense : pay.getExpenses().getResults()) {
+                if (expense == null || expense.getCategory() == null || misc.isEmptyOrNull(expense.getCategory().getName())
+                        || misc.isEmptyOrNull(expense.getDescription()) || expense.getAmount() == null || expense.getStatus() != Expense.StatusEnum.APPROVED)
+                    continue;
 
-            dataHolders.add(new DataHolder(TYPE_EXPENSE, expense));
+                dataHolders.add(new DataHolder(TYPE_EXPENSE, expense));
+            }
         }
+
         // discount
-        for (PayModifier discount : pay.getDiscounts().getResults()) {
-            if (discount == null || discount.getName() == null || discount.getAmount() == null)
-                continue;
-            dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple(discount.getName(), "-" + misc.toCurrency(discount.getAmount()))));
+        if (pay.getDiscounts() != null && pay.getDiscounts().getResults() != null && pay.getDiscounts().getResults().length != 0) {
+            for (PayModifier discount : pay.getDiscounts().getResults()) {
+                if (discount == null || discount.getName() == null || discount.getAmount() == null || !discount.getCharged())
+                    continue;
+                dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple(discount.getName(), "-" + misc.toCurrency(discount.getAmount()))));
+            }
         }
 
         PayModifier[] fees = pay.getFees();
         if (fees != null) {
             for (PayModifier fee : fees) {
-                if (fee.getName() != null
-                        && fee.getName().equals("insurance")
-                        && fee.getAmount() != null
+                if (fee.getName() != null && fee.getName().equals("insurance") && fee.getAmount() != null
                         && fee.getModifier() != null) {
-
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
                             new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_insurance_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
                                     "-" + misc.toCurrency(fee.getAmount()))));
-                } else if (fee.getName() != null
-                        && fee.getName().equals("provider")
-                        && fee.getAmount() != null
+
+                } else if (fee.getName() != null && fee.getName().equals("provider") && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
                             new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_fee_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
