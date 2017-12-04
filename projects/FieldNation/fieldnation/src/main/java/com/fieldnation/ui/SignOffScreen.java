@@ -141,7 +141,7 @@ public class SignOffScreen extends RelativeLayout {
 
         _titleTextView.setText(_workOrder.getTitle());
         if (_workOrder.getDescription() != null)
-            _descriptionTextView.setText(misc.htmlify( "<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>" + _workOrder.getDescription().getHtml()));
+            _descriptionTextView.setText(misc.htmlify(_workOrder.getDescription().getHtml()));
         //_descriptionTextView.setLinksClickable(false);
 
         final TimeLog[] timeLogs = _workOrder.getTimeLogs().getResults();
