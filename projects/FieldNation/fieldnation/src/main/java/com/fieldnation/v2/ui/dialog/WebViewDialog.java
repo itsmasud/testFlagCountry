@@ -64,11 +64,14 @@ public class WebViewDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
-        String html = params.getString("html");
-        html = html.replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
-        html = html.replaceAll("</del>", "</span>");
-        html = Html.toHtml(misc.linkifyHtml(html, Linkify.ALL));
         _toolbar.setTitle(params.getString("title"));
+
+        String html = params.getString("html");
+        if (!params.getBoolean("skipFormatting")) {
+            html = html.replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
+            html = html.replaceAll("</del>", "</span>");
+            html = Html.toHtml(misc.linkifyHtml(html, Linkify.ALL));
+        }
         _webView.loadData(html, "text/html", "utf-8");
     }
 
@@ -102,6 +105,16 @@ public class WebViewDialog extends FullScreenDialog {
         Bundle params = new Bundle();
         params.putString("title", title);
         params.putString("html", html);
+        params.putBoolean("skipFormatting", false);
+
+        Controller.show(context, null, WebViewDialog.class, params);
+    }
+
+    public static void show(Context context, String title, String html, boolean skipFormatting) {
+        Bundle params = new Bundle();
+        params.putString("title", title);
+        params.putString("html", html);
+        params.putBoolean("skipFormatting", skipFormatting);
 
         Controller.show(context, null, WebViewDialog.class, params);
     }
@@ -110,6 +123,16 @@ public class WebViewDialog extends FullScreenDialog {
         Bundle params = new Bundle();
         params.putString("title", title);
         params.putString("html", html);
+        params.putBoolean("skipFormatting", false);
+
+        Controller.show(context, uid, WebViewDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, String title, String html, boolean skipFormatting) {
+        Bundle params = new Bundle();
+        params.putString("title", title);
+        params.putString("html", html);
+        params.putBoolean("skipFormatting", skipFormatting);
 
         Controller.show(context, uid, WebViewDialog.class, params);
     }
