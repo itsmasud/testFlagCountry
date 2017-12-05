@@ -877,22 +877,19 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         @Override
         public void showConfidentialInfo(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_confidential_information_title),
-                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
+            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_confidential_information_title), body);
         }
 
         @Override
         public void showCustomerPolicies(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_policy_title),
-                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
+            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_policy_title), body);
         }
 
         @Override
         public void showStandardInstructions(String body) {
             WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_standard_instruction_title),
-                    Html.toHtml(misc.linkifyHtml(body, Linkify.ALL)));
+            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_standard_instruction_title), body);
         }
     };
 
