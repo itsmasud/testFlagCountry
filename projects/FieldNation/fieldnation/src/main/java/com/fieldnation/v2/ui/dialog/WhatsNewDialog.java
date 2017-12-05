@@ -24,6 +24,7 @@ public class WhatsNewDialog extends WebViewDialog {
         Bundle params = new Bundle();
         params.putString("title", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
         params.putString("html", context.getString(R.string.added_new_feature));
+        params.putBoolean("skipFormatting", true);
 
         Controller.show(context, uid, WhatsNewDialog.class, params);
     }
@@ -32,6 +33,7 @@ public class WhatsNewDialog extends WebViewDialog {
         Bundle params = new Bundle();
         params.putString("title", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
         params.putString("html", context.getString(R.string.added_new_feature));
+        params.putBoolean("skipFormatting", true);
 
         Controller.show(context, null, WhatsNewDialog.class, params);
     }
