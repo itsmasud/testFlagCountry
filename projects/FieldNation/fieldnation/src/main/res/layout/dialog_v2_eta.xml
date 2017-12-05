@@ -56,11 +56,6 @@
                     android:layout_below="@+id/expire_duration_spinner"
                     android:layout_marginTop="12dp" />
 
-                <View
-                    android:id="@+id/divider_two"
-                    style="@style/DividerFull"
-                    android:layout_below="@+id/divider_one"
-                    android:layout_marginTop="12dp" />
             </RelativeLayout>
 
             <com.fieldnation.v2.ui.ListItemTwoVertView

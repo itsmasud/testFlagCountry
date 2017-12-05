@@ -228,7 +228,7 @@
 
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
-    <string name="hint_text_additional_details">Feel free to share more detail</string>
+    <string name="hint_text_additional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
