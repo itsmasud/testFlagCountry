@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -123,7 +124,10 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _webSettings.setDefaultFontSize(fontSize);
 
             _descriptionWebView.loadData("<style>del {color:#FFFFFF; background-color:#000000; text-decoration:none}</style>" + _workOrder.getDescription().getHtml(), "text/html", "utf-8");
-            _descriptionShortTextView.setText(misc.linkifyHtml(_workOrder.getDescription().getHtml().trim(), Linkify.ALL));
+
+            String html = _workOrder.getDescription().getHtml().trim().replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
+            html = html.replaceAll("</del>", "</span>");
+            _descriptionShortTextView.setText(misc.linkifyHtml(html, Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
