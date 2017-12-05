@@ -95,6 +95,7 @@ public class EtaDialog extends FullScreenDialog {
 
     private TextView _etaSwitchLabel;
     private Switch _etaSwitch;
+    private View _etaSwitchDivider;
 
     private RelativeLayout _etaLayout;
     private Button _etaStartDateButton;
@@ -123,6 +124,7 @@ public class EtaDialog extends FullScreenDialog {
     private int[] _durations;
     private boolean _isDateSet = false;
     private boolean _isTimeSet = false;
+    private boolean _isDirty = false;
 
 
     /*-*************************************-*/
@@ -157,6 +159,7 @@ public class EtaDialog extends FullScreenDialog {
         // ETA layout
         _etaSwitchLabel = v.findViewById(R.id.switchLabel_textview);
         _etaSwitch = v.findViewById(R.id.eta_switch);
+        _etaSwitchDivider = v.findViewById(R.id.etaSwitch_divider);
         _etaLayout = v.findViewById(R.id.eta_layout);
         _etaStartDateButton = v.findViewById(R.id.etaStartDate_button);
         _etaStartTimeButton = v.findViewById(R.id.etaStartTime_button);
@@ -230,9 +233,12 @@ public class EtaDialog extends FullScreenDialog {
                     && _woEta.getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
                     && _woEta.getStart().getUtc() != null) {
                 _etaStart = _woEta.getStart().getCalendar();
-
+                _isTimeSet = true;
+                _isDateSet = true;
             } else if (_woSchedule.getServiceWindow().getStart().getUtc() != null) {
                 _etaStart = _woSchedule.getServiceWindow().getStart().getCalendar();
+                _isTimeSet = true;
+                _isDateSet = true;
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -313,6 +319,7 @@ public class EtaDialog extends FullScreenDialog {
 
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
+            _etaSwitchDivider.setVisibility(View.VISIBLE);
             _etaSwitchLabel.setVisibility(View.VISIBLE);
             _etaSwitch.setChecked(_isSwitchOn);
             _etaLayout.setVisibility(_isSwitchOn ? View.VISIBLE : View.GONE);
@@ -330,9 +337,12 @@ public class EtaDialog extends FullScreenDialog {
             _finishMenu.setText(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
+            _etaSwitch.setOnCheckedChangeListener(null);
             _etaSwitch.setChecked(true);
+            _etaSwitch.setOnCheckedChangeListener(_switch_onChange);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
+            _etaSwitchDivider.setVisibility(View.GONE);
             _etaLayout.setVisibility(View.VISIBLE);
 
             SpannableString spanned = new SpannableString("By accepting this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
@@ -361,9 +371,12 @@ public class EtaDialog extends FullScreenDialog {
             _finishMenu.setText(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
+            _etaSwitch.setOnCheckedChangeListener(null);
             _etaSwitch.setChecked(true);
+            _etaSwitch.setOnCheckedChangeListener(_switch_onChange);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
+            _etaSwitchDivider.setVisibility(View.GONE);
             _etaLayout.setVisibility(View.VISIBLE);
             _termsWarningTextView.setVisibility(View.GONE);
 
@@ -374,8 +387,11 @@ public class EtaDialog extends FullScreenDialog {
 
             _expirationLayout.setVisibility(View.GONE);
 
+            _etaSwitch.setOnCheckedChangeListener(null);
             _etaSwitch.setChecked(true);
+            _etaSwitch.setOnCheckedChangeListener(_switch_onChange);
             _etaSwitch.setVisibility(View.GONE);
+            _etaSwitchDivider.setVisibility(View.GONE);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaLayout.setVisibility(View.VISIBLE);
             _termsWarningTextView.setVisibility(View.GONE);
@@ -422,6 +438,22 @@ public class EtaDialog extends FullScreenDialog {
         } else _expireSpinner.setSelection(0);
 
         _finishMenu.setEnabled(canEnableSubmitButton());
+    }
+
+    private boolean canEnableSubmitButton() {
+        if (!_isDirty)
+            return false;
+
+        if (!_etaSwitch.isChecked())
+            return true;
+
+        if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT && _durationMilliseconds != INVALID_NUMBER)
+            return true;
+
+        if ((_woSchedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) && _isDateSet && _isTimeSet && _durationMilliseconds != INVALID_NUMBER)
+            return true;
+
+        return false;
     }
 
     private boolean isValidEta(final Calendar arrival) {
@@ -618,6 +650,7 @@ public class EtaDialog extends FullScreenDialog {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             _isSwitchOn = isChecked;
+            _isDirty = true;
             populateUi();
         }
     };
@@ -637,6 +670,7 @@ public class EtaDialog extends FullScreenDialog {
             if (isValidEta(test)) {
                 _etaStart = test;
                 _isDateSet = true;
+                _isDirty = true;
                 populateUi();
             } else {
                 // the time field might need to be cleared.
@@ -648,6 +682,7 @@ public class EtaDialog extends FullScreenDialog {
                         _etaStart = test;
                         _isDateSet = true;
                         _isTimeSet = false;
+                        _isDirty = true;
                         populateUi();
                         _etaStartTimeButton.setText("");
                     } else {
@@ -658,6 +693,7 @@ public class EtaDialog extends FullScreenDialog {
                             _etaStart = test;
                             _isDateSet = true;
                             _isTimeSet = false;
+                            _isDirty = true;
                             populateUi();
                             _etaStartTimeButton.setText("");
                         } else {
@@ -688,6 +724,7 @@ public class EtaDialog extends FullScreenDialog {
             if (isValidEta(test)) {
                 _etaStart = test;
                 _isTimeSet = true;
+                _isDirty = true;
                 populateUi();
             } else {
                 ToastClient.toast(App.get(), R.string.toast_pick_time_within_schedule, Toast.LENGTH_SHORT);
@@ -704,12 +741,6 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private boolean canEnableSubmitButton() {
-        return !_etaSwitch.isChecked() ||
-                (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT && _durationMilliseconds != INVALID_NUMBER)
-                || ((_woSchedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) && _isDateSet && _isTimeSet && _durationMilliseconds != INVALID_NUMBER);
-    }
-
     private final DurationPickerDialog.OnOkListener _durationPickerDialog_onOk = new DurationPickerDialog.OnOkListener() {
         @Override
         public void onOk(long milliseconds) {
@@ -722,6 +753,7 @@ public class EtaDialog extends FullScreenDialog {
 
             if (_woSchedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
                 _durationMilliseconds = milliseconds;
+                _isDirty = true;
                 populateUi();
             } else {
                 Calendar test = Calendar.getInstance();
@@ -729,6 +761,7 @@ public class EtaDialog extends FullScreenDialog {
 
                 if (isValidEta(test)) {
                     _durationMilliseconds = milliseconds;
+                    _isDirty = true;
                     populateUi();
                 } else {
                     ToastClient.toast(App.get(), R.string.toast_pick_duration_within_range, Toast.LENGTH_LONG);
@@ -746,11 +779,15 @@ public class EtaDialog extends FullScreenDialog {
             }
             _currentPosition = position;
             _expiringDurationSeconds = _durations[position];
+            _isDirty = true;
+            populateUi();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             _currentPosition = INVALID_NUMBER;
+            _isDirty = true;
+            populateUi();
         }
     };
 
@@ -865,6 +902,7 @@ public class EtaDialog extends FullScreenDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            _isDirty = false;
             return true;
         }
     };
@@ -966,5 +1004,4 @@ public class EtaDialog extends FullScreenDialog {
     public static void removeAllOnBundleEtaListener(String uid) {
         _onBundleEtaDispatcher.removeAll(uid);
     }
-
 }
