@@ -332,7 +332,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     try {
                         t.timestamp = attachment.getCreated().getUtcLong();
                     } catch (Exception ex) {
-                        Log.v(TAG, ex);
+                        //Log.v(TAG, ex);
                     }
                     t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
                     t.object = attachment;
