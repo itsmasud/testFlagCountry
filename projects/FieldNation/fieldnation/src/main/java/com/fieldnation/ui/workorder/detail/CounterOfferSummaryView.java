@@ -222,7 +222,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
                     break;
             }
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            // Log.v(TAG, ex);
             line1 = null;
             line2 = null;
         }

@@ -3,6 +3,7 @@ package com.fieldnation.service.auth;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
@@ -21,6 +22,8 @@ public abstract class AuthClient extends Pigeon implements AuthTopicConstants {
     }
 
     public static void authenticated(OAuth auth) {
+        PigeonRoost.clearAddressCache(ADDRESS_AUTH_COMMAND_NEED_PASSWORD);
+
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_STATE, AuthState.AUTHENTICATED.ordinal());
         bundle.putParcelable(PARAM_OAUTH, auth);
@@ -99,6 +102,7 @@ public abstract class AuthClient extends Pigeon implements AuthTopicConstants {
 
     @Override
     public void onMessage(String address, Object message) {
+        Log.v(TAG, address);
 
         switch (address) {
             case ADDRESS_AUTH_STATE: {

@@ -36,6 +36,9 @@ public class ProblemType implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "message")
+    private String _message;
+
     @Json(name = "name")
     private String _name;
 
@@ -44,6 +47,9 @@ public class ProblemType implements Parcelable {
 
     @Json(name = "performance_event")
     private Boolean _performanceEvent;
+
+    @Json(name = "reportable")
+    private Boolean _reportable;
 
     @Json(name = "show_pqap_warning")
     private Boolean _showPqapWarning;
@@ -155,6 +161,28 @@ public class ProblemType implements Parcelable {
         return this;
     }
 
+    public void setMessage(String message) throws ParseException {
+        _message = message;
+        SOURCE.put("message", message);
+    }
+
+    public String getMessage() {
+        try {
+            if (_message == null && SOURCE.has("message") && SOURCE.get("message") != null)
+                _message = SOURCE.getString("message");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _message;
+    }
+
+    public ProblemType message(String message) throws ParseException {
+        _message = message;
+        SOURCE.put("message", message);
+        return this;
+    }
+
     public void setName(String name) throws ParseException {
         _name = name;
         SOURCE.put("name", name);
@@ -218,6 +246,28 @@ public class ProblemType implements Parcelable {
     public ProblemType performanceEvent(Boolean performanceEvent) throws ParseException {
         _performanceEvent = performanceEvent;
         SOURCE.put("performance_event", performanceEvent);
+        return this;
+    }
+
+    public void setReportable(Boolean reportable) throws ParseException {
+        _reportable = reportable;
+        SOURCE.put("reportable", reportable);
+    }
+
+    public Boolean getReportable() {
+        try {
+            if (_reportable == null && SOURCE.has("reportable") && SOURCE.get("reportable") != null)
+                _reportable = SOURCE.getBoolean("reportable");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _reportable;
+    }
+
+    public ProblemType reportable(Boolean reportable) throws ParseException {
+        _reportable = reportable;
+        SOURCE.put("reportable", reportable);
         return this;
     }
 

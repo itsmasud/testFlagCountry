@@ -32,38 +32,40 @@ public class Debug {
         _started = true;
 
         if (USE_CRASHLYTICS) {
-            new AsyncTaskEx<Object, Object, Object>() {
-                @Override
-                protected Object doInBackground(Object... params) {
-                    Crashlytics c = new Crashlytics();
-                    Fabric.with(App.get(), c);
-                    Fabric.with(App.get(), new Answers());
-                    setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
-                    setString("sdk", Build.VERSION.SDK_INT + "");
-                    setBool("debug", BuildConfig.DEBUG);
-
-                    _anrWatchDog = new ANRWatchDog(5000);
-                    _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
-                        @Override
-                        public void onAppNotResponding(ANRError error) {
-                            logException(error);
-                        }
-                    });
-                    _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
-                        @Override
-                        public void onInterrupted(InterruptedException exception) {
-                            logException(exception);
-                        }
-                    });
-                    _anrWatchDog.start();
-                    _crashlytics = c;
-                    dumpTodo();
-                    return null;
-                }
-            }.executeEx();
+            new CrashlyticsAsyncTask().executeEx();
         } else {
 //            _anrWatchDog = new ANRWatchDog(5000);
 //            _anrWatchDog.start();
+        }
+    }
+
+    private static class CrashlyticsAsyncTask extends AsyncTaskEx<Object, Object, Object> {
+        @Override
+        protected Object doInBackground(Object... params) {
+            Crashlytics c = new Crashlytics();
+            Fabric.with(App.get(), c);
+            Fabric.with(App.get(), new Answers());
+            setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+            setString("sdk", Build.VERSION.SDK_INT + "");
+            setBool("debug", BuildConfig.DEBUG);
+
+            _anrWatchDog = new ANRWatchDog(5000);
+            _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
+                @Override
+                public void onAppNotResponding(ANRError error) {
+                    logException(error);
+                }
+            });
+            _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
+                @Override
+                public void onInterrupted(InterruptedException exception) {
+                    logException(exception);
+                }
+            });
+            _anrWatchDog.start();
+            _crashlytics = c;
+            dumpTodo();
+            return null;
         }
     }
 

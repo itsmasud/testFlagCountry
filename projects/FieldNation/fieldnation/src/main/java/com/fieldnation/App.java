@@ -653,21 +653,22 @@ public class App extends Application {
 
 
     private void setInstallTime() {
-        new AsyncTaskEx<Object, Object, Object>() {
+        new SetInstallTimeAsyncTask().executeEx(this);
+    }
 
-            @Override
-            protected Object doInBackground(Object... params) {
-                SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+    private static class SetInstallTimeAsyncTask extends AsyncTaskEx<Context, Object, Object> {
+        @Override
+        protected Object doInBackground(Context... params) {
+            SharedPreferences settings = (params[0]).getSharedPreferences(PREF_NAME, 0);
 
-                if (settings.contains(PREF_INSTALL_TIME))
-                    return null;
-
-                SharedPreferences.Editor edit = settings.edit();
-                edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
-                edit.apply();
+            if (settings.contains(PREF_INSTALL_TIME))
                 return null;
-            }
-        }.executeEx();
+
+            SharedPreferences.Editor edit = settings.edit();
+            edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+            edit.apply();
+            return null;
+        }
     }
 
     public long getInstallTime() {
