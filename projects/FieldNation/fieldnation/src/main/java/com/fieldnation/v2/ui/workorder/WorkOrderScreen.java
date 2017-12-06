@@ -587,9 +587,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     WorkOrderTracker.onActionButtonEvent(
                             App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId,
-                            _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
-                            _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
                     break;
                 case 2: // not interested
                     WorkOrderTracker.onActionButtonEvent(
@@ -706,10 +704,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(
-                    App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(),
-                    _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
-                    _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
         }
 
         @Override

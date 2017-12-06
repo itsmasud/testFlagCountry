@@ -159,7 +159,9 @@ public class ListItemWebView extends RelativeLayout {
     }
 
     public void setData(String data) {
-        _data = Html.toHtml(misc.linkifyHtml(data, Linkify.ALL));
+        _data = data.replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
+        _data = _data.replaceAll("</del>", "</span>");
+        _data = Html.toHtml(misc.linkifyHtml(_data, Linkify.ALL));
         _switchCollapsed = true;
         populateUi();
     }
