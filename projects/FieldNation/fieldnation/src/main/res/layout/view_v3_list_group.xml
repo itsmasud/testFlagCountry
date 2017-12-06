@@ -36,6 +36,7 @@
     </RelativeLayout>
 
     <View
+        android:id="@+id/bottom_divider"
         style="@style/DividerFull"
         android:layout_below="@+id/title_layout" />
 </RelativeLayout>
