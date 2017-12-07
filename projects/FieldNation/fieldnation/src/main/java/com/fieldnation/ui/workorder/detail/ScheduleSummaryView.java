@@ -108,9 +108,11 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
             _editEtaButton.setOnClickListener(_setEta_onClick);
         } else*/
         if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+            _etaView.setEnabled(true);
             _etaView.setOnClickListener(_editEta_onClick);
         } else {
             _etaView.setOnClickListener(null);
+            _etaView.setEnabled(false);
         }
 
         Schedule schedule = _workOrder.getSchedule();
@@ -145,11 +147,17 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
 
                 SimpleDateFormat sdf1 = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
-                SimpleDateFormat sdf2 = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                SimpleDateFormat sdf2 = new SimpleDateFormat("MMM d", Locale.getDefault());
                 sdf2.setDateFormatSymbols(symbols);
+                SimpleDateFormat sdf3 = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                sdf3.setDateFormatSymbols(symbols);
 
-                _firstView.set("Between", sdf1.format(sCal.getTime()) + " - " + sdf1.format(eCal.getTime()));
-                _secondView.set("During", sdf2.format(sCal.getTime()) + " - " + sdf2.format(eCal.getTime()) + DateUtils.getDeviceTimezone(eCal));
+                if (sCal.get(Calendar.YEAR) == eCal.get(Calendar.YEAR)) {
+                    _firstView.set("Between", sdf2.format(sCal.getTime()) + " - " + sdf1.format(eCal.getTime()));
+                } else {
+                    _firstView.set("Between", sdf1.format(sCal.getTime()) + " - " + sdf1.format(eCal.getTime()));
+                }
+                _secondView.set("During", sdf3.format(sCal.getTime()) + " - " + sdf3.format(eCal.getTime()) + DateUtils.getDeviceTimezone(eCal));
 
                 // range
             } else if (schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {

@@ -11,8 +11,6 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +44,6 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -97,7 +94,6 @@ import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
-import com.fieldnation.v2.ui.dialog.WebViewDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 
@@ -587,9 +583,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     WorkOrderTracker.onActionButtonEvent(
                             App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId,
-                            _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
-                            _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
                     break;
                 case 2: // not interested
                     WorkOrderTracker.onActionButtonEvent(
@@ -706,10 +700,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(
-                    App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(),
-                    _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
-                    _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
         }
 
         @Override

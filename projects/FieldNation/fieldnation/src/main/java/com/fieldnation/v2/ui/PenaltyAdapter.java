@@ -20,7 +20,6 @@ import java.util.List;
 public class PenaltyAdapter extends RecyclerView.Adapter<PenaltyViewHolder> {
     private static final String TAG = "PenaltyAdapter";
 
-    private PayModifier[] _penalties;
     private String _valueTitle;
     private String _valueDescription;
 
@@ -42,7 +41,6 @@ public class PenaltyAdapter extends RecyclerView.Adapter<PenaltyViewHolder> {
 
     public void setPenalties(PayModifier[] penalties) {
         dataHolders.clear();
-        _penalties = penalties;
         dataHolders.add(new DataHolder(TYPE_HEADER, App.get().getResources().getString(R.string.penalty_statement)));
 
         for (PayModifier penalty : penalties) {

@@ -26,7 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@string/placeholder_paragraph"
-                android:textStyle="bold" />
+                android:textColor="@color/fn_dark_text_statefull"
+                />
 
             <TextView
                 android:id="@+id/keyDescription_textview"
@@ -34,7 +35,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/placeholder_paragraph"
-                android:visibility="visible" />
+                android:visibility="visible"
+                android:textColor="@color/fn_dark_text_statefull"/>
         </LinearLayout>
 
         <LinearLayout
@@ -52,7 +54,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="Value title"
-                android:textSize="16sp" />
+                android:textColor="@color/fn_dark_text_statefull"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/valueDescription_textview"
@@ -60,6 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="value description"
+                android:textColor="@color/fn_dark_text_statefull"
                 android:visibility="visible" />
         </LinearLayout>
     </RelativeLayout>
