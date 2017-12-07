@@ -19,16 +19,15 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.ui.PenaltyAdapter;
+import com.fieldnation.v2.data.model.Qualifications;
+import com.fieldnation.v2.ui.QualificationsAdapter;
 
 /**
- * Created by Shoaib on 11/07/17.
+ * Created by Shoaib on 11/14/17.
  */
 
-public class PenaltyListDialog extends FullScreenDialog {
-    private static final String TAG = "PenaltyListDialog";
+public class QualificationsDialog extends FullScreenDialog {
+    private static final String TAG = "QualificationsDialog";
 
 
     // Ui
@@ -39,21 +38,21 @@ public class PenaltyListDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
-    private PayModifiers _penalties;
-    private PenaltyAdapter _adapter = new PenaltyAdapter();
+    private Qualifications _qualifications;
+    private QualificationsAdapter _adapter = new QualificationsAdapter();
 
-    public PenaltyListDialog(Context context, ViewGroup container) {
+    public QualificationsDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_v2_penalty_list, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_qualification_list, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setTitle(v.getResources().getString(R.string.penalties));
+        _toolbar.setTitle(v.getResources().getString(R.string.qualifications));
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setVisibility(View.GONE);
@@ -81,7 +80,7 @@ public class PenaltyListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getPenalties(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getQualifications(App.get(), _workOrderId, true, false);
         populateUi();
     }
 
@@ -91,10 +90,13 @@ public class PenaltyListDialog extends FullScreenDialog {
         if (_list == null)
             return;
 
-        if (_penalties == null || _penalties.getResults() == null)
+        if (_qualifications == null
+                || _qualifications.getSelectionRule() == null
+                || _qualifications.getSelectionRule().getResults() == null
+                || _qualifications.getSelectionRule().getResults().length == 0)
             return;
 
-        _adapter.setPenalties(_penalties.getResults());
+        _adapter.setQualifications(_qualifications.getSelectionRule().getResults());
     }
 
     @Override
@@ -113,18 +115,18 @@ public class PenaltyListDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.toLowerCase().contains("penalties");
+            return methodName.toLowerCase().contains("qualifications");
         }
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject != null && successObject instanceof PayModifiers) {
-                PayModifiers penalties = (PayModifiers) successObject;
-                _penalties = penalties;
+            if (successObject != null && successObject instanceof Qualifications) {
+                Qualifications qualifications = (Qualifications) successObject;
+                QualificationsDialog.this._qualifications = qualifications;
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
-                WorkordersWebApi.getPenalties(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getQualifications(App.get(), _workOrderId, true, false);
             }
         }
     };
@@ -133,6 +135,6 @@ public class PenaltyListDialog extends FullScreenDialog {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
 
-        Controller.show(context, uid, PenaltyListDialog.class, params);
+        Controller.show(context, uid, QualificationsDialog.class, params);
     }
 }

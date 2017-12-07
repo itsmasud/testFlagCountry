@@ -128,6 +128,9 @@
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
     <string name="complete">Complete</string>
+    <string name="qualifications_missing">Qualifications Missing</string>
+    <string name="qualifications_met">Qualifications Met</string>
+    <string name="qualifications_statement">Increase your chances of being assigned to this work order by meeting all provider qualifications.</string>
     <string name="reasons">Reasons</string>
 
     <string name="penalty_statement">This work order has possible penalty charges. If you are assigned to this work order you agree to be charged any of the following penalties if the conditions are met.</string>
@@ -202,6 +205,7 @@
     <!--<string name="notification_uploading_dot">Uploading…</string>-->
     <!--<string name="notification_success">Success!</string>-->
 
+    <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
     <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
     <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
@@ -698,6 +702,8 @@
     <string name="provide_a_timeframe">Provide a timeframe (min)</string>
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
+
+    <string name="qualifications">Qualifications</string>
 
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="rate_us">Rate Us</string>
