@@ -25,6 +25,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     private TextView _companyNameTextView;
     private TextView _companyNotesTextView;
     private StarView _starRating;
+    private TextView _newBuyerTextView;
     private ListItemTwoHorizView _clearExpectationView;
     private ListItemTwoHorizView _professionalismView;
     private ListItemTwoHorizView _reviewPeriodView;
@@ -59,6 +60,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _companyNameTextView = findViewById(R.id.companyName_textview);
         _companyNotesTextView = findViewById(R.id.companyNotes_textview);
         _starRating = findViewById(R.id.star_rating);
+        _newBuyerTextView = findViewById(R.id.newBuyer_view);
         _clearExpectationView = findViewById(R.id.clearExpectation_view);
         _professionalismView = findViewById(R.id.professionalism_view);
         _reviewPeriodView = findViewById(R.id.reviewPeriod_view);
@@ -111,7 +113,8 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getRatings() != null
                 && _workOrder.getRatings().getBuyer() != null
                 && _workOrder.getRatings().getBuyer().getOverall() != null
-                && _workOrder.getRatings().getBuyer().getOverall().getRatings() != null) {
+                && _workOrder.getRatings().getBuyer().getOverall().getRatings() != null
+                && _workOrder.getRatings().getBuyer().getOverall().getApprovalDays() > 0) {
             if (misc.isEmptyOrNull(desc)) {
                 desc = _workOrder.getRatings().getBuyer().getOverall().getRatings() + " Reviews";
             } else {
@@ -161,11 +164,14 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         // Time To Approval
         if (overall != null && overall.getApprovalDays() != null && overall.getApprovalDays() != 0) {
             _ttaLayout.setVisibility(VISIBLE);
-            _ttaNotesTextView.setText(getResources().getString(R.string.company_percentage_approval, 90));
+            _ttaNotesTextView.setText(getResources().getString(R.string.company_percentage_approval, overall.getApprovalDaysPercentile()));
             _ttaDaysTextView.setText(overall.getApprovalDays() + " days");
             _ttaNotesTextView.setVisibility(VISIBLE);
+            _newBuyerTextView.setVisibility(GONE);
         } else {
             _ttaLayout.setVisibility(GONE);
+            _starRating.setVisibility(GONE);
+            _newBuyerTextView.setVisibility(VISIBLE);
         }
     }
 }
