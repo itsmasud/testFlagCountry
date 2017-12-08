@@ -239,7 +239,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

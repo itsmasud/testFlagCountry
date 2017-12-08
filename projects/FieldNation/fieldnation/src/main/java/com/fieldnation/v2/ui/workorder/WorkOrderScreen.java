@@ -1158,7 +1158,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                 Log.v(TAG, "onWorkordersWebApi");
                 setLoading(false);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return false;
         }
     };
 }

@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -23,11 +24,14 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 import java.util.ArrayList;
 
@@ -196,19 +200,27 @@ public class SearchEditText extends RelativeLayout {
 
         @Override
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject != null && methodName.equals("getWorkOrder")) {
+            _progressBar.setVisibility(GONE);
+
+            if (!success) {
+                if (failObject != null && failObject instanceof Error && "Unauthorized".equals(((Error) failObject).getMessage())) {
+                    OneButtonDialog.show(App.get(), null, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "OK", true);
+                    return true;
+                }
+                return false;
+
+            } else if (successObject != null) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _progressBar.setVisibility(GONE);
-                if (!success)
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
 
                 if (_lastLookup != null && _listener != null
                         && (int) workOrder.getId() == (int) _lastLookup) {
                     _listener.onLookupWorkOrder(workOrder.getId());
                     _lastLookup = null;
                 }
+                return true;
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return false;
         }
     };
 

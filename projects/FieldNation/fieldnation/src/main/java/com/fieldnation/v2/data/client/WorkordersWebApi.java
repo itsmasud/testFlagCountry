@@ -9631,6 +9631,14 @@ public abstract class WorkordersWebApi extends Pigeon {
     public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
     }
 
+    /**
+     * @param transactionParams
+     * @param methodName
+     * @param successObject
+     * @param success
+     * @param failObject
+     * @return true if data handled, false if not
+     */
     public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         return false;
     }
