@@ -160,7 +160,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (_workOrderId == workOrder.getId()) {
@@ -168,6 +168,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
                     generateProblemsList();
                 }
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

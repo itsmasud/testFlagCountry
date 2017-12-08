@@ -195,12 +195,12 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _progressBar.setVisibility(GONE);
                 if (!success)
-                    return;
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
 
                 if (_lastLookup != null && _listener != null
                         && (int) workOrder.getId() == (int) _lastLookup) {
@@ -208,6 +208,7 @@ public class SearchEditText extends RelativeLayout {
                     _lastLookup = null;
                 }
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

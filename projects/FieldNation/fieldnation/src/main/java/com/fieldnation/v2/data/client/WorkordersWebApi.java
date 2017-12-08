@@ -9631,7 +9631,8 @@ public abstract class WorkordersWebApi extends Pigeon {
     public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
     }
 
-    public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+    public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        return false;
     }
 
     private static class BgParser {
@@ -10102,9 +10103,6 @@ public abstract class WorkordersWebApi extends Pigeon {
                 }
 
                 try {
-                    if (failObject != null && failObject instanceof Error) {
-                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                    }
                     getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -10133,7 +10131,11 @@ public abstract class WorkordersWebApi extends Pigeon {
 
         @Override
         public void run() {
-            workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
+            if (!workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject)) {
+                if (failObject != null && failObject instanceof Error) {
+                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                }
+            }
         }
     }
 }

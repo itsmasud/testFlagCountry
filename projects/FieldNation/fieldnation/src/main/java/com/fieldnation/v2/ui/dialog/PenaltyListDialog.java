@@ -117,7 +117,7 @@ public class PenaltyListDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers penalties = (PayModifiers) successObject;
                 _penalties = penalties;
@@ -126,6 +126,7 @@ public class PenaltyListDialog extends FullScreenDialog {
             } else {
                 WorkordersWebApi.getPenalties(App.get(), _workOrderId, true, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

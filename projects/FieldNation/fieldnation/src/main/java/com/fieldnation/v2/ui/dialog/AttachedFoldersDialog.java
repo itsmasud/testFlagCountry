@@ -243,11 +243,12 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && methodName.equals("getAttachments")) {
                 _folders = (AttachmentFolders) successObject;
                 populateUi();
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

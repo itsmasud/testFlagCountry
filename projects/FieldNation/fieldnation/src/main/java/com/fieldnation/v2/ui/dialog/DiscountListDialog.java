@@ -157,7 +157,7 @@ public class DiscountListDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers discounts = (PayModifiers) successObject;
                 _discounts = discounts;
@@ -166,6 +166,7 @@ public class DiscountListDialog extends FullScreenDialog {
             } else {
                 WorkordersWebApi.getDiscounts(App.get(), _workOrderId, true, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

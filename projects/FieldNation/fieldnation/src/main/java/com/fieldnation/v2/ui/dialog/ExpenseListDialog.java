@@ -162,7 +162,7 @@ public class ExpenseListDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof Expenses) {
                 Expenses expenses = (Expenses) successObject;
                 _expenses = expenses;
@@ -171,6 +171,7 @@ public class ExpenseListDialog extends FullScreenDialog {
             } else {
                 WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

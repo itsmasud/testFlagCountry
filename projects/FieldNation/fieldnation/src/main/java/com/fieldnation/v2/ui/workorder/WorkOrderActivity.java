@@ -204,12 +204,12 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
                 if (!success) {
-                    return;
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
                 }
 
                 if (_workOrderId == workOrder.getId()) {
@@ -234,11 +234,12 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             }
 
             if (methodName.startsWith("get") || !success)
-                return;
+                return super.onComplete(transactionParams, methodName, successObject, success, failObject);
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

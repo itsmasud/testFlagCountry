@@ -123,7 +123,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject != null && methodName.equals("getCustomFields")) {
                 _customFields = (CustomFields) successObject;
                 populateUi();
@@ -132,6 +132,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
                 WorkordersWebApi.getCustomFields(App.get(), _workOrderId, false, false);
                 AppMessagingClient.setLoading(true);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

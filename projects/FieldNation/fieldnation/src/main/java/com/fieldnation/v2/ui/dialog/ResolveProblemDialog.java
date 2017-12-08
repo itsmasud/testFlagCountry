@@ -140,7 +140,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("updateProblem") && success) {
                 PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
@@ -149,6 +149,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
                 Log.v(TAG, "onComplete");
             }
             _refreshView.refreshComplete();
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 

@@ -539,7 +539,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {
@@ -554,6 +554,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                     ToastClient.toast(App.get(), "Check Out Failed, Please Try Again Later", Toast.LENGTH_SHORT);
                 }
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
         }
     };
 
