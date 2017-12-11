@@ -166,12 +166,12 @@ public class UploadSlotPickerScreen extends FrameLayout {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (!success) {
                     _refreshView.refreshComplete();
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 if (_workOrderId == workOrder.getId()) {
@@ -184,12 +184,12 @@ public class UploadSlotPickerScreen extends FrameLayout {
             }
 
             if (methodName.startsWith("get") || !success)
-                return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

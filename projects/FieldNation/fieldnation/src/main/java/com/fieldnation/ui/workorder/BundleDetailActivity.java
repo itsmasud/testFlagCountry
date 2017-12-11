@@ -365,7 +365,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
@@ -383,7 +383,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 setLoading(false);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

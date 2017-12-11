@@ -487,7 +487,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
             if (methodName.equals("addAttachment")) {
@@ -510,7 +510,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

@@ -254,7 +254,7 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
                 if (_savedList == null) {
@@ -270,7 +270,7 @@ public class NavActivity extends AuthSimpleActivity {
                     }
                 }
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

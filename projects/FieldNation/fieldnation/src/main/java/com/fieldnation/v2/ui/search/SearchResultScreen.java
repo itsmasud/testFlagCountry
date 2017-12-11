@@ -229,17 +229,17 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             //Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (successObject != null && methodName.equals("getWorkOrders")) {
                 if (!success) {
                     _refreshView.refreshComplete();
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
@@ -259,7 +259,7 @@ public class SearchResultScreen extends RelativeLayout {
                 _refreshView.refreshComplete();
             } else {
                 if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                 WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
 
@@ -271,7 +271,7 @@ public class SearchResultScreen extends RelativeLayout {
                     }
                 });
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

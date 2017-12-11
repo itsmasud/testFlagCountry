@@ -307,7 +307,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             try {
                 Log.v(TAG, "onComplete " + methodName);
                 if (successObject != null && methodName.equals("getWorkOrderLists")) {
@@ -326,14 +326,14 @@ public class WebCrawlerService extends Service {
                 } else if (successObject != null && methodName.equals("getWorkOrders")) {
                     WorkOrders workOrders = (WorkOrders) successObject;
                     if (workOrders.getMetadata() == null)
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                     Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
                     incrementPendingRequestCounter(-1);
 
                     if (!workOrders.getMetadata().getList().equals("workorders_assignments")) {
                         Log.v(TAG, "!!!!!! Not assigned work !!!!!!");
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     // get the details
@@ -356,7 +356,7 @@ public class WebCrawlerService extends Service {
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
                     if (workOrder.getId() == null)
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                     Log.v(TAG, "getWorkOrder " + workOrder.getId());
                     incrementPendingRequestCounter(-1);
@@ -388,7 +388,7 @@ public class WebCrawlerService extends Service {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

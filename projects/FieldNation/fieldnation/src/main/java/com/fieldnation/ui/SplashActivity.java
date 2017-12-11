@@ -201,7 +201,7 @@ public class SplashActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "onComplete");
 
             if (methodName.equals("getWorkOrders")
@@ -213,7 +213,7 @@ public class SplashActivity extends AuthSimpleActivity {
                 WorkOrders workOrders = (WorkOrders) successObject;
 
                 if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
                 _gotConfirmList = true;
                 if (workOrders.getMetadata().getTotal() != null
@@ -223,7 +223,7 @@ public class SplashActivity extends AuthSimpleActivity {
                 }
                 doNextStep();
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

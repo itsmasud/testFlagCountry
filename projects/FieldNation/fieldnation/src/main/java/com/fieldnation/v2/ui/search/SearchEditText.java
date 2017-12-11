@@ -24,6 +24,7 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
@@ -199,12 +200,13 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             _progressBar.setVisibility(GONE);
 
             if (!success) {
                 if (failObject != null && failObject instanceof Error && "Unauthorized".equals(((Error) failObject).getMessage())) {
                     OneButtonDialog.show(App.get(), null, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "OK", true);
+                    PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
                     return true;
                 }
                 return false;

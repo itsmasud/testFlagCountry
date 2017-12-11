@@ -306,7 +306,7 @@ public class SignOffActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (success && successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (workOrder.getId() == _workOrderId) {
@@ -314,7 +314,7 @@ public class SignOffActivity extends AuthSimpleActivity {
                     populateUi();
                 }
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

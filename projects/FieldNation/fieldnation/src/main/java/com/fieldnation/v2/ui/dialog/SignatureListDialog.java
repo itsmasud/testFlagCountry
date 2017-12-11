@@ -170,7 +170,7 @@ public class SignatureListDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof Signatures) {
                 _signatures = (Signatures) successObject;
                 _adapter.setSignatures(_signatures.getResults());
@@ -180,7 +180,7 @@ public class SignatureListDialog extends FullScreenDialog {
                 WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, false);
                 AppMessagingClient.setLoading(true);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject);
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 
