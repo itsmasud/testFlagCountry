@@ -27,6 +27,12 @@ public class WorkOrderRatingsBuyerOverall implements Parcelable {
     @Json(name = "approval_days")
     private Integer _approvalDays;
 
+    @Json(name = "approval_days_percentile")
+    private Integer _approvalDaysPercentile;
+
+    @Json(name = "approval_days_range")
+    private Integer _approvalDaysRange;
+
     @Json(name = "approval_period")
     private Integer _approvalPeriod;
 
@@ -78,6 +84,50 @@ public class WorkOrderRatingsBuyerOverall implements Parcelable {
     public WorkOrderRatingsBuyerOverall approvalDays(Integer approvalDays) throws ParseException {
         _approvalDays = approvalDays;
         SOURCE.put("approval_days", approvalDays);
+        return this;
+    }
+
+    public void setApprovalDaysPercentile(Integer approvalDaysPercentile) throws ParseException {
+        _approvalDaysPercentile = approvalDaysPercentile;
+        SOURCE.put("approval_days_percentile", approvalDaysPercentile);
+    }
+
+    public Integer getApprovalDaysPercentile() {
+        try {
+            if (_approvalDaysPercentile == null && SOURCE.has("approval_days_percentile") && SOURCE.get("approval_days_percentile") != null)
+                _approvalDaysPercentile = SOURCE.getInt("approval_days_percentile");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _approvalDaysPercentile;
+    }
+
+    public WorkOrderRatingsBuyerOverall approvalDaysPercentile(Integer approvalDaysPercentile) throws ParseException {
+        _approvalDaysPercentile = approvalDaysPercentile;
+        SOURCE.put("approval_days_percentile", approvalDaysPercentile);
+        return this;
+    }
+
+    public void setApprovalDaysRange(Integer approvalDaysRange) throws ParseException {
+        _approvalDaysRange = approvalDaysRange;
+        SOURCE.put("approval_days_range", approvalDaysRange);
+    }
+
+    public Integer getApprovalDaysRange() {
+        try {
+            if (_approvalDaysRange == null && SOURCE.has("approval_days_range") && SOURCE.get("approval_days_range") != null)
+                _approvalDaysRange = SOURCE.getInt("approval_days_range");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _approvalDaysRange;
+    }
+
+    public WorkOrderRatingsBuyerOverall approvalDaysRange(Integer approvalDaysRange) throws ParseException {
+        _approvalDaysRange = approvalDaysRange;
+        SOURCE.put("approval_days_range", approvalDaysRange);
         return this;
     }
 

@@ -47,6 +47,22 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp" />
 
+        <TextView
+            android:id="@+id/newBuyer_view"
+            style="@style/Text_Subhead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_rect_gray"
+            android:paddingBottom="2dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="1dp"
+            android:text="NEW BUYER"
+            android:textColor="@color/fn_white_text" />
+
         <View
             style="@style/DividerFull"
             android:layout_below="@+id/companyNotes_textview"
