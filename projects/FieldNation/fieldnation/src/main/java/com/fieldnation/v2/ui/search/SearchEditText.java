@@ -12,10 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -24,15 +22,8 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpigeon.PigeonRoost;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 import java.util.ArrayList;
 
@@ -46,11 +37,9 @@ public class SearchEditText extends RelativeLayout {
     private IconFontTextView _searchIconFont;
     private EditText _searchTermEditText;
     private IconFontTextView _micIconFont;
-    private ProgressBar _progressBar;
 
     // Data
     private Listener _listener;
-    private Integer _lastLookup = null;
 
     public SearchEditText(Context context) {
         super(context);
@@ -83,11 +72,7 @@ public class SearchEditText extends RelativeLayout {
         _micIconFont = findViewById(R.id.right_textview);
         _micIconFont.setOnClickListener(_micIconFont_onClick);
 
-        _progressBar = findViewById(R.id.progress_view);
-
         _activityResultListener.sub();
-
-        _workOrderApi.sub();
 
         _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
     }
@@ -111,8 +96,6 @@ public class SearchEditText extends RelativeLayout {
         super.onDetachedFromWindow();
 
         _activityResultListener.unsub();
-
-        _workOrderApi.unsub();
     }
 
     private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {
@@ -162,9 +145,7 @@ public class SearchEditText extends RelativeLayout {
 
     private void doWorkOrderLookup() {
         try {
-            _progressBar.setVisibility(VISIBLE);
-            _lastLookup = Integer.parseInt(_searchTermEditText.getText().toString());
-            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, false, false);
+            _listener.onLookupWorkOrder(Integer.parseInt(_searchTermEditText.getText().toString()));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -187,39 +168,6 @@ public class SearchEditText extends RelativeLayout {
                 ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 String firstMatch = (String) matches.get(0);
                 _searchTermEditText.setText(misc.extractNumbers(firstMatch));
-                return true;
-            }
-            return false;
-        }
-    };
-
-    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
-        @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.equals("getWorkOrder");
-        }
-
-        @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
-            _progressBar.setVisibility(GONE);
-
-            if (!success) {
-                if (failObject != null && failObject instanceof Error && "Unauthorized".equals(((Error) failObject).getMessage())) {
-                    OneButtonDialog.show(App.get(), null, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "OK", true);
-                    PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
-                    return true;
-                }
-                return false;
-
-            } else if (successObject != null) {
-                WorkOrder workOrder = (WorkOrder) successObject;
-                _progressBar.setVisibility(GONE);
-
-                if (_lastLookup != null && _listener != null
-                        && (int) workOrder.getId() == (int) _lastLookup) {
-                    _listener.onLookupWorkOrder(workOrder.getId());
-                    _lastLookup = null;
-                }
                 return true;
             }
             return false;

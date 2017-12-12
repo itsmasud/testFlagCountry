@@ -17,7 +17,6 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -179,18 +178,9 @@ public class SplashActivity extends AuthSimpleActivity {
 
         if (_profile.isProvider() && _gotConfirmList && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
-            if (App.get().needsConfirmation()) {
-                Log.v(TAG, "doNextStep 5a");
-                _calledMyWork = true;
-                ConfirmActivity.startNew(this);
-                finish();
-
-            } else {
-                Log.v(TAG, "doNextStep 5b");
-                _calledMyWork = true;
-                NavActivity.startNew(this);
-                finish();
-            }
+            _calledMyWork = true;
+            NavActivity.startNew(this);
+            finish();
         }
     }
 

@@ -28,6 +28,9 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.ui.nav.SavedSearchList.OnSavedListChangeListener;
 import com.fieldnation.v2.ui.search.SearchResultScreen;
+import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
+
+import java.util.List;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -53,6 +56,7 @@ public class NavActivity extends AuthSimpleActivity {
     // Data
     private SavedList _savedList = null;
     private WorkordersWebApi _workOrderClient;
+    private boolean _isLoadingWorkOrder = false;
 
     @Override
     public int getLayoutResource() {
@@ -63,6 +67,36 @@ public class NavActivity extends AuthSimpleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            int _workOrderId = 0;
+            // taking a link from e-mail/browser
+            if (Intent.ACTION_VIEW.equals(intent.getAction())) {
+                try {
+                    final List<String> segments = intent.getData().getPathSegments();
+                    if (segments.size() > 1) {
+                        if (segments.get(0).equals("wo")) {
+                            _workOrderId = Integer.parseInt(segments.get(1));
+                        } else if (segments.get(0).equals("workorder")) {
+                            _workOrderId = Integer.parseInt(segments.get(2));
+                        } else if (segments.get(0).equals("marketplace")) {
+                            _workOrderId = Integer.parseInt(intent.getData().getQueryParameter("workorder_id"));
+                        } else if (segments.get(0).equals("w") && segments.get(1).equals("r")) {
+                            _workOrderId = Integer.parseInt(segments.get(2));
+                        }
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+
+            if (_workOrderId != 0) {
+                _isLoadingWorkOrder = true;
+                this.startActivity(
+                        WorkOrderActivity.makeIntentShow(this, _workOrderId));
+            }
+        }
 
         _layout = (CoordinatorLayout) findViewById(R.id.main_content);
 
@@ -112,9 +146,11 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (App.get().needsConfirmation()
+        if (!_isLoadingWorkOrder && App.get().needsConfirmation()
                 && App.get().confirmRemindMeExpired()) {
             launchConfirmActivity();
+        } else if (_isLoadingWorkOrder) {
+            _isLoadingWorkOrder = false;
         }
         _recyclerView.onResume();
 
@@ -273,6 +309,13 @@ public class NavActivity extends AuthSimpleActivity {
             return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
+
+    public static Intent startNewIntent(Context context) {
+        Log.v(TAG, "startNew");
+        Intent intent = new Intent(context, NavActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        return intent;
+    }
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");

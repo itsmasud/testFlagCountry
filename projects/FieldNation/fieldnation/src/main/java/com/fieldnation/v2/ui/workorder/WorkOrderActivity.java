@@ -11,12 +11,15 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +35,9 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
+
+    // Dialogs
+    private static final String DIALOG_NOT_AVAILABLE = TAG + ".notAvailableDialog";
 
     // UI
     private WorkOrderScreen _workOrderScreen;
@@ -115,7 +121,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             finish();
         } else {
             Log.v(TAG, "Opening work order " + _workOrderId);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         if (intent.hasExtra(INTENT_FIELD_ACTION)) {
@@ -161,6 +166,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStart() {
+        OneButtonDialog.addOnPrimaryListener(DIALOG_NOT_AVAILABLE, _notAvailable_onOk);
+
         super.onStart();
         _workOrderScreen.setUUID(_myUUID);
         _workOrderScreen.onStart();
@@ -183,6 +190,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
+        OneButtonDialog.removeOnPrimaryListener(DIALOG_NOT_AVAILABLE, _notAvailable_onOk);
         _workOrderScreen.onStop();
         super.onStop();
     }
@@ -193,6 +201,13 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             return;
         super.onBackPressed();
     }
+
+    private final OneButtonDialog.OnPrimaryListener _notAvailable_onOk = new OneButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary() {
+            finish();
+        }
+    };
 
     /*-*****************************-*/
     /*-			Web Events			-*/
@@ -208,6 +223,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
+
                 if (!success) {
                     return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
@@ -233,11 +249,20 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
 
+            if (!success && !isCached && methodName.equals("getWorkOrder")) {
+                if (failObject != null && failObject instanceof Error && "Unauthorized".equals(((Error) failObject).getMessage())) {
+                    PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
+                    OneButtonDialog.show(App.get(), DIALOG_NOT_AVAILABLE, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "VIEW AVAILABLE WORK", false);
+                    return true;
+                }
+            }
+
             if (methodName.startsWith("get") || !success)
                 return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
+            // only here if.. call doesn't start with get, was successfull
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }

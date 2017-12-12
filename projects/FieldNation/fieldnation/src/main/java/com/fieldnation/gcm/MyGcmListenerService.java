@@ -40,7 +40,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
-import com.fieldnation.ui.ncns.ConfirmActivity;
+import com.fieldnation.v2.ui.nav.NavActivity;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -140,7 +140,7 @@ public class MyGcmListenerService extends GcmListenerService {
             case CONFIRM_TOMORROW: {
                 App.get().setNeedsConfirmation(true);
                 PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                        ConfirmActivity.startNewIntent(this), 0);
+                        NavActivity.startNewIntent(this), 0);
                 return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
             }
         }
