@@ -549,7 +549,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, false);
         }
     };
 
@@ -1026,7 +1026,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, false);
         }
 
         @Override

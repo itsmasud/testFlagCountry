@@ -57,6 +57,7 @@ import com.fieldnation.v2.ui.ListItemTwoVertView;
 import com.fieldnation.v2.ui.PayView;
 import com.fieldnation.v2.ui.ScheduleView;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -135,6 +136,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
     // User Data
     private int _workOrderId;
+    private boolean _isReadOnly = false;
     private Pay _pay = null;
     private Schedule _schedule = null;
     private Pay _woPay = null;
@@ -340,8 +342,10 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         Log.v(TAG, "show");
         _workOrderId = payload.getInt("workOrderId");
-        _woPay = payload.getParcelable("pay");
-        _woSchedule = payload.getParcelable("schedule");
+        _isReadOnly = payload.getBoolean("readonly");
+
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+
         populateUi();
     }
 
@@ -412,6 +416,9 @@ public class CounterOfferDialog extends FullScreenDialog {
 
     private void populateUi() {
         if (_payLayout == null)
+            return;
+
+        if (_woPay == null || _woSchedule == null)
             return;
 
         // Pay
@@ -940,7 +947,8 @@ public class CounterOfferDialog extends FullScreenDialog {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("request")
-                    || methodName.equals("deleteRequest");
+                    || methodName.equals("deleteRequest")
+                    || methodName.equals("getWorkOrder");
         }
 
         @Override
@@ -957,15 +965,40 @@ public class CounterOfferDialog extends FullScreenDialog {
 
                     _refreshView.refreshComplete();
                 }
+            } else if (successObject != null && methodName.equals("getWorkOrder") && successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+
+                _woPay = workOrder.getPay();
+                _woSchedule = workOrder.getSchedule();
+
+                try {
+                    if (_isReadOnly) {
+                        Request request = workOrder.getRequests().getOpenRequest();
+                        _pay = request.getPay();
+                        _schedule = request.getSchedule();
+                        _expenses.clear();
+                        _expenses.addAll(Arrays.asList(request.getExpenses()));
+
+                        if (request.getExpires().getUtc() != null) {
+                            _expiresMilliSeconds = request.getExpires().getUtcLong();
+                            // TODO not good yet
+                            _expiresTitle = misc.convertMsToHuman(_expiresMilliSeconds - System.currentTimeMillis());
+                        }
+                        _reason = request.getNotes();
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                populateUi();
             }
         }
     };
 
-    public static void show(Context context, int workOrderId, Pay pay, Schedule schedule) {
+    public static void show(Context context, int workOrderId, boolean readonly) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
-        params.putParcelable("pay", pay);
-        params.putParcelable("schedule", schedule);
+        params.putBoolean("readonly", readonly);
 
         Controller.show(context, null, CounterOfferDialog.class, params);
     }
