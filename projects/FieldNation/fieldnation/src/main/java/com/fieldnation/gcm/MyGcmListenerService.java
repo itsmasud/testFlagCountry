@@ -41,7 +41,6 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.v2.ui.nav.NavActivity;
-import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -99,10 +98,7 @@ public class MyGcmListenerService extends GcmListenerService {
             case VIEW: {
                 switch (action.getObject()) {
                     case "wo": {
-                        Intent workorderIntent = new Intent(this, WorkOrderActivity.class);
-                        workorderIntent.setAction("DUMMY");
-                        workorderIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, Integer.parseInt(action.getId()));
+                        Intent workorderIntent = NavActivity.intentShowWorkOrder(this, Integer.parseInt(action.getId()));
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
@@ -128,7 +124,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 switch (action.getObject()) {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                                WorkOrderActivity.makeIntentConfirm(this, Integer.parseInt(action.getId())), 0);
+                                NavActivity.intentShowWorkOrder(this, Integer.parseInt(action.getId()), NavActivity.ACTION_CONFIRM), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     default:

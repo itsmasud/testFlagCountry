@@ -29,7 +29,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     // Intent stuff
     public static final String INTENT_FIELD_WORKORDER_ID = TAG + ".workOrderId";
-    public static final String INTENT_FIELD_WORKORDER = TAG + ".workOrder";
     public static final String INTENT_FIELD_ACTION = TAG + ".action";
     public static final String INTENT_UI_UUID = TAG + ".uuid";
     public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
@@ -276,34 +275,15 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         ActivityClient.startActivity(intent);
     }
 
-    public static Intent makeIntentAttachments(Context context, int workOrderId, String uuid) {
+    public static Intent makeIntentShow(Context context, int workOrderId, String action, String uuid) {
         Log.v(TAG, "makeIntentAttachments");
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, ACTION_ATTACHMENTS);
+        intent.putExtra(INTENT_FIELD_ACTION, action);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
-        intent.putExtra(INTENT_UI_UUID, uuid);
-        return intent;
-    }
-
-    public static Intent makeIntentMessages(Context context, int workOrderId) {
-        Log.v(TAG, "makeIntentMessages");
-        Intent intent = new Intent(context, WorkOrderActivity.class);
-        intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, ACTION_MESSAGES);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
-        return intent;
-    }
-
-    public static Intent makeIntentConfirm(Context context, int workOrderId) {
-        Log.v(TAG, "makeIntentMessages");
-        Intent intent = new Intent(context, WorkOrderActivity.class);
-        intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        if (uuid != null)
+            intent.putExtra(INTENT_UI_UUID, uuid);
         return intent;
     }
 

@@ -25,6 +25,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
+import com.fieldnation.v2.ui.nav.NavActivity;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.io.File;
@@ -226,7 +227,7 @@ public class TransactionListener extends WebTransactionListener {
                     JsonObject methodParams = new JsonObject(params.methodParams);
                     if (transaction.isTracked()) {
                         if (methodParams.has("workOrderId")) {
-                            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), methodParams.getInt("workOrderId"));
+                            Intent workorderIntent = NavActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
                             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
                             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
                         } else {
@@ -283,7 +284,7 @@ public class TransactionListener extends WebTransactionListener {
                 if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
                     if (transaction.isTracked()) {
                         if (methodParams.has("workOrderId")) {
-                            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), methodParams.getInt("workOrderId"));
+                            Intent workorderIntent = NavActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
                             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
                             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
                         } else {

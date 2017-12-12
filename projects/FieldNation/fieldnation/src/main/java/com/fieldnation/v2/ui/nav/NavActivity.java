@@ -40,6 +40,14 @@ public class NavActivity extends AuthSimpleActivity {
 
     private static final String STATE_CURRENT_SEARCH = "STATE_CURRENT_SEARCH";
 
+    // Intent stuff
+    public static final String INTENT_FIELD_WORKORDER_ID = WorkOrderActivity.INTENT_FIELD_WORKORDER_ID;
+    public static final String INTENT_FIELD_ACTION = WorkOrderActivity.INTENT_FIELD_ACTION;
+    public static final String INTENT_UI_UUID = WorkOrderActivity.INTENT_UI_UUID;
+    public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
+    public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
+    public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
+
     // Ui
     private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
@@ -95,6 +103,20 @@ public class NavActivity extends AuthSimpleActivity {
                 _isLoadingWorkOrder = true;
                 this.startActivity(
                         WorkOrderActivity.makeIntentShow(this, _workOrderId));
+            } else {
+                if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
+                    _workOrderId = intent.getIntExtra(INTENT_FIELD_WORKORDER_ID, 0);
+
+                    if (intent.hasExtra(INTENT_FIELD_ACTION)) {
+                        _isLoadingWorkOrder = true;
+                        this.startActivity(
+                                WorkOrderActivity.makeIntentShow(this, _workOrderId, intent.getStringExtra(INTENT_FIELD_ACTION), null));
+                    } else {
+                        _isLoadingWorkOrder = true;
+                        this.startActivity(
+                                WorkOrderActivity.makeIntentShow(this, _workOrderId, null, null));
+                    }
+                }
             }
         }
 
@@ -322,5 +344,23 @@ public class NavActivity extends AuthSimpleActivity {
         Intent intent = new Intent(context, NavActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    public static Intent intentShowWorkOrder(Context context, int workOrderId) {
+        Intent intent = new Intent(context, NavActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(/*Intent.FLAG_ACTIVITY_CLEAR_TOP |*/ Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        return intent;
+    }
+
+
+    public static Intent intentShowWorkOrder(Context context, int workOrderId, String action) {
+        Intent intent = new Intent(context, NavActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_ACTION, action);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        return intent;
     }
 }

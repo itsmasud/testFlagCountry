@@ -362,7 +362,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     };
 
     private void startWorkOrderDetails() {
-        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId(), _myUUID));
+        startActivity(WorkOrderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId(), WorkOrderActivity.ACTION_ATTACHMENTS, _myUUID));
         finish();
     }
 

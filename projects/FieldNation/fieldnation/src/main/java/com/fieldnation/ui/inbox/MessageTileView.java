@@ -174,7 +174,7 @@ public class MessageTileView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ActivityClient.startActivity(WorkOrderActivity.makeIntentMessages(getContext(), _message.getWorkorderId().intValue()));
+            ActivityClient.startActivity(WorkOrderActivity.makeIntentShow(getContext(), _message.getWorkorderId().intValue(), WorkOrderActivity.ACTION_MESSAGES, null));
         }
     };
 
