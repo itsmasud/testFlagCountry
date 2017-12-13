@@ -7,7 +7,7 @@
     <com.fieldnation.v2.ui.workorder.WodHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Payments" />
+        android:text="Payment" />
 
     <com.fieldnation.ui.workorder.detail.PaymentView
         android:id="@+id/payment_view"
