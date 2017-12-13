@@ -82,7 +82,7 @@ public class InsuranceSummaryView extends RelativeLayout implements WorkOrderRen
                         && fee.getName().equals("insurance")
                         && fee.getAmount() != null
                         && fee.getModifier() != null) {
-                    _summaryView.set(App.get().getString(R.string.fieldnation_insurance_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))+ "%");
+                    _summaryView.set(App.get().getString(R.string.fieldnation_insurance_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0))) + "%");
                     setVisibility(VISIBLE);
                     break;
                 }

@@ -19,7 +19,7 @@ public class ChatInputView extends RelativeLayout {
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
     public ChatInputView(Context context) {
         super(context);
         init();
