@@ -508,7 +508,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 try {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
                                     .category("AttachmentRetry")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
@@ -539,7 +538,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 if (_task != null) {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
@@ -562,7 +560,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     Log.v(TAG, getUid() + " slot attached");
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
                                     .action("start")
