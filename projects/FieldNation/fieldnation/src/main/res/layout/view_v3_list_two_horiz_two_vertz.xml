@@ -24,7 +24,6 @@
                 style="@style/Text_Subhead"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="@string/placeholder_paragraph"
                 android:textColor="@color/fn_dark_text_statefull"
                 />
@@ -34,6 +33,7 @@
                 style="@style/Text_Body_1_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/placeholder_paragraph"
                 android:visibility="visible"
                 android:textColor="@color/fn_dark_text_statefull"/>
@@ -52,7 +52,6 @@
                 style="@style/Text_Body_1_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="Value title"
                 android:textColor="@color/fn_dark_text_statefull"
                 android:textSize="14sp" />
@@ -62,6 +61,7 @@
                 style="@style/Text_Body_1_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="value description"
                 android:textColor="@color/fn_dark_text_statefull"
                 android:visibility="visible" />
