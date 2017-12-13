@@ -138,7 +138,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private WorkSummaryView _sumView;
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
-    private TextView _bundleWarningTextView;
     private RequestNewPayView _requestNewPayView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
@@ -229,9 +228,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _additionalInfoSectionView = findViewById(R.id.additionalInfoSeciontView);
         _renderers.add(_additionalInfoSectionView);
-
-        _bundleWarningTextView = findViewById(R.id.bundlewarning2_textview);
-        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
         _refreshView = findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
@@ -399,15 +395,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
 
         setLoading(false);
-
-        if (_bundleWarningTextView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
-                _bundleWarningTextView.setVisibility(View.VISIBLE);
-            } else {
-                _bundleWarningTextView.setVisibility(View.GONE);
-            }
-        }
 
         Menu menu = _morePopup.getMenu();
         menu.clear();
@@ -873,14 +860,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
             WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
-    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
-            setLoading(true);
         }
     };
 
