@@ -21,7 +21,7 @@
     <string name="tos_date">08/16/2016</string>
 
     <!-- Snowplow -->
-    <string name="sp_collector_uri">52.207.41.131:8080</string>
+    <string name="sp_collector_uri">com-fieldnation.mini.snowplow.net</string>
     <string name="sp_app_id">fn:dev</string>
     <!--<string name="sp_collector_uri">collector.fieldnation.com</string>-->
     <!--<string name="sp_app_id">fn:dev_hi_dave_2</string>-->
