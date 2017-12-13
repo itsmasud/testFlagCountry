@@ -421,6 +421,36 @@ public class CounterOfferDialog extends FullScreenDialog {
         if (_woPay == null || _woSchedule == null)
             return;
 
+        if (_isReadOnly) {
+            _finishMenu.setVisibility(View.GONE);
+            _payMenu.setVisibility(View.GONE);
+            _payView.setEnabled(false);
+            _scheduleMenu.setVisibility(View.GONE);
+            _scheduleView.setEnabled(false);
+            _scheduleTypeView.setEnabled(false);
+            _expensesList.setEnabled(false);
+            _expiresMenu.setVisibility(View.GONE);
+            _expiresView.setEnabled(false);
+            _reasonsMenu.setVisibility(View.GONE);
+            _reasonEditText.setEnabled(false);
+            _reasonTextView.setEnabled(false);
+            _floatingActionButton.setVisibility(View.GONE);
+        } else {
+            _finishMenu.setVisibility(View.VISIBLE);
+            _payMenu.setVisibility(View.VISIBLE);
+            _payView.setEnabled(true);
+            _scheduleMenu.setVisibility(View.VISIBLE);
+            _scheduleView.setEnabled(true);
+            _scheduleTypeView.setEnabled(true);
+            _expensesList.setEnabled(true);
+            _expiresMenu.setVisibility(View.VISIBLE);
+            _expiresView.setEnabled(true);
+            _reasonsMenu.setVisibility(View.VISIBLE);
+            _reasonEditText.setEnabled(true);
+            _reasonTextView.setEnabled(true);
+            _floatingActionButton.setVisibility(View.VISIBLE);
+        }
+
         // Pay
         if (_pay != null) {
             _payLayout.setVisibility(View.VISIBLE);
@@ -455,17 +485,29 @@ public class CounterOfferDialog extends FullScreenDialog {
             if (_expenseRunnables != null)
                 _expenseRunnables.cancel();
             _expenseLayout.setVisibility(View.VISIBLE);
-            _expensesList.removeAllViews();
 
             _expenseRunnables = new ForLoopRunnable(_expenses.size(), new Handler()) {
+                List<View> l = new LinkedList<>();
+
                 @Override
                 public void next(int i) throws Exception {
                     ListItemTwoVertView v = new ListItemTwoVertView(getContext());
                     v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
-                    v.setActionString(getContext().getString(R.string.icon_overflow));
-                    v.setOnActionClickedListener(_expense_onClick);
+                    if (!_isReadOnly) {
+                        v.setActionString(getContext().getString(R.string.icon_overflow));
+                        v.setOnActionClickedListener(_expense_onClick);
+                    }
                     v.setTag(i);
-                    _expensesList.addView(v);
+                    v.setEnabled(!_isReadOnly);
+                    l.add(v);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _expensesList.removeAllViews();
+                    for (View v : l) {
+                        _expensesList.addView(v);
+                    }
                 }
             };
             getView().postDelayed(_expenseRunnables, 100);
@@ -956,13 +998,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             if (successObject != null && methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
-                    Expense[] exp = new Expense[_expenses.size()];
-                    for (int i = 0; i < _expenses.size(); i++) {
-                        exp[i] = _expenses.get(i);
-                    }
-
                     dismiss(true);
-
                     _refreshView.refreshComplete();
                 }
             } else if (successObject != null && methodName.equals("getWorkOrder") && successObject instanceof WorkOrder) {
@@ -974,8 +1010,16 @@ public class CounterOfferDialog extends FullScreenDialog {
                 try {
                     if (_isReadOnly) {
                         Request request = workOrder.getRequests().getOpenRequest();
+
                         _pay = request.getPay();
+                        if (_pay == null || _pay.getType() == null)
+                            _pay = null;
+
                         _schedule = request.getSchedule();
+                        if (_schedule == null || _schedule.getServiceWindow() == null
+                                || _schedule.getServiceWindow().getMode() == null)
+                            _schedule = null;
+
                         _expenses.clear();
                         _expenses.addAll(Arrays.asList(request.getExpenses()));
 

@@ -15,7 +15,6 @@
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true">
 
-
             <LinearLayout
                 android:id="@+id/empty_view"
                 android:layout_width="match_parent"
@@ -249,7 +248,7 @@
                         android:layout_marginRight="10dp"
                         android:paddingBottom="16dp"
                         android:paddingTop="16dp"
-                        android:textColor="@color/fn_dark_text"
+                        android:textColor="@color/fn_dark_text_statefull"
                         android:textSize="16sp"
                         android:visibility="gone" />
 
@@ -266,7 +265,7 @@
                         android:imeOptions="actionDone"
                         android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
                         android:padding="16dp"
-                        android:textColor="@color/fn_dark_text_50" />
+                        android:textColor="@color/fn_dark_text_statefull" />
 
                     <TextView
                         android:id="@+id/disclaimer_textview"
