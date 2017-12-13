@@ -110,7 +110,7 @@ public class Blocks implements Parcelable {
         if (_author == null)
             _author = new User();
 
-            return _author;
+        return _author;
     }
 
     public Blocks author(User author) throws ParseException {
@@ -179,7 +179,7 @@ public class Blocks implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Blocks created(Date created) throws ParseException {

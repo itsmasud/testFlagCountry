@@ -57,7 +57,7 @@ public class UpdateModelParams implements Parcelable {
         if (_model == null)
             _model = new UpdateModelParamsModel();
 
-            return _model;
+        return _model;
     }
 
     public UpdateModelParams model(UpdateModelParamsModel model) throws ParseException {
@@ -82,7 +82,7 @@ public class UpdateModelParams implements Parcelable {
         if (_updateScheduleByWorkOrder == null)
             _updateScheduleByWorkOrder = new EventUpdateScheduleByWorkOrder();
 
-            return _updateScheduleByWorkOrder;
+        return _updateScheduleByWorkOrder;
     }
 
     public UpdateModelParams updateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) throws ParseException {

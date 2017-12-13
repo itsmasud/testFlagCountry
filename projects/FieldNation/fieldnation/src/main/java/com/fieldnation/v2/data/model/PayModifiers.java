@@ -101,7 +101,7 @@ public class PayModifiers implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public PayModifiers metadata(ListEnvelope metadata) throws ParseException {
@@ -156,7 +156,7 @@ public class PayModifiers implements Parcelable {
         if (_sum == null)
             _sum = new PayModifiersSum();
 
-            return _sum;
+        return _sum;
     }
 
     public PayModifiers sum(PayModifiersSum sum) throws ParseException {

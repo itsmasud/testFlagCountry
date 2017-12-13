@@ -66,7 +66,7 @@ public class ShipmentCarrier implements Parcelable {
         if (_arrival == null)
             _arrival = new Date();
 
-            return _arrival;
+        return _arrival;
     }
 
     public ShipmentCarrier arrival(Date arrival) throws ParseException {
@@ -91,7 +91,7 @@ public class ShipmentCarrier implements Parcelable {
         if (_arrived == null)
             _arrived = new Date();
 
-            return _arrived;
+        return _arrived;
     }
 
     public ShipmentCarrier arrived(Date arrived) throws ParseException {

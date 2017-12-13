@@ -113,7 +113,7 @@ public class Tag implements Parcelable {
         if (_author == null)
             _author = new User();
 
-            return _author;
+        return _author;
     }
 
     public Tag author(User author) throws ParseException {
@@ -138,7 +138,7 @@ public class Tag implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Tag created(Date created) throws ParseException {

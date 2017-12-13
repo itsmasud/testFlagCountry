@@ -79,7 +79,7 @@ public class UserBlocked implements Parcelable {
         if (_by == null)
             _by = new UserBlockedBy();
 
-            return _by;
+        return _by;
     }
 
     public UserBlocked by(UserBlockedBy by) throws ParseException {

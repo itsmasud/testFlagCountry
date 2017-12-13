@@ -67,7 +67,7 @@ public class ChatInputView extends RelativeLayout {
 
 
 	/*-*********************************-*/
-	/*-				Events				-*/
+    /*-				Events				-*/
 	/*-*********************************-*/
 
 }

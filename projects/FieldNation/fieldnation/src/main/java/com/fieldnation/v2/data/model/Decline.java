@@ -101,7 +101,7 @@ public class Decline implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Decline created(Date created) throws ParseException {
@@ -148,7 +148,7 @@ public class Decline implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public Decline user(User user) throws ParseException {
