@@ -19,7 +19,6 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.ui.PenaltyAdapter;
 
