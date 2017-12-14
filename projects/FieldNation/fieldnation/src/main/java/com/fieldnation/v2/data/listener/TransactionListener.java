@@ -89,7 +89,6 @@ public class TransactionListener extends WebTransactionListener {
             }
 
             SimpleEvent.Builder se = new SimpleEvent.Builder()
-                    .tag(AnswersWrapper.TAG)
                     .category(params.apiFunction)
                     .action("START");
 
@@ -175,7 +174,6 @@ public class TransactionListener extends WebTransactionListener {
 
 
                 SimpleEvent.Builder se = new SimpleEvent.Builder()
-                        .tag(AnswersWrapper.TAG)
                         .category(params.apiFunction)
                         .action("COMPLETE");
                 if (transaction.getUUID() != null) {
@@ -239,7 +237,6 @@ public class TransactionListener extends WebTransactionListener {
                     if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
 
                         SimpleEvent.Builder se = new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category(params.apiFunction)
                                 .action("ZOMBIE");
                         if (transaction.getUUID() != null) {
@@ -253,7 +250,6 @@ public class TransactionListener extends WebTransactionListener {
                     }
 
                     SimpleEvent.Builder se = new SimpleEvent.Builder()
-                            .tag(AnswersWrapper.TAG)
                             .category(params.apiFunction)
                             .action("FAIL");
                     if (transaction.getUUID() != null) {
@@ -293,7 +289,6 @@ public class TransactionListener extends WebTransactionListener {
                     }
 
                     SimpleEvent.Builder se = new SimpleEvent.Builder()
-                            .tag(AnswersWrapper.TAG)
                             .category(params.apiFunction)
                             .action("ZOMBIE");
                     if (transaction.getUUID() != null) {
@@ -309,7 +304,6 @@ public class TransactionListener extends WebTransactionListener {
                 }
 
                 SimpleEvent.Builder se = new SimpleEvent.Builder()
-                        .tag(AnswersWrapper.TAG)
                         .category(params.apiFunction)
                         .action("RETRY");
                 if (transaction.getUUID() != null) {

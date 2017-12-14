@@ -74,7 +74,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _descriptionView.setData(_workOrder.getDescription().getHtml());
         _qualificationsSummaryView.setWorkOrder(_workOrder);
 
-
         if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesView.setVisibility(View.GONE);
         } else {

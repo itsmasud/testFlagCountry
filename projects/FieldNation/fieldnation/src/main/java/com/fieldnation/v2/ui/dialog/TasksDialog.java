@@ -274,7 +274,6 @@ public class TasksDialog extends FullScreenDialog {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label("WorkOrderScreen - multiple")
                                 .action("start")
