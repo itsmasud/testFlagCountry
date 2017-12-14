@@ -274,7 +274,6 @@ public class TasksDialog extends FullScreenDialog {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label("WorkOrderScreen - multiple")
                                 .action("start")
@@ -572,7 +571,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
             if (successObject != null && (methodName.equals("getWorkOrder"))) {
@@ -604,6 +603,7 @@ public class TasksDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

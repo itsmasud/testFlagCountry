@@ -72,7 +72,7 @@ public class Condition implements Parcelable {
         if (_coords == null)
             _coords = new Coords();
 
-            return _coords;
+        return _coords;
     }
 
     public Condition coords(Coords coords) throws ParseException {
@@ -97,7 +97,7 @@ public class Condition implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Condition created(Date created) throws ParseException {
@@ -210,7 +210,7 @@ public class Condition implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public Condition user(User user) throws ParseException {

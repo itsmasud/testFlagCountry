@@ -130,7 +130,7 @@ public class WorkOrderRatingsBuyerWorkOrder implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public WorkOrderRatingsBuyerWorkOrder created(Date created) throws ParseException {

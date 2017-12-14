@@ -205,7 +205,6 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
                                 .action("start")
@@ -243,11 +242,12 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getAttachments")) {
                 _folders = (AttachmentFolders) successObject;
                 populateUi();
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

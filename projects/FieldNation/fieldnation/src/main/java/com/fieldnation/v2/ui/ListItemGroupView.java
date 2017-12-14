@@ -79,7 +79,7 @@ public class ListItemGroupView extends RelativeLayout {
         populateUi();
     }
 
-    public void setDividerVisiblity(int isVisible){
+    public void setDividerVisiblity(int isVisible) {
         _bottomDivider.setVisibility(isVisible);
     }
 

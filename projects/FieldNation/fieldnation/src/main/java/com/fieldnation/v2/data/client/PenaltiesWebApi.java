@@ -290,9 +290,9 @@ public abstract class PenaltiesWebApi extends Pigeon {
                 super(manager);
                 setName("PenaltiesWebApi/Parser");
                 start();
-        }
+            }
 
-        @Override
+            @Override
             public boolean doWork() {
                 PenaltiesWebApi webApi = null;
                 Bundle bundle = null;
@@ -313,47 +313,47 @@ public abstract class PenaltiesWebApi extends Pigeon {
                 boolean success = bundle.getBoolean("success");
                 byte[] data = bundle.getByteArray("data");
 
-            Stopwatch watch = new Stopwatch(true);
-            try {
-                if (data != null && success) {
-                    switch (transactionParams.apiFunction) {
-                        case "deletePenalty":
-                        case "updatePenalty":
-                            successObject = data;
-                            break;
-                        case "addPenalty":
-                            successObject = PayModifier.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
+                Stopwatch watch = new Stopwatch(true);
+                try {
+                    if (data != null && success) {
+                        switch (transactionParams.apiFunction) {
+                            case "deletePenalty":
+                            case "updatePenalty":
+                                successObject = data;
+                                break;
+                            case "addPenalty":
+                                successObject = PayModifier.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
+                    } else if (data != null) {
+                        switch (transactionParams.apiFunction) {
+                            case "addPenalty":
+                            case "deletePenalty":
+                            case "updatePenalty":
+                                failObject = Error.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
                     }
-                } else if (data != null) {
-                    switch (transactionParams.apiFunction) {
-                        case "addPenalty":
-                        case "deletePenalty":
-                        case "updatePenalty":
-                            failObject = Error.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
-                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                } finally {
+                    Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
                 }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            } finally {
-                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
-        }
 
-            try {
-                if (failObject != null && failObject instanceof Error) {
-                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                }
+                try {
+                    if (failObject != null && failObject instanceof Error) {
+                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                    }
                     getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
                 return true;
             }

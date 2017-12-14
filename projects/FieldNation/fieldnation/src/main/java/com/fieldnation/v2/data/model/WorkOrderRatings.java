@@ -63,7 +63,7 @@ public class WorkOrderRatings implements Parcelable {
         if (_assignedProvider == null)
             _assignedProvider = new WorkOrderRatingsAssignedProvider();
 
-            return _assignedProvider;
+        return _assignedProvider;
     }
 
     public WorkOrderRatings assignedProvider(WorkOrderRatingsAssignedProvider assignedProvider) throws ParseException {
@@ -88,7 +88,7 @@ public class WorkOrderRatings implements Parcelable {
         if (_buyer == null)
             _buyer = new WorkOrderRatingsBuyer();
 
-            return _buyer;
+        return _buyer;
     }
 
     public WorkOrderRatings buyer(WorkOrderRatingsBuyer buyer) throws ParseException {
@@ -135,7 +135,7 @@ public class WorkOrderRatings implements Parcelable {
         if (_serviceCompany == null)
             _serviceCompany = new WorkOrderRatingsServiceCompany();
 
-            return _serviceCompany;
+        return _serviceCompany;
     }
 
     public WorkOrderRatings serviceCompany(WorkOrderRatingsServiceCompany serviceCompany) throws ParseException {

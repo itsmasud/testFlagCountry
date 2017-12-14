@@ -60,7 +60,7 @@ public class Acknowledgment implements Parcelable {
         if (_author == null)
             _author = new User();
 
-            return _author;
+        return _author;
     }
 
     public Acknowledgment author(User author) throws ParseException {
@@ -85,7 +85,7 @@ public class Acknowledgment implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Acknowledgment created(Date created) throws ParseException {

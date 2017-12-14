@@ -50,6 +50,7 @@ public class AdditionalInfoSectionView extends LinearLayout implements WorkOrder
         _renderers.add((WorkOrderRenderer) findViewById(R.id.signaturesSummaryView));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.shipmentSummaryView));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.attachment_summary_view));
+        _renderers.add((WorkOrderRenderer) findViewById(R.id.bundleSummaryView));
 
         _legalView = findViewById(R.id.legal_view);
         _legalView.setOnClickListener(_legal_onClick);

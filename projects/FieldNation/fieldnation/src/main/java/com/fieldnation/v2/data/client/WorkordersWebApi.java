@@ -9631,7 +9631,16 @@ public abstract class WorkordersWebApi extends Pigeon {
     public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
     }
 
-    public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+    /**
+     * @param transactionParams
+     * @param methodName
+     * @param successObject
+     * @param success
+     * @param failObject
+     * @return true if data handled, false if not
+     */
+    public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        return false;
     }
 
     private static class BgParser {
@@ -10102,10 +10111,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 }
 
                 try {
-                    if (failObject != null && failObject instanceof Error) {
-                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                    }
-                    getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
+                    getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject, bundle.containsKey("cached")));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -10121,19 +10127,25 @@ public abstract class WorkordersWebApi extends Pigeon {
         private Object successObject;
         private boolean success;
         private Object failObject;
+        private boolean isCached = false;
 
         public Deliverator(WorkordersWebApi workordersWebApi, TransactionParams transactionParams,
-                           Object successObject, boolean success, Object failObject) {
+                           Object successObject, boolean success, Object failObject, boolean isCached) {
             this.workordersWebApi = workordersWebApi;
             this.transactionParams = transactionParams;
             this.successObject = successObject;
             this.success = success;
             this.failObject = failObject;
+            this.isCached = isCached;
         }
 
         @Override
         public void run() {
-            workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
+            if (!workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject, isCached)) {
+                if (failObject != null && failObject instanceof Error) {
+                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                }
+            }
         }
     }
 }

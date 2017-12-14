@@ -154,7 +154,7 @@ public class ShipmentListDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (success && successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _folders = workOrder.getAttachments();
@@ -166,6 +166,7 @@ public class ShipmentListDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(true);
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

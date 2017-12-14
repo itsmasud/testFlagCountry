@@ -66,7 +66,7 @@ public class Hold implements Parcelable {
         if (_acknowledgment == null)
             _acknowledgment = new Acknowledgment();
 
-            return _acknowledgment;
+        return _acknowledgment;
     }
 
     public Hold acknowledgment(Acknowledgment acknowledgment) throws ParseException {
@@ -173,7 +173,7 @@ public class Hold implements Parcelable {
         if (_type == null)
             _type = new HoldType();
 
-            return _type;
+        return _type;
     }
 
     public Hold type(HoldType type) throws ParseException {

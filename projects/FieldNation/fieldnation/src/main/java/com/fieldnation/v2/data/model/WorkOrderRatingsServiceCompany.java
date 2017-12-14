@@ -54,7 +54,7 @@ public class WorkOrderRatingsServiceCompany implements Parcelable {
         if (_overall == null)
             _overall = new WorkOrderRatingsServiceCompanyOverall();
 
-            return _overall;
+        return _overall;
     }
 
     public WorkOrderRatingsServiceCompany overall(WorkOrderRatingsServiceCompanyOverall overall) throws ParseException {

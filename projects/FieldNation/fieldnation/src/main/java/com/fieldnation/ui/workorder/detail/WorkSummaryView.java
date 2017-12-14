@@ -20,9 +20,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "WorkSummaryView";
 
     // UI
-    private TextView _bundleWarningTextView;
-    private View _bundleWarningLayout;
-
     private ListItemWebView _descriptionView;
     private QualificationsSummaryView _qualificationsSummaryView;
 
@@ -62,10 +59,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _confidentialInformationView = findViewById(R.id.confidentialInformationView);
         _policiesView = findViewById(R.id.policiesView);
 
-        _bundleWarningTextView = findViewById(R.id.bundlewarning_textview);
-        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
-        _bundleWarningLayout = findViewById(R.id.bundlewarning_layout);
-
         setVisibility(View.GONE);
     }
 
@@ -78,17 +71,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private void refresh() {
         setVisibility(View.VISIBLE);
 
-        if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
-            _bundleWarningTextView.setVisibility(View.VISIBLE);
-            _bundleWarningLayout.setVisibility(VISIBLE);
-        } else {
-            _bundleWarningTextView.setVisibility(View.GONE);
-            _bundleWarningLayout.setVisibility(GONE);
-        }
-
         _descriptionView.setData(_workOrder.getDescription().getHtml());
         _qualificationsSummaryView.setWorkOrder(_workOrder);
-
 
         if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesView.setVisibility(View.GONE);

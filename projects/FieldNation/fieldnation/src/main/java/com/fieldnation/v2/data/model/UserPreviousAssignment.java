@@ -60,7 +60,7 @@ public class UserPreviousAssignment implements Parcelable {
         if (_by == null)
             _by = new User();
 
-            return _by;
+        return _by;
     }
 
     public UserPreviousAssignment by(User by) throws ParseException {
@@ -107,7 +107,7 @@ public class UserPreviousAssignment implements Parcelable {
         if (_removal == null)
             _removal = new Date();
 
-            return _removal;
+        return _removal;
     }
 
     public UserPreviousAssignment removal(Date removal) throws ParseException {

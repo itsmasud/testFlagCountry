@@ -112,7 +112,7 @@ public class StarView extends FrameLayout {
             if (i < _goldStars) {
                 _starViews.get(i).setTextColor(getResources().getColor(R.color.fn_yellow));
             } else {
-                _starViews.get(i).setTextColor( getResources().getColor(R.color.fn_gray_lighter));
+                _starViews.get(i).setTextColor(getResources().getColor(R.color.fn_gray_lighter));
             }
         }
     }

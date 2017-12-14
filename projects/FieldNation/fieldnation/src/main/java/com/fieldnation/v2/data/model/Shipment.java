@@ -116,7 +116,7 @@ public class Shipment implements Parcelable {
         if (_carrier == null)
             _carrier = new ShipmentCarrier();
 
-            return _carrier;
+        return _carrier;
     }
 
     public Shipment carrier(ShipmentCarrier carrier) throws ParseException {
@@ -141,7 +141,7 @@ public class Shipment implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Shipment created(Date created) throws ParseException {
@@ -254,7 +254,7 @@ public class Shipment implements Parcelable {
         if (_task == null)
             _task = new ShipmentTask();
 
-            return _task;
+        return _task;
     }
 
     public Shipment task(ShipmentTask task) throws ParseException {
@@ -279,7 +279,7 @@ public class Shipment implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public Shipment user(User user) throws ParseException {
