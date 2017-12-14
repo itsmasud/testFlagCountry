@@ -195,7 +195,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
 
         AppMessagingClient.appShutdown();
-
         super.onBackPressed();
     }
 

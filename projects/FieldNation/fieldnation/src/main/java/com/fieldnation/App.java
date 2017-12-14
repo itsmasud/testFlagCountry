@@ -34,7 +34,6 @@ import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
-import com.fieldnation.fnstore.ObjectStoreSqlHelper;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -48,8 +47,6 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.transaction.TransformSqlHelper;
-import com.fieldnation.service.transaction.WebTransactionSqlHelper;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.google.android.gms.security.ProviderInstaller;
 
@@ -152,7 +149,6 @@ public class App extends Application {
 //        }
 
         super.onCreate();
-
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);
 
@@ -286,24 +282,6 @@ public class App extends Application {
 
     public boolean isLowMemDevice() {
         return _memoryClass <= 70;
-    }
-
-    @Override
-    public void onTerminate() {
-        _profileClient.unsubGet();
-        _profileClient.unsubSwitchUser();
-        _regClient.unsub();
-        _appMessagingClient.unsubProfileInvalid();
-        _appMessagingClient.unsubNetworkConnect();
-        _appMessagingClient.unsubNetworkState();
-        _authClient.unsubAuthStateChange();
-        AuthSystem.stop();
-        WebTransactionSystem.stop();
-        WebTransactionSqlHelper.stop();
-        TransformSqlHelper.stop();
-        ObjectStoreSqlHelper.stop();
-        super.onTerminate();
-        _context = null;
     }
 
     public static App get() {
@@ -849,23 +827,9 @@ public class App extends Application {
 
         PhotoClient.clearPhotoClientCache();
         PigeonRoost.pruneStickies();
-        switch (level) {
-            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-                break;
-            default:
-                break;
+
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            PigeonRoost.clearAddressCacheAll(AppMessagingConstants.ADDRESS_SHUTDOWN_UI);
         }
     }
 
