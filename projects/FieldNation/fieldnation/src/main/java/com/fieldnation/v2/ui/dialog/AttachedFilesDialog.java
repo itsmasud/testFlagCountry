@@ -306,7 +306,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
                                 .action("start")
