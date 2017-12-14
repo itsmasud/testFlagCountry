@@ -1026,7 +1026,13 @@ public class CounterOfferDialog extends FullScreenDialog {
                         if (request.getExpires().getUtc() != null) {
                             _expiresMilliSeconds = request.getExpires().getUtcLong();
                             // TODO not good yet
-                            _expiresTitle = misc.convertMsToHuman(_expiresMilliSeconds - System.currentTimeMillis());
+                            if (_expiresMilliSeconds - System.currentTimeMillis() < 0) {
+                                _expiresTitle = "Expired";
+                            } else {
+                                _expiresTitle = misc.convertMsToHuman(_expiresMilliSeconds - System.currentTimeMillis());
+                            }
+                        } else {
+                            _expiresTitle = "Never";
                         }
                         _reason = request.getNotes();
                     }
