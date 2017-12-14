@@ -3,7 +3,6 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.Window;
 import android.widget.ImageView;
@@ -105,11 +104,6 @@ public class SplashActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public boolean doPasswordCheck() {
-        return false;
-    }
-
-    @Override
     public int getLayoutResource() {
         return R.layout.activity_splash;
     }
@@ -195,8 +189,6 @@ public class SplashActivity extends AuthSimpleActivity {
         WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
 
         AuthClient.requestCommand();
-
-        _authClient.subNeedUsernameAndPassword();
     }
 
     @Override
@@ -209,7 +201,6 @@ public class SplashActivity extends AuthSimpleActivity {
     protected void onStop() {
         Log.v(TAG, "onStop");
         _authClient.unsubAuthStateChange();
-        _authClient.unsubNeedUsernameAndPassword();
         _workOrdersApi.unsub();
         super.onStop();
     }
@@ -236,13 +227,6 @@ public class SplashActivity extends AuthSimpleActivity {
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
             AuthClient.requestCommand();
-        }
-
-        @Override
-        public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
-            startActivity(
-                    AuthActivity.startNewWithResponseIntent(App.get(), authenticatorResponse));
-            finish();
         }
     };
 

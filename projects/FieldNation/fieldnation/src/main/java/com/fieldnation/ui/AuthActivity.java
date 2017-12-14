@@ -319,7 +319,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.finish();
 
                         AuthClient.addedAccountCommand();
-                        SplashActivity.startNew(AuthActivity.this);
+                        //SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
