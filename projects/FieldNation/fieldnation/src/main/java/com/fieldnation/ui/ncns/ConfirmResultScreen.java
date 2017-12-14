@@ -234,17 +234,17 @@ public class ConfirmResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
                 if (!success || successObject == null) {
                     _refreshView.refreshComplete();
-                    return;
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
-                    return;
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
@@ -271,6 +271,7 @@ public class ConfirmResultScreen extends RelativeLayout {
                     }
                 });
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

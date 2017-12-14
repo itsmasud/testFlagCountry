@@ -29,7 +29,6 @@ import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -963,7 +962,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ConfirmActivity.startNew(App.get());
+            //ConfirmActivity.startNew(App.get());
             //_onMyWay_onClick.onClick(v);
         }
     };

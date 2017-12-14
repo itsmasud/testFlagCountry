@@ -916,7 +916,7 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.equals("assignUser")) {
                 if (success) {
                     // TODO this might not work
@@ -967,6 +967,7 @@ public class EtaDialog extends FullScreenDialog {
             if (!success) {
                 _refreshView.refreshComplete();
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

@@ -1132,11 +1132,12 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
                 setLoading(false);
             }
+            return false;
         }
     };
 }

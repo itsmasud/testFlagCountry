@@ -116,7 +116,7 @@ public class EarnedPayDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof Pay) {
                 _pay = (Pay) successObject;
                 AppMessagingClient.setLoading(false);
@@ -124,6 +124,7 @@ public class EarnedPayDialog extends FullScreenDialog {
             } else {
                 WorkordersWebApi.getPay(App.get(), _workOrderId, true, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 
