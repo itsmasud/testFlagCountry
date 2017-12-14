@@ -251,7 +251,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (!success && !isCached && methodName.equals("getWorkOrder")) {
                 if (failObject != null && failObject instanceof Error && "Unauthorized".equals(((Error) failObject).getMessage())) {
                     PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
-                    OneButtonDialog.show(App.get(), DIALOG_NOT_AVAILABLE, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "VIEW AVAILABLE WORK", false);
+                    OneButtonDialog.show(App.get(), DIALOG_NOT_AVAILABLE, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "GO BACK", false);
                     return true;
                 }
             }
@@ -280,8 +280,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, action);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+
+        if (action != null)
+            intent.putExtra(INTENT_FIELD_ACTION, action);
         if (uuid != null)
             intent.putExtra(INTENT_UI_UUID, uuid);
         return intent;

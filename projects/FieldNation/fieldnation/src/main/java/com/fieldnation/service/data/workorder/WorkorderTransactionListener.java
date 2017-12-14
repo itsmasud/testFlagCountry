@@ -24,8 +24,8 @@ import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionSystem;
+import com.fieldnation.ui.SplashActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.v2.ui.nav.NavActivity;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.text.ParseException;
@@ -886,7 +886,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            Intent workorderIntent = NavActivity.intentShowWorkOrder(App.get(), (int) workorderId);
+            Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), (int) workorderId);
             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
 

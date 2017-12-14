@@ -95,6 +95,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         return true;
     }
 
+    public boolean doPasswordCheck() {
+        return true;
+    }
+
     @Override
     protected void onStart() {
         Log.v(TAG, "onStart");
@@ -125,7 +129,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         startService(new Intent(this, TopicService.class));
         startService(new Intent(this, WebCrawlerService.class));
 
-        _authClient.subNeedUsernameAndPassword();
+        if (doPasswordCheck()) {
+            _authClient.subNeedUsernameAndPassword();
+        }
 
         _appMessagingClient.subGotProfile();
         _appMessagingClient.subUpdateApp();
@@ -149,7 +155,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
 
-        _authClient.unsubNeedUsernameAndPassword();
+        if (doPasswordCheck()) {
+            _authClient.unsubNeedUsernameAndPassword();
+        }
         _toastClient.unSubToast();
         _toastClient.unSubSnackbar();
         _activityRequestHandler.unsub();

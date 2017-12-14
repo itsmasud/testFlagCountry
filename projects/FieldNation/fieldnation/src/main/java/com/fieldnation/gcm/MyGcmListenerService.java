@@ -40,7 +40,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
-import com.fieldnation.v2.ui.nav.NavActivity;
+import com.fieldnation.ui.SplashActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -98,7 +98,7 @@ public class MyGcmListenerService extends GcmListenerService {
             case VIEW: {
                 switch (action.getObject()) {
                     case "wo": {
-                        Intent workorderIntent = NavActivity.intentShowWorkOrder(this, Integer.parseInt(action.getId()));
+                        Intent workorderIntent = SplashActivity.intentShowWorkOrder(this, Integer.parseInt(action.getId()));
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
@@ -124,7 +124,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 switch (action.getObject()) {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                                NavActivity.intentShowWorkOrder(this, Integer.parseInt(action.getId()), NavActivity.ACTION_CONFIRM), 0);
+                                SplashActivity.intentShowWorkOrder(this, Integer.parseInt(action.getId()), SplashActivity.ACTION_CONFIRM), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     default:
@@ -136,7 +136,7 @@ public class MyGcmListenerService extends GcmListenerService {
             case CONFIRM_TOMORROW: {
                 App.get().setNeedsConfirmation(true);
                 PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                        NavActivity.startNewIntent(this), 0);
+                        SplashActivity.startNewIntent(this), 0);
                 return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
             }
         }
