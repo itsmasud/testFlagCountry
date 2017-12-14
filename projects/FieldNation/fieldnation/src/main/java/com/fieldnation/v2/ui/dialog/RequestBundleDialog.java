@@ -25,7 +25,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
-import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.ui.ListItemSummaryView;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
@@ -91,9 +90,6 @@ public class RequestBundleDialog extends FullScreenDialog {
 
         _refreshView = v.findViewById(R.id.refresh_view);
 
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getView().getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
         return v;
     }
 
@@ -126,6 +122,27 @@ public class RequestBundleDialog extends FullScreenDialog {
         super.show(payload, animate);
 
         populateUi();
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+
+        if (savedState.containsKey("_expiringDurationSeconds"))
+            _expiringDurationSeconds = savedState.getLong("_expiringDurationSeconds");
+
+        if (savedState.containsKey("_expires"))
+            _expires = savedState.getBoolean("expires");
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        super.onSaveDialogState(outState);
+        if (_expires)
+            outState.putBoolean("_expires", _expires);
+
+        if (_expiringDurationSeconds != -1)
+            outState.putLong("_expiringDurationSeconds", _expiringDurationSeconds);
     }
 
     @Override
