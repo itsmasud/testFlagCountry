@@ -291,7 +291,7 @@ public class User implements Parcelable {
         if (_client == null)
             _client = new Company();
 
-            return _client;
+        return _client;
     }
 
     public User client(Company client) throws ParseException {
@@ -316,7 +316,7 @@ public class User implements Parcelable {
         if (_company == null)
             _company = new UserCompany();
 
-            return _company;
+        return _company;
     }
 
     public User company(UserCompany company) throws ParseException {
@@ -341,7 +341,7 @@ public class User implements Parcelable {
         if (_coords == null)
             _coords = new Coords();
 
-            return _coords;
+        return _coords;
     }
 
     public User coords(Coords coords) throws ParseException {
@@ -484,7 +484,7 @@ public class User implements Parcelable {
         if (_jobs == null)
             _jobs = new UserJobs();
 
-            return _jobs;
+        return _jobs;
     }
 
     public User jobs(UserJobs jobs) throws ParseException {
@@ -509,7 +509,7 @@ public class User implements Parcelable {
         if (_lastActive == null)
             _lastActive = new Date();
 
-            return _lastActive;
+        return _lastActive;
     }
 
     public User lastActive(Date lastActive) throws ParseException {
@@ -674,7 +674,7 @@ public class User implements Parcelable {
         if (_previousAssignment == null)
             _previousAssignment = new UserPreviousAssignment();
 
-            return _previousAssignment;
+        return _previousAssignment;
     }
 
     public User previousAssignment(UserPreviousAssignment previousAssignment) throws ParseException {
@@ -699,7 +699,7 @@ public class User implements Parcelable {
         if (_previousRequest == null)
             _previousRequest = new UserPreviousRequest();
 
-            return _previousRequest;
+        return _previousRequest;
     }
 
     public User previousRequest(UserPreviousRequest previousRequest) throws ParseException {
@@ -746,7 +746,7 @@ public class User implements Parcelable {
         if (_rating == null)
             _rating = new UserRating();
 
-            return _rating;
+        return _rating;
     }
 
     public User rating(UserRating rating) throws ParseException {
@@ -771,7 +771,7 @@ public class User implements Parcelable {
         if (_request == null)
             _request = new Request();
 
-            return _request;
+        return _request;
     }
 
     public User request(Request request) throws ParseException {
@@ -840,7 +840,7 @@ public class User implements Parcelable {
         if (_route == null)
             _route = new Route();
 
-            return _route;
+        return _route;
     }
 
     public User route(Route route) throws ParseException {
@@ -909,7 +909,7 @@ public class User implements Parcelable {
         if (_timeZone == null)
             _timeZone = new TimeZone();
 
-            return _timeZone;
+        return _timeZone;
     }
 
     public User timeZone(TimeZone timeZone) throws ParseException {

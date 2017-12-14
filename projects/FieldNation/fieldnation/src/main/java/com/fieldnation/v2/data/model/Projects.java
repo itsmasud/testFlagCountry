@@ -57,7 +57,7 @@ public class Projects implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public Projects metadata(ListEnvelope metadata) throws ParseException {

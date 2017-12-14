@@ -115,7 +115,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         super.onRestoreDialogState(savedState);
         if (savedState.containsKey(STATE_LOCATION_POSITION))
             _locationSpinner.setSelection(savedState.getInt(STATE_LOCATION_POSITION));
-        else  _locationSpinner.setSelection(1);
+        else _locationSpinner.setSelection(1);
         if (savedState.containsKey(STATE_DISTANCE_POSITION))
             _distanceSpinner.setSelection(savedState.getInt(STATE_DISTANCE_POSITION));
         if (savedState.containsKey(STATE_LOCATION_TEXT))
@@ -129,7 +129,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         outState.putInt(STATE_DISTANCE_POSITION, _distanceSpinner.getSelectedItemPosition());
 
         if (!misc.isEmptyOrNull(_otherLocationEditText.getText().toString()))
-        outState.putString(STATE_LOCATION_TEXT, _otherLocationEditText.getText().toString());
+            outState.putString(STATE_LOCATION_TEXT, _otherLocationEditText.getText().toString());
     }
 
     @Override

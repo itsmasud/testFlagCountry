@@ -12,6 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.ListItemTwoHorizTwoVertView;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -24,7 +25,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // UI
-    private TextView _payTextView;
+    private ListItemTwoHorizTwoVertView _payView;
     private TextView _termsTextView;
 
     // Data
@@ -50,7 +51,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _payTextView = findViewById(R.id.pay_textview);
+        _payView = findViewById(R.id.pay_summary_view);
         _termsTextView = findViewById(R.id.terms_textview);
         _renderers.add((WorkOrderRenderer) findViewById(R.id.penalty_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.bonus_summary_view));
@@ -76,35 +77,91 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     }
 
     private void refresh() {
-        if (_termsTextView == null)
+        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getType() == null || _termsTextView == null)
             return;
-
-        Pay pay = _workOrder.getPay();
 
         _termsTextView.setVisibility(VISIBLE);
-        String[] paytext = pay.toDisplayStringLong();
-        String data = "";
 
-        if (paytext[0] != null) {
-            data = paytext[0];
-        }
-
-        if (paytext[1] != null) {
-            data += "\n" + paytext[1];
-        }
-
-        if (misc.isEmptyOrNull(data)) {
-            setVisibility(GONE);
-            return;
-        }
-        _payTextView.setText(data);
+        _payView.set(getPayTypeString(), getPayInfoString(), getPayAmountString(), null);
         setVisibility(View.VISIBLE);
     }
+
+    private String getPayTypeString() {
+        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getType() == null)
+            return null;
+
+        final Pay.TypeEnum type = _workOrder.getPay().getType();
+        String payTypeText = null;
+        switch (type) {
+            case FIXED:
+                payTypeText = "Fixed";
+                break;
+            case HOURLY:
+                payTypeText = "Hourly";
+                break;
+            case DEVICE:
+                payTypeText = "Device";
+                break;
+            case BLENDED:
+                payTypeText = "Blended (Fixed + Hourly)";
+                break;
+        }
+        return payTypeText;
+    }
+
+    private String getPayInfoString() {
+        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getType() == null)
+            return null;
+
+        final Pay pay = _workOrder.getPay();
+        final Pay.TypeEnum type = _workOrder.getPay().getType();
+        String payInfoText = null;
+        switch (type) {
+            case FIXED:
+                break;
+            case HOURLY:
+                payInfoText = "For up to " + misc.to1Decimal(pay.getBase().getUnits()) + " hrs";
+                break;
+            case DEVICE:
+                payInfoText = "For up to " + misc.to1Decimal(pay.getBase().getUnits()) + " devices";
+                break;
+            case BLENDED:
+                payInfoText = misc.toCurrency(pay.getBase().getAmount()) + " for first " + misc.to1Decimal(pay.getBase().getUnits()) + " hrs + " +
+                        misc.toCurrency(pay.getAdditional().getAmount()) + " for up to " + misc.to1Decimal(pay.getAdditional().getUnits()) + " hrs";
+                break;
+        }
+        return payInfoText;
+    }
+
+    private String getPayAmountString() {
+        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getType() == null)
+            return null;
+
+        final Pay pay = _workOrder.getPay();
+        final Pay.TypeEnum type = _workOrder.getPay().getType();
+        String text = null;
+        switch (type) {
+            case FIXED:
+                text = misc.toCurrency(pay.getBase().getAmount());
+                break;
+            case HOURLY:
+                text = misc.toCurrency(pay.getBase().getAmount()) + "/hr";
+                break;
+            case DEVICE:
+                text = misc.toCurrency(pay.getBase().getAmount()) + "/device";
+                break;
+            case BLENDED:
+                text = misc.toCurrency(pay.getBase().getAmount() + pay.getAdditional().getAmount() * pay.getAdditional().getUnits());
+                break;
+        }
+        return text;
+    }
+
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
+    private final OnClickListener _terms_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             TermsDialog.show(App.get(), null, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));

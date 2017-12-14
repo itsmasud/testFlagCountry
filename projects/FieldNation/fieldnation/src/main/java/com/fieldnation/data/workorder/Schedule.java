@@ -27,7 +27,7 @@ public class Schedule implements Parcelable {
     private String _endTime;
     @Json(name = "startTime")
     private String _startTime;
-//    @Json(name = "startTimeHours") // Don't use this because it will give you wrong time
+    //    @Json(name = "startTimeHours") // Don't use this because it will give you wrong time
 //    private String _startTimeHours;
     @Json(name = "workorderScheduleId")
     private Integer _workorderScheduleId;
@@ -35,7 +35,6 @@ public class Schedule implements Parcelable {
     private Integer _type;
     @Json(name = "note")
     private String _note;
-
 
 
     public Schedule() {

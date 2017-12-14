@@ -36,7 +36,7 @@ public class BuyerRating {
     @Json(name = "workorderManagerName")
     private String _workorderManagerName;
     @Json(name = "ratingId")
-    private Integer _ratingId ;
+    private Integer _ratingId;
 
 
     public BuyerRating() {

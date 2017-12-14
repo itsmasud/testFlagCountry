@@ -994,7 +994,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
@@ -1036,6 +1036,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
                 populateUi();
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

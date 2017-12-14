@@ -19,7 +19,6 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.ui.BonusesAdapter;
 
@@ -117,7 +116,7 @@ public class BonusesListDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers bonuses = (PayModifiers) successObject;
                 _bonuses = bonuses;
@@ -126,6 +125,7 @@ public class BonusesListDialog extends FullScreenDialog {
             } else {
                 WorkordersWebApi.getBonuses(App.get(), _workOrderId, true, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

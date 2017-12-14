@@ -85,7 +85,7 @@ public class RatingCompany implements Parcelable {
         if (_marketplace == null)
             _marketplace = new RatingCompanyMarketplace();
 
-            return _marketplace;
+        return _marketplace;
     }
 
     public RatingCompany marketplace(RatingCompanyMarketplace marketplace) throws ParseException {
@@ -110,7 +110,7 @@ public class RatingCompany implements Parcelable {
         if (_mine == null)
             _mine = new RatingCompanyMine();
 
-            return _mine;
+        return _mine;
     }
 
     public RatingCompany mine(RatingCompanyMine mine) throws ParseException {

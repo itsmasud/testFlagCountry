@@ -42,7 +42,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthTopicConstants;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.data.profile.ProfileSystem;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**

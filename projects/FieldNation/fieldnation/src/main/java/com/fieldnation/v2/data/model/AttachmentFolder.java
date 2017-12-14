@@ -206,7 +206,7 @@ public class AttachmentFolder implements Parcelable {
         if (_task == null)
             _task = new Task();
 
-            return _task;
+        return _task;
     }
 
     public AttachmentFolder task(Task task) throws ParseException {

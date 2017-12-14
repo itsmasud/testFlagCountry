@@ -52,8 +52,6 @@ import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.Task;
 
 import java.io.File;
 
@@ -506,7 +504,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 try {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
                                     .category("AttachmentRetry")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
@@ -537,7 +534,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 if (_isTask) {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
@@ -549,7 +545,6 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 } else {
                     Tracker.event(App.get(),
                             new SimpleEvent.Builder()
-                                    .tag(AnswersWrapper.TAG)
                                     .category("AttachmentUpload")
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
                                     .action("start")

@@ -118,7 +118,7 @@ public class FundTransaction implements Parcelable {
         if (_bank == null)
             _bank = new Bank();
 
-            return _bank;
+        return _bank;
     }
 
     public FundTransaction bank(Bank bank) throws ParseException {

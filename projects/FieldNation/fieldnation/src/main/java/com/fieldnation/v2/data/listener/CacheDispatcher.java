@@ -51,6 +51,7 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
                 bundle.putByteArray("data", obj.getData());
             }
             bundle.putString("type", "complete");
+            bundle.putBoolean("cached", true);
             return bundle;
         } catch (Exception ex) {
             Log.v(TAG, ex);

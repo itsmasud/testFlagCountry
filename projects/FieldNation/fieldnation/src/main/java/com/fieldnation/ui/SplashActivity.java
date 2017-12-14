@@ -17,7 +17,6 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -179,18 +178,9 @@ public class SplashActivity extends AuthSimpleActivity {
 
         if (_profile.isProvider() && _gotConfirmList && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
-            if (App.get().needsConfirmation()) {
-                Log.v(TAG, "doNextStep 5a");
-                _calledMyWork = true;
-                ConfirmActivity.startNew(this);
-                finish();
-
-            } else {
-                Log.v(TAG, "doNextStep 5b");
-                _calledMyWork = true;
-                NavActivity.startNew(this);
-                finish();
-            }
+            _calledMyWork = true;
+            NavActivity.startNew(this);
+            finish();
         }
     }
 
@@ -201,7 +191,7 @@ public class SplashActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "onComplete");
 
             if (methodName.equals("getWorkOrders")
@@ -213,7 +203,7 @@ public class SplashActivity extends AuthSimpleActivity {
                 WorkOrders workOrders = (WorkOrders) successObject;
 
                 if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
-                    return;
+                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
                 _gotConfirmList = true;
                 if (workOrders.getMetadata().getTotal() != null
@@ -223,6 +213,7 @@ public class SplashActivity extends AuthSimpleActivity {
                 }
                 doNextStep();
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

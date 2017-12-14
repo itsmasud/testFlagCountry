@@ -187,25 +187,25 @@ public class ChatDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             try {
                 if (successObject != null && successObject instanceof Messages) {
                     Messages messages = (Messages) successObject;
                     Error error = (Error) failObject;
                     if (!success || error != null)
-                        return;
+                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                     JsonObject methodParams = new JsonObject(transactionParams.methodParams);
 
                     if (methodParams.has("workOrderId")
                             && methodParams.getInt("workOrderId") != _workOrderId) {
                         Log.v(TAG, "not my work order!");
-                        return;
+                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     if (messages == null || messages.getResults() == null) {
                         _refreshView.refreshComplete();
-                        return;
+                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     // flatten the tree with a depth first search
@@ -268,6 +268,7 @@ public class ChatDialog extends FullScreenDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

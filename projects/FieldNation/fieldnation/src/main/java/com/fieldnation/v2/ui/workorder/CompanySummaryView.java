@@ -7,12 +7,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
-import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverallPercentApproval;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
 /**

@@ -290,7 +290,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
                 startWorkOrderDetails();
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - single")
                                 .action("start")
@@ -337,7 +336,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
             for (SharedFile file : sharedFiles) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label("ReceiverActivity - multiple")
                                 .action("start")
@@ -362,7 +360,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     };
 
     private void startWorkOrderDetails() {
-        startActivity(WorkOrderActivity.makeIntentAttachments(App.get(), _selectedWorkOrder.getId(), _myUUID));
+        startActivity(WorkOrderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId(), WorkOrderActivity.ACTION_ATTACHMENTS, _myUUID));
         finish();
     }
 

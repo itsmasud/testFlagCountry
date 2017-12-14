@@ -194,7 +194,7 @@ public class TimeLog implements Parcelable {
         if (_in == null)
             _in = new CheckInOut();
 
-            return _in;
+        return _in;
     }
 
     public TimeLog in(CheckInOut in) throws ParseException {
@@ -219,7 +219,7 @@ public class TimeLog implements Parcelable {
         if (_loggedBy == null)
             _loggedBy = new User();
 
-            return _loggedBy;
+        return _loggedBy;
     }
 
     public TimeLog loggedBy(User loggedBy) throws ParseException {
@@ -244,7 +244,7 @@ public class TimeLog implements Parcelable {
         if (_onMyWay == null)
             _onMyWay = new OnMyWay();
 
-            return _onMyWay;
+        return _onMyWay;
     }
 
     public TimeLog onMyWay(OnMyWay onMyWay) throws ParseException {
@@ -269,7 +269,7 @@ public class TimeLog implements Parcelable {
         if (_out == null)
             _out = new CheckInOut();
 
-            return _out;
+        return _out;
     }
 
     public TimeLog out(CheckInOut out) throws ParseException {
@@ -338,7 +338,7 @@ public class TimeLog implements Parcelable {
         if (_timeZone == null)
             _timeZone = new TimeZone();
 
-            return _timeZone;
+        return _timeZone;
     }
 
     public TimeLog timeZone(TimeZone timeZone) throws ParseException {

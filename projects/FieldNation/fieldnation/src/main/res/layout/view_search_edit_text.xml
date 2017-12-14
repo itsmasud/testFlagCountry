@@ -42,10 +42,4 @@
         android:gravity="center"
         android:text="@string/icon_google_microphone"
         android:textSize="24sp" />
-
-    <ProgressBar
-        android:id="@+id/progress_view"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:visibility="gone" />
 </RelativeLayout>

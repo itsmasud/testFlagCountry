@@ -94,7 +94,7 @@ public class Rating implements Parcelable {
         if (_company == null)
             _company = new RatingCompany();
 
-            return _company;
+        return _company;
     }
 
     public Rating company(RatingCompany company) throws ParseException {

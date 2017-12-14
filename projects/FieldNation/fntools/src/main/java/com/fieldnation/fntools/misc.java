@@ -98,6 +98,14 @@ public final class misc {
         return b;
     }
 
+    public static String to1Decimal(double value) {
+        return _maxOneDecimal.format(value);
+    }
+
+    public static String to1Decimal(float value) {
+        return _maxOneDecimal.format(value);
+    }
+
     public static String to2Decimal(double value) {
         return _maxTwoDecimal.format(value);
     }
