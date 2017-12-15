@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.fieldnation.App;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
@@ -25,8 +24,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.v2.ui.nav.NavActivity;
-import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
+import com.fieldnation.ui.SplashActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -225,7 +223,7 @@ public class TransactionListener extends WebTransactionListener {
                     JsonObject methodParams = new JsonObject(params.methodParams);
                     if (transaction.isTracked()) {
                         if (methodParams.has("workOrderId")) {
-                            Intent workorderIntent = NavActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
+                            Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
                             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
                             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
                         } else {
@@ -280,7 +278,7 @@ public class TransactionListener extends WebTransactionListener {
                 if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
                     if (transaction.isTracked()) {
                         if (methodParams.has("workOrderId")) {
-                            Intent workorderIntent = NavActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
+                            Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
                             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
                             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
                         } else {

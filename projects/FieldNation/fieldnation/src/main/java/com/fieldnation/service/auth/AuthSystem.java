@@ -58,8 +58,6 @@ public class AuthSystem implements AuthTopicConstants {
         _authClient.subRequestCommand();
         _authClient.subAccountAddedCommand();
 
-        _appMessagingClient.subAppShutdown();
-
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
     }
@@ -71,7 +69,6 @@ public class AuthSystem implements AuthTopicConstants {
         _authClient.unsubRequestCommand();
         _authClient.unsubAccountAddedCommand();
 
-        _appMessagingClient.unsubAppShutdown();
         //setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
@@ -91,14 +88,6 @@ public class AuthSystem implements AuthTopicConstants {
             }
         }
     }
-
-    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
-        @Override
-        public void onShutdown() {
-            Log.v(TAG, "GlobalTopicClient.onShutdown");
-            shutdown();
-        }
-    };
 
     private final AuthClient _authClient = new AuthClient() {
         @Override

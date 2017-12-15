@@ -195,7 +195,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
 
         AppMessagingClient.appShutdown();
-
         super.onBackPressed();
     }
 
@@ -319,7 +318,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.finish();
 
                         AuthClient.addedAccountCommand();
-                        SplashActivity.startNew(AuthActivity.this);
+                        //SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
@@ -381,6 +380,18 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         ActivityClient.startActivity(intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
+    }
+
+    public static Intent startNewWithResponseIntent(Context context, Parcelable authenticatorResponse) {
+        Intent intent = new Intent(context, AuthActivity.class);
+
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        return intent;
     }
 }
 

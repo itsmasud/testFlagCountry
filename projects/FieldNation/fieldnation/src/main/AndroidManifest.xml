@@ -81,11 +81,20 @@
             android:process=":frontside" />
         <activity
             android:name=".v2.ui.nav.NavActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:process=":frontside" />
+        <activity
+            android:name=".ui.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:process=":frontside">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
+            <intent-filter>
                 <!-- fieldnation.com -->
                 <data
                     android:host="fieldnation.com"
@@ -139,15 +148,6 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <action android:name="android.intent.action.VIEW" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.SplashActivity"
-            android:exported="true"
-            android:process=":frontside">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity

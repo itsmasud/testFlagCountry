@@ -359,8 +359,10 @@ public class NavActivity extends AuthSimpleActivity {
         Intent intent = new Intent(context, NavActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, action);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+
+        if (action != null)
+            intent.putExtra(INTENT_FIELD_ACTION, action);
         return intent;
     }
 }

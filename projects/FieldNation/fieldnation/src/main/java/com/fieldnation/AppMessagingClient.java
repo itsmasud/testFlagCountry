@@ -36,8 +36,8 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sub(this, ADDRESS_PROFILE_INVALID);
     }
 
-    public void subAppShutdown() {
-        PigeonRoost.sub(this, ADDRESS_SHUTDOWN);
+    public void subShutdownUI() {
+        PigeonRoost.sub(this, ADDRESS_SHUTDOWN_UI);
     }
 
     public void subFinishActivity() {
@@ -76,8 +76,8 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.unsub(this, ADDRESS_PROFILE_INVALID);
     }
 
-    public void unsubAppShutdown() {
-        PigeonRoost.unsub(this, ADDRESS_SHUTDOWN);
+    public void unsubShutdownUI() {
+        PigeonRoost.unsub(this, ADDRESS_SHUTDOWN_UI);
     }
 
     public void unsubFinishActivity() {
@@ -113,7 +113,7 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
     }
 
     public static void appShutdown() {
-        PigeonRoost.sendMessage(ADDRESS_SHUTDOWN, null, Sticky.NONE);
+        PigeonRoost.sendMessage(ADDRESS_SHUTDOWN_UI, null, Sticky.TEMP);
     }
 
     public static void finishActivity() {
@@ -170,8 +170,8 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
             case ADDRESS_PROFILE_INVALID:
                 onProfileInvalid();
                 break;
-            case ADDRESS_SHUTDOWN:
-                onShutdown();
+            case ADDRESS_SHUTDOWN_UI:
+                onShutdownUI();
                 break;
             case ADDRESS_FINISH_ACTIVITY:
                 onFinish();
@@ -214,7 +214,7 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
     public void onProfileInvalid() {
     }
 
-    public void onShutdown() {
+    public void onShutdownUI() {
     }
 
     public void onFinish() {
