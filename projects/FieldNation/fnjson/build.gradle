@@ -22,13 +22,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-annotations:26.0.0-alpha1';
+    compile 'com.android.support:support-annotations:26.0.0-alpha1'
     testCompile 'junit:junit:4.12'
 
     compile project(':fnlog')
     // Force usage of support annotations in the test app, since it is internally used by the runner module.
-    androidTestCompile 'com.android.support:support-annotations:26.0.0-alpha1';
-    androidTestCompile 'com.android.support.test:runner:0.5';
-    androidTestCompile 'com.android.support.test:rules:0.5';
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2';
+    androidTestCompile 'com.android.support:support-annotations:26.0.0-alpha1'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test:rules:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
