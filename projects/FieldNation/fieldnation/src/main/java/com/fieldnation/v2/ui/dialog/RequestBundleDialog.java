@@ -133,6 +133,8 @@ public class RequestBundleDialog extends FullScreenDialog {
 
         if (savedState.containsKey("_expires"))
             _expires = savedState.getBoolean("expires");
+
+        populateUi();
     }
 
     @Override
