@@ -29,7 +29,7 @@
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/key_iconView"
         android:text="Key"
-        android:textColor="@color/fn_dark_text" />
+        android:textColor="@color/fn_dark_text_statefull" />
 
     <TextView
         android:id="@+id/value"
@@ -42,7 +42,7 @@
         android:layout_marginRight="16dp"
         android:gravity="left"
         android:text="Value"
-        android:textColor="@color/fn_light_text" />
+        android:textColor="@color/fn_light_text_statefull" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -66,7 +66,7 @@
         android:layout_alignParentRight="true"
         android:padding="16dp"
         android:text="@string/icon_x"
-        android:textColor="@color/fn_dark_text"
+        android:textColor="@color/fn_dark_text_statefull"
         android:textSize="16sp" />
 
     <com.fieldnation.ui.IconFontTextView

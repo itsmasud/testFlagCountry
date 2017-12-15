@@ -119,6 +119,17 @@ public class ListItemTwoVertView extends RelativeLayout {
         populateUi();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        _keyTextView.setEnabled(enabled);
+        _keyIconView.setEnabled(enabled);
+        _valueTextView.setEnabled(enabled);
+        _actionTextView.setEnabled(enabled);
+        _alertTextView.setEnabled(enabled);
+        _progressBar.setEnabled(enabled);
+    }
+
     public String getKey() {
         return _key;
     }
