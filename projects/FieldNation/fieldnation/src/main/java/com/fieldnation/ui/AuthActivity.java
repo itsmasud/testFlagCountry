@@ -182,6 +182,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void finish() {
+        Log.v(TAG, "finish");
         super.finish();
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
@@ -376,8 +377,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                /*| Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK*/);
 
         ActivityClient.startActivity(intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
@@ -388,8 +389,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                /*| Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK*/);
 
         return intent;
     }

@@ -207,6 +207,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public void finish() {
+        Log.v(TAG, "finish");
         super.finish();
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
