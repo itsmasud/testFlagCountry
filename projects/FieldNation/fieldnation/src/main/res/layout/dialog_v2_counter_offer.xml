@@ -333,7 +333,8 @@
         android:paddingRight="0dp"
         android:paddingTop="0dp"
         android:text="+"
-        android:textSize="32sp" />
+        android:textSize="32sp"
+        android:visibility="gone" />
 
     <View
         android:id="@+id/bottomSheet_background"

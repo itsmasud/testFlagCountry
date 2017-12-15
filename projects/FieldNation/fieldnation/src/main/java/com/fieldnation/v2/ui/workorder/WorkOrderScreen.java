@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -43,7 +42,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -53,7 +51,7 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.menu.MessagesMenuButton;
 import com.fieldnation.ui.menu.MoreMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.ui.workorder.BundleDetailActivity;
+import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -145,6 +143,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private MessagesMenuButton _messagesMenuButton;
     private MoreMenuButton _moreMenuButton;
     private PopupMenu _morePopup;
+    private CounterOfferSummaryView _counterOfferSummaryView;
 
     private AdditionalInfoSectionView _additionalInfoSectionView;
     private PaymentSectionView _paymentSectionView;
@@ -213,6 +212,9 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _buyerInfoSectionView = findViewById(R.id.buyerInfoSectionView);
         _renderers.add(_buyerInfoSectionView);
+
+        _counterOfferSummaryView = findViewById(R.id.counterOfferSummary_view);
+        _renderers.add(_counterOfferSummaryView);
 
         _locView = findViewById(R.id.location_view);
         _renderers.add(_locView);
