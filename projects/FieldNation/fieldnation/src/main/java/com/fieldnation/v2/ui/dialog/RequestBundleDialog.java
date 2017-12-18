@@ -208,7 +208,13 @@ public class RequestBundleDialog extends FullScreenDialog {
     private final ExpireDialog.OnOkListener _expireDialog_onOk = new ExpireDialog.OnOkListener() {
         @Override
         public void onOk(String title, int milliseconds) {
-            _expiringDurationSeconds = milliseconds / 1000;
+            if (milliseconds == -1) {
+                _expiringDurationSeconds = -1;
+                _expires = false;
+            } else {
+                _expiringDurationSeconds = milliseconds / 1000;
+                _expires = true;
+            }
             populateUi();
         }
     };
