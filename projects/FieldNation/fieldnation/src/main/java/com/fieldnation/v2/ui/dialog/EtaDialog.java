@@ -651,6 +651,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             _isSwitchOn = isChecked;
             _isDirty = true;
+            misc.hideKeyboard(buttonView);
             populateUi();
         }
     };
