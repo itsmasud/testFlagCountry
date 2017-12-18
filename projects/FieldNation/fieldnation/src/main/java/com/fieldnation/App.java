@@ -284,6 +284,25 @@ public class App extends Application {
         return _memoryClass <= 70;
     }
 
+/* This doesn't get called in the wild. Leaving here for reference later
+    @Override
+    public void onTerminate() {
+        _profileClient.unsubGet();
+        _profileClient.unsubSwitchUser();
+        _regClient.unsub();
+        _appMessagingClient.unsubProfileInvalid();
+        _appMessagingClient.unsubNetworkConnect();
+        _appMessagingClient.unsubNetworkState();
+        _authClient.unsubAuthStateChange();
+        AuthSystem.stop();
+        WebTransactionSystem.stop();
+        WebTransactionSqlHelper.stop();
+        TransformSqlHelper.stop();
+        ObjectStoreSqlHelper.stop();
+        super.onTerminate();
+        _context = null;
+    }*/
+
     public static App get() {
         return _context;
     }
