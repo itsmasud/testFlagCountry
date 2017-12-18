@@ -101,7 +101,6 @@ public class RequestBundleDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         ExpireDialog.addOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
-
     }
 
     @Override
@@ -278,7 +277,6 @@ public class RequestBundleDialog extends FullScreenDialog {
             ExpireDialog.show(App.get(), DIALOG_UID_EXPIRE);
         }
     };
-
 
     /**
      * @param context     Application context
