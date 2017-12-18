@@ -306,6 +306,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AccountManager am = AccountManager.get(AuthActivity.this);
                         am.addAccountExplicitly(account, _password, null);
                         am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
+                        AuthClient.addedAccountCommand();
 
                         Intent intent = new Intent();
                         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
@@ -318,7 +319,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.setResult(RESULT_OK, intent);
                         AuthActivity.this.finish();
 
-                        AuthClient.addedAccountCommand();
                         //SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
@@ -395,4 +395,3 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         return intent;
     }
 }
-
