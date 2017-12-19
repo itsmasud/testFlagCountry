@@ -136,7 +136,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         }
 
         // Expectations
-        if (overall != null && overall.getPercentClearExpectations() != null) {
+        if (overall != null && overall.getPercentClearExpectations() != null && overall.getPercentClearExpectations() > 0) {
             _clearExpectationView.setVisibility(VISIBLE);
             _clearExpectationView.set("Clear Expectations", overall.getPercentClearExpectations() + "%");
         } else {
@@ -144,7 +144,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         }
 
         // Professionalism
-        if (overall != null && overall.getPercentRespectful() != null) {
+        if (overall != null && overall.getPercentRespectful() != null && overall.getPercentRespectful() > 0) {
             _professionalismView.setVisibility(VISIBLE);
             _professionalismView.set("Professionalism", overall.getPercentRespectful() + "%");
         } else {
