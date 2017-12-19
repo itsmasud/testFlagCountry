@@ -26,17 +26,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subActions() {
-        return subActions(0);
-    }
-
-    public boolean subActions(long workorderId) {
-        String topicId = TOPIC_ID_ACTION_COMPLETE;
-
-        if (workorderId > 0) {
-            topicId += "/" + workorderId;
-        }
-
-        return register(topicId);
+        return register(TOPIC_ID_ACTION_COMPLETE);
     }
 
     public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,

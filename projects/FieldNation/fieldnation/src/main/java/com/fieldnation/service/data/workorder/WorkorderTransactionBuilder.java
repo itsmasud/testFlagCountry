@@ -22,13 +22,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
-    private static void action(Context context, long workorderId, String action, String params,
-                               String contentType, String body) {
+    private static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
         action(context, workorderId, action, params, contentType, body, true);
     }
 
-    private static void action(Context context, long workorderId, String action, String params,
-                               String contentType, String body, boolean useKey) {
+    private static void action(Context context, long workorderId, String action, String params, String contentType, String body, boolean useKey) {
         WebTransactionSystem.queueTransaction(context,
                 action(workorderId, "POST", action, params, contentType, body,
                         "POST/api/rest/v1/workorder/[workorderId]/" + action,
@@ -36,16 +34,12 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         WorkorderTransactionListener.pAction(workorderId, action), useKey));
     }
 
-    private static WebTransaction action(long workorderId, String method, String action, String params,
-                                         String contentType, String body, Class<? extends WebTransactionListener> clazz,
-                                         byte[] handlerParams) {
+    private static WebTransaction action(long workorderId, String method, String action, String params, String contentType, String body, Class<? extends WebTransactionListener> clazz, byte[] handlerParams) {
         return action(workorderId, method, action, params, contentType, body,
                 method + "/api/rest/v1/workorder/[workorderId]/" + action, clazz, handlerParams, true);
     }
 
-    private static WebTransaction action(long workorderId, String method, String action, String params,
-                                         String contentType, String body, String timingKey, Class<? extends WebTransactionListener> clazz,
-                                         byte[] handlerParams, boolean useKey) {
+    private static WebTransaction action(long workorderId, String method, String action, String params, String contentType, String body, String timingKey, Class<? extends WebTransactionListener> clazz, byte[] handlerParams, boolean useKey) {
         App.get().setInteractedWorkorder();
         try {
             JsonObject _action = new JsonObject();
@@ -157,13 +151,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 WorkorderTransactionListener.pAccept(workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta));
     }
 
-    // returns the details
     public static void actionDecline(Context context, long workorderId) {
         action(context, workorderId, "decline", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
     }
 
-    // return the details
     public static WebTransaction actionReadyIntent(long workorderId) {
         return action(workorderId, "POST", "ready", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "",
@@ -172,7 +164,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         );
     }
 
-    // returns work order details
     public static void actionWithdrawRequest(Context context, long workorderId) {
         try {
             JsonObject _action = new JsonObject();
@@ -201,9 +192,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-
-    public static WebTransaction actionPostRatingIntent(long workorderId, int satisfactionRating, int scopeRating,
-                                                        int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
+    public static WebTransaction actionPostRatingIntent(long workorderId, int satisfactionRating, int scopeRating, int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
         try {
             String body = "";
 
