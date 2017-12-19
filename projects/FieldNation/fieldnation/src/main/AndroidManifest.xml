@@ -278,10 +278,6 @@
             android:exported="false"
             android:process=":frontside" />
         <service
-            android:name=".service.data.workorder.WorkorderService"
-            android:exported="false"
-            android:process=":frontside" />
-        <service
             android:name=".service.data.payment.PaymentService"
             android:exported="false"
             android:process=":frontside" />
