@@ -465,6 +465,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         if (pay.getType() == Pay.TypeEnum.DEVICE
                 && pay.getBase().getUnits() != null) {
             _deviceCount = pay.getBase().getUnits().intValue();
+        } else {
+            _deviceCount = -1;
         }
 
         App.get().analActionTitle = null;
