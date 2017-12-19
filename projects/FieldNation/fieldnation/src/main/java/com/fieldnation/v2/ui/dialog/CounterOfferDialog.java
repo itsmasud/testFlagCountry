@@ -1029,7 +1029,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                             if (_expiresMilliSeconds - System.currentTimeMillis() < 0) {
                                 _expiresTitle = "Expired";
                             } else {
-                                _expiresTitle = misc.convertMsToHuman(_expiresMilliSeconds - System.currentTimeMillis());
+                                _expiresTitle = misc.convertMsToHuman(_expiresMilliSeconds - System.currentTimeMillis(), false);
                             }
                         } else {
                             _expiresTitle = "Never";
