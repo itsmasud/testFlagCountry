@@ -240,6 +240,8 @@ public class App extends Application {
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
+
+        new DataPurgeAsync().run(this, null);
     }
 
     private Runnable _anrReport = new Runnable() {
@@ -251,7 +253,6 @@ public class App extends Application {
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
-
                 anrReport();
             }
         }
