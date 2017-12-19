@@ -145,8 +145,9 @@ public class Debug {
                         log(msg);
                     }
                 });
+            } else {
+                android.util.Log.println(android.util.Log.VERBOSE, "Debug", msg);
             }
-            android.util.Log.println(android.util.Log.VERBOSE, "Debug", msg);
             return;
         }
         Crashlytics.log(msg);
@@ -161,8 +162,9 @@ public class Debug {
                         log(priority, tag, msg);
                     }
                 });
+            } else {
+                android.util.Log.println(priority, tag, msg);
             }
-            android.util.Log.println(priority, tag, msg);
             return;
         }
         Crashlytics.log(priority, tag, msg);
