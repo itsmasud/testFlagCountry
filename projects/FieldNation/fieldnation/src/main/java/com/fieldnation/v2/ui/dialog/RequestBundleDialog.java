@@ -101,7 +101,6 @@ public class RequestBundleDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         ExpireDialog.addOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
-
     }
 
     @Override
@@ -208,7 +207,13 @@ public class RequestBundleDialog extends FullScreenDialog {
     private final ExpireDialog.OnOkListener _expireDialog_onOk = new ExpireDialog.OnOkListener() {
         @Override
         public void onOk(String title, int milliseconds) {
-            _expiringDurationSeconds = milliseconds / 1000;
+            if (milliseconds == -1) {
+                _expiringDurationSeconds = -1;
+                _expires = false;
+            } else {
+                _expiringDurationSeconds = milliseconds / 1000;
+                _expires = true;
+            }
             populateUi();
         }
     };
@@ -272,7 +277,6 @@ public class RequestBundleDialog extends FullScreenDialog {
             ExpireDialog.show(App.get(), DIALOG_UID_EXPIRE);
         }
     };
-
 
     /**
      * @param context     Application context
