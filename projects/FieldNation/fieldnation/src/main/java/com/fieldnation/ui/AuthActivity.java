@@ -3,14 +3,17 @@ package com.fieldnation.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.os.UserManager;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,8 +32,11 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityRequestHandler;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
@@ -255,6 +261,33 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         public void onClick(View v) {
             Log.v(TAG, "Login Button");
             misc.hideKeyboard(getCurrentFocus());
+
+            try {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("isUserAMonkey")
+                                .action(ActivityManager.isUserAMonkey() ? "true" : "false")
+                                .build());
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    UserManager um = (UserManager) getSystemService(Context.USER_SERVICE);
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("isUserAGoat")
+                                    .action(um.isUserAGoat() ? "true" : "false")
+                                    .build());
+                } else {
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("isUserAGoat")
+                                    .action("false")
+                                    .build());
+                }
+            } catch (Exception ex) {
+            }
 
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
