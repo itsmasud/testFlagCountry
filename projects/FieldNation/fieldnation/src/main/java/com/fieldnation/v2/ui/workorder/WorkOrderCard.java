@@ -1,10 +1,7 @@
 package com.fieldnation.v2.ui.workorder;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.Settings;
@@ -56,6 +53,7 @@ import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.ContactListDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
@@ -863,26 +861,7 @@ public class WorkOrderCard extends RelativeLayout {
             String phone = null;
             String phoneExt = null;
             if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null && _workOrder.getContacts().getResults().length > 0) {
-                phone = _workOrder.getContacts().getResults()[0].getPhone();
-                phoneExt = _workOrder.getContacts().getResults()[0].getExt();
-            }
-            // TODO if phone number is null we will handle the behavior in MAR-1163
-            if (!App.get().getPackageManager().hasSystemFeature(
-                    PackageManager.FEATURE_TELEPHONY)) {
-                ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = android.content.ClipData.newPlainText("Copied Text", phone + (misc.isEmptyOrNull(phoneExt) ? "" : " x" + phoneExt));
-                clipboard.setPrimaryClip(clip);
-                ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
-                return;
-            }
-
-            try {
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + phone));
-                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(callIntent);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+                ContactListDialog.show(App.get(), null, _workOrder.getContacts());
             }
         }
     };
