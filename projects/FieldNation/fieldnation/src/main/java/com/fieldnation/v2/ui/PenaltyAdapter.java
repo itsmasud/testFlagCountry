@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.PayModifier;
 
 import java.util.LinkedList;
@@ -19,7 +20,6 @@ import java.util.List;
 public class PenaltyAdapter extends RecyclerView.Adapter<PenaltyViewHolder> {
     private static final String TAG = "PenaltyAdapter";
 
-    private PayModifier[] _penalties;
     private String _valueTitle;
     private String _valueDescription;
 
@@ -41,7 +41,6 @@ public class PenaltyAdapter extends RecyclerView.Adapter<PenaltyViewHolder> {
 
     public void setPenalties(PayModifier[] penalties) {
         dataHolders.clear();
-        _penalties = penalties;
         dataHolders.add(new DataHolder(TYPE_HEADER, App.get().getResources().getString(R.string.penalty_statement)));
 
         for (PayModifier penalty : penalties) {
@@ -85,8 +84,9 @@ public class PenaltyAdapter extends RecyclerView.Adapter<PenaltyViewHolder> {
                 PayModifier penalty = (PayModifier) dataHolders.get(position).object;
 
                 v.setTag(penalty);
-                _valueTitle = "-$" + String.valueOf(penalty.getAmount());
-                _valueDescription = penalty.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ? null : (penalty.getModifier() + "% of labor");
+                _valueTitle = "-" + misc.toCurrency(penalty.getAmount());
+                _valueDescription = penalty.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
+                        null : (misc.to2Decimal(penalty.getModifier()) + "% of labor");
                 v.set(penalty.getName(), penalty.getDescription(), _valueTitle, _valueDescription);
                 break;
             }

@@ -332,7 +332,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     try {
                         t.timestamp = attachment.getCreated().getUtcLong();
                     } catch (Exception ex) {
-                        Log.v(TAG, ex);
+                        //Log.v(TAG, ex);
                     }
                     t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
                     t.object = attachment;
@@ -425,6 +425,11 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 Attachment a = (Attachment) objects.get(position).object;
                 view.setTag(a);
+                if (a.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
+                    view.setEnabled(true);
+                } else {
+                    view.setEnabled(false);
+                }
 
                 if (objects.get(position).downloading) {
                     view.set(a.getFile().getName(), null);

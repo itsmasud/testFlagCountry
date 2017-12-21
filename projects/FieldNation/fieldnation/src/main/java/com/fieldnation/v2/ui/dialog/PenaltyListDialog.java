@@ -19,7 +19,6 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.ui.PenaltyAdapter;
 
@@ -81,7 +80,7 @@ public class PenaltyListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getPay(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getPenalties(App.get(), _workOrderId, true, false);
         populateUi();
     }
 
@@ -113,19 +112,20 @@ public class PenaltyListDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.toLowerCase().contains("pay");
+            return methodName.toLowerCase().contains("penalties");
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject != null && successObject instanceof Pay) {
-                PayModifiers penalties = ((Pay) successObject).getPenalties();
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+            if (successObject != null && successObject instanceof PayModifiers) {
+                PayModifiers penalties = (PayModifiers) successObject;
                 _penalties = penalties;
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
-                WorkordersWebApi.getPay(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getPenalties(App.get(), _workOrderId, true, false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

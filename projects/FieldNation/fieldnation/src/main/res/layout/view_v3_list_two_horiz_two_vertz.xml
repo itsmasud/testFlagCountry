@@ -14,8 +14,8 @@
             android:id="@+id/leftside_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="8dp"
             android:layout_alignParentLeft="true"
+            android:layout_marginRight="8dp"
             android:layout_toLeftOf="@+id/rightside_layout"
             android:orientation="vertical">
 
@@ -24,16 +24,17 @@
                 style="@style/Text_Subhead"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="@string/placeholder_paragraph"
-                android:textStyle="bold" />
+                android:textColor="@color/fn_dark_text_statefull" />
 
             <TextView
                 android:id="@+id/keyDescription_textview"
                 style="@style/Text_Body_1_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="@string/placeholder_paragraph"
+                android:textColor="@color/fn_dark_text_statefull"
                 android:visibility="visible" />
         </LinearLayout>
 
@@ -47,19 +48,20 @@
 
             <TextView
                 android:id="@+id/valueTitle_textview"
-                style="@style/Text_Body_1_Caption"
+                style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:text="Value title"
-                android:textSize="16sp" />
+                android:textColor="@color/fn_light_text_statefull" />
 
             <TextView
                 android:id="@+id/valueDescription_textview"
-                style="@style/Text_Body_1_Caption"
+                style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:text="value description"
+                android:textColor="@color/fn_light_text_statefull"
                 android:visibility="visible" />
         </LinearLayout>
     </RelativeLayout>

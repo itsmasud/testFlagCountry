@@ -135,15 +135,16 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (_pages.size() > 0 && getItemCount() > 0) {
-            int itemsPerPage = (getItemCount() / _pages.size());
-            if (itemsPerPage != 0 && position / itemsPerPage >= _pages.size() - 1) {
-                preRequestPage(_pages.size(), false);
-            }
-        }
     }
 
     public Object getObject(int index) {
+        if (_pages.size() > 0 && getItemCount() > 0) {
+            int itemsPerPage = (getItemCount() / _pages.size());
+            if (itemsPerPage != 0 && index / itemsPerPage >= _pages.size() - 1) {
+                preRequestPage(_pages.size(), false);
+            }
+        }
+
         if (!_displayList.isEmpty() && _displayList.size() > index)
             return _displayList.get(index);
         return null;

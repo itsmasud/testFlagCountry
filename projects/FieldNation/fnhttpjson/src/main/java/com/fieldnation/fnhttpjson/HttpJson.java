@@ -31,6 +31,14 @@ public class HttpJson {
     }
 
     public static HttpResult run(Context context, JsonObject request, final ProgressListener progress) throws Exception {
+/* // Used to test slow connections
+        try {
+            Thread.sleep(10000);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+*/
+
         String path = "";
         String protocol = "";
         String params = "";

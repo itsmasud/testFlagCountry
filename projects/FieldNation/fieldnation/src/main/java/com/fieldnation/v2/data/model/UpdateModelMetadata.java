@@ -57,7 +57,7 @@ public class UpdateModelMetadata implements Parcelable {
         if (_data == null)
             _data = new UpdateModelMetadataData();
 
-            return _data;
+        return _data;
     }
 
     public UpdateModelMetadata data(UpdateModelMetadataData data) throws ParseException {
@@ -82,7 +82,7 @@ public class UpdateModelMetadata implements Parcelable {
         if (_universalContext == null)
             _universalContext = new UpdateModelMetadataUniversalContext();
 
-            return _universalContext;
+        return _universalContext;
     }
 
     public UpdateModelMetadata universalContext(UpdateModelMetadataUniversalContext universalContext) throws ParseException {

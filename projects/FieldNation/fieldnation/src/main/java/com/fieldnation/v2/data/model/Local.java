@@ -49,7 +49,7 @@ public class Local implements Parcelable {
     public String getDate() {
         try {
             if (_date == null && SOURCE.has("date") && SOURCE.get("date") != null)
-            _date = SOURCE.getString("date");
+                _date = SOURCE.getString("date");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

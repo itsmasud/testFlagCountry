@@ -4,7 +4,7 @@ package com.fieldnation.v2.ui;
  * Created by Shoaib on 6/11/17.
  */
 
-public enum  TaskTypeEnum {
+public enum TaskTypeEnum {
     SET_ETA(1),
     CLOSING_NOTES(2),
     CHECK_IN(3),

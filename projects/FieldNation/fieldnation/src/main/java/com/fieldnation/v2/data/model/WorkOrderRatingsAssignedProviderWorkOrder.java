@@ -93,7 +93,7 @@ public class WorkOrderRatingsAssignedProviderWorkOrder implements Parcelable {
         if (_comment == null)
             _comment = new WorkOrderRatingsAssignedProviderWorkOrderComment();
 
-            return _comment;
+        return _comment;
     }
 
     public WorkOrderRatingsAssignedProviderWorkOrder comment(WorkOrderRatingsAssignedProviderWorkOrderComment comment) throws ParseException {
@@ -118,7 +118,7 @@ public class WorkOrderRatingsAssignedProviderWorkOrder implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public WorkOrderRatingsAssignedProviderWorkOrder created(Date created) throws ParseException {

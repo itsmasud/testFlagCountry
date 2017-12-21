@@ -67,10 +67,6 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
         PigeonRoost.unsub(this, topicId);
     }
 
-    public static void listNotifications(Context context, int page) {
-        listNotifications(context, page, false, true);
-    }
-
     public static void listNotifications(Context context, int page, boolean isSync, boolean allowCache) {
         ProfileSystem.listNotifications(context, page, isSync, allowCache);
     }
@@ -99,10 +95,6 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
             topicId += "_SYNC";
         }
         PigeonRoost.unsub(this, topicId);
-    }
-
-    public static void listMessages(Context context, int page) {
-        listMessages(context, page, false, true);
     }
 
     public static void listMessages(Context context, int page, boolean isSync, boolean allowCache) {
@@ -166,10 +158,6 @@ public class ProfileClient extends Pigeon implements ProfileConstants {
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
-    public static void actionAcceptTos(Context context, long userId) {
-        ProfileTransactionBuilder.actionAcceptTos(context, userId);
-    }
-
     public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
         ProfileTransactionBuilder.actionBlockCompany(context, profileId, companyId, eventReasonId, explanation);
     }

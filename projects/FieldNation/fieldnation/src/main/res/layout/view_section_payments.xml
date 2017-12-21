@@ -7,7 +7,7 @@
     <com.fieldnation.v2.ui.workorder.WodHeader
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Payments" />
+        android:text="Payment" />
 
     <com.fieldnation.ui.workorder.detail.PaymentView
         android:id="@+id/payment_view"
@@ -17,12 +17,6 @@
 
     <com.fieldnation.v2.ui.workorder.TimeLogSummaryView
         android:id="@+id/timelogSummary_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
-    <com.fieldnation.ui.workorder.detail.CounterOfferSummaryView
-        android:id="@+id/counterOfferSummary_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="gone" />
@@ -39,9 +33,10 @@
         android:layout_height="wrap_content"
         android:visibility="gone" />
 
-    <com.fieldnation.ui.workorder.detail.ExpectedPaymentView
-        android:id="@+id/expected_pay_view"
+    <com.fieldnation.v2.ui.workorder.EarnedPaySummaryView
+        android:id="@+id/earnedPaySummaryView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
 </LinearLayout>

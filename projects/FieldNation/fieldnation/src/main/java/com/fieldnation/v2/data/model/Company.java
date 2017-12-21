@@ -186,7 +186,7 @@ public class Company implements Parcelable {
         if (_jobs == null)
             _jobs = new CompanyJobs();
 
-            return _jobs;
+        return _jobs;
     }
 
     public Company jobs(CompanyJobs jobs) throws ParseException {
@@ -211,7 +211,7 @@ public class Company implements Parcelable {
         if (_location == null)
             _location = new Location();
 
-            return _location;
+        return _location;
     }
 
     public Company location(Location location) throws ParseException {
@@ -302,7 +302,7 @@ public class Company implements Parcelable {
         if (_rating == null)
             _rating = new Rating();
 
-            return _rating;
+        return _rating;
     }
 
     public Company rating(Rating rating) throws ParseException {

@@ -259,7 +259,8 @@ public class TasksDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrderId,
+                            _currentTask.getAttachments().getId(), true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
                             .addContext(new SpTracingContext(fui.uuid))
@@ -273,7 +274,6 @@ public class TasksDialog extends FullScreenDialog {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label("WorkOrderScreen - multiple")
                                 .action("start")
@@ -571,7 +571,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
             if (successObject != null && (methodName.equals("getWorkOrder"))) {
@@ -603,6 +603,7 @@ public class TasksDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

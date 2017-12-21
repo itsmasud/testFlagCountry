@@ -1,6 +1,8 @@
 package com.fieldnation.v2.ui;
 
 import android.content.Context;
+import android.text.Html;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 
 /**
@@ -70,6 +73,13 @@ public class ListItemWebView extends RelativeLayout {
 
         _ccw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_ccw);
         _cw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_cw);
+
+        int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
+        WebSettings webSettings = null;
+        webSettings = _webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setDefaultFontSize(fontSize);
 
         populateUi();
     }
@@ -149,7 +159,9 @@ public class ListItemWebView extends RelativeLayout {
     }
 
     public void setData(String data) {
-        _data = data;
+        _data = data.replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
+        _data = _data.replaceAll("</del>", "</span>");
+        _data = Html.toHtml(misc.linkifyHtml(_data, Linkify.ALL));
         _switchCollapsed = true;
         populateUi();
     }
@@ -160,9 +172,6 @@ public class ListItemWebView extends RelativeLayout {
 
         if (_data != null) {
             _webView.setVisibility(VISIBLE);
-            int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
-            WebSettings _webSettings = _webView.getSettings();
-            _webSettings.setDefaultFontSize(fontSize);
             _webView.loadData(_data, "text/html", "utf-8");
         }
     }

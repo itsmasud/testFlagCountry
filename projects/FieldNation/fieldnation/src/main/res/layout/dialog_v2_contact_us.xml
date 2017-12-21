@@ -32,10 +32,10 @@
     <EditText
         android:id="@+id/explanation_edittext"
         style="@style/EditText"
+        android:layout_width="match_parent"
         android:layout_below="@+id/reason_spinner"
         android:hint="@string/dialog_explanation_default"
-        android:imeOptions="actionNext"
-        android:inputType="text" />
+        android:imeOptions="actionNext" />
 
     <TextView
         android:id="@+id/additionalHelp_textview"

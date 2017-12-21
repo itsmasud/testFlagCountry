@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +28,7 @@ public class ListItemGroupView extends RelativeLayout {
     private int _titleTextColor = -1;
     private String _iconText = null;
     private int _iconTextColor = -1;
-
+    private View _bottomDivider;
 
     public ListItemGroupView(Context context) {
         super(context);
@@ -52,6 +53,7 @@ public class ListItemGroupView extends RelativeLayout {
 
         _titleTextView = findViewById(R.id.title_textview);
         _iconView = findViewById(R.id.x_textview);
+        _bottomDivider = findViewById(R.id.bottom_divider);
 
         populateUi();
     }
@@ -62,9 +64,9 @@ public class ListItemGroupView extends RelativeLayout {
         populateUi();
     }
 
-    public void setTitle(String title, int titleGragity, int titleTextColor) {
+    public void setTitle(String title, int titleGravity, int titleTextColor) {
         _title = title;
-        _titleGragity = titleGragity;
+        _titleGragity = titleGravity;
         _titleTextColor = titleTextColor;
 
         populateUi();
@@ -77,6 +79,9 @@ public class ListItemGroupView extends RelativeLayout {
         populateUi();
     }
 
+    public void setDividerVisiblity(int isVisible) {
+        _bottomDivider.setVisibility(isVisible);
+    }
 
     private void populateUi() {
         if (_titleTextView == null)

@@ -54,7 +54,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     // Data
     private AttachmentFolders _folders = null;
     private int _workOrderId;
-    private AttachmentFolder _currentFolder;
+    private int _currentFolderId;
     private String _uiUUID;
 
     /*-*********----------**********-*/
@@ -128,15 +128,15 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        if (savedState.containsKey("currentFolder"))
-            _currentFolder = savedState.getParcelable("currentFolder");
+        if (savedState.containsKey("currentFolderId"))
+            _currentFolderId = savedState.getInt("currentFolderId");
         super.onRestoreDialogState(savedState);
     }
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        if (_currentFolder != null)
-            outState.putParcelable("currentFolder", _currentFolder);
+        if (_currentFolderId != 0)
+            outState.putInt("currentFolderId", _currentFolderId);
         super.onSaveDialogState(outState);
     }
 
@@ -163,7 +163,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     private final AttachedFoldersAdapter _adapter = new AttachedFoldersAdapter() {
         @Override
         public void onItemClick(AttachmentFolder attachmentFolder) {
-            _currentFolder = attachmentFolder;
+            _currentFolderId = attachmentFolder.getId();
             startAppPickerDialog();
         }
     };
@@ -189,7 +189,8 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId, _currentFolder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, fui.uuid, _workOrderId,
+                            _currentFolderId, false, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
                     Tracker.event(App.get(), new CustomEvent.Builder()
@@ -204,7 +205,6 @@ public class AttachedFoldersDialog extends FullScreenDialog {
             for (GetFileDialog.UriIntent fui : fileResult) {
                 Tracker.event(App.get(),
                         new SimpleEvent.Builder()
-                                .tag(AnswersWrapper.TAG)
                                 .category("AttachmentUpload")
                                 .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - multiple")
                                 .action("start")
@@ -215,13 +215,13 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
                 try {
                     Attachment attachment = new Attachment();
-                    attachment.folderId(_currentFolder.getId());
+                    attachment.folderId(_currentFolderId);
                     AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
             }
-            _currentFolder = null;
+            _currentFolderId = 0;
             dismiss(true);
             AttachedFilesDialog.show(App.get(), null, _uiUUID, _workOrderId);
         }
@@ -242,11 +242,12 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getAttachments")) {
                 _folders = (AttachmentFolders) successObject;
                 populateUi();
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

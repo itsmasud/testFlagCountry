@@ -63,7 +63,7 @@ public class UserPreferredGroups implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public UserPreferredGroups created(Date created) throws ParseException {

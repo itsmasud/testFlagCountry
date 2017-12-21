@@ -34,7 +34,6 @@ import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
-import com.fieldnation.fnstore.ObjectStoreSqlHelper;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -48,8 +47,6 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.transaction.TransformSqlHelper;
-import com.fieldnation.service.transaction.WebTransactionSqlHelper;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.google.android.gms.security.ProviderInstaller;
 
@@ -152,7 +149,6 @@ public class App extends Application {
 //        }
 
         super.onCreate();
-
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);
 
@@ -244,6 +240,8 @@ public class App extends Application {
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
+
+        new DataPurgeAsync().run(this, null);
     }
 
     private Runnable _anrReport = new Runnable() {
@@ -255,7 +253,6 @@ public class App extends Application {
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
-
                 anrReport();
             }
         }
@@ -288,6 +285,7 @@ public class App extends Application {
         return _memoryClass <= 70;
     }
 
+/* This doesn't get called in the wild. Leaving here for reference later
     @Override
     public void onTerminate() {
         _profileClient.unsubGet();
@@ -304,7 +302,7 @@ public class App extends Application {
         ObjectStoreSqlHelper.stop();
         super.onTerminate();
         _context = null;
-    }
+    }*/
 
     public static App get() {
         return _context;
@@ -458,6 +456,10 @@ public class App extends Application {
         @Override
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");
+
+            if (profile == null) {
+                return;
+            }
 
             // had no profile previously, or new profile, then request new token
             if (_profile == null || !_profile.getUserId().equals(profile.getUserId())) {
@@ -649,21 +651,22 @@ public class App extends Application {
 
 
     private void setInstallTime() {
-        new AsyncTaskEx<Object, Object, Object>() {
+        new SetInstallTimeAsyncTask().executeEx(this);
+    }
 
-            @Override
-            protected Object doInBackground(Object... params) {
-                SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+    private static class SetInstallTimeAsyncTask extends AsyncTaskEx<Context, Object, Object> {
+        @Override
+        protected Object doInBackground(Context... params) {
+            SharedPreferences settings = (params[0]).getSharedPreferences(PREF_NAME, 0);
 
-                if (settings.contains(PREF_INSTALL_TIME))
-                    return null;
-
-                SharedPreferences.Editor edit = settings.edit();
-                edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
-                edit.apply();
+            if (settings.contains(PREF_INSTALL_TIME))
                 return null;
-            }
-        }.executeEx();
+
+            SharedPreferences.Editor edit = settings.edit();
+            edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+            edit.apply();
+            return null;
+        }
     }
 
     public long getInstallTime() {
@@ -844,23 +847,9 @@ public class App extends Application {
 
         PhotoClient.clearPhotoClientCache();
         PigeonRoost.pruneStickies();
-        switch (level) {
-            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-                break;
-            default:
-                break;
+
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            PigeonRoost.clearAddressCacheAll(AppMessagingConstants.ADDRESS_SHUTDOWN_UI);
         }
     }
 

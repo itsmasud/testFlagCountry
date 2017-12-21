@@ -98,6 +98,14 @@ public final class misc {
         return b;
     }
 
+    public static String to1Decimal(double value) {
+        return _maxOneDecimal.format(value);
+    }
+
+    public static String to1Decimal(float value) {
+        return _maxOneDecimal.format(value);
+    }
+
     public static String to2Decimal(double value) {
         return _maxTwoDecimal.format(value);
     }
@@ -517,6 +525,10 @@ public final class misc {
     }
 
     public static String convertMsToHuman(long milliseconds) {
+        return convertMSToDHMS(milliseconds, true);
+    }
+
+    public static String convertMsToHuman(long milliseconds, boolean includeSeconds) {
         String result = "";
 
         long Seconds = milliseconds / 1000;
@@ -530,16 +542,25 @@ public final class misc {
 
         result = "";
 
-        if (days > 0) {
+        if (days == 1) {
+            result += days + " day ";
+        } else if (days > 1) {
             result += days + " days ";
         }
-        if (hours > 0) {
+
+        if (hours == 1) {
+            result += hours + " hour ";
+        } else if (hours > 1) {
             result += hours + " hours ";
         }
-        if (min > 0) {
+
+        if (min == 1) {
             result += min + " min ";
+        } else if (min > 1) {
+            result += min + " mins ";
         }
-        if (sec > 0) {
+
+        if (includeSeconds && sec > 0) {
             result += sec + " sec";
         }
 

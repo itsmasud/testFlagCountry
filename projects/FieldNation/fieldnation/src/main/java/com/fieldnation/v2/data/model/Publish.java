@@ -60,7 +60,7 @@ public class Publish implements Parcelable {
         if (_billingAddress == null)
             _billingAddress = new BillingAddress();
 
-            return _billingAddress;
+        return _billingAddress;
     }
 
     public Publish billingAddress(BillingAddress billingAddress) throws ParseException {
@@ -85,7 +85,7 @@ public class Publish implements Parcelable {
         if (_creditCard == null)
             _creditCard = new CreditCard();
 
-            return _creditCard;
+        return _creditCard;
     }
 
     public Publish creditCard(CreditCard creditCard) throws ParseException {

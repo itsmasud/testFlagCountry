@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.PayModifier;
 
 import java.util.LinkedList;
@@ -19,14 +20,13 @@ import java.util.List;
 public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
     private static final String TAG = "BonusesAdapter";
 
-    private PayModifier[] _bonuses;
     private String _valueTitle;
     private String _valueDescription;
 
 
     private List<DataHolder> dataHolders = new LinkedList<>();
 
-    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_DISCLAIMER = 0;
     private static final int TYPE_BONUS = 1;
 
     private static class DataHolder {
@@ -41,8 +41,7 @@ public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
 
     public void setBonuses(PayModifier[] bonuses) {
         dataHolders.clear();
-        _bonuses = bonuses;
-        dataHolders.add(new DataHolder(TYPE_HEADER, App.get().getResources().getString(R.string.bonuses_statement)));
+        dataHolders.add(new DataHolder(TYPE_DISCLAIMER, App.get().getResources().getString(R.string.bonuses_statement)));
 
         for (PayModifier bonus : bonuses) {
             dataHolders.add(new DataHolder(TYPE_BONUS, bonus));
@@ -59,7 +58,7 @@ public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
     public BonusViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         BonusViewHolder holder = null;
         switch (viewType) {
-            case TYPE_HEADER: {
+            case TYPE_DISCLAIMER: {
                 ListItemGroupView view = new ListItemGroupView(parent.getContext());
                 return new BonusViewHolder(view);
             }
@@ -75,7 +74,7 @@ public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
     @Override
     public void onBindViewHolder(BonusViewHolder holder, int position) {
         switch (getItemViewType(position)) {
-            case TYPE_HEADER: {
+            case TYPE_DISCLAIMER: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 view.setTitle((String) dataHolders.get(position).object, Gravity.LEFT, ContextCompat.getColor(App.get(), R.color.fn_dark_text));
                 break;
@@ -85,8 +84,9 @@ public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
                 PayModifier bonus = (PayModifier) dataHolders.get(position).object;
 
                 v.setTag(bonus);
-                _valueTitle = "+$" + String.valueOf(bonus.getAmount());
-                _valueDescription = bonus.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ? null : (bonus.getModifier() + "% of labor");
+                _valueTitle = "+" + misc.toCurrency(bonus.getAmount());
+                _valueDescription = bonus.getCalculation().equals(PayModifier.CalculationEnum.FIXED) ?
+                        null : (misc.to2Decimal(bonus.getModifier()) + "% of labor");
                 v.set(bonus.getName(), bonus.getDescription(), _valueTitle, _valueDescription);
                 break;
             }

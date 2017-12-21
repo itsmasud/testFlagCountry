@@ -51,7 +51,7 @@ public class ShipmentSummaryView extends RelativeLayout implements WorkOrderRend
         _countTextView.setBackgroundResource(R.drawable.round_rect_gray);
 
         setVisibility(GONE);
-        
+
         populateUi();
     }
 

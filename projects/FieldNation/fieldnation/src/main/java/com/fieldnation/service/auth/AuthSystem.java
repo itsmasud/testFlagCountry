@@ -58,8 +58,6 @@ public class AuthSystem implements AuthTopicConstants {
         _authClient.subRequestCommand();
         _authClient.subAccountAddedCommand();
 
-        _appMessagingClient.subAppShutdown();
-
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
     }
@@ -71,7 +69,6 @@ public class AuthSystem implements AuthTopicConstants {
         _authClient.unsubRequestCommand();
         _authClient.unsubAccountAddedCommand();
 
-        _appMessagingClient.unsubAppShutdown();
         //setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
@@ -91,14 +88,6 @@ public class AuthSystem implements AuthTopicConstants {
             }
         }
     }
-
-    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
-        @Override
-        public void onShutdown() {
-            Log.v(TAG, "GlobalTopicClient.onShutdown");
-            shutdown();
-        }
-    };
 
     private final AuthClient _authClient = new AuthClient() {
         @Override
@@ -208,6 +197,10 @@ public class AuthSystem implements AuthTopicConstants {
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
         Log.v(TAG, "onNeedUserNameAndPassword");
+        // toggling cause we may never get a response from the UI here, but we don't want
+        // to notify eveybody that we're not authed.
+        _state = AuthState.NOT_AUTHENTICATED;
+        Log.v(TAG, "NOT_AUTHENTICATED");
         AuthClient.needUsernameAndPassword(authenticatorResponse);
     }
 

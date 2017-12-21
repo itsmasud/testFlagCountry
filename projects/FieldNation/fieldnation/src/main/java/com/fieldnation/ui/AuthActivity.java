@@ -35,12 +35,13 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.auth.AuthTopicConstants;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.data.profile.ProfileSystem;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
@@ -80,6 +81,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        PigeonRoost.clearAddressCache(AuthTopicConstants.ADDRESS_AUTH_COMMAND_NEED_PASSWORD);
+
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFormat(PixelFormat.UNKNOWN);
         setContentView(R.layout.activity_login);
@@ -179,6 +182,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void finish() {
+        Log.v(TAG, "finish");
         super.finish();
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
@@ -192,7 +196,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
 
         AppMessagingClient.appShutdown();
-
         super.onBackPressed();
     }
 
@@ -250,8 +253,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "Login Button");
             misc.hideKeyboard(getCurrentFocus());
-            startService(new Intent(AuthActivity.this, ProfileSystem.class));
 
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
@@ -274,8 +277,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     try {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
-
-                        AppMessagingClient.networkConnected();
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
@@ -305,6 +306,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AccountManager am = AccountManager.get(AuthActivity.this);
                         am.addAccountExplicitly(account, _password, null);
                         am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
+                        AuthClient.addedAccountCommand();
 
                         Intent intent = new Intent();
                         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
@@ -317,8 +319,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.setResult(RESULT_OK, intent);
                         AuthActivity.this.finish();
 
-                        AuthClient.addedAccountCommand();
-                        SplashActivity.startNew(AuthActivity.this);
+                        //SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
@@ -376,10 +377,21 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                /*| Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK*/);
 
         ActivityClient.startActivity(intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
-}
 
+    public static Intent startNewWithResponseIntent(Context context, Parcelable authenticatorResponse) {
+        Intent intent = new Intent(context, AuthActivity.class);
+
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                /*| Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK*/);
+
+        return intent;
+    }
+}

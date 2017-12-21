@@ -7,12 +7,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
-import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverallPercentApproval;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
 /**
@@ -25,6 +23,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     private TextView _companyNameTextView;
     private TextView _companyNotesTextView;
     private StarView _starRating;
+    private TextView _newBuyerTextView;
     private ListItemTwoHorizView _clearExpectationView;
     private ListItemTwoHorizView _professionalismView;
     private ListItemTwoHorizView _reviewPeriodView;
@@ -53,14 +52,13 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_company_summary, this);
 
-        Log.v(TAG, "Init");
-
         if (isInEditMode())
             return;
 
         _companyNameTextView = findViewById(R.id.companyName_textview);
         _companyNotesTextView = findViewById(R.id.companyNotes_textview);
         _starRating = findViewById(R.id.star_rating);
+        _newBuyerTextView = findViewById(R.id.newBuyer_view);
         _clearExpectationView = findViewById(R.id.clearExpectation_view);
         _professionalismView = findViewById(R.id.professionalism_view);
         _reviewPeriodView = findViewById(R.id.reviewPeriod_view);
@@ -69,7 +67,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _ttaDaysTextView = findViewById(R.id.ttaDays_textview);
 
         setVisibility(GONE);
-
         populateUi();
     }
 
@@ -80,7 +77,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     }
 
     public void populateUi() {
-
         if (_ttaDaysTextView == null)
             return;
 
@@ -115,7 +111,8 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getRatings() != null
                 && _workOrder.getRatings().getBuyer() != null
                 && _workOrder.getRatings().getBuyer().getOverall() != null
-                && _workOrder.getRatings().getBuyer().getOverall().getRatings() != null) {
+                && _workOrder.getRatings().getBuyer().getOverall().getRatings() != null
+                && _workOrder.getRatings().getBuyer().getOverall().getApprovalDays() > 0) {
             if (misc.isEmptyOrNull(desc)) {
                 desc = _workOrder.getRatings().getBuyer().getOverall().getRatings() + " Reviews";
             } else {
@@ -139,7 +136,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         }
 
         // Expectations
-        if (overall != null && overall.getPercentClearExpectations() != null) {
+        if (overall != null && overall.getPercentClearExpectations() != null && overall.getPercentClearExpectations() > 0) {
             _clearExpectationView.setVisibility(VISIBLE);
             _clearExpectationView.set("Clear Expectations", overall.getPercentClearExpectations() + "%");
         } else {
@@ -147,7 +144,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         }
 
         // Professionalism
-        if (overall != null && overall.getPercentRespectful() != null) {
+        if (overall != null && overall.getPercentRespectful() != null && overall.getPercentRespectful() > 0) {
             _professionalismView.setVisibility(VISIBLE);
             _professionalismView.set("Professionalism", overall.getPercentRespectful() + "%");
         } else {
@@ -163,27 +160,16 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         }
 
         // Time To Approval
-        if (overall != null && overall.getApprovalDays() != null) {
-            int days = 0;
-            int percent = 0;
-            for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
-                if (ob.getPercent() > percent) {
-                    percent = ob.getPercent();
-                    days = ob.getDays();
-                } else if (ob.getPercent() == percent && ob.getDays() < days) {
-                    days = ob.getDays();
-                }
-            }
-            if (days != 0 && percent != 0) {
-                _ttaLayout.setVisibility(VISIBLE);
-                _ttaNotesTextView.setText(getResources().getString(R.string.company_percentage_approval, percent));
-                _ttaDaysTextView.setText(days + " days");
-                _ttaNotesTextView.setVisibility(VISIBLE);
-            } else {
-                _ttaLayout.setVisibility(GONE);
-            }
+        if (overall != null && overall.getApprovalDays() != null && overall.getApprovalDays() != 0) {
+            _ttaLayout.setVisibility(VISIBLE);
+            _ttaNotesTextView.setText(getResources().getString(R.string.company_percentage_approval, overall.getApprovalDaysPercentile()));
+            _ttaDaysTextView.setText(overall.getApprovalDays() + " days");
+            _ttaNotesTextView.setVisibility(VISIBLE);
+            _newBuyerTextView.setVisibility(GONE);
         } else {
             _ttaLayout.setVisibility(GONE);
+            _starRating.setVisibility(GONE);
+            _newBuyerTextView.setVisibility(VISIBLE);
         }
     }
 }

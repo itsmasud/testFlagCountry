@@ -101,7 +101,7 @@ public class Declines implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public Declines metadata(ListEnvelope metadata) throws ParseException {
@@ -156,7 +156,7 @@ public class Declines implements Parcelable {
         if (_userDecline == null)
             _userDecline = new Decline();
 
-            return _userDecline;
+        return _userDecline;
     }
 
     public Declines userDecline(Decline userDecline) throws ParseException {

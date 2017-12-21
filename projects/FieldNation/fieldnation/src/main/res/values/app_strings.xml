@@ -128,6 +128,9 @@
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
     <string name="complete">Complete</string>
+    <string name="qualifications_missing">Qualifications Missing</string>
+    <string name="qualifications_met">Qualifications Met</string>
+    <string name="qualifications_statement">Increase your chances of being assigned to this work order by meeting all provider qualifications.</string>
     <string name="reasons">Reasons</string>
 
     <string name="penalty_statement">This work order has possible penalty charges. If you are assigned to this work order you agree to be charged any of the following penalties if the conditions are met.</string>
@@ -148,7 +151,7 @@
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
     <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
-    <string name="toast_job_duration_empty">Please fill up job duration.</string>
+    <string name="toast_job_duration_empty">Please fill out job duration.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_empty_counter_offer">Counter offer must have an expense, schedule or pay</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
@@ -202,8 +205,10 @@
     <!--<string name="notification_uploading_dot">Uploading…</string>-->
     <!--<string name="notification_success">Success!</string>-->
 
-    <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
-    <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
+    <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
+    <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
+    <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
+    <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
 
     <string name="dialog_withdraw_title">Withdraw Request?</string>
@@ -228,6 +233,7 @@
 
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
+    <string name="hint_text_additional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
@@ -368,6 +374,9 @@
     <string name="accept_penalty_and_cancel">Accept penalty and cancel job</string>
     <string name="penalties">Penalties</string>
     <string name="bonuses">Bonuses</string>
+    <string name="earned_pay">Earned Pay</string>
+    <string name="payment_breakdown">Payment Breakdown</string>
+    <string name="labor_earnings">Labor Earnings</string>
     <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
@@ -694,6 +703,8 @@
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
 
+    <string name="qualifications">Qualifications</string>
+
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="rate_us">Rate Us</string>
     <string name="reason">Reason</string>
@@ -703,7 +714,7 @@
     <string name="report_issue">Report Issue</string>
     <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
-    <string name="request_expires">Request expires</string>
+    <string name="request_expires">Expire Request</string>
     <string name="request_new_pay">Request New Pay</string>
     <string name="request_reschedule">Request reschedule</string>
     <string name="request_workorder">Request Work Order</string>
@@ -1054,6 +1065,32 @@
         <item>86400</item>
         <item>172800</item>
     </integer-array>
+
+    <string-array name="request_expire_duration_titles">
+        <item>Never</item>
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="request_expire_duration_values">
+        <item>-1</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
 
     <string-array name="co_expire_duration_titles">
         <item>NEVER</item>

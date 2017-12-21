@@ -57,7 +57,7 @@ public class WorkOrderOverviewTypeOfWork implements Parcelable {
         if (_company == null)
             _company = new WorkOrderOverviewTypeOfWorkCompany();
 
-            return _company;
+        return _company;
     }
 
     public WorkOrderOverviewTypeOfWork company(WorkOrderOverviewTypeOfWorkCompany company) throws ParseException {
@@ -82,7 +82,7 @@ public class WorkOrderOverviewTypeOfWork implements Parcelable {
         if (_marketplace == null)
             _marketplace = new WorkOrderOverviewTypeOfWorkMarketplace();
 
-            return _marketplace;
+        return _marketplace;
     }
 
     public WorkOrderOverviewTypeOfWork marketplace(WorkOrderOverviewTypeOfWorkMarketplace marketplace) throws ParseException {
