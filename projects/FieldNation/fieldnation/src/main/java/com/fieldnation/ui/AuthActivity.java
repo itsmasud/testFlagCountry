@@ -297,76 +297,97 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 return;
             }
 
-            new AsyncTaskEx<Object, Object, OAuth>() {
-                @Override
-                protected OAuth doInBackground(Object... params) {
-                    String hostname = AuthActivity.this.getString(R.string.web_fn_hostname);
-                    String grantType = AuthActivity.this.getString(R.string.auth_fn_grant_type);
-                    String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
-                    String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
-                    String username = (String) params[0];
-                    String password = (String) params[1];
-
-                    try {
-                        OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
-                                grantType, clientId, clientSecret, username, password);
-                        return auth;
-                    } catch (Exception ex) {
-                        // TODO, when we get here, app hangs at login screen. Need to do something
-                        Log.v(TAG, ex);
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(OAuth auth) {
-                    if (auth == null) {
-                        Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        AppMessagingClient.networkDisconnected();
-                        _contentLayout.setVisibility(View.VISIBLE);
-                        _signupButton.setVisibility(View.VISIBLE);
-                        _stiltView.setVisibility(View.VISIBLE);
-                        return;
-                    }
-                    String authToken = auth.getAccessToken();
-                    String error = auth.getErrorType();
-
-                    if ("invalid_client".equals(error)) {
-                        AppMessagingClient.updateApp();
-                    } else if (authToken != null) {
-                        Log.v(TAG, "have authtoken");
-                        Account account = new Account(_username, getString(R.string.auth_account_type));
-                        AccountManager am = AccountManager.get(AuthActivity.this);
-                        am.addAccountExplicitly(account, _password, null);
-                        am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
-                        AuthClient.addedAccountCommand();
-
-                        Intent intent = new Intent();
-                        intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-                        intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
-                        intent.putExtra(AccountManager.KEY_AUTHTOKEN, auth.getAccessToken());
-
-                        _authcomplete = true;
-
-                        AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
-                        AuthActivity.this.setResult(RESULT_OK, intent);
-                        AuthActivity.this.finish();
-
-                        //SplashActivity.startNew(AuthActivity.this);
-                    } else {
-                        _contentLayout.setVisibility(View.VISIBLE);
-                        _signupButton.setVisibility(View.VISIBLE);
-                        _stiltView.setVisibility(View.VISIBLE);
-                    }
-                    if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
-                        Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }.executeEx(_username, _password);
+            new LoginAsync(_loginListener).executeEx(_username, _password, App.get());
 
             _contentLayout.setVisibility(View.GONE);
             _signupButton.setVisibility(View.GONE);
             _stiltView.setVisibility(View.GONE);
+        }
+    };
+
+    private static class LoginAsync extends AsyncTaskEx<Object, Object, OAuth> {
+        private Listener _loginListener;
+
+        LoginAsync(Listener listener) {
+            super();
+            _loginListener = listener;
+        }
+
+        @Override
+        protected OAuth doInBackground(Object... params) {
+            String username = (String) params[0];
+            String password = (String) params[1];
+            Context context = (Context) params[2];
+            String hostname = context.getString(R.string.web_fn_hostname);
+            String grantType = context.getString(R.string.auth_fn_grant_type);
+            String clientId = context.getString(R.string.auth_fn_client_id);
+            String clientSecret = context.getString(R.string.auth_fn_client_secret);
+
+            try {
+                OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
+                        grantType, clientId, clientSecret, username, password);
+                return auth;
+            } catch (Exception ex) {
+                // TODO, when we get here, app hangs at login screen. Need to do something
+                Log.v(TAG, ex);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(OAuth auth) {
+            _loginListener.onComplete(auth);
+        }
+
+        public interface Listener {
+            void onComplete(OAuth oauth);
+        }
+    }
+
+    private final LoginAsync.Listener _loginListener = new LoginAsync.Listener() {
+        @Override
+        public void onComplete(OAuth oauth) {
+            if (oauth == null) {
+                Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
+                AppMessagingClient.networkDisconnected();
+                _contentLayout.setVisibility(View.VISIBLE);
+                _signupButton.setVisibility(View.VISIBLE);
+                _stiltView.setVisibility(View.VISIBLE);
+                return;
+            }
+            String authToken = oauth.getAccessToken();
+            String error = oauth.getErrorType();
+
+            if ("invalid_client".equals(error)) {
+                AppMessagingClient.updateApp();
+            } else if (authToken != null) {
+                Log.v(TAG, "have authtoken");
+                Account account = new Account(_username, getString(R.string.auth_account_type));
+                AccountManager am = AccountManager.get(AuthActivity.this);
+                am.addAccountExplicitly(account, _password, null);
+                am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
+                AuthClient.addedAccountCommand();
+
+                Intent intent = new Intent();
+                intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
+                intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
+                intent.putExtra(AccountManager.KEY_AUTHTOKEN, oauth.getAccessToken());
+
+                _authcomplete = true;
+
+                AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
+                AuthActivity.this.setResult(RESULT_OK, intent);
+                AuthActivity.this.finish();
+
+                //SplashActivity.startNew(AuthActivity.this);
+            } else {
+                _contentLayout.setVisibility(View.VISIBLE);
+                _signupButton.setVisibility(View.VISIBLE);
+                _stiltView.setVisibility(View.VISIBLE);
+            }
+            if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
+                Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+            }
         }
     };
 
