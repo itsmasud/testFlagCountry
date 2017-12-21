@@ -1,7 +1,10 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.provider.Settings;
@@ -35,7 +38,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
-import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Declines;
 import com.fieldnation.v2.data.model.ETA;
@@ -857,10 +859,26 @@ public class WorkOrderCard extends RelativeLayout {
             if (_onActionListener != null) _onActionListener.onAction();
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CALL_BUYER, null, _workOrder.getId());
+
+            String phone = null;
+            String phoneExt = null;
+            if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null && _workOrder.getContacts().getResults().length > 0) {
+                phone = _workOrder.getContacts().getResults()[0].getPhone();
+                phoneExt = _workOrder.getContacts().getResults()[0].getExt();
+            }
+            // TODO if phone number is null we will handle the behavior in MAR-1163
+            if (!App.get().getPackageManager().hasSystemFeature(
+                    PackageManager.FEATURE_TELEPHONY)) {
+                ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = android.content.ClipData.newPlainText("Copied Text", phone + (misc.isEmptyOrNull(phoneExt) ? "" : " x" + phoneExt));
+                clipboard.setPrimaryClip(clip);
+                ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
+                return;
+            }
+
             try {
-                Contact contact = _workOrder.getContacts().getResults()[0];
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + contact.getPhone()));
+                callIntent.setData(Uri.parse("tel:" + phone));
                 callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(callIntent);
             } catch (Exception ex) {
