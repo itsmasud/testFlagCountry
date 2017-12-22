@@ -35,6 +35,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
+import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Declines;
 import com.fieldnation.v2.data.model.ETA;
@@ -597,12 +598,22 @@ public class WorkOrderCard extends RelativeLayout {
 
         // phone
         if (_workOrder.getContacts().getResults().length > 0) {
-            button.setVisibility(VISIBLE);
-            button.setText(R.string.icon_phone_solid);
-            button.setOnClickListener(_phone_onClick);
-            buttonId++;
-            if (buttonId >= _secondaryButtons.length) return;
-            button = _secondaryButtons[buttonId];
+            boolean hasContacts = false;
+            for (Contact contact : _workOrder.getContacts().getResults()) {
+                if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
+                    hasContacts = true;
+                    break;
+                }
+            }
+
+            if (hasContacts) {
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_phone_solid);
+                button.setOnClickListener(_phone_onClick);
+                buttonId++;
+                if (buttonId >= _secondaryButtons.length) return;
+                button = _secondaryButtons[buttonId];
+            }
         }
 
         // message
