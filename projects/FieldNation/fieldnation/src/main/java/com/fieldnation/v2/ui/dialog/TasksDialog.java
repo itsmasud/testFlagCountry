@@ -395,7 +395,7 @@ public class TasksDialog extends FullScreenDialog {
                     }
 
                     try {
-                        if (task.getPhone() != null) {
+                        if (!misc.isEmptyOrNull(task.getPhone())) {
                             if (!App.get().getPackageManager().hasSystemFeature(
                                     PackageManager.FEATURE_TELEPHONY)) {
                                 ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
