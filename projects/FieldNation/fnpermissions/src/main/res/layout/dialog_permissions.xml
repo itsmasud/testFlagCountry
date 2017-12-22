@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFFFF"
-    android:orientation="vertical">
+    android:background="#FFFFFFFF">
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="match_parent"
+        android:layout_width="250dp"
         android:layout_height="250dp"
-        android:layout_gravity="center_horizontal|top"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="64dp"
         android:layout_marginRight="64dp"
@@ -21,6 +20,8 @@
         style="@style/Text_Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp"
         android:gravity="center"
         android:text="Location Information"
@@ -31,6 +32,8 @@
         style="@style/Text_Body_1_Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
@@ -38,9 +41,12 @@
         android:textColor="#FF1e1e1e" />
 
     <TextView
+
         android:id="@+id/access_button"
         style="@style/Material.Button.Flat"
+        android:layout_below="@id/description_textviews"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
         android:text="GIVE ACCESS" />
-</LinearLayout>
+</RelativeLayout>
