@@ -1,8 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,6 +41,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -391,9 +395,18 @@ public class TasksDialog extends FullScreenDialog {
                     }
 
                     try {
-                        if (task.getPhone() != null) {
+                        if (!misc.isEmptyOrNull(task.getPhone())) {
+                            if (!App.get().getPackageManager().hasSystemFeature(
+                                    PackageManager.FEATURE_TELEPHONY)) {
+                                ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+                                ClipData clip = android.content.ClipData.newPlainText("Copied Text", task.getPhone());
+                                clipboard.setPrimaryClip(clip);
+                                ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
+                                return;
+                            }
+
                             if (!TextUtils.isEmpty(task.getPhone()) && android.util.Patterns.PHONE.matcher(task.getPhone()).matches()) {
-                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                                Intent callIntent = new Intent(Intent.ACTION_CALL);
                                 String phNum = "tel:" + task.getPhone();
                                 callIntent.setData(Uri.parse(phNum));
                                 ActivityClient.startActivity(callIntent);
