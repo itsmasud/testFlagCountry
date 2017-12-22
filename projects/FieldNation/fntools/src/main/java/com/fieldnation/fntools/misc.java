@@ -645,7 +645,8 @@ public final class misc {
      * @param trackingId
      * @return 0 = Fedex, 1 = UPS, 2 = USPS, 3 = Other/unknown
      */
-    public static int getCarrierId(final String trackingId) {
+    public static int getCarrierId(String trackingId) {
+        trackingId = trackingId.toUpperCase();
         if (Pattern.compile("^E\\D{1}\\d{9}\\D{2}$|^9\\d{15,21}$").matcher(trackingId).matches()) {
             Log.e("ShipmentAddDialog", "tracking id: " + trackingId);
             return 2;
