@@ -304,6 +304,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
             AuthClient.removeCommand();
+            App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
             AppMessagingClient.finishActivity();
         }
     };
