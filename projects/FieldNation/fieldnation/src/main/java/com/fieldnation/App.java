@@ -32,6 +32,7 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
@@ -48,6 +49,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionSystem;
+import com.fieldnation.v2.data.model.SavedList;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -84,6 +86,7 @@ public class App extends Application {
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
+    public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
 
     private static App _context;
 
@@ -719,6 +722,47 @@ public class App extends Application {
             return -1;
 
         return settings.getLong(PREF_RATE_SHOWN, 0);
+    }
+
+    public void setLastVisitedWoL(SavedList savedList) {
+        if (savedList == null) return;
+
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putString(PREF_LAST_VISITED_WOL, savedList.getJson().toString());
+
+        edit.apply();
+    }
+
+    public SavedList getLastVisitedWoL() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        String jsonData = settings.getString(PREF_LAST_VISITED_WOL, null);
+        SavedList _savedList = null;
+
+        if (misc.isEmptyOrNull(jsonData)) {
+            try {
+               _savedList =  new SavedList()
+                        .id("workorders_available")
+                        .label("available");
+            } catch (Exception ex) {
+            }
+        } else {
+
+            try {
+                _savedList = SavedList.fromJson(new JsonObject(jsonData));
+                return _savedList;
+            } catch (Exception ex) {
+                return null;
+            }
+        }
+        return _savedList;
+
+    }
+
+    public void clearPrefKey(String key) {
+        SharedPreferences settings = App.get().getSharedPreferences(PREF_NAME, 0);
+        settings.edit().remove(key).apply();
     }
 
     public boolean onlyUploadWithWifi() {

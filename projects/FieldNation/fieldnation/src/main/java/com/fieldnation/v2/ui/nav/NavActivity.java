@@ -299,6 +299,7 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void onChange(SavedList savedList) {
             _savedList = savedList;
+            App.get().setLastVisitedWoL(savedList);
             _recyclerView.startSearch(_savedList);
             NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
@@ -320,12 +321,17 @@ public class NavActivity extends AuthSimpleActivity {
                     _recyclerView.startSearch(_savedList);
                     NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
                 } else {
+                    if (App.get().getLastVisitedWoL() != null) {
+                        _savedList = App.get().getLastVisitedWoL();
+                    }
+
                     for (SavedList list : savedList) {
                         if (list.getId().equals(_savedList.getId())) {
                             _savedList = list;
                             NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
                         }
                     }
+                    _recyclerView.startSearch(_savedList);
                 }
             }
             return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
