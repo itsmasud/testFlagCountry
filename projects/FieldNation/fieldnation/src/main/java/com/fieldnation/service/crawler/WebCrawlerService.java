@@ -84,7 +84,7 @@ public class WebCrawlerService extends Service {
 
         purgeOldData();
 
-        boolean forceRun = true;
+        boolean forceRun = false;
 
         if (intent != null && intent.hasExtra("force")) {
             forceRun = true;
@@ -305,10 +305,9 @@ public class WebCrawlerService extends Service {
                     ListEnvelope metadata = workOrders.getMetadata();
                     if (metadata.getPage() == 1) {
                         for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
-                            // FIXME remove comments
-//                            incrementPendingRequestCounter(1);
-//                            incRequestCounter(1);
-//                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                            incrementPendingRequestCounter(1);
+                            incRequestCounter(1);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
                         }
                     }
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
