@@ -3812,7 +3812,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getAssignee(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3852,7 +3852,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getAttachments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3893,7 +3893,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3936,7 +3936,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3982,7 +3982,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getBonuses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4022,7 +4022,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getContacts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4063,7 +4063,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4104,7 +4104,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getCustomFields(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4144,7 +4144,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getDiscounts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4184,7 +4184,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getETA(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/eta" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/eta");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4224,7 +4224,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getExpenses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4266,7 +4266,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4309,7 +4309,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4351,7 +4351,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getHold(Context context, Integer workOrderId, Integer holdId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4394,7 +4394,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getHold(Context context, Integer workOrderId, Integer holdId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4437,7 +4437,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getHolds(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4478,7 +4478,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4521,7 +4521,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4564,7 +4564,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getIncreases(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4604,7 +4604,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getLocation(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4644,7 +4644,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getMessages(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4684,7 +4684,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getMilestones(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4724,7 +4724,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getOverview(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4764,7 +4764,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getOverviewValues(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4809,7 +4809,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
                     + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
                     + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
-                    + (isBackground ? ":isBackground" : ""));
+                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4854,7 +4854,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getPay(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4894,7 +4894,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getPenalties(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4935,7 +4935,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4977,7 +4977,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getProblem(Context context, Integer workOrderId, Integer problemId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5018,7 +5018,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getProblems(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5058,7 +5058,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getProviders(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5102,7 +5102,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
                     + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
                     + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-                    + (isBackground ? ":isBackground" : ""));
+                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5146,7 +5146,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getQualifications(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/qualifications" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/qualifications");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5186,7 +5186,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5227,7 +5227,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5270,7 +5270,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5313,7 +5313,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getRequests(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5353,7 +5353,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5394,7 +5394,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getSchedule(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5434,7 +5434,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getShipments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5475,7 +5475,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5516,7 +5516,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getSignatures(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5556,7 +5556,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getStatus(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5597,7 +5597,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getTag(Context context, Integer workOrderId, Integer tagId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5638,7 +5638,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5679,7 +5679,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5720,7 +5720,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getTasks(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5760,7 +5760,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getTimeLogs(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5800,7 +5800,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5839,7 +5839,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getWorkOrderLists(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/lists" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders/lists");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5877,7 +5877,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getWorkOrders(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/workorders");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5972,7 +5972,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     + (getWorkOrdersOptions.getFLocationRadius() != null ?
                     ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
                             + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
-                    + (isBackground ? ":isBackground" : ""));
+                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")

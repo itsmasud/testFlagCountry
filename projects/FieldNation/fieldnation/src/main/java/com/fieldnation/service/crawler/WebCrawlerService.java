@@ -84,7 +84,7 @@ public class WebCrawlerService extends Service {
 
         purgeOldData();
 
-        boolean forceRun = false;
+        boolean forceRun = true;
 
         if (intent != null && intent.hasExtra("force")) {
             forceRun = true;
@@ -259,7 +259,8 @@ public class WebCrawlerService extends Service {
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists")
                     || methodName.equals("getWorkOrders")
-                    || methodName.equals("getWorkOrder");
+                    || methodName.equals("getWorkOrder")
+                    || methodName.equals("getAttachments");
         }
 
         @Override
@@ -304,9 +305,10 @@ public class WebCrawlerService extends Service {
                     ListEnvelope metadata = workOrders.getMetadata();
                     if (metadata.getPage() == 1) {
                         for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
-                            incrementPendingRequestCounter(1);
-                            incRequestCounter(1);
-                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                            // FIXME remove comments
+//                            incrementPendingRequestCounter(1);
+//                            incRequestCounter(1);
+//                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
                         }
                     }
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
@@ -327,8 +329,31 @@ public class WebCrawlerService extends Service {
                     incRequestCounter(1);
                     WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, true);
 
+                    incrementPendingRequestCounter(1);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, true);
+
+                    incRequestCounter(1);
+                    WorkordersWebApi.getBonuses(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getCustomFields(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getDiscounts(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getPay(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getExpenses(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getPenalties(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getQualifications(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getSignatures(WebCrawlerService.this, workOrder.getId(), false, true);
+
+                } else if (successObject != null && methodName.equals("getAttachments")) {
+                    incrementPendingRequestCounter(-1);
                     // get attachments
-                    AttachmentFolders folders = workOrder.getAttachments();
+                    AttachmentFolders folders = (AttachmentFolders) successObject;
                     if (folders.getResults().length > 0) {
                         for (AttachmentFolder folder : folders.getResults()) {
                             Attachment[] attachments = folder.getResults();

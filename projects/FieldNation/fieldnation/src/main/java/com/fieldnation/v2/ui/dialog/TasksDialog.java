@@ -627,7 +627,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
