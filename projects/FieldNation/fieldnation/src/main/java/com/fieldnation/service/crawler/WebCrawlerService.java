@@ -1,5 +1,6 @@
 package com.fieldnation.service.crawler;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +44,17 @@ public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
     private final Object LOCK = new Object();
 
+    /**
+     * When set to true, this will force the web crawler to run on startup. Only possible when
+     * running a debug build.
+     */
+    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
+    /**
+     * When set to true, will force the web crawler to only download the first page of assigned work.
+     * Only possible when running a debug build.
+     */
+    private static final boolean LIMIT_ONE_PAGE = true && BuildConfig.DEBUG;
+
     private Handler _activityHandler;
 
     private boolean _haveProfile = false;
@@ -84,7 +96,7 @@ public class WebCrawlerService extends Service {
 
         purgeOldData();
 
-        boolean forceRun = false;
+        boolean forceRun = FORCE_RUN;
 
         if (intent != null && intent.hasExtra("force")) {
             forceRun = true;
@@ -303,7 +315,7 @@ public class WebCrawlerService extends Service {
 
                     // request the other lists
                     ListEnvelope metadata = workOrders.getMetadata();
-                    if (metadata.getPage() == 1) {
+                    if (metadata.getPage() == 1 && !LIMIT_ONE_PAGE) {
                         for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
                             incrementPendingRequestCounter(1);
                             incRequestCounter(1);
