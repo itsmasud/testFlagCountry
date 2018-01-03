@@ -163,6 +163,10 @@ public class ExpenseListDialog extends FullScreenDialog {
 
         @Override
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+
             if (successObject != null && successObject instanceof Expenses) {
                 Expenses expenses = (Expenses) successObject;
                 _expenses = expenses;

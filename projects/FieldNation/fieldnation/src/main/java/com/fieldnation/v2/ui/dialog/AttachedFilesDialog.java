@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
@@ -489,25 +488,31 @@ public class AttachedFilesDialog extends FullScreenDialog {
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
-            if (methodName.equals("addAttachment")) {
-                try {
-                    JsonObject obj = new JsonObject(transactionParams.methodParams);
-                    String name = obj.getString("attachment.file.name");
-                    int folderId = obj.getInt("attachment.folder_id");
-                    if (adapter != null)
-                        adapter.uploadStop(transactionParams);
+            try {
+                if (methodName.equals("addAttachment")) {
+                    try {
+                        JsonObject obj = new JsonObject(transactionParams.methodParams);
+                        String name = obj.getString("attachment.file.name");
+                        int folderId = obj.getInt("attachment.folder_id");
+                        if (adapter != null)
+                            adapter.uploadStop(transactionParams);
+                        AppMessagingClient.setLoading(true);
+                        WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                } else if (methodName.equals("deleteAttachment")) {
                     AppMessagingClient.setLoading(true);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+                } else if (successObject != null && methodName.equals("getAttachments")
+                        && transactionParams.getMethodParamInt("workOrderId") != null
+                        && transactionParams.getMethodParamInt("workOrderId") == _workOrderId) {
+                    folders = (AttachmentFolders) successObject;
+                    populateUi();
+                    AppMessagingClient.setLoading(false);
                 }
-            } else if (methodName.equals("deleteAttachment")) {
-                AppMessagingClient.setLoading(true);
-                WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
-            } else if (successObject != null && methodName.equals("getAttachments")) {
-                folders = (AttachmentFolders) successObject;
-                populateUi();
-                AppMessagingClient.setLoading(false);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }

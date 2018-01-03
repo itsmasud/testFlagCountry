@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
@@ -243,7 +242,10 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
         @Override
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
-            if (successObject != null && methodName.equals("getAttachments")) {
+            if (successObject != null
+                    && methodName.equals("getAttachments")
+                    && transactionParams.getMethodParamInt("workOrderId") != null
+                    && transactionParams.getMethodParamInt("workOrderId") == _workOrderId) {
                 _folders = (AttachmentFolders) successObject;
                 populateUi();
             }

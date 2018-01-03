@@ -540,6 +540,10 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         @Override
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {
