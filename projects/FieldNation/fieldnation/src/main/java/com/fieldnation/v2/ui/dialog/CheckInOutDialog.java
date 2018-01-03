@@ -528,6 +528,10 @@ public class CheckInOutDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.equals("addTimeLog")
                     || methodName.equals("updateTimeLog");
         }
@@ -540,10 +544,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         @Override
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
-            if (transactionParams.getMethodParamInt("workOrderId") == null
-                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
-                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
-
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {

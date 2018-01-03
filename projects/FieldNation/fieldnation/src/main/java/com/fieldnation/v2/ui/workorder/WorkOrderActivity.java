@@ -214,6 +214,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private final WorkordersWebApi _workorderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return !methodName.equals("getWorkOrders");
         }
 

@@ -112,15 +112,15 @@ public class BonusesListDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.toLowerCase().contains("bonus");
         }
 
         @Override
         public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
-            if (transactionParams.getMethodParamInt("workOrderId") == null
-                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
-                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
-
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers bonuses = (PayModifiers) successObject;
                 _bonuses = bonuses;

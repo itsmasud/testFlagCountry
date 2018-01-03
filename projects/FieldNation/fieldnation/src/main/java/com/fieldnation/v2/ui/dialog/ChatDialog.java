@@ -181,6 +181,10 @@ public class ChatDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.equals("addMessage")
                     || methodName.equals("getMessages")
                     || methodName.equals("replyMessage");

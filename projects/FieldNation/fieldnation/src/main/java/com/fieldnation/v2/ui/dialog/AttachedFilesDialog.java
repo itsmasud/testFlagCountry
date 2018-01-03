@@ -397,6 +397,10 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.toLowerCase().contains("attachment");
         }
 
@@ -504,9 +508,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 } else if (methodName.equals("deleteAttachment")) {
                     AppMessagingClient.setLoading(true);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
-                } else if (successObject != null && methodName.equals("getAttachments")
-                        && transactionParams.getMethodParamInt("workOrderId") != null
-                        && transactionParams.getMethodParamInt("workOrderId") == _workOrderId) {
+                } else if (successObject != null && methodName.equals("getAttachments")) {
                     folders = (AttachmentFolders) successObject;
                     populateUi();
                     AppMessagingClient.setLoading(false);

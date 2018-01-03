@@ -44,11 +44,12 @@ public class ApplicationTest extends ApplicationTestCase<App> {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.equals("getWorkOrderLists")) {
                 signal.countDown();
                 Log.v(TAG, "onGetWorkOrderLists");
             }
+            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 }
