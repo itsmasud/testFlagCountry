@@ -1,6 +1,5 @@
 package com.fieldnation.service.crawler;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
