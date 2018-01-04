@@ -193,7 +193,11 @@ public class SimpleGps {
         public void onConnected(Bundle bundle) {
             if (!_isRunning)
                 return;
+            if (!_gglApiClient.isConnected())
+                return;
+
             Log.v(TAG, "onConnected");
+
             try {
                 _providerApi.requestLocationUpdates(_gglApiClient, _locationRequest, _locationUpdate_listener);
 
