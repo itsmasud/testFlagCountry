@@ -38,8 +38,6 @@ import java.util.List;
 public class NavActivity extends AuthSimpleActivity {
     private static final String TAG = "NavActivity";
 
-    private static final String STATE_CURRENT_SEARCH = "STATE_CURRENT_SEARCH";
-
     // Intent stuff
     public static final String INTENT_FIELD_WORKORDER_ID = WorkOrderActivity.INTENT_FIELD_WORKORDER_ID;
     public static final String INTENT_FIELD_ACTION = WorkOrderActivity.INTENT_FIELD_ACTION;
@@ -144,9 +142,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         //_arrowTextView.startAnimation(_cw);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
-            _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
-        }
+        _savedList = App.get().getLastVisitedWoL();
 
         SavedSearchTracker.onShow(App.get());
 
@@ -202,27 +198,6 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public DialogManager getDialogManager() {
         return (DialogManager) findViewById(R.id.dialogManager);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //Log.v(TAG, "onSaveInstanceState");
-        if (_savedList != null)
-            outState.putParcelable(STATE_CURRENT_SEARCH, _savedList);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        //Log.v(TAG, "onRestoreInstanceState");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
-                _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
-                _recyclerView.startSearch(_savedList);
-                NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
-            }
-        }
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -331,7 +306,6 @@ public class NavActivity extends AuthSimpleActivity {
                             NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
                         }
                     }
-                    _recyclerView.startSearch(_savedList);
                 }
             }
             return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
