@@ -296,10 +296,6 @@ public class NavActivity extends AuthSimpleActivity {
                     _recyclerView.startSearch(_savedList);
                     NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
                 } else {
-                    if (App.get().getLastVisitedWoL() != null) {
-                        _savedList = App.get().getLastVisitedWoL();
-                    }
-
                     for (SavedList list : savedList) {
                         if (list.getId().equals(_savedList.getId())) {
                             _savedList = list;
