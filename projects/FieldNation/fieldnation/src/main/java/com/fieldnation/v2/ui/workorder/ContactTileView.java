@@ -130,7 +130,6 @@ public class ContactTileView extends RelativeLayout {
                         return;
                     }
 
-                    // TODO Save this for when we upgrade to Android 6+
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
 
                     String phone = _phone;
