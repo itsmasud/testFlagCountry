@@ -31,6 +31,12 @@ public class Pay implements Parcelable {
     @Json(name = "bonuses")
     private PayModifiers _bonuses;
 
+    @Json(name = "calculated_total")
+    private PayCalculatedTotal _calculatedTotal;
+
+    @Json(name = "can_view")
+    private Boolean _canView;
+
     @Json(name = "correlation_id")
     private String _correlationId;
 
@@ -61,6 +67,9 @@ public class Pay implements Parcelable {
     @Json(name = "max_pay")
     private Double _maxPay;
 
+    @Json(name = "minimum_payment")
+    private Double _minimumPayment;
+
     @Json(name = "number_of_devices")
     private Double _numberOfDevices;
 
@@ -81,6 +90,9 @@ public class Pay implements Parcelable {
 
     @Json(name = "role")
     private String _role;
+
+    @Json(name = "term")
+    private PayTerm _term;
 
     @Json(name = "total")
     private Double _total;
@@ -212,6 +224,56 @@ public class Pay implements Parcelable {
     public Pay bonuses(PayModifiers bonuses) throws ParseException {
         _bonuses = bonuses;
         SOURCE.put("bonuses", bonuses.getJson());
+        return this;
+    }
+
+    public void setCalculatedTotal(PayCalculatedTotal calculatedTotal) throws ParseException {
+        _calculatedTotal = calculatedTotal;
+        SOURCE.put("calculated_total", calculatedTotal.getJson());
+    }
+
+    public PayCalculatedTotal getCalculatedTotal() {
+        try {
+            if (_calculatedTotal == null && SOURCE.has("calculated_total") && SOURCE.get("calculated_total") != null)
+                _calculatedTotal = PayCalculatedTotal.fromJson(SOURCE.getJsonObject("calculated_total"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_calculatedTotal == null)
+            _calculatedTotal = new PayCalculatedTotal();
+
+        return _calculatedTotal;
+    }
+
+    public Pay calculatedTotal(PayCalculatedTotal calculatedTotal) throws ParseException {
+        _calculatedTotal = calculatedTotal;
+        SOURCE.put("calculated_total", calculatedTotal.getJson());
+        return this;
+    }
+
+    public void setCanView(Boolean canView) throws ParseException {
+        _canView = canView;
+        SOURCE.put("can_view", canView);
+    }
+
+    public Boolean getCanView() {
+        try {
+            if (_canView == null && SOURCE.has("can_view") && SOURCE.get("can_view") != null)
+                _canView = SOURCE.getBoolean("can_view");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_canView == null)
+            return true;
+
+        return _canView;
+    }
+
+    public Pay canView(Boolean canView) throws ParseException {
+        _canView = canView;
+        SOURCE.put("can_view", canView);
         return this;
     }
 
@@ -461,6 +523,28 @@ public class Pay implements Parcelable {
         return this;
     }
 
+    public void setMinimumPayment(Double minimumPayment) throws ParseException {
+        _minimumPayment = minimumPayment;
+        SOURCE.put("minimum_payment", minimumPayment);
+    }
+
+    public Double getMinimumPayment() {
+        try {
+            if (_minimumPayment == null && SOURCE.has("minimum_payment") && SOURCE.get("minimum_payment") != null)
+                _minimumPayment = SOURCE.getDouble("minimum_payment");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _minimumPayment;
+    }
+
+    public Pay minimumPayment(Double minimumPayment) throws ParseException {
+        _minimumPayment = minimumPayment;
+        SOURCE.put("minimum_payment", minimumPayment);
+        return this;
+    }
+
     public void setNumberOfDevices(Double numberOfDevices) throws ParseException {
         _numberOfDevices = numberOfDevices;
         SOURCE.put("number_of_devices", numberOfDevices);
@@ -627,6 +711,31 @@ public class Pay implements Parcelable {
         return this;
     }
 
+    public void setTerm(PayTerm term) throws ParseException {
+        _term = term;
+        SOURCE.put("term", term.getJson());
+    }
+
+    public PayTerm getTerm() {
+        try {
+            if (_term == null && SOURCE.has("term") && SOURCE.get("term") != null)
+                _term = PayTerm.fromJson(SOURCE.getJsonObject("term"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_term == null)
+            _term = new PayTerm();
+
+        return _term;
+    }
+
+    public Pay term(PayTerm term) throws ParseException {
+        _term = term;
+        SOURCE.put("term", term.getJson());
+        return this;
+    }
+
     public void setTotal(Double total) throws ParseException {
         _total = total;
         SOURCE.put("total", total);
@@ -736,8 +845,14 @@ public class Pay implements Parcelable {
     }
 
     public enum ActionsEnum {
+        @Json(name = "adjust")
+        ADJUST("adjust"),
         @Json(name = "edit")
-        EDIT("edit");
+        EDIT("edit"),
+        @Json(name = "print")
+        PRINT("print"),
+        @Json(name = "view")
+        VIEW("view");
 
         private String value;
 
