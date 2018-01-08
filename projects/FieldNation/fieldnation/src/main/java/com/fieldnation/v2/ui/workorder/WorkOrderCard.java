@@ -347,7 +347,8 @@ public class WorkOrderCard extends RelativeLayout {
     private void populatePay() {
         Pay pay = _workOrder.getPay();
 
-        if (pay.getType() == null) {
+        if (pay.getType() == null
+                || !pay.getCanView()) {
             _payTypeTextView.setVisibility(INVISIBLE);
             _amountTextView.setVisibility(INVISIBLE);
             return;

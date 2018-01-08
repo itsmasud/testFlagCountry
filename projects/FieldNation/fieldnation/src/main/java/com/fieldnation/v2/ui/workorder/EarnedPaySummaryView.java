@@ -70,9 +70,7 @@ public class EarnedPaySummaryView extends RelativeLayout implements WorkOrderRen
             return;
 
         if (_workOrder.getPay() == null
-                || _workOrder.getPay().getTotal() == null
-                || _workOrder.getStatus().getId() == 2
-                || _workOrder.getStatus().getId() == 9) {
+                || !_workOrder.getPay().getCanView()) {
             setVisibility(GONE);
             return;
         }
