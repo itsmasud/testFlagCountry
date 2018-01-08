@@ -725,7 +725,10 @@ public class App extends Application {
     }
 
     public void setLastVisitedWoL(SavedList savedList) {
-        if (savedList == null) return;
+        if (savedList == null) {
+            clearPrefKey(PREF_LAST_VISITED_WOL);
+            return;
+        }
 
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
@@ -740,21 +743,15 @@ public class App extends Application {
         String jsonData = settings.getString(PREF_LAST_VISITED_WOL, null);
         SavedList _savedList = null;
 
-        if (misc.isEmptyOrNull(jsonData)) {
-            try {
-               _savedList =  new SavedList()
+        try {
+            if (misc.isEmptyOrNull(jsonData)) {
+                _savedList = new SavedList()
                         .id("workorders_available")
                         .label("available");
-            } catch (Exception ex) {
-            }
-        } else {
-
-            try {
+            } else {
                 _savedList = SavedList.fromJson(new JsonObject(jsonData));
-                return _savedList;
-            } catch (Exception ex) {
-                return null;
             }
+        } catch (Exception ex) {
         }
         return _savedList;
 

@@ -157,13 +157,30 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         _recyclerView.onStart();
     }
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
+
+        SavedList savedList = App.get().getLastVisitedWoL();
+        if (_savedList == null) {
+            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+        } else if (savedList == null) {
+            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+            _savedList = null;
+        } else if (savedList.getId().equals(_savedList.getId())) {
+            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+            SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
+        } else {
+            _savedList = savedList;
+            _recyclerView.startSearch(_savedList);
+        }
+
         if (!_isLoadingWorkOrder && App.get().needsConfirmation()
                 && App.get().confirmRemindMeExpired()) {
             launchConfirmActivity();
@@ -178,6 +195,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         _workOrdersApi.unsub();
         _recyclerView.onPause();
         super.onPause();
@@ -185,7 +203,8 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        _recyclerView.onStart();
+        Log.v(TAG, "onStop");
+        _recyclerView.onStop();
         super.onStop();
     }
 
@@ -293,17 +312,15 @@ public class NavActivity extends AuthSimpleActivity {
                 SavedList[] savedList = (SavedList[]) successObject;
                 if (_savedList == null) {
                     _savedList = savedList[0];
+                    App.get().setLastVisitedWoL(_savedList);
                     _recyclerView.startSearch(_savedList);
                     NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
                 } else {
-                    if (App.get().getLastVisitedWoL() != null) {
-                        _savedList = App.get().getLastVisitedWoL();
-                    }
-
                     for (SavedList list : savedList) {
                         if (list.getId().equals(_savedList.getId())) {
                             _savedList = list;
                             NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                            break;
                         }
                     }
                 }
