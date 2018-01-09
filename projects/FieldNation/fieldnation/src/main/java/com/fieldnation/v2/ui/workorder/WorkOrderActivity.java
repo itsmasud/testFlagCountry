@@ -231,15 +231,17 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
 
-                    if (_showAttachments && !_attachmentsShown) {
-                        AttachedFilesDialog.show(App.get(), null, _myUUID, _workOrder.getId());
-                        _showAttachments = false;
-                        _attachmentsShown = true;
-                    }
-                    if (_showMessages && !_messagesShown) {
-                        ChatDialog.show(App.get(), _workOrderId);
-                        _showMessages = false;
-                        _messagesShown = true;
+                    if (!isCached) {
+                        if (_showAttachments && !_attachmentsShown) {
+                            AttachedFilesDialog.show(App.get(), null, _myUUID, _workOrder.getId());
+                            _showAttachments = false;
+                            _attachmentsShown = true;
+                        }
+                        if (_showMessages && !_messagesShown) {
+                            ChatDialog.show(App.get(), _workOrderId);
+                            _showMessages = false;
+                            _messagesShown = true;
+                        }
                     }
 
                     _workOrderScreen.setWorkOrder(_workOrder);
