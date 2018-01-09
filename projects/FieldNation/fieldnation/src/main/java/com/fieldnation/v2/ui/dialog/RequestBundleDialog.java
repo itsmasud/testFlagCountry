@@ -21,7 +21,6 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
@@ -68,6 +67,7 @@ public class RequestBundleDialog extends FullScreenDialog {
 
     private long _expiringDurationSeconds = -1;
     private boolean _expires;
+    private String _expiresTitle;
 
     public RequestBundleDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -127,11 +127,14 @@ public class RequestBundleDialog extends FullScreenDialog {
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
 
+        if (savedState.containsKey("_expires"))
+            _expires = savedState.getBoolean("_expires");
+
         if (savedState.containsKey("_expiringDurationSeconds"))
             _expiringDurationSeconds = savedState.getLong("_expiringDurationSeconds");
 
-        if (savedState.containsKey("_expires"))
-            _expires = savedState.getBoolean("expires");
+        if (savedState.containsKey("_expiresTitle"))
+            _expiresTitle = savedState.getString("_expiresTitle");
 
         populateUi();
     }
@@ -144,6 +147,9 @@ public class RequestBundleDialog extends FullScreenDialog {
 
         if (_expiringDurationSeconds != -1)
             outState.putLong("_expiringDurationSeconds", _expiringDurationSeconds);
+
+        if (_expiresTitle != null)
+            outState.putString("_expiresTitle", _expiresTitle);
     }
 
     @Override
@@ -187,7 +193,7 @@ public class RequestBundleDialog extends FullScreenDialog {
                 if (_expiringDurationSeconds == -1) {
                     _expiresView.set("Expire Request", "Never");
                 } else {
-                    _expiresView.set("Expire Request", misc.convertMsToHuman(_expiringDurationSeconds * 1000));
+                    _expiresView.set("Expire Request", _expiresTitle);
                 }
 
                 break;
@@ -211,6 +217,7 @@ public class RequestBundleDialog extends FullScreenDialog {
                 _expiringDurationSeconds = -1;
                 _expires = false;
             } else {
+                _expiresTitle = title;
                 _expiringDurationSeconds = milliseconds / 1000;
                 _expires = true;
             }
