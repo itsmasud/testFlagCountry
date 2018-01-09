@@ -16,7 +16,7 @@ import java.util.List;
 public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 7; // last update: 9-20-2017 MAR-525
+    private static final int TABLE_VER = 8; // last update: 9-20-2017 MAR-525
     public static final String TABLE_NAME = "transactions";
 
     private static WebTransactionSqlHelper _instance = null;
@@ -32,17 +32,19 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         PRIORITY(7, "priority", "integer not null", true),
         KEY(8, "key", "text", true),
         QUEUE_TIME(9, "queue_time", "integer not null", true),
-        WIFI_REQUIRED(10, "wifi_req", "integer not null", true),
-        TRACK(11, "track", "integer not null"),
-        TRACK_TYPE(12, "track_type", "integer not null"),
-        TIMING_KEY(13, "timing_key", "text"),
-        WAS_ZOMBIE(14, "was_zombie", "integer not null", true),
-        UUID(15, "uuid", "text"),
-        NOTIF_ID(16, "notif_id", "integer"),
-        NOTIF_START(17, "notif_start", "integer"),
-        NOTIF_SUCCESS(18, "notif_success", "integer"),
-        NOTIF_FAILED(19, "notif_failed", "integer"),
-        NOTIF_RETRY(20, "notif_retry", "integer"),;
+        TRY_COUNT(10, "try_count", "integer not null", true),
+        MAX_TRIES(11, "max_tries", "integer not null"),
+        WIFI_REQUIRED(12, "wifi_req", "integer not null", true),
+        TRACK(13, "track", "integer not null"),
+        TRACK_TYPE(14, "track_type", "integer not null"),
+        TIMING_KEY(15, "timing_key", "text"),
+        WAS_ZOMBIE(16, "was_zombie", "integer not null", true),
+        UUID(17, "uuid", "text"),
+        NOTIF_ID(18, "notif_id", "integer"),
+        NOTIF_START(19, "notif_start", "integer"),
+        NOTIF_SUCCESS(20, "notif_success", "integer"),
+        NOTIF_FAILED(21, "notif_failed", "integer"),
+        NOTIF_RETRY(22, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;
