@@ -5,15 +5,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizTwoVertView;
-import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.LinkedList;
@@ -26,7 +23,6 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
 
     // UI
     private ListItemTwoHorizTwoVertView _payView;
-    private TextView _termsTextView;
 
     // Data
     private WorkOrder _workOrder;
@@ -52,13 +48,10 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
             return;
 
         _payView = findViewById(R.id.pay_summary_view);
-        _termsTextView = findViewById(R.id.terms_textview);
         _renderers.add((WorkOrderRenderer) findViewById(R.id.penalty_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.bonus_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.insurance_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.fnServiceFeeSummaryView));
-
-        _termsTextView.setOnClickListener(_terms_onClick);
 
         setVisibility(View.GONE);
     }
@@ -77,13 +70,16 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     }
 
     private void refresh() {
-        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getType() == null || _termsTextView == null)
-            return;
+        setVisibility(View.VISIBLE);
 
-        _termsTextView.setVisibility(VISIBLE);
+        if (_workOrder == null
+                || _workOrder.getPay() == null
+                || _workOrder.getPay().getType() == null) {
+            _payView.setVisibility(GONE);
+            return;
+        }
 
         _payView.set(getPayTypeString(), getPayInfoString(), getPayAmountString(), null);
-        setVisibility(View.VISIBLE);
     }
 
     private String getPayTypeString() {
@@ -156,15 +152,4 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         }
         return text;
     }
-
-
-    /*-*********************************-*/
-    /*-				Events				-*/
-    /*-*********************************-*/
-    private final OnClickListener _terms_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            TermsDialog.show(App.get(), null, getContext().getString(R.string.dialog_terms_title), getContext().getString(R.string.dialog_terms_body));
-        }
-    };
 }
