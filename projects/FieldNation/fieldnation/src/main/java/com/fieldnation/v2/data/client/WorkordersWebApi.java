@@ -351,6 +351,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .setTrack(true)
                     .setTrackType(TrackerEnum.DELIVERABLES)
                     .uuid(uuid)
+                    .setMaxTries(5)
                     .setWifiRequired(App.get().onlyUploadWithWifi())
                     .build();
 

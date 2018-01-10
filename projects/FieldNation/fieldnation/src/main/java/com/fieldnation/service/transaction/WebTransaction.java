@@ -356,6 +356,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public void requeue(long retryTime) {
+        Log.v(TAG, "requeue " + retryTime);
         setState(State.IDLE);
         setQueueTime(System.currentTimeMillis() + retryTime);
         setTryCount(getTryCount() + 1);
