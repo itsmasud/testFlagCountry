@@ -275,7 +275,8 @@ public class TransactionListener extends WebTransactionListener {
                 JsonObject methodParams = new JsonObject(params.methodParams);
 
                 Log.v(TAG, "Saving zombie transaction");
-                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")
+                        && transaction.getTryCount() >= transaction.getMaxTries()) {
                     if (transaction.isTracked()) {
                         if (methodParams.has("workOrderId")) {
                             Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));
