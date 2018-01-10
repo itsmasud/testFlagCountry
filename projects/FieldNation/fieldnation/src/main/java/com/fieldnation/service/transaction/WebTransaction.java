@@ -259,6 +259,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public void setTryCount(int tryCount) {
+        Log.v(TAG, "setTryCount " + tryCount);
         _tryCount = tryCount;
     }
 
