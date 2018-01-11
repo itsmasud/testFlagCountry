@@ -15,6 +15,7 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.EmptyCardView;
@@ -237,8 +238,17 @@ public class SearchResultScreen extends RelativeLayout {
                     return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
+                boolean isFlightBoard = false;
+                try {
+                    JsonObject options = new JsonObject(transactionParams.methodParams);
+                    if (options.has("getWorkOrdersOptions.fFlightboardTomorrow") && options.getBoolean("getWorkOrdersOptions.fFlightboardTomorrow"))
+                        isFlightBoard = true;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
                 WorkOrders workOrders = (WorkOrders) successObject;
-                if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
+                if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()) || isFlightBoard)
                     return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
 
                 if (_onListReceivedListener != null)
