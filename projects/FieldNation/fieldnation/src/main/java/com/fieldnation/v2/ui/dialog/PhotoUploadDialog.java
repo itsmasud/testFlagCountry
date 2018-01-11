@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpFileContext;
@@ -523,6 +522,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     _httpBuilder.put("multipart.fields.attachment.value", attachment.getJson());
                     _httpBuilder.put("multipart.files.file.filename", _newFileName);
                     _webTransaction.setRequest(_httpBuilder.toString());
+                    _webTransaction.setTryCount(-1); // -1 cause +1 in requeue()
                     _webTransaction.requeue(0);
                     WebTransactionSystem.getInstance();
 

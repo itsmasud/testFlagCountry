@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
@@ -154,6 +153,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         adapter.setAttachments(folders);
         WebTransaction.cleanZombies(folders);
         adapter.setFailedUploads(WebTransaction.getZombies());
+        adapter.setPausedUploads(WebTransaction.getPaused());
     }
 
     @Override

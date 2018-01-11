@@ -90,7 +90,7 @@ public class WebTransactionSystem implements WebTransactionConstants {
     }
 
     public boolean isStillWorking() {
-        boolean stillWorking = WebTransaction.count() > 0 && App.get().isConnected();
+        boolean stillWorking = WebTransaction.count() > 0;
         synchronized (TRANSACTION_QUEUE) {
             stillWorking = stillWorking || TRANSACTION_QUEUE.size() > 0;
         }

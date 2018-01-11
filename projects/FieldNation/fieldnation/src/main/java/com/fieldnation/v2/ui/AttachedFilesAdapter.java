@@ -67,6 +67,42 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     }
 
+    /*-*********************************-*/
+    /*-         Paused Uploads          -*/
+    /*-*********************************-*/
+    private static class PausedUploadTuple {
+        long timestamp;
+        int folderId;
+        String name;
+        String notes;
+        WebTransaction transaction;
+
+        public PausedUploadTuple(WebTransaction webTransaction) {
+            this.transaction = webTransaction;
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+                JsonObject methodParams = new JsonObject(params.methodParams);
+
+                this.folderId = methodParams.getInt("folderId");
+                this.name = methodParams.getString("attachment.file.name");
+                this.notes = methodParams.has("attachment.notes") ? methodParams.getString("attachment.notes") : "";
+                this.timestamp = methodParams.getLong("timestamp");
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    }
+
+    private List<PausedUploadTuple> pausedUploads = new LinkedList<>();
+
+    public void setPausedUploads(List<WebTransaction> webTransactions) {
+        pausedUploads.clear();
+
+        for (WebTransaction webTransaction : webTransactions) {
+            pausedUploads.add(new PausedUploadTuple(webTransaction));
+        }
+    }
+
     /*-*********+***********************-*/
     /*-         Failed Uploads          -*/
     /*-*********************************-*/
@@ -293,6 +329,16 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 objects.add(t);
 
                 List<Tuple> group = new LinkedList<>();
+                // Add all paused
+                for (PausedUploadTuple pt : pausedUploads) {
+                    if (pt.folderId == attachmentFolder.getId()) {
+                        t = new Tuple();
+                        t.type = AttachedFilesViewHolder.TYPE_PAUSED;
+                        t.timestamp = pt.timestamp;
+                        t.object = pt;
+                        group.add(t);
+                    }
+                }
 
                 //Add all failed
                 for (FailedUploadTuple ft : failedUploads) {
@@ -408,6 +454,15 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 holder.type = viewType;
                 break;
             }
+            case AttachedFilesViewHolder.TYPE_PAUSED: {
+                ListItemTwoVertView view = new ListItemTwoVertView(parent.getContext());
+                view.setActionVisible(false);
+                view.setProgressVisible(false);
+                view.setAlertVisible(false);
+                holder = new AttachedFilesViewHolder(view);
+                holder.type = viewType;
+                break;
+            }
         }
         return holder;
     }
@@ -472,6 +527,20 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     view.setOnClickListener(null);
                     view.setOnLongClickListener(null);
                 }
+
+                break;
+            }
+            case AttachedFilesViewHolder.TYPE_PAUSED: {
+                ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
+                PausedUploadTuple t = (PausedUploadTuple) objects.get(position).object;
+                long timeLeft = t.transaction.getQueueTime() - System.currentTimeMillis();
+                if (timeLeft < 0) {
+                    view.set(t.name, "Will retry soon");
+                } else {
+                    view.set(t.name, "Will retry in " + (timeLeft / 1000) + " sec");
+                }
+                view.setTag(t.transaction);
+                view.setProgressVisible(false);
 
                 break;
             }
