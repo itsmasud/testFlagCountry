@@ -91,10 +91,10 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.test1"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
-        brew {
-            applicationId "com.fieldnation.android.brew"
-            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Brew"'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.brew"'
+        stage {
+            applicationId "com.fieldnation.android.stage"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Stage"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.stage"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
     }
