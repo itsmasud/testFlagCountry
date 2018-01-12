@@ -1,5 +1,6 @@
 package com.fieldnation.v2.ui;
 
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private AttachmentFolders folders = null;
     private List<Tuple> objects = new LinkedList<>();
     private Listener _listener;
+    private Handler _handler = new Handler();
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -314,6 +316,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             return;
         }
 
+        boolean hasPaused = false;
         Tuple t;
         AttachmentFolder[] attachmentFolders = folders.getResults();
         for (AttachmentFolder attachmentFolder : attachmentFolders) {
@@ -337,6 +340,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                         t.timestamp = pt.timestamp;
                         t.object = pt;
                         group.add(t);
+                        hasPaused = true;
                     }
                 }
 
@@ -405,6 +409,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     objects.add(t);
                 }
             }
+        }
+
+        if (hasPaused) {
+            _handler.postDelayed(refreshClock, 1000);
         }
     }
 
@@ -535,17 +543,33 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 PausedUploadTuple t = (PausedUploadTuple) objects.get(position).object;
                 long timeLeft = t.transaction.getQueueTime() - System.currentTimeMillis();
                 if (timeLeft < 0) {
-                    view.set(t.name, "Will retry soon");
+                    view.set(t.name, "Waiting for network...");
                 } else {
                     view.set(t.name, "Will retry in " + (timeLeft / 1000) + " sec");
                 }
                 view.setTag(t.transaction);
                 view.setProgressVisible(false);
-
                 break;
             }
         }
     }
+
+    private final Runnable refreshClock = new Runnable() {
+        @Override
+        public void run() {
+            boolean hasPaused = false;
+            for (int i = 0; i < objects.size(); i++) {
+                Tuple t = objects.get(i);
+                if (t.object instanceof PausedUploadTuple) {
+                    notifyItemChanged(i);
+                    hasPaused = true;
+                }
+            }
+
+            if (hasPaused)
+                _handler.postDelayed(refreshClock, 1000);
+        }
+    };
 
     private final View.OnClickListener _attachment_onClick = new ApatheticOnClickListener() {
         @Override
