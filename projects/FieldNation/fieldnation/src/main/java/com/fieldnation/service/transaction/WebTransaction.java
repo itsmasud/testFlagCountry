@@ -469,8 +469,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
                             Column.WAS_ZOMBIE + "=1"
-                            + " AND NOT (" + Column.QUEUE_TIME + " !=0"
-                            + " AND " + Column.STATE + " =?)",
+                                    + " AND " + Column.STATE + " !=?",
                             new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
 
                     while (cursor.moveToNext()) {
@@ -498,8 +497,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.QUEUE_TIME + " !=0 AND "
-                                    + Column.STATE + " =?",
+                            Column.STATE + " =?",
                             new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
 
                     while (cursor.moveToNext()) {

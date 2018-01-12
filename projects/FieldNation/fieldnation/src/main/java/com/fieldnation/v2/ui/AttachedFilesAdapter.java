@@ -24,7 +24,7 @@ import java.util.List;
  */
 
 public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesViewHolder> {
-    private static final String TAG = "AttachmentFoldersAdapter";
+    private static final String TAG = "AttachedFilesAdapter";
 
     private AttachmentFolders folders = null;
     private List<Tuple> objects = new LinkedList<>();
@@ -101,8 +101,17 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         pausedUploads.clear();
 
         for (WebTransaction webTransaction : webTransactions) {
-            pausedUploads.add(new PausedUploadTuple(webTransaction));
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+                if (params != null && params.apiFunction != null && "addAttachment".equals(params.apiFunction))
+                    pausedUploads.add(new PausedUploadTuple(webTransaction));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
+        rebuild();
+        notifyDataSetChanged();
     }
 
     /*-*********+***********************-*/

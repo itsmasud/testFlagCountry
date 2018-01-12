@@ -227,7 +227,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private final AttachedFilesAdapter.Listener _attachmentFolder_listener = new AttachedFilesAdapter.Listener() {
         @Override
         public void onShowAttachment(Attachment attachment) {
-            Log.v(TAG, "AttachmentFoldersAdapter.onShowAttachment");
+            Log.v(TAG, "AttachedFilesAdapter.onShowAttachment");
             if (attachment.getFile().getType().equals(com.fieldnation.v2.data.model.File.TypeEnum.LINK)) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(attachment.getFile().getLink()));
                 getContext().startActivity(intent);
@@ -241,7 +241,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onDeleteAttachment(Attachment attachment) {
-            Log.v(TAG, "AttachmentFoldersAdapter.onDeleteAttachment");
+            Log.v(TAG, "AttachedFilesAdapter.onDeleteAttachment");
             _selectedAttachmentId = attachment.getId();
             _selectedAttachmentFolderId = attachment.getFolderId();
             TwoButtonDialog.show(App.get(), DIALOG_YES_NO,
@@ -253,7 +253,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onAdd(AttachmentFolder attachmentFolder) {
-            Log.v(TAG, "AttachmentFoldersAdapter.onAdd");
+            Log.v(TAG, "AttachedFilesAdapter.onAdd");
             if (checkMedia()) {
                 // start of the upload process
                 _selectedFolderId = attachmentFolder.getId();
@@ -408,6 +408,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             if (!methodName.equals("addAttachment"))
                 return;
 
+/*
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
@@ -417,6 +418,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+*/
             populateUi();
         }
 
@@ -444,6 +446,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             if (!methodName.equals("addAttachment"))
                 return;
 
+/*
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
@@ -453,6 +456,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+*/
             populateUi();
         }
 
