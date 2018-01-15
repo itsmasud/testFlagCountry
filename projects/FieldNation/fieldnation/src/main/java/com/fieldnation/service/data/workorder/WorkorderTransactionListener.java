@@ -1,6 +1,5 @@
 package com.fieldnation.service.data.workorder;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
@@ -24,7 +23,6 @@ import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionSystem;
-import com.fieldnation.ui.SplashActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
@@ -338,7 +336,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
-        UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+        UploadTrackerClient.uploadStarted(transaction, transaction.getTrackType());
     }
 
     /*-**************************************-*/
@@ -882,13 +880,11 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
             WorkorderClient.get(context, workorderId, false);
-            UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
+            UploadTrackerClient.uploadSuccess(transaction, transaction.getTrackType());
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), (int) workorderId);
-            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
-            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
+            UploadTrackerClient.uploadFailed(transaction, transaction.getTrackType());
 
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
