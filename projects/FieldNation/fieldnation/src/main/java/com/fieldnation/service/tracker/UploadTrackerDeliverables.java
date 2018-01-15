@@ -114,15 +114,15 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
                     builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
-                } else if (success > 0) {
-                    builder.setSmallIcon(R.drawable.ic_notif_success);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
                 } else if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
                     builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading);
                 } else if (queued > 0) {
                     builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
                     builder.setContentText("Waiting for network ");
+                } else if (success > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_success);
+                    builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
                 }
 
                 manager.notify(_notificationId, builder.build());
@@ -140,15 +140,15 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
                     builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
-                } else if (success > 0) {
-                    builder.setSmallIcon(R.drawable.ic_notif_success);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
                 } else if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
                     builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading);
                 } else if (queued > 0) {
                     builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
                     builder.setContentText("Waiting for network ");
+                } else if (success > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_success);
+                    builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
                 }
 
                 manager.notify(_notificationId, builder.build());
