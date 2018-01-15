@@ -28,6 +28,7 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
@@ -910,14 +911,14 @@ public class EtaDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("assignUser")
                     || methodName.contains("updateETA")
                     || methodName.contains("request"); // TODO this might not work here
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.equals("assignUser")) {
                 if (success) {
                     // TODO this might not work
@@ -968,7 +969,7 @@ public class EtaDialog extends FullScreenDialog {
             if (!success) {
                 _refreshView.refreshComplete();
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

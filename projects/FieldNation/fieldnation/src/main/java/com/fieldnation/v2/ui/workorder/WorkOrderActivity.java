@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
@@ -213,18 +214,18 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     /*-*****************************-*/
     private final WorkordersWebApi _workorderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return !methodName.equals("getWorkOrders");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
 
                 if (!success) {
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 if (_workOrderId == workOrder.getId()) {
@@ -259,13 +260,13 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             }
 
             if (methodName.startsWith("get") || !success)
-                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             // only here if.. call doesn't start with get, was successfull
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

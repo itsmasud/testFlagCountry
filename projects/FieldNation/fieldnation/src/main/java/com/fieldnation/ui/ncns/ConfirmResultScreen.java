@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -230,17 +231,17 @@ public class ConfirmResultScreen extends RelativeLayout {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders") || !methodName.startsWith("get");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
                 if (!success || successObject == null) {
                     _refreshView.refreshComplete();
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 boolean isFlightBoard = false;
@@ -254,7 +255,7 @@ public class ConfirmResultScreen extends RelativeLayout {
 
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()) || !isFlightBoard)
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
@@ -281,7 +282,7 @@ public class ConfirmResultScreen extends RelativeLayout {
                     }
                 });
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

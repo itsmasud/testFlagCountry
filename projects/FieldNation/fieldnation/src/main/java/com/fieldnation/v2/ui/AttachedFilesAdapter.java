@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -30,6 +31,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private List<Tuple> objects = new LinkedList<>();
     private Listener _listener;
     private Handler _handler = new Handler();
+    private boolean _isClockRunning = false;
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -78,9 +80,11 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         String name;
         String notes;
         WebTransaction transaction;
+        UUIDGroup uuid;
 
         public PausedUploadTuple(WebTransaction webTransaction) {
             this.transaction = webTransaction;
+            uuid = webTransaction.getUUID();
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 JsonObject methodParams = new JsonObject(params.methodParams);
@@ -125,9 +129,11 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         WebTransaction transaction;
         UploadTuple ut = null;
         String hash;
+        UUIDGroup uuid;
 
         public FailedUploadTuple(WebTransaction webTransaction) {
             this.transaction = webTransaction;
+            uuid = webTransaction.getUUID();
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 JsonObject methodParams = new JsonObject(params.methodParams);
@@ -158,7 +164,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             try {
                 FailedUploadTuple ft = new FailedUploadTuple(webTransaction);
                 for (UploadTuple ut : uploads) {
-                    if (ft.name.equals(ut.name)) {
+                    if (ft.uuid.uuid.equals(ut.uuid.uuid)) {
                         ft.ut = ut;
                         break;
                     }
@@ -184,8 +190,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         int progress = -1;
         int index = -1;
         TransactionParams transactionParams;
+        UUIDGroup uuid;
 
-        public UploadTuple(TransactionParams transactionParams, int progress) {
+        public UploadTuple(UUIDGroup uuid, TransactionParams transactionParams, int progress) {
+            this.uuid = uuid;
             try {
                 JsonObject methodParams = new JsonObject(transactionParams.methodParams);
                 this.folderId = methodParams.getInt("folderId");
@@ -209,32 +217,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         notifyDataSetChanged();
     }
 
-    public void uploadStart(TransactionParams transactionParams) {
-        Log.v(TAG, "uploadStart");
-
-        String name = null;
-        try {
-            JsonObject methodParams = new JsonObject(transactionParams.methodParams);
-            name = methodParams.getString("attachment.file.name");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        for (UploadTuple ut : uploads) {
-            if (ut.name.equals(name)) {
-                rebuild();
-                notifyDataSetChanged();
-                return;
-            }
-        }
-        UploadTuple t = new UploadTuple(transactionParams, -1);
-        uploads.add(t);
-        // TODO find position and notify accordingly
-        rebuild();
-        notifyDataSetChanged();
-    }
-
-    public void uploadProgress(TransactionParams transactionParams, int progress) {
+    public void uploadProgress(UUIDGroup uuid, TransactionParams transactionParams, int progress) {
         Log.v(TAG, "uploadProgress");
 
         String name = null;
@@ -246,21 +229,21 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
 
         for (UploadTuple ut : uploads) {
-            if (ut.name.equals(name)) {
+            if (ut.uuid.uuid.equals(uuid.uuid)) {
                 ut.progress = progress;
                 rebuild();
                 notifyDataSetChanged();
                 return;
             }
         }
-        UploadTuple t = new UploadTuple(transactionParams, progress);
+        UploadTuple t = new UploadTuple(uuid, transactionParams, progress);
         uploads.add(t);
         // TODO find location and notify accordingly
         rebuild();
         notifyDataSetChanged();
     }
 
-    public void uploadStop(TransactionParams transactionParams) {
+    public void uploadStop(UUIDGroup uuidGroup, TransactionParams transactionParams) {
         Log.v(TAG, "uploadStop");
 
         String name = null;
@@ -273,7 +256,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
         UploadTuple t = null;
         for (UploadTuple ut : uploads) {
-            if (ut.name.equals(name)) {
+            if (ut.uuid.uuid.equals(uuidGroup.uuid)) {
                 t = ut;
                 break;
             }
@@ -368,7 +351,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 for (UploadTuple ut : uploads) {
                     boolean match = false;
                     for (FailedUploadTuple ft : failedUploads) {
-                        if (ft.name.equals(ut.name))
+                        if (ft.uuid.uuid.equals(ut.uuid.uuid))
                             match = true;
                     }
 
@@ -420,8 +403,9 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             }
         }
 
-        if (hasPaused) {
-            _handler.postDelayed(refreshClock, 1000);
+        if (hasPaused && !_isClockRunning) {
+            _isClockRunning = true;
+            _handler.post(refreshClock);
         }
     }
 
@@ -577,6 +561,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
             if (hasPaused)
                 _handler.postDelayed(refreshClock, 1000);
+            else
+                _isClockRunning = false;
         }
     };
 

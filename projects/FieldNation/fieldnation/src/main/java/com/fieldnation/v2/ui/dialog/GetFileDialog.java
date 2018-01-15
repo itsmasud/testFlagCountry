@@ -429,11 +429,11 @@ public class GetFileDialog extends SimpleDialog {
 
                 for (UriIntent ui : fileUris) {
                     if (ui.uri != null) {
-                        caching.put(ui.uri.toString(), ui);
-                        FileCacheClient.cacheFileUpload(ui.uuid, ui.uri.toString(), ui.uri);
+                        caching.put(ui.uuid.uuid, ui);
+                        FileCacheClient.cacheFileUpload(ui.uuid, ui.uri);
                     } else if (ui.intent != null && ui.intent.getData() != null) {
-                        caching.put(ui.intent.getData().toString(), ui);
-                        FileCacheClient.cacheFileUpload(ui.uuid, ui.intent.getData().toString(), ui.intent.getData());
+                        caching.put(ui.uuid.uuid, ui);
+                        FileCacheClient.cacheFileUpload(ui.uuid, ui.intent.getData());
                     }
                 }
             } catch (Exception ex) {
@@ -501,8 +501,8 @@ public class GetFileDialog extends SimpleDialog {
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
 
         @Override
-        public void onFileCacheProgress(UUIDGroup uuid, String tag, long size) {
-            progress.put(tag, size);
+        public void onFileCacheProgress(UUIDGroup uuid, long size) {
+            progress.put(uuid.uuid, size);
 
             long sum = 0;
             for (Long val : progress.values()) {
@@ -514,9 +514,9 @@ public class GetFileDialog extends SimpleDialog {
         }
 
         @Override
-        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
-            if (caching.containsKey(tag)) {
-                cached.add(caching.remove(tag));
+        public void onFileCacheEnd(UUIDGroup uuid, Uri uri, long size, boolean success) {
+            if (caching.containsKey(uuid.uuid)) {
+                cached.add(caching.remove(uuid.uuid));
 
                 _loadingProgress.setProgress(cached.size());
                 _loadingProgress.setMax(cached.size() + caching.size());
@@ -525,7 +525,7 @@ public class GetFileDialog extends SimpleDialog {
                                 cached.size(),
                                 cached.size() + caching.size()));
 
-                progress.put(tag, size);
+                progress.put(uuid.uuid, size);
 
                 long sum = 0;
                 for (Long val : progress.values()) {

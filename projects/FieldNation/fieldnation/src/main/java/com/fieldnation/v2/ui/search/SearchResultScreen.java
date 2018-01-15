@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnjson.JsonObject;
@@ -224,18 +225,18 @@ public class SearchResultScreen extends RelativeLayout {
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders")
                     || (!methodName.startsWith("get") && !methodName.toLowerCase().contains("attachment"));
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             //Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (successObject != null && methodName.equals("getWorkOrders")) {
                 if (!success) {
                     _refreshView.refreshComplete();
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 boolean isFlightBoard = false;
@@ -249,7 +250,7 @@ public class SearchResultScreen extends RelativeLayout {
 
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()) || isFlightBoard)
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
@@ -269,7 +270,7 @@ public class SearchResultScreen extends RelativeLayout {
                 _refreshView.refreshComplete();
             } else {
                 if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                 WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
 
@@ -281,7 +282,7 @@ public class SearchResultScreen extends RelativeLayout {
                     }
                 });
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

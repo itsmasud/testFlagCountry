@@ -12,7 +12,6 @@ public interface FileCacheConstants {
     String PARAM_ACTION = "PARAM_ACTION";
 
     String PARAM_URI = "uri";
-    String PARAM_TAG = "tag";
     String PARAM_SUCCESS = "success";
     String PARAM_SIZE = "size";
     String PARAM_POS = "pos";

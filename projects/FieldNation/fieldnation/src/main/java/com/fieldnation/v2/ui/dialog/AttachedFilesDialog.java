@@ -397,33 +397,22 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.toLowerCase().contains("attachment");
         }
 
         @Override
-        public void onQueued(TransactionParams transactionParams, String methodName) {
+        public void onQueued(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onQueued");
 
             if (!methodName.equals("addAttachment"))
                 return;
 
-/*
-            try {
-                JsonObject obj = new JsonObject(transactionParams.methodParams);
-                String name = obj.getString("attachment.file.name");
-                int folderId = obj.getInt("attachment.folder_id");
-                if (adapter != null)
-                    adapter.uploadStart(transactionParams);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-*/
             populateUi();
         }
 
         @Override
-        public void onStart(TransactionParams transactionParams, String methodName) {
+        public void onStart(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onStart");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -433,7 +422,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 String name = obj.getString("attachment.file.name");
                 int folderId = obj.getInt("attachment.folder_id");
                 if (adapter != null)
-                    adapter.uploadProgress(transactionParams, 0);
+                    adapter.uploadProgress(uuidGroup, transactionParams, 0);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -441,7 +430,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onPaused(TransactionParams transactionParams, String methodName) {
+        public void onPaused(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onPaused");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -461,7 +450,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+        public void onProgress(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, long pos, long size, long time) {
             Log.v(TAG, "WorkordersWebApi.onProgress");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -477,11 +466,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 if (pos == size) {
                     AppMessagingClient.setLoading(true);
                     if (adapter != null)
-                        adapter.uploadStop(transactionParams);
+                        adapter.uploadStop(uuidGroup, transactionParams);
                     populateUi();
                 } else {
                     if (adapter != null)
-                        adapter.uploadProgress(transactionParams, (int) (pos * 100 / size));
+                        adapter.uploadProgress(uuidGroup, transactionParams, (int) (pos * 100 / size));
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -490,7 +479,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
             if (methodName.equals("addAttachment")) {
@@ -499,7 +488,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                     String name = obj.getString("attachment.file.name");
                     int folderId = obj.getInt("attachment.folder_id");
                     if (adapter != null)
-                        adapter.uploadStop(transactionParams);
+                        adapter.uploadStop(uuidGroup, transactionParams);
                     AppMessagingClient.setLoading(true);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
                 } catch (Exception ex) {
@@ -513,7 +502,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

@@ -536,14 +536,14 @@ public class TasksDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.toLowerCase().contains("attachment")
                     || methodName.equals("getWorkOrder")
                     || methodName.equals("updateTask");
         }
 
         @Override
-        public void onQueued(TransactionParams transactionParams, String methodName) {
+        public void onQueued(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onQueued");
 
             if (!methodName.equals("addAttachment"))
@@ -561,7 +561,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onStart(TransactionParams transactionParams, String methodName) {
+        public void onStart(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onStart");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -578,7 +578,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onPaused(TransactionParams transactionParams, String methodName) {
+        public void onPaused(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onPaused");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -595,7 +595,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+        public void onProgress(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, long pos, long size, long time) {
             Log.v(TAG, "WorkordersWebApi.onProgress");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -622,7 +622,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
             if (successObject != null && (methodName.equals("getWorkOrder"))) {
@@ -654,7 +654,7 @@ public class TasksDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

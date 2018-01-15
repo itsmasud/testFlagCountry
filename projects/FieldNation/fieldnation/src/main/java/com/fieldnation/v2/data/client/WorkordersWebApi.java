@@ -9591,25 +9591,26 @@ public abstract class WorkordersWebApi extends Pigeon {
         Bundle bundle = (Bundle) message;
         String type = bundle.getString("type");
         TransactionParams transactionParams = bundle.getParcelable("params");
+        UUIDGroup uuid = bundle.getParcelable("uuid");
 
-        if (!processTransaction(transactionParams, transactionParams.apiFunction))
+        if (!processTransaction(uuid, transactionParams, transactionParams.apiFunction))
             return;
 
         switch (type) {
             case "queued": {
-                onQueued(transactionParams, transactionParams.apiFunction);
+                onQueued(uuid, transactionParams, transactionParams.apiFunction);
                 break;
             }
             case "start": {
-                onStart(transactionParams, transactionParams.apiFunction);
+                onStart(uuid, transactionParams, transactionParams.apiFunction);
                 break;
             }
             case "progress": {
-                onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                onProgress(uuid, transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                 break;
             }
             case "paused": {
-                onPaused(transactionParams, transactionParams.apiFunction);
+                onPaused(uuid, transactionParams, transactionParams.apiFunction);
                 break;
             }
             case "complete": {
@@ -9619,18 +9620,18 @@ public abstract class WorkordersWebApi extends Pigeon {
         }
     }
 
-    public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
+    public abstract boolean processTransaction(UUIDGroup uuid, TransactionParams transactionParams, String methodName);
 
-    public void onQueued(TransactionParams transactionParams, String methodName) {
+    public void onQueued(UUIDGroup uuid, TransactionParams transactionParams, String methodName) {
     }
 
-    public void onStart(TransactionParams transactionParams, String methodName) {
+    public void onStart(UUIDGroup uuid, TransactionParams transactionParams, String methodName) {
     }
 
-    public void onPaused(TransactionParams transactionParams, String methodName) {
+    public void onPaused(UUIDGroup uuid, TransactionParams transactionParams, String methodName) {
     }
 
-    public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+    public void onProgress(UUIDGroup uuid, TransactionParams transactionParams, String methodName, long pos, long size, long time) {
     }
 
     /**
@@ -9641,7 +9642,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param failObject
      * @return true if data handled, false if not
      */
-    public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+    public boolean onComplete(UUIDGroup uuid, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
         return false;
     }
 
@@ -9734,6 +9735,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 TransactionParams transactionParams = bundle.getParcelable("params");
                 boolean success = bundle.getBoolean("success");
                 byte[] data = bundle.getByteArray("data");
+                UUIDGroup uuid = bundle.getParcelable("uuid");
 
                 Stopwatch watch = new Stopwatch(true);
                 try {
@@ -10113,7 +10115,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 }
 
                 try {
-                    getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject, bundle.containsKey("cached")));
+                    getHandler().post(new Deliverator(webApi, transactionParams, uuid, successObject, success, failObject, bundle.containsKey("cached")));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -10126,15 +10128,17 @@ public abstract class WorkordersWebApi extends Pigeon {
     private static class Deliverator implements Runnable {
         private WorkordersWebApi workordersWebApi;
         private TransactionParams transactionParams;
+        private UUIDGroup uuid;
         private Object successObject;
         private boolean success;
         private Object failObject;
         private boolean isCached = false;
 
         public Deliverator(WorkordersWebApi workordersWebApi, TransactionParams transactionParams,
-                           Object successObject, boolean success, Object failObject, boolean isCached) {
+                           UUIDGroup uuid, Object successObject, boolean success, Object failObject, boolean isCached) {
             this.workordersWebApi = workordersWebApi;
             this.transactionParams = transactionParams;
+            this.uuid = uuid;
             this.successObject = successObject;
             this.success = success;
             this.failObject = failObject;
@@ -10143,7 +10147,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
         @Override
         public void run() {
-            if (!workordersWebApi.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject, isCached)) {
+            if (!workordersWebApi.onComplete(uuid, transactionParams, transactionParams.apiFunction, successObject, success, failObject, isCached)) {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
