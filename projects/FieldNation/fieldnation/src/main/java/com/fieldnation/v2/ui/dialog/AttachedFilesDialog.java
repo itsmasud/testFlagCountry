@@ -435,17 +435,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
             if (!methodName.equals("addAttachment"))
                 return;
 
-/*
-            try {
-                JsonObject obj = new JsonObject(transactionParams.methodParams);
-                String name = obj.getString("attachment.file.name");
-                int folderId = obj.getInt("attachment.folder_id");
-                if (adapter != null)
-                    adapter.uploadProgress(transactionParams, -1);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-*/
             populateUi();
         }
 

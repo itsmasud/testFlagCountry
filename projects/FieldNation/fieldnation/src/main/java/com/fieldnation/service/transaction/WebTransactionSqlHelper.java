@@ -16,7 +16,7 @@ import java.util.List;
 public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 8; // last update: 9-20-2017 MAR-525
+    private static final int TABLE_VER = 8; // last update: 1-15-2018 MAR-1214
     public static final String TABLE_NAME = "transactions";
 
     private static WebTransactionSqlHelper _instance = null;
