@@ -140,8 +140,11 @@ public class SignOffScreen extends RelativeLayout {
         Stopwatch stopwatch = new Stopwatch(true);
 
         _titleTextView.setText(_workOrder.getTitle());
-        if (_workOrder.getDescription() != null)
-            _descriptionTextView.setText(misc.htmlify(_workOrder.getDescription().getHtml()));
+        if (_workOrder.getDescription() != null && !misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
+            String data = _workOrder.getDescription().getHtml().replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
+            data = data.replaceAll("</del>", "</span>");
+            _descriptionTextView.setText(misc.htmlify(data));
+        }
         //_descriptionTextView.setLinksClickable(false);
 
         final TimeLog[] timeLogs = _workOrder.getTimeLogs().getResults();
