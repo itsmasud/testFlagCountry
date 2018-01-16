@@ -75,7 +75,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
             }
         }
 
-        public void updateNotification(Context context) {
+        boolean updateNotification(Context context) {
             Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), _workOrderId);
             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
 
@@ -124,7 +124,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     long timeleft = _timeout - System.currentTimeMillis();
                     if (timeleft >= 0) {
-                        builder.setContentTitle("WO" + _workOrderId + " | uploads failed");
+                        builder.setContentTitle("WO" + _workOrderId + " | " + retries + " uploads failed");
                         builder.setContentText("Retry in " + misc.convertMSToDHMS(timeleft, true));
                         if (!_isTiming) {
                             _isTiming = true;
@@ -140,7 +140,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
                 } else if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
-                    builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading);
+                    builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading + " files");
                     if (queued > 0)
                         builder.setContentText(queued + " queued");
 
@@ -164,23 +164,25 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
 
                 if (retries > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
-                    builder.setContentTitle("WO" + _workOrderId + " | uploads failed");
                     long timeleft = _timeout - System.currentTimeMillis();
                     if (timeleft >= 0) {
+                        builder.setContentTitle("WO" + _workOrderId + " | " + retries + " uploads failed");
                         builder.setContentText("Retry in " + misc.convertMSToDHMS(timeleft, true));
                         if (!_isTiming) {
                             _isTiming = true;
                             _handler.postDelayed(_timer, 1000);
                         }
-                    } else
+                    } else {
+                        builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
                         builder.setContentText("Waiting for network");
+                    }
 
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
                     builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
                 } else if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
-                    builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading);
+                    builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading + " files");
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
@@ -193,6 +195,11 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
                     manager.notify(_notificationId, builder.build());
             }
+
+            if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success > 0) {
+                return true;
+            }
+            return false;
         }
     }
 
@@ -217,7 +224,9 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
             }
 
             woNotif.updateNotification(action, webTransaction);
-            woNotif.updateNotification(context);
+            if (woNotif.updateNotification(context)) {
+                _notifications.remove(workOrderId);
+            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
