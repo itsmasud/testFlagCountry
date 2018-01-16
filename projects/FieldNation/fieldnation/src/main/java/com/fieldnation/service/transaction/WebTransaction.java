@@ -14,6 +14,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
@@ -361,6 +362,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         setQueueTime(System.currentTimeMillis() + retryTime);
         setTryCount(getTryCount() + 1);
         save();
+
+        if (isTracked())
+            UploadTrackerClient.uploadRetry(this, getTrackType());
     }
 
     public void setZombie() {

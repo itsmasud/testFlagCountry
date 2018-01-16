@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
@@ -43,8 +45,19 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
     private static class WoNotif {
         public int _notificationId = App.secureRandom.nextInt();
         public int _workOrderId;
+        public long _timeout;
+        private boolean _isTiming = false;
+        private Handler _handler = new Handler(Looper.getMainLooper());
 
         private Hashtable<String, Tuple> tuples = new Hashtable<>();
+
+        private Runnable _timer = new Runnable() {
+            @Override
+            public void run() {
+                _isTiming = false;
+                updateNotification(App.get());
+            }
+        };
 
         public WoNotif(int workOrderId) {
             this._workOrderId = workOrderId;
@@ -67,7 +80,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
 
             int retries = 0;
-            long timeout = System.currentTimeMillis();
+            _timeout = System.currentTimeMillis();
             int failed = 0;
             int success = 0;
             int uploading = 0;
@@ -87,8 +100,8 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 } else if (tuple.action.equals(ACTION_RETRY)) {
                     total++;
                     retries++;
-                    if (timeout < tuple.webTransaction.getQueueTime())
-                        timeout = tuple.webTransaction.getQueueTime();
+                    if (_timeout < tuple.webTransaction.getQueueTime())
+                        _timeout = tuple.webTransaction.getQueueTime();
                 } else if (tuple.action.equals(ACTION_STARTED)) {
                     total++;
                     uploading++;
@@ -108,24 +121,40 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
                 if (retries > 0) {
-                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
-                    builder.setContentTitle("WO" + _workOrderId + " | uploads failed");
-                    builder.setContentText("Retry in " + misc.convertMSToDHMS(timeout - System.currentTimeMillis(), true));
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
+                    long timeleft = _timeout - System.currentTimeMillis();
+                    if (timeleft >= 0) {
+                        builder.setContentTitle("WO" + _workOrderId + " | uploads failed");
+                        builder.setContentText("Retry in " + misc.convertMSToDHMS(timeleft, true));
+                        if (!_isTiming) {
+                            _isTiming = true;
+                            _handler.postDelayed(_timer, 1000);
+                        }
+                    } else {
+                        builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
+                        builder.setContentText("Waiting for network");
+                    }
+
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
                     builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
                 } else if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
                     builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading);
+                    if (queued > 0)
+                        builder.setContentText(queued + " queued");
+
                 } else if (queued > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
-                    builder.setContentText("Waiting for network ");
+                    builder.setContentText("Waiting for network");
                 } else if (success > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_success);
                     builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
                 }
 
-                manager.notify(_notificationId, builder.build());
+                if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
+                    manager.notify(_notificationId, builder.build());
             } else {
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get());
                 builder.setLargeIcon(null);
@@ -134,9 +163,18 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
                 if (retries > 0) {
-                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + retries + " uploads failed");
-                    builder.setContentText("Retry in " + misc.convertMSToDHMS(timeout - System.currentTimeMillis(), true));
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
+                    builder.setContentTitle("WO" + _workOrderId + " | uploads failed");
+                    long timeleft = _timeout - System.currentTimeMillis();
+                    if (timeleft >= 0) {
+                        builder.setContentText("Retry in " + misc.convertMSToDHMS(timeleft, true));
+                        if (!_isTiming) {
+                            _isTiming = true;
+                            _handler.postDelayed(_timer, 1000);
+                        }
+                    } else
+                        builder.setContentText("Waiting for network");
+
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
                     builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
@@ -144,14 +182,16 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
                     builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading);
                 } else if (queued > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
-                    builder.setContentText("Waiting for network ");
+                    builder.setContentText("Waiting for network");
                 } else if (success > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_success);
                     builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
                 }
 
-                manager.notify(_notificationId, builder.build());
+                if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
+                    manager.notify(_notificationId, builder.build());
             }
         }
     }
