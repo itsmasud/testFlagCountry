@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpFileContext;
@@ -169,7 +168,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                     .addContext(new SpFileContext.Builder().name(_sharedFiles[0].getFileName()).size(0).build())
                     .build());
 
-            FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri.toString(), fileUri);
+            FileCacheClient.cacheFileUpload(_sharedFiles[0].getUUID(), fileUri);
         } else {
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
@@ -209,7 +208,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                         .addContext(new SpFileContext.Builder().name(_sharedFiles[i].getFileName()).size(0).build())
                         .build());
 
-                FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i).toString(), fileUris.get(i));
+                FileCacheClient.cacheFileUpload(_sharedFiles[i].getUUID(), fileUris.get(i));
             }
         } else {
             Tracker.event(App.get(), new CustomEvent.Builder()
@@ -366,7 +365,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
+        public void onFileCacheEnd(UUIDGroup uuid, Uri uri, long size, boolean success) {
             _remainingCacheItems--;
 
             _loadingProgress.setProgress(_sharedFiles.length - _remainingCacheItems);

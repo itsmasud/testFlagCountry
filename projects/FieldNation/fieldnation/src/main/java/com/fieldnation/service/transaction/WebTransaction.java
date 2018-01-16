@@ -43,6 +43,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private String _timingKey;
     private boolean _wasZombie = false;
     private UUIDGroup _uuid;
+    private int _tryCount = 0;
+    private int _maxTries = 1;
 
     private int _notifId = -1;
 
@@ -73,6 +75,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
         _isSync = cursor.getInt(Column.IS_SYNC.getIndex()) == 1;
         _queueTime = cursor.getLong(Column.QUEUE_TIME.getIndex());
+        _tryCount = cursor.getInt(Column.TRY_COUNT.getIndex());
+        _maxTries = cursor.getInt(Column.MAX_TRIES.getIndex());
         try {
             _requestString = new String(cursor.getBlob(Column.REQUEST.getIndex()));
         } catch (Exception ex) {
@@ -104,6 +108,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _state = (State) bundle.getSerializable(PARAM_STATE);
         _isSync = bundle.getBoolean(PARAM_IS_SYNC);
         _queueTime = bundle.getLong(PARAM_QUEUE_TIME);
+        _tryCount = bundle.getInt(PARAM_TRY_COUNT);
+        _maxTries = bundle.getInt(PARAM_MAX_TRIES);
         try {
             _requestString = new String(bundle.getByteArray(PARAM_REQUEST));
         } catch (Exception ex) {
@@ -147,6 +153,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
         bundle.putBoolean(PARAM_IS_SYNC, _isSync);
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
+        bundle.putInt(PARAM_TRY_COUNT, _tryCount);
+        bundle.putInt(PARAM_MAX_TRIES, _maxTries);
         bundle.putBoolean(PARAM_WIFI_REQUIRED, _wifiRequired);
         bundle.putBoolean(PARAM_TRACK, _track);
         bundle.putInt(PARAM_TRACK_ENUM, _trackType.ordinal());
@@ -246,6 +254,23 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _queueTime = queueTime;
     }
 
+    public int getTryCount() {
+        return _tryCount;
+    }
+
+    public void setTryCount(int tryCount) {
+        Log.v(TAG, "setTryCount " + tryCount);
+        _tryCount = tryCount;
+    }
+
+    public int getMaxTries() {
+        return _maxTries;
+    }
+
+    public void setMaxTries(int maxTries) {
+        _maxTries = maxTries;
+    }
+
     public void setWifiRequired(boolean required) {
         _wifiRequired = required;
     }
@@ -331,8 +356,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public void requeue(long retryTime) {
+        Log.v(TAG, "requeue " + retryTime);
         setState(State.IDLE);
         setQueueTime(System.currentTimeMillis() + retryTime);
+        setTryCount(getTryCount() + 1);
         save();
     }
 
@@ -441,8 +468,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.WAS_ZOMBIE + "=1",
-                            null, null, null, null, null);
+                            Column.WAS_ZOMBIE + "=1"
+                                    + " AND " + Column.STATE + " !=?",
+                            new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
 
                     while (cursor.moveToNext()) {
                         WebTransaction trans = new WebTransaction(cursor);
@@ -456,6 +484,34 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
         return zombies;
+    }
+
+    public static List<WebTransaction> getPaused() {
+        List<WebTransaction> paused = new LinkedList<>();
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.STATE + " =?",
+                            new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        WebTransaction trans = new WebTransaction(cursor);
+                        paused.add(trans);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return paused;
     }
 
     public static void list() {
@@ -562,6 +618,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
         v.put(Column.IS_SYNC.getName(), obj._isSync ? 1 : 0);
         v.put(Column.QUEUE_TIME.getName(), obj._queueTime);
+        v.put(Column.TRY_COUNT.getName(), obj._tryCount);
+        v.put(Column.MAX_TRIES.getName(), obj._maxTries);
         v.put(Column.WIFI_REQUIRED.getName(), obj._wifiRequired ? 1 : 0);
         v.put(Column.TRACK.getName(), obj._track ? 1 : 0);
         v.put(Column.TRACK_TYPE.getName(), obj._trackType.ordinal());
@@ -728,6 +786,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putBoolean(PARAM_ZOMBIE, false);
             params.putInt(PARAM_NOTIFICATION_ID, -1);
             params.putParcelable(PARAM_UUID, null);
+            params.putInt(PARAM_TRY_COUNT, 0);
+            params.putInt(PARAM_MAX_TRIES, 1);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_FAILED, (byte[]) null);
@@ -784,6 +844,16 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             return this;
         }
 
+        public Builder setTryCount(int tryCount) {
+            params.putInt(PARAM_TRY_COUNT, tryCount);
+            return this;
+        }
+
+        public Builder setMaxTries(int maxTries) {
+            params.putInt(PARAM_MAX_TRIES, maxTries);
+            return this;
+        }
+
         public Builder listener(Class<? extends WebTransactionListener> clazz) {
             params.putString(PARAM_LISTENER_NAME, clazz.getName());
             return this;
@@ -812,33 +882,25 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder notifyOnStart(NotificationDefinition start) throws ParseException {
             addNotificationId();
-
             params.putByteArray(PARAM_NOTIFICATION_START, start.toJson().toByteArray());
-
             return this;
         }
 
         public Builder notifyOnSuccess(NotificationDefinition success) throws ParseException {
             addNotificationId();
-
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, success.toJson().toByteArray());
-
             return this;
         }
 
         public Builder notifyOnFail(NotificationDefinition failed) throws ParseException {
             addNotificationId();
-
             params.putByteArray(PARAM_NOTIFICATION_FAILED, failed.toJson().toByteArray());
-
             return this;
         }
 
         public Builder notifyOnRetry(NotificationDefinition retry) throws ParseException {
             addNotificationId();
-
             params.putByteArray(PARAM_NOTIFICATION_RETRY, retry.toJson().toByteArray());
-
             return this;
         }
 

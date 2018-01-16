@@ -48,6 +48,7 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.model.SavedList;
 import com.google.android.gms.security.ProviderInstaller;
@@ -240,6 +241,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
+        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
@@ -257,6 +259,20 @@ public class App extends Application {
                     Log.v(TAG, e);
                 }
                 anrReport();
+            }
+        }
+    };
+
+    private Runnable _pausedTest = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                try {
+                    Thread.sleep(2000);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
             }
         }
     };

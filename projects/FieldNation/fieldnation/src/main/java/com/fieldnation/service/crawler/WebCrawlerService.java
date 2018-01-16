@@ -11,6 +11,7 @@ import android.os.IBinder;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.DataPurgeAsync;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -256,14 +257,14 @@ public class WebCrawlerService extends Service {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists")
                     || methodName.equals("getWorkOrders")
                     || methodName.equals("getWorkOrder");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             try {
                 Log.v(TAG, "onComplete " + methodName);
                 if (successObject != null && methodName.equals("getWorkOrderLists")) {
@@ -282,14 +283,14 @@ public class WebCrawlerService extends Service {
                 } else if (successObject != null && methodName.equals("getWorkOrders")) {
                     WorkOrders workOrders = (WorkOrders) successObject;
                     if (workOrders.getMetadata() == null)
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                     Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
                     incrementPendingRequestCounter(-1);
 
                     if (!workOrders.getMetadata().getList().equals("workorders_assignments")) {
                         Log.v(TAG, "!!!!!! Not assigned work !!!!!!");
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     // get the details
@@ -312,7 +313,7 @@ public class WebCrawlerService extends Service {
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
                     if (workOrder.getId() == null)
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                     Log.v(TAG, "getWorkOrder " + workOrder.getId());
                     incrementPendingRequestCounter(-1);
@@ -344,7 +345,7 @@ public class WebCrawlerService extends Service {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

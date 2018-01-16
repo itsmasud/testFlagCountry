@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SavedSearchTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
@@ -302,12 +303,12 @@ public class NavActivity extends AuthSimpleActivity {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
                 if (_savedList == null) {
@@ -325,7 +326,7 @@ public class NavActivity extends AuthSimpleActivity {
                     }
                 }
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

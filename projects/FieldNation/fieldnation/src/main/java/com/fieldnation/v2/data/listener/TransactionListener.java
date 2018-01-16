@@ -63,6 +63,8 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "queued");
+            bundle.putParcelable("uuid", transaction.getUUID());
+
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
@@ -80,6 +82,7 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "start");
+            bundle.putParcelable("uuid", transaction.getUUID());
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
@@ -110,6 +113,7 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "paused");
+            bundle.putParcelable("uuid", transaction.getUUID());
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
@@ -130,6 +134,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putLong("pos", pos);
             bundle.putLong("size", size);
             bundle.putLong("time", time);
+            bundle.putParcelable("uuid", transaction.getUUID());
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -146,6 +151,7 @@ public class TransactionListener extends WebTransactionListener {
                 Log.v(TAG, "onComplete " + params.apiFunction + (transaction.getKey() != null ? transaction.getKey() : ""));
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("params", params);
+                bundle.putParcelable("uuid", transaction.getUUID());
 
                 if (httpResult.isFile()) {
                     //Log.v(TAG, "isFile true");
@@ -183,7 +189,11 @@ public class TransactionListener extends WebTransactionListener {
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET") && !misc.isEmptyOrNull(transaction.getKey())) {
-                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
+                    JsonObject p = new JsonObject();
+                    p.put("transactionParams", params.toJson());
+                    if (transaction.getUUID() != null)
+                        p.put("uuid", transaction.getUUID().toJson());
+                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), p.toByteArray(), true);
                     if (httpResult.isFile()) {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
                     } else {
@@ -203,6 +213,7 @@ public class TransactionListener extends WebTransactionListener {
 
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("params", params);
+                bundle.putParcelable("uuid", transaction.getUUID());
 
                 if (httpResult != null) {
                     if (httpResult.isFile()) {
@@ -275,7 +286,8 @@ public class TransactionListener extends WebTransactionListener {
                 JsonObject methodParams = new JsonObject(params.methodParams);
 
                 Log.v(TAG, "Saving zombie transaction");
-                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")
+                        && transaction.getTryCount() >= transaction.getMaxTries()) {
                     if (transaction.isTracked()) {
                         if (methodParams.has("workOrderId")) {
                             Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), methodParams.getInt("workOrderId"));

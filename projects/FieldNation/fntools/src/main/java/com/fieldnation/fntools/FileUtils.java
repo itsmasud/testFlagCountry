@@ -264,6 +264,8 @@ public class FileUtils {
                             String value = cursor.getString(nameIndex);
                             if (value != null) {
                                 fileName = Uri.parse(value).getLastPathSegment();
+                                if (fileName == null)
+                                    fileName = value;
                                 break;
                             }
                         }
