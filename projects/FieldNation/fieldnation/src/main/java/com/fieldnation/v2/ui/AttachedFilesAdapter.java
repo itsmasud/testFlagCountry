@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -538,7 +539,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 if (timeLeft < 0) {
                     view.set(t.name, "Waiting for network...");
                 } else {
-                    view.set(t.name, "Will retry in " + (timeLeft / 1000) + " sec");
+                    view.set(t.name, "Will retry in " + misc.convertMsToHuman(timeLeft));
                 }
                 view.setTag(t.transaction);
                 view.setProgressVisible(false);
