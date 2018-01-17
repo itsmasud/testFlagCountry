@@ -122,9 +122,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
 
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
-                if (false) {
-
-                } else if (uploading > 0) {
+                if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
                     builder.setContentTitle(context.getResources().getString(
                             R.string.uploading_to_wo, _workOrderId));
@@ -179,9 +177,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 builder.setContentIntent(pendingIntent);
 
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
-                if (false) {
-
-                } else if (uploading > 0) {
+                if (uploading > 0) {
                     builder.setSmallIcon(R.drawable.ic_anim_upload_start);
                     builder.setContentTitle(context.getResources().getString(
                             R.string.uploading_to_wo, _workOrderId));
