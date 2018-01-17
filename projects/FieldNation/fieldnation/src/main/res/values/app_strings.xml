@@ -779,16 +779,6 @@
     <string name="zipcode">Zipcode</string>
     <string name="zip_code">ZIP code</string>
 
-    <plurals name="num_deliverables_uploaded">
-        <item quantity="one">%1$d deliverable uploaded</item>
-        <item quantity="other">%1$d deliverables uploaded</item>
-    </plurals>
-
-    <plurals name="num_deliverables_uploading">
-        <item quantity="one">%1$d deliverable uploading</item>
-        <item quantity="other">%1$d deliverables uploading</item>
-    </plurals>
-
     <plurals name="num_files_to_upload">
         <item quantity="one">%1$d files to upload</item>
         <item quantity="other">%1$d files to upload</item>
@@ -797,11 +787,6 @@
     <plurals name="num_other_payments">
         <item quantity="one">and 1 other payment</item>
         <item quantity="other">and %1$s other payments</item>
-    </plurals>
-
-    <plurals name="num_photos_to_upload">
-        <item quantity="one">%1$d photo to upload</item>
-        <item quantity="other">%1$d photos to upload</item>
     </plurals>
 
     <plurals name="num_photos_uploaded">
