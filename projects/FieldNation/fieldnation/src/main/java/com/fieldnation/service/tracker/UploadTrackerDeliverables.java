@@ -112,6 +112,8 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 }
             }
 
+            //Log.v(TAG, "t" + total + " q" + queued + " u" + uploading + " r" + retries + " s" + success + " f" + failed);
+
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 Notification.Builder builder = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL);
@@ -120,37 +122,53 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
 
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
-                if (retries > 0) {
+                if (false) {
+
+                } else if (uploading > 0) {
+                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    if (success > 0) {
+                        builder.setContentText(context.getString(R.string.num_num_uploaded, success, total));
+                    } else {
+                        builder.setContentText(context.getString(R.string.num_uploading, uploading));
+                    }
+
+                } else if (retries > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     long timeleft = _timeout - System.currentTimeMillis();
                     if (timeleft >= 0) {
-                        builder.setContentTitle("WO" + _workOrderId + " | " + retries + " uploads failed");
-                        builder.setContentText("Retry in " + misc.convertMSToDHMS(timeleft, true));
+                        builder.setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_failed_title, retries, _workOrderId));
+                        builder.setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_retrying, retries, retries, misc.convertMsToHuman(timeleft)));
                         if (!_isTiming) {
                             _isTiming = true;
                             _handler.postDelayed(_timer, 1000);
                         }
                     } else {
-                        builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
-                        builder.setContentText("Waiting for network");
+                        builder.setContentTitle(context.getResources().getString(
+                                R.string.uploading_to_wo, _workOrderId));
+                        builder.setContentText(context.getString(R.string.waiting_for_network));
                     }
 
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
-                } else if (uploading > 0) {
-                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
-                    builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading + " files");
-                    if (queued > 0)
-                        builder.setContentText(queued + " queued");
-
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_failed_title, failed, _workOrderId));
+                    builder.setContentText(context.getString(R.string.num_num_failed_to_upload, failed, total));
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
-                    builder.setContentText("Waiting for network");
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.waiting_for_network));
                 } else if (success > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_success);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_complete_title, success, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.num_num_successfully_uploaded, success, total));
                 }
 
                 if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
@@ -161,35 +179,53 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 builder.setContentIntent(pendingIntent);
 
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
+                if (false) {
 
-                if (retries > 0) {
+                } else if (uploading > 0) {
+                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    if (success > 0) {
+                        builder.setContentText(context.getString(R.string.num_num_uploaded, success, total));
+                    } else {
+                        builder.setContentText(context.getString(R.string.num_uploading, uploading));
+                    }
+
+                } else if (retries > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     long timeleft = _timeout - System.currentTimeMillis();
                     if (timeleft >= 0) {
-                        builder.setContentTitle("WO" + _workOrderId + " | " + retries + " uploads failed");
-                        builder.setContentText("Retry in " + misc.convertMSToDHMS(timeleft, true));
+                        builder.setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_failed_title, retries, _workOrderId));
+                        builder.setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_retrying, retries, retries, misc.convertMSToDHMS(timeleft, true)));
                         if (!_isTiming) {
                             _isTiming = true;
                             _handler.postDelayed(_timer, 1000);
                         }
                     } else {
-                        builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
-                        builder.setContentText("Waiting for network");
+                        builder.setContentTitle(context.getResources().getString(
+                                R.string.uploading_to_wo, _workOrderId));
+                        builder.setContentText(context.getString(R.string.waiting_for_network));
                     }
 
                 } else if (failed > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_fail);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + failed + " uploads failed");
-                } else if (uploading > 0) {
-                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
-                    builder.setContentTitle("WO" + _workOrderId + " | uploading " + uploading + " files");
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_failed_title, failed, _workOrderId));
+                    builder.setContentText(context.getString(R.string.num_num_failed_to_upload, failed, total));
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + queued + " files queued");
-                    builder.setContentText("Waiting for network");
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.waiting_for_network));
                 } else if (success > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_success);
-                    builder.setContentTitle("WO" + _workOrderId + " | " + success + " uploads complete!");
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_complete_title, success, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.num_num_successfully_uploaded, success, total));
                 }
 
                 if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
