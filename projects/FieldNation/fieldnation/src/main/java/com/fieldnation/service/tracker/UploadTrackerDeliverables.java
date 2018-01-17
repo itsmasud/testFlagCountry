@@ -194,7 +194,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                         builder.setContentTitle(context.getResources().getQuantityString(
                                 R.plurals.num_uploads_failed_title, retries, _workOrderId));
                         builder.setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_retrying, retries, retries, misc.convertMSToDHMS(timeleft, true)));
+                                R.plurals.num_uploads_retrying, retries, retries, misc.convertMsToHuman(timeleft, true)));
                         if (!_isTiming) {
                             _isTiming = true;
                             _handler.postDelayed(_timer, 1000);
