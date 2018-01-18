@@ -539,7 +539,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 if (timeLeft < 0) {
                     view.set(t.name, "Waiting for network...");
                 } else {
-                    view.set(t.name, "Will retry in " + misc.convertMsToHuman(timeLeft));
+                    view.set(t.name, "Will retry in " + misc.convertMsToHuman(timeLeft, true));
                 }
                 view.setTag(t.transaction);
                 view.setProgressVisible(false);
