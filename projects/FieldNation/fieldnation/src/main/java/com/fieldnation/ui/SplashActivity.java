@@ -164,6 +164,14 @@ public class SplashActivity extends AuthSimpleActivity {
             return;
         }
         _profile = profile;
+
+        GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
+        opts.setPerPage(25);
+        opts.setList("workorders_assignments");
+        opts.setFFlightboardTomorrow(true);
+        opts.setPage(1);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
+
         doNextStep();
     }
 
@@ -182,12 +190,6 @@ public class SplashActivity extends AuthSimpleActivity {
         _authClient.subAuthStateChange();
 
         _workOrdersApi.sub();
-        GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
-        opts.setPerPage(25);
-        opts.setList("workorders_assignments");
-        opts.setFFlightboardTomorrow(true);
-        opts.setPage(1);
-        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
 
         AuthClient.requestCommand();
     }
@@ -222,7 +224,7 @@ public class SplashActivity extends AuthSimpleActivity {
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "onAuthenticated");
             _isAuth = true;
-            doNextStep();
+//            doNextStep();
         }
 
         @Override
