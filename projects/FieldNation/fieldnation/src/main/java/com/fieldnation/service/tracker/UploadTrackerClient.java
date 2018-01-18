@@ -1,11 +1,10 @@
 package com.fieldnation.service.tracker;
 
-import android.app.PendingIntent;
-import android.content.Context;
 import android.os.Bundle;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.service.transaction.WebTransaction;
 
 /**
  * Created by Michael on 5/18/2016.
@@ -13,44 +12,48 @@ import com.fieldnation.fntools.DebugUtils;
 public class UploadTrackerClient implements UploadTrackerConstants {
     private static final String TAG = "UploadTrackerClient";
 
-    public static void uploadQueued(Context context, TrackerEnum trackerEnum) {
+    public static void uploadQueued(WebTransaction webTransaction, TrackerEnum trackerEnum) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadQueued Debug Log")));
         Bundle bundle = new Bundle();
         bundle.putString(ACTION, ACTION_QUEUED);
         bundle.putInt(UPLOAD_TYPE, trackerEnum.ordinal());
+        bundle.putParcelable(TRANSACTION, webTransaction);
         UploadTrackerService.getInstance().process(bundle);
     }
 
-    public static void uploadStarted(Context context, TrackerEnum trackerEnum) {
+    public static void uploadStarted(WebTransaction webTransaction, TrackerEnum trackerEnum) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadStarted Debug Log")));
         Bundle bundle = new Bundle();
         bundle.putString(ACTION, ACTION_STARTED);
         bundle.putInt(UPLOAD_TYPE, trackerEnum.ordinal());
+        bundle.putParcelable(TRANSACTION, webTransaction);
         UploadTrackerService.getInstance().process(bundle);
     }
 
-    public static void uploadRequeued(Context context, TrackerEnum trackerEnum) {
-        Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadRequeued Debug Log")));
+    public static void uploadRetry(WebTransaction webTransaction, TrackerEnum trackerEnum) {
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadRetry Debug Log")));
         Bundle bundle = new Bundle();
-        bundle.putString(ACTION, ACTION_REQUEUED);
+        bundle.putString(ACTION, ACTION_RETRY);
         bundle.putInt(UPLOAD_TYPE, trackerEnum.ordinal());
+        bundle.putParcelable(TRANSACTION, webTransaction);
         UploadTrackerService.getInstance().process(bundle);
     }
 
-    public static void uploadSuccess(Context context, TrackerEnum trackerEnum) {
+    public static void uploadSuccess(WebTransaction webTransaction, TrackerEnum trackerEnum) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadSuccess Debug Log")));
         Bundle bundle = new Bundle();
         bundle.putString(ACTION, ACTION_SUCCESS);
         bundle.putInt(UPLOAD_TYPE, trackerEnum.ordinal());
+        bundle.putParcelable(TRANSACTION, webTransaction);
         UploadTrackerService.getInstance().process(bundle);
     }
 
-    public static void uploadFailed(Context context, TrackerEnum trackerEnum, PendingIntent failedIntent) {
+    public static void uploadFailed(WebTransaction webTransaction, TrackerEnum trackerEnum) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadFailed Debug Log")));
         Bundle bundle = new Bundle();
         bundle.putString(ACTION, ACTION_FAILED);
         bundle.putInt(UPLOAD_TYPE, trackerEnum.ordinal());
-        bundle.putParcelable(FAILED_PENDING_INTENT, failedIntent);
+        bundle.putParcelable(TRANSACTION, webTransaction);
         UploadTrackerService.getInstance().process(bundle);
     }
 }
