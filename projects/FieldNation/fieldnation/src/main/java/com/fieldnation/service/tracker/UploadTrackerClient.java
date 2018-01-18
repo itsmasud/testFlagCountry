@@ -30,6 +30,15 @@ public class UploadTrackerClient implements UploadTrackerConstants {
         UploadTrackerService.getInstance().process(bundle);
     }
 
+    public static void uploadDelete(WebTransaction webTransaction, TrackerEnum trackerEnum) {
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadDelete Debug Log")));
+        Bundle bundle = new Bundle();
+        bundle.putString(ACTION, ACTION_DELETE);
+        bundle.putInt(UPLOAD_TYPE, trackerEnum.ordinal());
+        bundle.putParcelable(TRANSACTION, webTransaction);
+        UploadTrackerService.getInstance().process(bundle);
+    }
+
     public static void uploadRetry(WebTransaction webTransaction, TrackerEnum trackerEnum) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadRetry Debug Log")));
         Bundle bundle = new Bundle();

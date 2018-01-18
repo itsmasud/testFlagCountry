@@ -35,6 +35,8 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.tracker.TrackerEnum;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -346,6 +348,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             AttachmentTracker.complete(getContext(), ((WebTransaction) extraData).getUUID());
 
+            UploadTrackerClient.uploadDelete((WebTransaction) extraData, TrackerEnum.DELIVERABLES);
             WebTransaction.delete(_selectedTransactionId);
             populateUi();
             // Todo, this is to force the WoD to update after the transaction is deleted

@@ -65,7 +65,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
 
         public void updateNotification(String action, WebTransaction webTransaction) {
             Tuple tuple;
-            if (tuples.containsKey(webTransaction.getUUID().uuid)) {
+            if (action.equals(ACTION_DELETE)) {
+                if (tuples.containsKey(webTransaction.getUUID().uuid))
+                    tuples.remove(webTransaction.getUUID().uuid);
+            } else if (tuples.containsKey(webTransaction.getUUID().uuid)) {
                 tuple = tuples.get(webTransaction.getUUID().uuid);
                 tuple.action = action;
                 tuple.webTransaction = webTransaction;
@@ -228,7 +231,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     manager.notify(_notificationId, builder.build());
             }
 
-            if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success > 0) {
+            if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success >= 0) {
                 return true;
             }
             return false;
