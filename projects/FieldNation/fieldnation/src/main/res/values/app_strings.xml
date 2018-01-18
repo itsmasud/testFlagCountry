@@ -595,65 +595,13 @@
     <string name="number_of_devices">Number of Devices</string>
     <string name="number_of_device_completed">Devices Completed</string>
     <string name="num_failed">%1$d failed</string>
+    <string name="num_num_failed_to_upload">%1$d/%2$d failed to upload</string>
+    <string name="num_num_successfully_uploaded">%1$d/%2$d successfully uploaded</string>
+    <string name="num_num_uploaded">%1$d/%2$d uploaded</string>
     <string name="num_mi_driving"> \u2022 %1$smi (driving)</string>
     <string name="num_mi_straight_line"> \u2022 %1$smi (straight line)</string>
-
-    <plurals name="num_deliverables_uploading">
-        <item quantity="one">%1$d deliverable uploading</item>
-        <item quantity="other">%1$d deliverables uploading</item>
-    </plurals>
-
-    <plurals name="num_photos_uploading">
-        <item quantity="one">%1$d photo uploading</item>
-        <item quantity="other">%1$d photos uploading</item>
-    </plurals>
-
-    <plurals name="num_uploads_queued">
-        <item quantity="one">%1$d upload queued</item>
-        <item quantity="other">%1$d uploads queued</item>
-    </plurals>
-
-    <plurals name="num_files_to_upload">
-        <item quantity="one">%1$d files to upload</item>
-        <item quantity="other">%1$d files to upload</item>
-    </plurals>
-
-    <plurals name="num_photos_to_upload">
-        <item quantity="one">%1$d photo to upload</item>
-        <item quantity="other">%1$d photos to upload</item>
-    </plurals>
-
-    <plurals name="num_uploads_completed">
-        <item quantity="one">%1$d upload completed</item>
-        <item quantity="other">%1$d uploads completed</item>
-    </plurals>
-
-    <plurals name="num_deliverables_uploaded">
-        <item quantity="one">%1$d deliverable uploaded</item>
-        <item quantity="other">%1$d deliverables uploaded</item>
-    </plurals>
-
-    <plurals name="num_photos_uploaded">
-        <item quantity="one">%1$d photo uploaded</item>
-        <item quantity="other">%1$d photos uploaded</item>
-    </plurals>
-
-    <plurals name="num_uploads_failed">
-        <item quantity="one">%1$d upload failed</item>
-        <item quantity="other">%1$d uploads failed</item>
-    </plurals>
-
+    <string name="num_uploading">%1$d uploading</string>
     <string name="num_workorders_and_payments">%1$s %2$s</string>
-
-    <plurals name="num_other_payments">
-        <item quantity="one">and 1 other payment</item>
-        <item quantity="other">and %1$s other payments</item>
-    </plurals>
-
-    <plurals name="num_workorders">
-        <item quantity="one">1 Work Order</item>
-        <item quantity="other">%1$s Work Orders</item>
-    </plurals>
 
     <string name="offer_expires">Offer expires</string>
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
@@ -785,6 +733,7 @@
     <string name="update_your_payment_info">Update your payment info</string>
     <string name="update_payment_info">Update Payment Info</string>
     <string name="uploading">Uploading…</string>
+    <string name="uploading_to_wo">Uploading to WO %1$d</string>
     <string name="user_not_supported">User Not Supported</string>
 
     <string name="valid_until">Valid until</string>
@@ -795,6 +744,7 @@
     <string name="view_field_nation_terms">View Field Nation Terms</string>
 
     <string name="waiting_for_approval">Waiting for Approval</string>
+    <string name="waiting_for_network">Waiting for network connection</string>
     <string name="warning">Warning!</string>
     <string name="were_there_clear_expectations">Were there clear expectations?</string>
     <string name="were_they_professional">Were they professional?</string>
@@ -828,6 +778,61 @@
 
     <string name="zipcode">Zipcode</string>
     <string name="zip_code">ZIP code</string>
+
+    <plurals name="num_files_to_upload">
+        <item quantity="one">%1$d files to upload</item>
+        <item quantity="other">%1$d files to upload</item>
+    </plurals>
+
+    <plurals name="num_other_payments">
+        <item quantity="one">and 1 other payment</item>
+        <item quantity="other">and %1$s other payments</item>
+    </plurals>
+
+    <plurals name="num_photos_uploaded">
+        <item quantity="one">%1$d photo uploaded</item>
+        <item quantity="other">%1$d photos uploaded</item>
+    </plurals>
+
+    <plurals name="num_photos_uploading">
+        <item quantity="one">%1$d photo uploading</item>
+        <item quantity="other">%1$d photos uploading</item>
+    </plurals>
+
+    <plurals name="num_uploads_completed">
+        <item quantity="one">%1$d upload completed</item>
+        <item quantity="other">%1$d uploads completed</item>
+    </plurals>
+
+    <plurals name="num_uploads_complete_title">
+        <item quantity="one">Upload complete on WO %1$d</item>
+        <item quantity="other">Uploads complete on WO %1$d</item>
+    </plurals>
+
+    <plurals name="num_uploads_failed">
+        <item quantity="one">%1$d upload failed</item>
+        <item quantity="other">%1$d uploads failed</item>
+    </plurals>
+
+    <plurals name="num_uploads_failed_title">
+        <item quantity="one">Upload failed on WO %1$d</item>
+        <item quantity="other">Uploads failed on WO %1$d</item>
+    </plurals>
+
+    <plurals name="num_uploads_queued">
+        <item quantity="one">%1$d upload queued</item>
+        <item quantity="other">%1$d uploads queued</item>
+    </plurals>
+
+    <plurals name="num_uploads_retrying">
+        <item quantity="one">Retrying %1$d upload in %2$s</item>
+        <item quantity="other">Retrying %1$d uploads in %2$s</item>
+    </plurals>
+
+    <plurals name="num_workorders">
+        <item quantity="one">1 Work Order</item>
+        <item quantity="other">%1$s Work Orders</item>
+    </plurals>
 
     <!-- /general strings -->
 

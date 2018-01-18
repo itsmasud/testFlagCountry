@@ -284,10 +284,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 break;
             case RETRY:
                 Log.v(TAG, "3");
-                generateNotification(notifId, notifRetry);
-                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
+
+                generateNotification(notifId, notifRetry);
+                trans.requeue(getRetry(trans.getTryCount()));
 
                 break;
             case ZOMBIE:
