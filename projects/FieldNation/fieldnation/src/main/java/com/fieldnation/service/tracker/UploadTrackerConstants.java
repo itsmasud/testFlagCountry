@@ -10,6 +10,7 @@ public interface UploadTrackerConstants {
     String ACTION_SUCCESS = "ACTION_SUCCESS";
     String ACTION_FAILED = "ACTION_FAILED";
     String ACTION_RETRY = "ACTION_RETRY";
+    String ACTION_DELETE = "ACTION_DELETE";
 
     String UPLOAD_TYPE = "PARAM_UPLOAD_TYPE";
     String TRANSACTION = "TRANSACTION";
