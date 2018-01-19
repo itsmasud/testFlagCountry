@@ -231,9 +231,13 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     manager.notify(_notificationId, builder.build());
             }
 
-            if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success >= 0) {
+
+            if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success > 0) {
                 return true;
+            } else if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success == 0) {
+                manager.cancel(_notificationId);
             }
+
             return false;
         }
     }
