@@ -4,12 +4,15 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.DataPurgeAsync;
+import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Message;
@@ -88,6 +91,13 @@ public class WebCrawlerService extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             //TODO make work with O
             Log.v(TAG, "Running on O, can't operate in background");
+
+            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Running background sync..");
+
+
             return START_NOT_STICKY;
         }
 
@@ -220,8 +230,8 @@ public class WebCrawlerService extends Service {
             cal.set(Calendar.MINUTE, (int) (runTime % 60));
         } else {
             Random random = new Random();
-            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1));
-            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60));
+            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1)); // add 0-1 hour
+            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60)); // add 0-60 min
         }
 
         long nextTime = cal.getTimeInMillis();
@@ -229,8 +239,12 @@ public class WebCrawlerService extends Service {
             nextTime += 86400000;
         }
 
-        AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
-        Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CrawlerJobService.schedule(this, runTime);
+        } else {
+            AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
+            Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+        }
     }
 
     public void runCrawler() {
