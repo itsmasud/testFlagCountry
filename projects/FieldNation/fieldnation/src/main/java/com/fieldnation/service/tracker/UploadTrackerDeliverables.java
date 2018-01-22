@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -65,7 +66,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
 
         public void updateNotification(String action, WebTransaction webTransaction) {
             Tuple tuple;
-            if (tuples.containsKey(webTransaction.getUUID().uuid)) {
+            if (action.equals(ACTION_DELETE)) {
+                if (tuples.containsKey(webTransaction.getUUID().uuid))
+                    tuples.remove(webTransaction.getUUID().uuid);
+            } else if (tuples.containsKey(webTransaction.getUUID().uuid)) {
                 tuple = tuples.get(webTransaction.getUUID().uuid);
                 tuple.action = action;
                 tuple.webTransaction = webTransaction;
@@ -155,6 +159,11 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setContentTitle(context.getResources().getQuantityString(
                             R.plurals.num_uploads_failed_title, failed, _workOrderId));
                     builder.setContentText(context.getString(R.string.num_num_failed_to_upload, failed, total));
+
+                    Intent retryIntent = new Intent(App.get(), RetryService.class).putExtra("workOrderId", _workOrderId);
+                    PendingIntent pi = PendingIntent.getService(App.get(), App.secureRandom.nextInt(), retryIntent, 0);
+                    builder.addAction(new Notification.Action.Builder(
+                            Icon.createWithResource(App.get(), R.drawable.ic_loader_arrow), "RETRY ALL", pi).build());
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle(context.getResources().getString(
@@ -210,6 +219,11 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setContentTitle(context.getResources().getQuantityString(
                             R.plurals.num_uploads_failed_title, failed, _workOrderId));
                     builder.setContentText(context.getString(R.string.num_num_failed_to_upload, failed, total));
+
+                    Intent retryIntent = new Intent(App.get(), RetryService.class).putExtra("workOrderId", _workOrderId);
+                    PendingIntent pi = PendingIntent.getService(App.get(), App.secureRandom.nextInt(), retryIntent, 0);
+                    builder.addAction(R.drawable.ic_loader_arrow, "RETRY ALL", pi);
+                    builder.setPriority(NotificationCompat.PRIORITY_MAX);
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle(context.getResources().getString(
@@ -228,9 +242,13 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     manager.notify(_notificationId, builder.build());
             }
 
+
             if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success > 0) {
                 return true;
+            } else if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success == 0) {
+                manager.cancel(_notificationId);
             }
+
             return false;
         }
     }

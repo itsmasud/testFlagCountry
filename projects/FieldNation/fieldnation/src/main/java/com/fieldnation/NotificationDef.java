@@ -51,6 +51,7 @@ public class NotificationDef {
 
         NotificationChannel mChannel = new NotificationChannel(PHOTO_UPLOAD_CHANNEL, name, importance);
         mChannel.setDescription(description);
+        mChannel.setImportance(NotificationManager.IMPORTANCE_HIGH);
         mNotificationManager.createNotificationChannel(mChannel);
     }
 

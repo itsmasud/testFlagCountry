@@ -16,7 +16,9 @@
 
     <!-- Phone -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
-    <uses-feature android:name="android.hardware.telephony" android:required="false" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <!-- Currently Not dangerous permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -296,6 +298,10 @@
             android:process=":frontside" />
         <service
             android:name=".service.AnalyticsPassThroughService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.tracker.RetryService"
             android:exported="false"
             android:process=":frontside" />
 
