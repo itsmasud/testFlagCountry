@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -155,7 +156,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
     private WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             if (transactionParams.getMethodParamInt("workOrderId") == null
                     || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
                 return false;
@@ -164,7 +165,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (_workOrderId == workOrder.getId()) {
@@ -172,7 +173,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
                     generateProblemsList();
                 }
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

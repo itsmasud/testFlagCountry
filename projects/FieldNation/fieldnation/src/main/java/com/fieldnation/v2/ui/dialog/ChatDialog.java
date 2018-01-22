@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -180,7 +181,7 @@ public class ChatDialog extends FullScreenDialog {
     /*-*****************************-*/
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             if (transactionParams.getMethodParamInt("workOrderId") == null
                     || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
                 return false;
@@ -191,25 +192,25 @@ public class ChatDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             try {
                 if (successObject != null && successObject instanceof Messages) {
                     Messages messages = (Messages) successObject;
                     Error error = (Error) failObject;
                     if (!success || error != null)
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                     JsonObject methodParams = new JsonObject(transactionParams.methodParams);
 
                     if (methodParams.has("workOrderId")
                             && methodParams.getInt("workOrderId") != _workOrderId) {
                         Log.v(TAG, "not my work order!");
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     if (messages == null || messages.getResults() == null) {
                         _refreshView.refreshComplete();
-                        return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     // flatten the tree with a depth first search
@@ -272,7 +273,7 @@ public class ChatDialog extends FullScreenDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

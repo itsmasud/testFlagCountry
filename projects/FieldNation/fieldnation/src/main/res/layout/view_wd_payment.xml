@@ -33,16 +33,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible" />
-
-    <TextView
-        android:id="@+id/terms_textview"
-        style="@style/TextViewLink"
-        android:layout_width="match_parent"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:text="@string/view_field_nation_terms"
-        android:textSize="14sp" />
-
-    <View style="@style/DividerFull" />
-
 </LinearLayout>

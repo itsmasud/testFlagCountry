@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.ui.RefreshView;
@@ -161,7 +162,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             if (transactionParams.getMethodParamInt("workOrderId") == null
                     || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
                 return false;
@@ -170,12 +171,12 @@ public class UploadSlotPickerScreen extends FrameLayout {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (!success) {
                     _refreshView.refreshComplete();
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 if (_workOrderId == workOrder.getId()) {
@@ -188,12 +189,12 @@ public class UploadSlotPickerScreen extends FrameLayout {
             }
 
             if (methodName.startsWith("get") || !success)
-                return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

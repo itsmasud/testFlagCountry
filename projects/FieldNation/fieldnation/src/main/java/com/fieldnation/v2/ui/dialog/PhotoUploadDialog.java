@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpFileContext;
@@ -320,7 +319,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             if (payload.containsKey("uri")) {
                 _sourceUri = payload.getParcelable("uri");
                 Log.v(TAG, "uri: " + _sourceUri);
-                FileCacheClient.cacheFileUpload(_uuid, _sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_uuid, _sourceUri);
             }
 
             Tracker.event(App.get(), new CustomEvent.Builder()
@@ -523,6 +522,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     _httpBuilder.put("multipart.fields.attachment.value", attachment.getJson());
                     _httpBuilder.put("multipart.files.file.filename", _newFileName);
                     _webTransaction.setRequest(_httpBuilder.toString());
+                    _webTransaction.setTryCount(-1); // -1 cause +1 in requeue()
                     _webTransaction.requeue(0);
                     WebTransactionSystem.getInstance();
 
@@ -642,11 +642,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
-            Log.v(TAG, "onFileCacheEnd tag: " + tag);
+        public void onFileCacheEnd(UUIDGroup uuid, Uri uri, long size, boolean success) {
             Log.v(TAG, "onFileCacheEnd uri: " + uri);
-            if (!tag.equals(_sourceUri.toString())) {
-                Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
+            if (!uuid.uuid.equals(_uuid.uuid)) {
+                Log.v(TAG, "onFileCacheEnd uuid mismatch, skipping");
                 return;
             }
 

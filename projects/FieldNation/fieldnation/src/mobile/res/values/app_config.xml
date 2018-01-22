@@ -4,6 +4,8 @@
     <string name="app_name">FN Mobile</string>
     <string name="auth_account_name">FN Mobile</string>
 
+    <!--<string name="auth_default_username">empty</string>-->
+    <!--<string name="auth_default_password">1</string>-->
     <!--<string name="auth_default_username">provider</string>-->
     <!--<string name="auth_default_password">provider</string>-->
     <!--<string name="auth_default_username">mprovider</string>-->

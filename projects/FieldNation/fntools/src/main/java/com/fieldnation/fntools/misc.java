@@ -28,6 +28,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -567,6 +569,16 @@ public final class misc {
         return result.trim();
     }
 
+    private static class Tupple {
+        String time;
+        String type;
+
+        public Tupple(String time, String type) {
+            this.time = time;
+            this.type = type;
+        }
+    }
+
     public static String convertSecondsToDHMS(long Seconds, boolean only_available) {
         String result = "";
 
@@ -595,20 +607,43 @@ public final class misc {
         }
 
         if (only_available) {
-            if (!"00".equals(days)) {
-                result = days + "d " + hours + "h " + min + "m " + sec + "s";
-            } else if (!"00".equals(hours)) {
-                result = hours + "h " + min + "m " + sec + "s";
-            } else if (!"00".equals(min)) {
-                result = min + "m " + sec + "s";
-            } else {
-                result = sec + "s";
+            List<Tupple> list = new LinkedList<>();
+            list.add(new Tupple(days, "d"));
+            list.add(new Tupple(hours, "h"));
+            list.add(new Tupple(min, "m"));
+            list.add(new Tupple(sec, "s"));
+
+            // remove from the front
+            while (list.size() > 0) {
+                if (list.get(0).time.equals("00")) {
+                    list.remove(0);
+                } else {
+                    break;
+                }
+            }
+
+            while (list.size() > 0) {
+                if (list.get(list.size() - 1).time.equals("00")) {
+                    list.remove(list.size() - 1);
+                } else {
+                    break;
+                }
+            }
+
+            for (Tupple tupple : list) {
+                result += tupple.time + tupple.type + " ";
+            }
+
+            result = result.trim();
+
+            if (misc.isEmptyOrNull(result)) {
+                result = "00s";
             }
         } else {
             result = days + "d " + hours + "h " + min + "m " + sec + "s";
         }
 
-        return result;
+        return result.trim();
     }
 
     public static void hideKeyboard(View v) {

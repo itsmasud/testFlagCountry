@@ -1134,7 +1134,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             if (transactionParams.getMethodParamInt("workOrderId") == null
                     || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
                 return false;
@@ -1143,7 +1143,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
                 setLoading(false);

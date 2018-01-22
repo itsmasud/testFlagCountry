@@ -2,7 +2,6 @@ package com.fieldnation.service.tracker;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,6 +12,7 @@ import com.fieldnation.App;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.transaction.WebTransaction;
 
 /**
  * Created by mc on 2/20/17.
@@ -31,7 +31,7 @@ public class UploadTrackerPhotos implements UploadTrackerConstants, UploadTracke
     public UploadTrackerPhotos() {
     }
 
-    public void update(Context context, String action, PendingIntent failIntent) {
+    public void update(Context context, String action, WebTransaction webTransaction) {
         if (resetTimerExpired()) {
             _uploadQueued = 0;
             _uploadRunning = 0;
@@ -52,7 +52,7 @@ public class UploadTrackerPhotos implements UploadTrackerConstants, UploadTracke
                 _uploadQueued--;
                 if (_uploadQueued < 0) _uploadQueued = 0;
                 break;
-            case ACTION_REQUEUED:
+            case ACTION_RETRY:
                 _uploadRunning--;
                 if (_uploadRunning < 0) _uploadRunning = 0;
                 _uploadQueued++;
@@ -66,7 +66,7 @@ public class UploadTrackerPhotos implements UploadTrackerConstants, UploadTracke
                 _uploadFailed++;
                 _uploadRunning--;
                 if (_uploadRunning < 0) _uploadRunning = 0;
-                createFailedNotification(context, failIntent);
+                createFailedNotification(context);
                 break;
             default:
                 break;
@@ -182,7 +182,7 @@ public class UploadTrackerPhotos implements UploadTrackerConstants, UploadTracke
         }
     }
 
-    public void createFailedNotification(Context context, PendingIntent failIntent) {
+    public void createFailedNotification(Context context) {
         NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Notification notification = new Notification.Builder(App.get(), NotificationDef.PHOTO_UPLOAD_CHANNEL)

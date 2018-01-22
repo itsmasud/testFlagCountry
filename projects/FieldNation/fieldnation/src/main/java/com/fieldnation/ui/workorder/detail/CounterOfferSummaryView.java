@@ -71,7 +71,8 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
         setVisibility(GONE);
 
-        if (requests.getOpenRequest().getId() == null)
+        if (requests.getOpenRequest().getId() == null
+                || !requests.getOpenRequest().getCounter())
             return;
 
         setVisibility(VISIBLE);

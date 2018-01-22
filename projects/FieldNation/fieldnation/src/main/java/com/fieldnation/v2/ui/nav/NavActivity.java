@@ -14,6 +14,7 @@ import android.view.animation.AnimationUtils;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SavedSearchTracker;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
@@ -37,8 +38,6 @@ import java.util.List;
  */
 public class NavActivity extends AuthSimpleActivity {
     private static final String TAG = "NavActivity";
-
-    private static final String STATE_CURRENT_SEARCH = "STATE_CURRENT_SEARCH";
 
     // Intent stuff
     public static final String INTENT_FIELD_WORKORDER_ID = WorkOrderActivity.INTENT_FIELD_WORKORDER_ID;
@@ -144,9 +143,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         //_arrowTextView.startAnimation(_cw);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
-            _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
-        }
+        _savedList = App.get().getLastVisitedWoL();
 
         SavedSearchTracker.onShow(App.get());
 
@@ -161,13 +158,30 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         _recyclerView.onStart();
     }
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
+
+        SavedList savedList = App.get().getLastVisitedWoL();
+        if (_savedList == null) {
+            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+        } else if (savedList == null) {
+            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+            _savedList = null;
+        } else if (savedList.getId().equals(_savedList.getId())) {
+            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+            SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
+        } else {
+            _savedList = savedList;
+            _recyclerView.startSearch(_savedList);
+        }
+
         if (!_isLoadingWorkOrder && App.get().needsConfirmation()
                 && App.get().confirmRemindMeExpired()) {
             launchConfirmActivity();
@@ -182,6 +196,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         _workOrdersApi.unsub();
         _recyclerView.onPause();
         super.onPause();
@@ -189,7 +204,8 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        _recyclerView.onStart();
+        Log.v(TAG, "onStop");
+        _recyclerView.onStop();
         super.onStop();
     }
 
@@ -202,27 +218,6 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public DialogManager getDialogManager() {
         return (DialogManager) findViewById(R.id.dialogManager);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //Log.v(TAG, "onSaveInstanceState");
-        if (_savedList != null)
-            outState.putParcelable(STATE_CURRENT_SEARCH, _savedList);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        //Log.v(TAG, "onRestoreInstanceState");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
-                _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
-                _recyclerView.startSearch(_savedList);
-                NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
-            }
-        }
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -308,33 +303,30 @@ public class NavActivity extends AuthSimpleActivity {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
                 if (_savedList == null) {
                     _savedList = savedList[0];
+                    App.get().setLastVisitedWoL(_savedList);
                     _recyclerView.startSearch(_savedList);
                     NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
                 } else {
-                    if (App.get().getLastVisitedWoL() != null) {
-                        _savedList = App.get().getLastVisitedWoL();
-                    }
-
                     for (SavedList list : savedList) {
                         if (list.getId().equals(_savedList.getId())) {
                             _savedList = list;
                             NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                            break;
                         }
                     }
-                    _recyclerView.startSearch(_savedList);
                 }
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

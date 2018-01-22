@@ -527,7 +527,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             if (transactionParams.getMethodParamInt("workOrderId") == null
                     || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
                 return false;
@@ -543,7 +543,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {
@@ -558,7 +558,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                     ToastClient.toast(App.get(), "Check Out Failed, Please Try Again Later", Toast.LENGTH_SHORT);
                 }
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

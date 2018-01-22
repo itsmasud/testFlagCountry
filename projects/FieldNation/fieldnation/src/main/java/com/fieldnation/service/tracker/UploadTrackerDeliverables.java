@@ -5,14 +5,26 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.ui.SplashActivity;
+import com.fieldnation.v2.data.listener.TransactionParams;
+
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 /**
  * Created by mc on 2/20/17.
@@ -21,188 +33,256 @@ import com.fieldnation.fnlog.Log;
 public class UploadTrackerDeliverables implements UploadTrackerConstants, UploadTracker {
     private static final String TAG = "UploadTrackerDeliverables";
 
-    private int _notificationId = App.secureRandom.nextInt();
-    private int _uploadQueued = 0;
-    private int _uploadRunning = 0;
-    private int _uploadSuccess = 0;
-    private int _uploadFailed = 0;
-    private long _resetTimer = 0;
+    private static class Tuple {
+        String action;
+        WebTransaction webTransaction;
+
+        public Tuple(String action, WebTransaction webTransaction) {
+            this.action = action;
+            this.webTransaction = webTransaction;
+        }
+    }
+
+    private static class WoNotif {
+        public int _notificationId = App.secureRandom.nextInt();
+        public int _workOrderId;
+        public long _timeout;
+        private boolean _isTiming = false;
+        private Handler _handler = new Handler(Looper.getMainLooper());
+
+        private Hashtable<String, Tuple> tuples = new Hashtable<>();
+
+        private Runnable _timer = new Runnable() {
+            @Override
+            public void run() {
+                _isTiming = false;
+                updateNotification(App.get());
+            }
+        };
+
+        public WoNotif(int workOrderId) {
+            this._workOrderId = workOrderId;
+        }
+
+        public void updateNotification(String action, WebTransaction webTransaction) {
+            Tuple tuple;
+            if (action.equals(ACTION_DELETE)) {
+                if (tuples.containsKey(webTransaction.getUUID().uuid))
+                    tuples.remove(webTransaction.getUUID().uuid);
+            } else if (tuples.containsKey(webTransaction.getUUID().uuid)) {
+                tuple = tuples.get(webTransaction.getUUID().uuid);
+                tuple.action = action;
+                tuple.webTransaction = webTransaction;
+            } else {
+                tuple = new Tuple(action, webTransaction);
+                tuples.put(webTransaction.getUUID().uuid, tuple);
+            }
+        }
+
+        boolean updateNotification(Context context) {
+            Intent workorderIntent = SplashActivity.intentShowWorkOrder(App.get(), _workOrderId);
+            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
+
+            int retries = 0;
+            _timeout = System.currentTimeMillis();
+            int failed = 0;
+            int success = 0;
+            int uploading = 0;
+            int queued = 0;
+            int total = 0;
+
+            Enumeration<Tuple> ts = tuples.elements();
+            while (ts.hasMoreElements()) {
+                Tuple tuple = ts.nextElement();
+
+                if (tuple.action.equals(ACTION_FAILED)) {
+                    total++;
+                    failed++;
+                } else if (tuple.action.equals(ACTION_QUEUED)) {
+                    total++;
+                    queued++;
+                } else if (tuple.action.equals(ACTION_RETRY)) {
+                    total++;
+                    retries++;
+                    if (_timeout < tuple.webTransaction.getQueueTime())
+                        _timeout = tuple.webTransaction.getQueueTime();
+                } else if (tuple.action.equals(ACTION_STARTED)) {
+                    total++;
+                    uploading++;
+
+                } else if (tuple.action.equals(ACTION_SUCCESS)) {
+                    total++;
+                    success++;
+                }
+            }
+
+            //Log.v(TAG, "t" + total + " q" + queued + " u" + uploading + " r" + retries + " s" + success + " f" + failed);
+
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Notification.Builder builder = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL);
+                builder.setLargeIcon((Bitmap) null);
+                builder.setContentIntent(pendingIntent);
+
+                //builder.setSmallIcon(R.drawable.ic_notif_queued);
+
+                if (uploading > 0) {
+                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    if (success > 0) {
+                        builder.setContentText(context.getString(R.string.num_num_uploaded, success, total));
+                    } else {
+                        builder.setContentText(context.getString(R.string.num_uploading, uploading));
+                    }
+
+                } else if (retries > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
+                    long timeleft = _timeout - System.currentTimeMillis();
+                    if (timeleft >= 0) {
+                        builder.setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_failed_title, retries, _workOrderId));
+                        builder.setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_retrying, retries, retries, misc.convertMsToHuman(timeleft)));
+                        if (!_isTiming) {
+                            _isTiming = true;
+                            _handler.postDelayed(_timer, 1000);
+                        }
+                    } else {
+                        builder.setContentTitle(context.getResources().getString(
+                                R.string.uploading_to_wo, _workOrderId));
+                        builder.setContentText(context.getString(R.string.waiting_for_network));
+                    }
+
+                } else if (failed > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_fail);
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_failed_title, failed, _workOrderId));
+                    builder.setContentText(context.getString(R.string.num_num_failed_to_upload, failed, total));
+
+                    Intent retryIntent = new Intent(App.get(), RetryService.class).putExtra("workOrderId", _workOrderId);
+                    PendingIntent pi = PendingIntent.getService(App.get(), App.secureRandom.nextInt(), retryIntent, 0);
+                    builder.addAction(new Notification.Action.Builder(
+                            Icon.createWithResource(App.get(), R.drawable.ic_loader_arrow), "RETRY ALL", pi).build());
+                } else if (queued > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.waiting_for_network));
+                } else if (success > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_success);
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_complete_title, success, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.num_num_successfully_uploaded, success, total));
+                }
+
+                if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
+                    manager.notify(_notificationId, builder.build());
+            } else {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get());
+                builder.setLargeIcon(null);
+                builder.setContentIntent(pendingIntent);
+
+                //builder.setSmallIcon(R.drawable.ic_notif_queued);
+                if (uploading > 0) {
+                    builder.setSmallIcon(R.drawable.ic_anim_upload_start);
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    if (success > 0) {
+                        builder.setContentText(context.getString(R.string.num_num_uploaded, success, total));
+                    } else {
+                        builder.setContentText(context.getString(R.string.num_uploading, uploading));
+                    }
+
+                } else if (retries > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
+                    long timeleft = _timeout - System.currentTimeMillis();
+                    if (timeleft >= 0) {
+                        builder.setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_failed_title, retries, _workOrderId));
+                        builder.setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_retrying, retries, retries, misc.convertMsToHuman(timeleft, true)));
+                        if (!_isTiming) {
+                            _isTiming = true;
+                            _handler.postDelayed(_timer, 1000);
+                        }
+                    } else {
+                        builder.setContentTitle(context.getResources().getString(
+                                R.string.uploading_to_wo, _workOrderId));
+                        builder.setContentText(context.getString(R.string.waiting_for_network));
+                    }
+
+                } else if (failed > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_fail);
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_failed_title, failed, _workOrderId));
+                    builder.setContentText(context.getString(R.string.num_num_failed_to_upload, failed, total));
+
+                    Intent retryIntent = new Intent(App.get(), RetryService.class).putExtra("workOrderId", _workOrderId);
+                    PendingIntent pi = PendingIntent.getService(App.get(), App.secureRandom.nextInt(), retryIntent, 0);
+                    builder.addAction(R.drawable.ic_loader_arrow, "RETRY ALL", pi);
+                    builder.setPriority(NotificationCompat.PRIORITY_MAX);
+                } else if (queued > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_queued);
+                    builder.setContentTitle(context.getResources().getString(
+                            R.string.uploading_to_wo, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.waiting_for_network));
+                } else if (success > 0) {
+                    builder.setSmallIcon(R.drawable.ic_notif_success);
+                    builder.setContentTitle(context.getResources().getQuantityString(
+                            R.plurals.num_uploads_complete_title, success, _workOrderId));
+                    builder.setContentText(context.getString(
+                            R.string.num_num_successfully_uploaded, success, total));
+                }
+
+                if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
+                    manager.notify(_notificationId, builder.build());
+            }
+
+
+            if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success > 0) {
+                return true;
+            } else if (retries == 0 && failed == 0 && uploading == 0 && queued == 0 && success == 0) {
+                manager.cancel(_notificationId);
+            }
+
+            return false;
+        }
+    }
+
+    private Hashtable<Integer, WoNotif> _notifications = new Hashtable<>();
 
     public UploadTrackerDeliverables() {
     }
 
-    public void update(Context context, String action, PendingIntent failIntent) {
-        if (resetTimerExpired()) {
-            _uploadQueued = 0;
-            _uploadRunning = 0;
-            _uploadFailed = 0;
-            _uploadSuccess = 0;
-            _notificationId = App.secureRandom.nextInt();
-            _resetTimer = 0;
+    public void update(Context context, String action, WebTransaction webTransaction) {
+        try {
+            TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+            JsonObject methodParams = new JsonObject(tp.methodParams);
+
+            int workOrderId = methodParams.getInt("workOrderId");
+
+            WoNotif woNotif;
+            if (_notifications.containsKey(workOrderId)) {
+                woNotif = _notifications.get(workOrderId);
+            } else {
+                woNotif = new WoNotif(workOrderId);
+                _notifications.put(workOrderId, woNotif);
+            }
+
+            woNotif.updateNotification(action, webTransaction);
+            if (woNotif.updateNotification(context)) {
+                _notifications.remove(workOrderId);
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
-
-        Log.v(TAG, action);
-
-        switch (action) {
-            case ACTION_QUEUED:
-                _uploadQueued++;
-                break;
-            case ACTION_STARTED:
-                _uploadRunning++;
-                _uploadQueued--;
-                if (_uploadQueued < 0) _uploadQueued = 0;
-                break;
-            case ACTION_REQUEUED:
-                _uploadRunning--;
-                if (_uploadRunning < 0) _uploadRunning = 0;
-                _uploadQueued++;
-                break;
-            case ACTION_SUCCESS:
-                _uploadRunning--;
-                if (_uploadRunning < 0) _uploadRunning = 0;
-                _uploadSuccess++;
-                break;
-            case ACTION_FAILED:
-                _uploadFailed++;
-                _uploadRunning--;
-                if (_uploadRunning < 0) _uploadRunning = 0;
-                createFailedNotification(context, failIntent);
-                break;
-            default:
-                break;
-        }
-        Log.v(TAG, "_uploadQueued: " + _uploadQueued + ", _uploadRunning: " + _uploadRunning
-                + ", _uploadSuccess: " + _uploadSuccess + ", _uploadFailed: " + _uploadFailed);
-
-        populateNotification(context);
-    }
-
-    public boolean resetTimerExpired() {
-        return _resetTimer > 0 && _resetTimer <= System.currentTimeMillis();
     }
 
     public boolean isViable() {
-        return _uploadQueued > 0 || _uploadRunning > 0;
-    }
-
-    private void populateNotification(Context context) {
-        // running
-        if (_uploadRunning > 0) {
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Notification notification = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
-                        .setLargeIcon((Bitmap) null)
-                        .setSmallIcon(R.drawable.ic_anim_upload_start)
-                        .setContentTitle(context.getResources().getQuantityString(
-                                R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
-                        .setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
-                        .setColor(context.getResources().getColor(R.color.fn_clickable_text))
-                        .build();
-
-                manager.notify(_notificationId, notification);
-            } else {
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                        .setLargeIcon(null)
-                        .setSmallIcon(R.drawable.ic_anim_upload_start)
-                        .setContentTitle(context.getResources().getQuantityString(
-                                R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
-                        .setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
-                        .setColor(context.getResources().getColor(R.color.fn_clickable_text));
-
-                manager.notify(_notificationId, builder.build());
-            }
-
-            // queued
-        } else if (_uploadQueued > 0) {
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Notification.Builder builder = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
-                        .setLargeIcon((Bitmap) null)
-                        .setSmallIcon(R.drawable.ic_notif_queued)
-                        .setContentTitle(context.getResources().getQuantityString(
-                                R.plurals.num_files_to_upload, _uploadQueued, _uploadQueued))
-                        .setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
-                        .setColor(context.getResources().getColor(R.color.fn_clickable_text));
-
-                if (_uploadFailed > 0) {
-                    builder.setContentText(context.getString(R.string.num_failed, _uploadFailed));
-                }
-
-                manager.notify(_notificationId, builder.build());
-            } else {
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                        .setLargeIcon(null)
-                        .setSmallIcon(R.drawable.ic_notif_queued)
-                        .setContentTitle(context.getResources().getQuantityString(
-                                R.plurals.num_files_to_upload, _uploadQueued, _uploadQueued))
-                        .setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
-                        .setColor(context.getResources().getColor(R.color.fn_clickable_text));
-
-                if (_uploadFailed > 0) {
-                    builder.setContentText(context.getString(R.string.num_failed, _uploadFailed));
-                }
-
-                manager.notify(_notificationId, builder.build());
-            }
-            // complete
-        } else if (_uploadQueued == 0 && _uploadRunning == 0) {
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Notification notification = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
-                        .setLargeIcon((Bitmap) null)
-                        .setSmallIcon(R.drawable.ic_notif_success)
-                        .setContentTitle(context.getResources().getQuantityString(
-                                R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess))
-                        .setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
-                        .setColor(context.getResources().getColor(R.color.fn_accent_color))
-                        .build();
-
-                manager.notify(_notificationId, notification);
-            } else {
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                        .setLargeIcon(null)
-                        .setSmallIcon(R.drawable.ic_notif_success)
-                        .setContentTitle(context.getResources().getQuantityString(
-                                R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess))
-                        .setContentText(context.getResources().getQuantityString(
-                                R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
-                        .setColor(context.getResources().getColor(R.color.fn_accent_color));
-
-                manager.notify(_notificationId, builder.build());
-            }
-            _resetTimer = System.currentTimeMillis() + 10000;
-        }
-    }
-
-    public void createFailedNotification(Context context, PendingIntent failIntent) {
-        NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification notification = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
-                    .setLargeIcon((Bitmap) null)
-                    .setSmallIcon(R.drawable.ic_notif_fail)
-                    .setContentText("File upload has failed")
-                    .setContentIntent(failIntent)
-                    .setContentTitle(context.getString(R.string.failed))
-                    .setColor(context.getResources().getColor(R.color.fn_red))
-                    .build();
-
-            manager.notify(App.secureRandom.nextInt(), notification);
-        } else {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                    .setLargeIcon(null)
-                    .setSmallIcon(R.drawable.ic_notif_fail)
-                    .setContentText("File upload has failed")
-                    .setContentIntent(failIntent)
-                    .setContentTitle(context.getString(R.string.failed))
-                    .setColor(context.getResources().getColor(R.color.fn_red));
-
-            manager.notify(App.secureRandom.nextInt(), builder.build());
-        }
+        return _notifications.size() > 0;
     }
 }

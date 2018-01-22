@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
@@ -163,6 +164,14 @@ public class SplashActivity extends AuthSimpleActivity {
             return;
         }
         _profile = profile;
+
+        GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
+        opts.setPerPage(25);
+        opts.setList("workorders_assignments");
+        opts.setFFlightboardTomorrow(true);
+        opts.setPage(1);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
+
         doNextStep();
     }
 
@@ -181,12 +190,6 @@ public class SplashActivity extends AuthSimpleActivity {
         _authClient.subAuthStateChange();
 
         _workOrdersApi.sub();
-        GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
-        opts.setPerPage(25);
-        opts.setList("workorders_assignments");
-        opts.setFFlightboardTomorrow(true);
-        opts.setPage(1);
-        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
 
         AuthClient.requestCommand();
     }
@@ -221,7 +224,7 @@ public class SplashActivity extends AuthSimpleActivity {
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "onAuthenticated");
             _isAuth = true;
-            doNextStep();
+//            doNextStep();
         }
 
         @Override
@@ -254,12 +257,12 @@ public class SplashActivity extends AuthSimpleActivity {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "onComplete");
 
             if (methodName.equals("getWorkOrders")
@@ -271,7 +274,7 @@ public class SplashActivity extends AuthSimpleActivity {
                 WorkOrders workOrders = (WorkOrders) successObject;
 
                 if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
-                    return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
                 _gotConfirmList = true;
                 if (workOrders.getMetadata().getTotal() != null
@@ -281,7 +284,7 @@ public class SplashActivity extends AuthSimpleActivity {
                 }
                 doNextStep();
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

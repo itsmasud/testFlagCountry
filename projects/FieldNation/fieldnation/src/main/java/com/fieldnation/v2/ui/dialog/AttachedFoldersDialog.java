@@ -236,21 +236,21 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            if (transactionParams.getMethodParamInt("workOrderId") == null
-                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
-                return false;
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+                if (transactionParams.getMethodParamInt("workOrderId") == null
+                        || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                    return false;
 
             return methodName.toLowerCase().contains("attachment");
         }
 
         @Override
-        public boolean onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getAttachments")) {
                 _folders = (AttachmentFolders) successObject;
                 populateUi();
             }
-            return super.onComplete(transactionParams, methodName, successObject, success, failObject, isCached);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

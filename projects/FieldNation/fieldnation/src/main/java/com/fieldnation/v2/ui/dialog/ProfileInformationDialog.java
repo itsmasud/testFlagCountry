@@ -232,7 +232,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onSave(UUIDGroup uuid, String name, Uri uri) {
             if (uri != null) {
-                FileCacheClient.cacheFileUpload(uuid, uri.toString(), uri);
+                FileCacheClient.cacheFileUpload(uuid, uri);
                 ProfilePhotoClient.upload(App.get(), uuid, uri);
             } else {
                 Tracker.event(App.get(), new CustomEvent.Builder()
@@ -268,7 +268,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 if (mime != null && mime.contains("image")) {
                     PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uuid, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
                 } else {
-                    FileCacheClient.cacheFileUpload(fui.uuid, fui.uri.toString(), fui.uri);
+                    FileCacheClient.cacheFileUpload(fui.uuid, fui.uri);
                     ProfileClient.uploadProfilePhoto(App.get(), fui.uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
             } else {

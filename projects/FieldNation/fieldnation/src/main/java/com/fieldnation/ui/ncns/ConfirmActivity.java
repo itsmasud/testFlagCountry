@@ -68,6 +68,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
             _savedList = new SavedList()
                     .id("workorders_assignments")
                     .label("assigned");
+            _recyclerView.startSearch(_savedList, _options);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -96,7 +97,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
     protected void onResume() {
         super.onResume();
         _recyclerView.onResume();
-        _recyclerView.startSearch(_savedList, _options);
     }
 
     @Override
