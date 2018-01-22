@@ -44,6 +44,17 @@ public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
     private final Object LOCK = new Object();
 
+    /**
+     * When set to true, this will force the web crawler to run on startup. Only possible when
+     * running a debug build.
+     */
+    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
+    /**
+     * When set to true, will force the web crawler to only download the first page of assigned work.
+     * Only possible when running a debug build.
+     */
+    private static final boolean LIMIT_ONE_PAGE = false && BuildConfig.DEBUG;
+
     private Handler _activityHandler;
 
     private boolean _haveProfile = false;
@@ -85,7 +96,7 @@ public class WebCrawlerService extends Service {
 
         purgeOldData();
 
-        boolean forceRun = false;
+        boolean forceRun = FORCE_RUN;
 
         if (intent != null && intent.hasExtra("force")) {
             forceRun = true;
@@ -260,7 +271,8 @@ public class WebCrawlerService extends Service {
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists")
                     || methodName.equals("getWorkOrders")
-                    || methodName.equals("getWorkOrder");
+                    || methodName.equals("getWorkOrder")
+                    || methodName.equals("getAttachments");
         }
 
         @Override
@@ -303,7 +315,7 @@ public class WebCrawlerService extends Service {
 
                     // request the other lists
                     ListEnvelope metadata = workOrders.getMetadata();
-                    if (metadata.getPage() == 1) {
+                    if (metadata.getPage() == 1 && !LIMIT_ONE_PAGE) {
                         for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
                             incrementPendingRequestCounter(1);
                             incRequestCounter(1);
@@ -328,8 +340,31 @@ public class WebCrawlerService extends Service {
                     incRequestCounter(1);
                     WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, true);
 
+                    incrementPendingRequestCounter(1);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, true);
+
+                    incRequestCounter(1);
+                    WorkordersWebApi.getBonuses(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getCustomFields(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getDiscounts(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getPay(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getExpenses(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getPenalties(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getQualifications(WebCrawlerService.this, workOrder.getId(), false, true);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getSignatures(WebCrawlerService.this, workOrder.getId(), false, true);
+
+                } else if (successObject != null && methodName.equals("getAttachments")) {
+                    incrementPendingRequestCounter(-1);
                     // get attachments
-                    AttachmentFolders folders = workOrder.getAttachments();
+                    AttachmentFolders folders = (AttachmentFolders) successObject;
                     if (folders.getResults().length > 0) {
                         for (AttachmentFolder folder : folders.getResults()) {
                             Attachment[] attachments = folder.getResults();

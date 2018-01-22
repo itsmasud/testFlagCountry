@@ -1086,13 +1086,16 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
                     ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
                 return;
             }
+
+            if (isSync)
+                return;
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -1132,6 +1135,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.contains("TimeLog");
         }
 

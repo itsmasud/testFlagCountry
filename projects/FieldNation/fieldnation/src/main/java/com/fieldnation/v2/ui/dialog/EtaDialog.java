@@ -912,6 +912,10 @@ public class EtaDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.equals("assignUser")
                     || methodName.contains("updateETA")
                     || methodName.contains("request"); // TODO this might not work here

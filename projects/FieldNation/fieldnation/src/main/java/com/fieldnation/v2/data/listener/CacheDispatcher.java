@@ -73,7 +73,7 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
     protected void onPostExecute(Bundle bundle) {
         if (bundle != null) {
             Log.v(TAG, "Data cache hit!");
-            PigeonRoost.sendMessage(_transactionParams.topicId, bundle, Sticky.TEMP);
+            PigeonRoost.sendMessage(_transactionParams.topicId, bundle, Sticky.NONE);
         } else {
             Log.v(TAG, "Data Cache Miss");
         }

@@ -157,6 +157,10 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     private WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return true;
         }
 
