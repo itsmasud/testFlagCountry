@@ -311,6 +311,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .property("folder_id")
                 .value(folderId)
                 .addContext(new SpTracingContext(uuid))
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "addAttachment API"))
                 .build()
@@ -358,6 +359,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransactionSystem.queueTransaction(context, transaction);
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "addAttachment API"))
                     .build());
@@ -1707,8 +1709,8 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .label(workOrderId + "")
                 .category("workorder")
                 .addContext(uiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .addContext(new SpTracingContext(uuid))
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "addTimeLog API"))
                 .build()
@@ -1745,6 +1747,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransactionSystem.queueTransaction(context, transaction);
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "addTimeLog API"))
                     .build());
@@ -9313,6 +9316,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransactionSystem.queueTransaction(context, transaction);
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "updateTimeLog API"))
                     .build());
@@ -9379,6 +9383,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransactionSystem.queueTransaction(context, transaction);
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "updateTimeLog API"))
                     .build());
