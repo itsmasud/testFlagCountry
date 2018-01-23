@@ -16,6 +16,7 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
@@ -107,6 +108,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
         WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
 
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Folders Dialog"))
@@ -149,6 +151,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Folders Dialog"))
@@ -193,6 +196,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                 } else {
                     // TODO show a toast?
                     Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                             .addContext(new SpTracingContext(fui.uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                             .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Folders Dialog, no uri"))

@@ -29,6 +29,7 @@ import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -626,6 +627,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     _workOrderId,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -642,6 +644,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     _workOrderId,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -658,6 +661,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     _workOrderId,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -983,6 +987,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                         new EventContext[]{
                                 new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                 new SpStackContext(DebugUtils.getStackTraceElement()),
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                         }
@@ -996,6 +1001,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                         new EventContext[]{
                                 new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                 new SpStackContext(DebugUtils.getStackTraceElement()),
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                         }
@@ -1029,6 +1035,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -1068,6 +1075,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             UUIDGroup uuid = new UUIDGroup(null, _myUUID);
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "WoD BottomSheet Add Attachment"))
                     .build());

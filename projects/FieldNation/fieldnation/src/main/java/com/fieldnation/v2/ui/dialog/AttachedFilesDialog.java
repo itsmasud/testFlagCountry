@@ -22,6 +22,7 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.AttachmentTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
@@ -128,6 +129,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         _myUUID = payload.getString("uuid");
 
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Files Dialog"))
@@ -185,6 +187,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Files Dialog"))
@@ -302,6 +305,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                             _selectedFolderId, false, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                             .addContext(new SpTracingContext(fui.uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                             .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Files Dialog, no uri"))
@@ -317,6 +321,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                                 .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
                                 .action("start")
                                 .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Files Dialog Upload"))
                                 .build());
