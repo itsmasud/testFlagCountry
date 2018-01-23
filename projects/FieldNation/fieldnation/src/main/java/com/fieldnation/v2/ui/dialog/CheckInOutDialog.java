@@ -27,6 +27,7 @@ import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -188,6 +189,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Check In Out Dialog"))
                 .build());
@@ -252,6 +254,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Check In Out Dialog"))
@@ -450,6 +453,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                             _workOrderId,
                             new EventContext[]{
                                     new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                    new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                     new SpStackContext(DebugUtils.getStackTraceElement()),
                                     new SpStatusContext(SpStatusContext.Status.INFO, "Check In Out Dialog"),
                             }
@@ -500,6 +504,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                             _workOrderId,
                             new EventContext[]{
                                     new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                    new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                     new SpStackContext(DebugUtils.getStackTraceElement()),
                                     new SpStatusContext(SpStatusContext.Status.INFO, "Check In Out Dialog"),
                             }

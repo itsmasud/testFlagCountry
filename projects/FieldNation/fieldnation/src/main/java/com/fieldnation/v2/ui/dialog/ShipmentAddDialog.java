@@ -27,6 +27,7 @@ import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityResultListener;
@@ -174,6 +175,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Shipment Dialog"))
                 .build());
@@ -236,6 +238,7 @@ public class ShipmentAddDialog extends SimpleDialog {
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Shipment Dialog"))
                 .build());

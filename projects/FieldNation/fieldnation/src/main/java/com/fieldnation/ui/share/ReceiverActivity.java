@@ -18,6 +18,7 @@ import com.fieldnation.analytics.contexts.SpFileContext;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
@@ -236,6 +237,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     public void finish() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_selectedWorkOrder.getId()).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Leaving Receiver"))
@@ -264,6 +266,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
             Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrder.getId()).build())
                     .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Workorder Selected"))
@@ -339,6 +342,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
                                 .label("ReceiverActivity - multiple")
                                 .action("start")
                                 .addContext(new SpTracingContext(file.getUUID()))
+                                .addContext(new SpWorkOrderContext.Builder().workOrderId(_selectedWorkOrder.getId()).build())
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Send Files"))
                                 .addContext(new SpFileContext.Builder().name(file.getFileName()).size(0).build())

@@ -31,6 +31,7 @@ import com.fieldnation.analytics.contexts.SpFileContext;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnanalytics.Tracker;
@@ -296,6 +297,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
                 Tracker.event(App.get(), new CustomEvent.Builder()
                         .addContext(new SpTracingContext(_uuid))
+                        .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                         .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                         .addContext(new SpStatusContext(SpStatusContext.Status.START, "Photo Upload Dialog - Retry"))
                         .addContext(new SpFileContext.Builder().name(_originalFileName).size((int) _cacheSize).build())
@@ -323,6 +325,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             }
 
             Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                     .addContext(new SpTracingContext(_uuid))
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.START, "Photo Upload Dialog - New"))
@@ -392,6 +395,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(_uuid))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Photo Upload Dialog"))
@@ -507,6 +511,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
                                     .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Retry"))
                                     .addContext(new SpFileContext.Builder().name(_newFileName).size((int) _cacheSize).build())
@@ -538,6 +543,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - task")
                                     .action("start")
                                     .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Task"))
                                     .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
@@ -549,6 +555,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                                     .label((misc.isEmptyOrNull(getUid()) ? TAG : getUid()) + " - slot")
                                     .action("start")
                                     .addContext(new SpTracingContext(_uuid))
+                                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Photo Upload Dialog - Normal - Slot"))
                                     .addContext(new SpFileContext.Builder().name(_newFileName).size(0).build())
