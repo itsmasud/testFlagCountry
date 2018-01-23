@@ -120,7 +120,7 @@ public class WebCrawlerService extends Service {
         if (forceRun) {
             Log.v(TAG, "force run, running");
 
-            showNotification();
+            startNotification();
             runCrawler();
 
             return START_STICKY;
@@ -130,7 +130,7 @@ public class WebCrawlerService extends Service {
         if (intent != null && intent.hasExtra("IS_ALARM") || forceRun) {
             Log.v(TAG, "alarm triggered");
 
-            showNotification();
+            startNotification();
             runCrawler();
 
             return START_STICKY;
@@ -141,12 +141,15 @@ public class WebCrawlerService extends Service {
         return START_STICKY;
     }
 
-    private void showNotification() {
+    private void startNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
             builder.setLargeIcon((Bitmap) null);
             builder.setSmallIcon(R.drawable.ic_notif_queued);
             builder.setContentTitle("Running background sync..");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
 
             android.app.Notification notification = builder.build();
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
@@ -157,9 +160,42 @@ public class WebCrawlerService extends Service {
             builder.setLargeIcon((Bitmap) null);
             builder.setSmallIcon(R.drawable.ic_notif_queued);
             builder.setContentTitle("Running background sync..");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
 
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, builder.build());
+            android.app.Notification notification = builder.build();
+            manager.notify(NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_ID, notification);
+        }
+    }
+
+    private void completeNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Background sync complete");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
+
+            android.app.Notification notification = builder.build();
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.notify(NOTIFICATION_ID, notification);
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Background sync complete");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
+
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            android.app.Notification notification = builder.build();
+            manager.notify(NOTIFICATION_ID, notification);
         }
     }
 
