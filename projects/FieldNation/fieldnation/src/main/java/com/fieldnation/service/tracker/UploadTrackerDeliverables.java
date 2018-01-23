@@ -123,7 +123,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 Notification.Builder builder = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL);
                 builder.setLargeIcon((Bitmap) null);
                 builder.setContentIntent(pendingIntent);
-
+                builder.setOnlyAlertOnce(true);
+                builder.setCategory(Notification.CATEGORY_PROGRESS);
+                builder.setOngoing(true);
+                
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
                 if (uploading > 0) {
@@ -164,6 +167,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     PendingIntent pi = PendingIntent.getService(App.get(), App.secureRandom.nextInt(), retryIntent, 0);
                     builder.addAction(new Notification.Action.Builder(
                             Icon.createWithResource(App.get(), R.drawable.ic_loader_arrow), "RETRY ALL", pi).build());
+                    builder.setOngoing(false);
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle(context.getResources().getString(
@@ -176,6 +180,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                             R.plurals.num_uploads_complete_title, success, _workOrderId));
                     builder.setContentText(context.getString(
                             R.string.num_num_successfully_uploaded, success, total));
+                    builder.setOngoing(false);
                 }
 
                 if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
@@ -184,6 +189,9 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get());
                 builder.setLargeIcon(null);
                 builder.setContentIntent(pendingIntent);
+                builder.setOnlyAlertOnce(true);
+                builder.setCategory(NotificationCompat.CATEGORY_PROGRESS);
+                builder.setOngoing(true);
 
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
                 if (uploading > 0) {
@@ -224,6 +232,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     PendingIntent pi = PendingIntent.getService(App.get(), App.secureRandom.nextInt(), retryIntent, 0);
                     builder.addAction(R.drawable.ic_loader_arrow, "RETRY ALL", pi);
                     builder.setPriority(NotificationCompat.PRIORITY_MAX);
+                    builder.setOngoing(false);
                 } else if (queued > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle(context.getResources().getString(
@@ -236,10 +245,12 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                             R.plurals.num_uploads_complete_title, success, _workOrderId));
                     builder.setContentText(context.getString(
                             R.string.num_num_successfully_uploaded, success, total));
+                    builder.setOngoing(false);
                 }
 
-                if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0)
+                if (retries > 0 || failed > 0 || uploading > 0 || queued > 0 || success > 0) {
                     manager.notify(_notificationId, builder.build());
+                }
             }
 
 
