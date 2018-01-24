@@ -18,7 +18,6 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.data.client.BundlesWebApi;
@@ -48,7 +47,7 @@ public class WebCrawlerService extends Service {
      * When set to true, this will force the web crawler to run on startup. Only possible when
      * running a debug build.
      */
-    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
+    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
     /**
      * When set to true, will force the web crawler to only download the first page of assigned work.
      * Only possible when running a debug build.
@@ -344,6 +343,7 @@ public class WebCrawlerService extends Service {
                     incRequestCounter(1);
                     WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, true);
 
+/*
                     incRequestCounter(1);
                     WorkordersWebApi.getBonuses(WebCrawlerService.this, workOrder.getId(), false, true);
                     incRequestCounter(1);
@@ -360,6 +360,7 @@ public class WebCrawlerService extends Service {
                     WorkordersWebApi.getQualifications(WebCrawlerService.this, workOrder.getId(), false, true);
                     incRequestCounter(1);
                     WorkordersWebApi.getSignatures(WebCrawlerService.this, workOrder.getId(), false, true);
+*/
 
                 } else if (successObject != null && methodName.equals("getAttachments")) {
                     incrementPendingRequestCounter(-1);
@@ -371,7 +372,11 @@ public class WebCrawlerService extends Service {
                             if (attachments.length > 0) {
                                 for (Attachment attachment : attachments) {
                                     incRequestCounter(1);
-                                    DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                    if (attachment.getFile().getSizeBytes() >= 60000000) {
+                                        WorkordersWebApi.deleteAttachment(WebCrawlerService.this, transactionParams.getMethodParamInt("workOrderId"), attachment.getFolderId(), attachment.getId(), null);
+                                    } else {
+                                        //DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                    }
                                 }
                             }
                         }

@@ -88,6 +88,7 @@ public class App extends Application {
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
     public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
+    public static final String PREF_OFFLINE_MODE = "PREF_OFFLINE_MODE";
 
     private static App _context;
 
@@ -461,13 +462,16 @@ public class App extends Application {
         public void onNetworkDisconnected() {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
-            ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AppMessagingClient.networkConnected();
-                    WebTransactionSystem.getInstance();
-                }
-            }, Snackbar.LENGTH_INDEFINITE);
+
+            if (!isOffline()) {
+                ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AppMessagingClient.networkConnected();
+                        WebTransactionSystem.getInstance();
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
+            }
         }
     };
 
@@ -546,6 +550,18 @@ public class App extends Application {
             return profile.getUserId();
         }
         return -1;
+    }
+
+    public boolean isOffline() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_OFFLINE_MODE, false);
+    }
+
+    public void setOffline(boolean isOffline) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_OFFLINE_MODE, isOffline);
+        edit.apply();
     }
 
     public boolean canRemindCoi() {

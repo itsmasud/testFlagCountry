@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,10 +23,12 @@ import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
@@ -50,6 +53,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private IconFontButton _profileExpandButton;
     private NavProfileDetailListView _profileListView = null;
 
+    private Button _offlineButton;
     private View _profileMenu;
     private View _paymentMenu;
     private View _settingsMenu;
@@ -98,6 +102,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             return;
 
         setSaveEnabled(true);
+
+        _offlineButton = findViewById(R.id.offline_button);
+        _offlineButton.setOnClickListener(_offline_onClick);
 
         _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -219,6 +226,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _offline_onClick = new ApatheticOnClickListener() {
+        @Override
+        public void onSingleClick(View v) {
+            AppMessagingClient.setOfflineMode(!App.get().isOffline());
+
+            ToastClient.toast(App.get(), "Offline: " + App.get().isOffline(), Toast.LENGTH_SHORT);
+        }
+    };
+
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {

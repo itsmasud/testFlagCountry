@@ -158,6 +158,13 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sendMessage(ADDRESS_SHOW_LOADING, bundle, Sticky.NONE);
     }
 
+    public static void setOfflineMode(boolean isOffline) {
+        App.get().setOffline(isOffline);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("isOffline", isOffline);
+        PigeonRoost.sendMessage(ADDRESS_OFFLINE_MODE, bundle, Sticky.NONE);
+    }
+
     @Override
     public void onMessage(String address, Object message) {
         switch (address) {
@@ -199,7 +206,13 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
             case ADDRESS_USER_SWITCHED:
                 onUserSwitched((Profile) ((Bundle) message).getParcelable(PARAM_PROFILE));
                 break;
+            case ADDRESS_OFFLINE_MODE:
+                onOfflineMode(((Bundle) message).getBoolean("isOffline"));
+                break;
         }
+    }
+
+    public void onOfflineMode(boolean isOffline) {
     }
 
     public void onUserSwitched(Profile profile) {

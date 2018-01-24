@@ -13,11 +13,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <Button
+                android:id="@+id/offline_button"
+                style="@style/Material.Button.Flat"
+                android:layout_width="match_parent"
+                android:text="Toggle Offline" />
+
             <TextView
                 android:id="@+id/options_textview"
                 style="@style/OptionsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/offline_button"
                 android:text="@string/account" />
 
             <View

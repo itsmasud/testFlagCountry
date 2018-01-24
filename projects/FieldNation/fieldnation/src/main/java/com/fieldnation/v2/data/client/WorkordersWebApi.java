@@ -2393,16 +2393,18 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param attachmentId File id
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, EventContext uiContext) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
-                .label(workOrderId + "")
-                .category("workorder")
-                .addContext(uiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
-                .property("folder_id")
-                .value(folderId)
-                .build()
-        );
+        if (uiContext != null) {
+            Tracker.event(context, new SimpleEvent.Builder()
+                    .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
+                    .label(workOrderId + "")
+                    .category("workorder")
+                    .addContext(uiContext)
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                    .property("folder_id")
+                    .value(folderId)
+                    .build()
+            );
+        }
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -4814,7 +4816,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
                     + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
                     + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
-                   );
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5107,7 +5109,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
                     + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
                     + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-                   );
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5977,7 +5979,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     + (getWorkOrdersOptions.getFLocationRadius() != null ?
                     ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
                             + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
-                   );
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
