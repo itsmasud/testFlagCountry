@@ -1,20 +1,26 @@
 package com.fieldnation.service.crawler;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 
+import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.DataPurgeAsync;
+import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
@@ -48,7 +54,7 @@ public class WebCrawlerService extends Service {
      * When set to true, this will force the web crawler to run on startup. Only possible when
      * running a debug build.
      */
-    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
+    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
     /**
      * When set to true, will force the web crawler to only download the first page of assigned work.
      * Only possible when running a debug build.
@@ -64,6 +70,7 @@ public class WebCrawlerService extends Service {
     private boolean _runningPurge = false;
     private boolean _monitorRunning = false;
     private int _pendingRequests = 0;
+    private static int NOTIFICATION_ID = App.secureRandom.nextInt();
 
     public WebCrawlerService() {
         super();
@@ -85,15 +92,8 @@ public class WebCrawlerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            //TODO make work with O
-            Log.v(TAG, "Running on O, can't operate in background");
-            return START_NOT_STICKY;
-        }
-
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
-
         purgeOldData();
 
         boolean forceRun = FORCE_RUN;
@@ -120,6 +120,7 @@ public class WebCrawlerService extends Service {
         if (forceRun) {
             Log.v(TAG, "force run, running");
 
+            startNotification();
             runCrawler();
 
             return START_STICKY;
@@ -129,6 +130,7 @@ public class WebCrawlerService extends Service {
         if (intent != null && intent.hasExtra("IS_ALARM") || forceRun) {
             Log.v(TAG, "alarm triggered");
 
+            startNotification();
             runCrawler();
 
             return START_STICKY;
@@ -137,6 +139,64 @@ public class WebCrawlerService extends Service {
         Log.v(TAG, "Do nothing");
         startActivityMonitor();
         return START_STICKY;
+    }
+
+    private void startNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Running background sync..");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
+
+            android.app.Notification notification = builder.build();
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.notify(NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_ID, notification);
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Running background sync..");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
+
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            android.app.Notification notification = builder.build();
+            manager.notify(NOTIFICATION_ID, notification);
+            startForeground(NOTIFICATION_ID, notification);
+        }
+    }
+
+    private void completeNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Background sync complete");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
+
+            android.app.Notification notification = builder.build();
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.notify(NOTIFICATION_ID, notification);
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setLargeIcon((Bitmap) null);
+            builder.setSmallIcon(R.drawable.ic_notif_queued);
+            builder.setContentTitle("Background sync complete");
+            builder.setOnlyAlertOnce(true);
+            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+            builder.setOngoing(true);
+
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            android.app.Notification notification = builder.build();
+            manager.notify(NOTIFICATION_ID, notification);
+        }
     }
 
     private void purgeOldData() {
@@ -151,7 +211,6 @@ public class WebCrawlerService extends Service {
         @Override
         public void onFinish() {
             _runningPurge = false;
-
         }
     };
 
@@ -208,6 +267,7 @@ public class WebCrawlerService extends Service {
     }
 
     private void scheduleNext() {
+        Log.v(TAG, "scheduleNext");
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
@@ -220,8 +280,8 @@ public class WebCrawlerService extends Service {
             cal.set(Calendar.MINUTE, (int) (runTime % 60));
         } else {
             Random random = new Random();
-            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1));
-            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60));
+            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1)); // add 0-1 hour
+            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60)); // add 0-60 min
         }
 
         long nextTime = cal.getTimeInMillis();
@@ -229,8 +289,12 @@ public class WebCrawlerService extends Service {
             nextTime += 86400000;
         }
 
-        AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
         Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CrawlerJobService.schedule(this, nextTime);
+        } else {
+            AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
+        }
     }
 
     public void runCrawler() {
@@ -281,6 +345,7 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "onComplete " + methodName);
                 if (successObject != null && methodName.equals("getWorkOrderLists")) {
                     Log.v(TAG, "getWorkOrderLists");
+
                     SavedList[] savedList = (SavedList[]) successObject;
                     incrementPendingRequestCounter(-1);
 
@@ -294,6 +359,18 @@ public class WebCrawlerService extends Service {
 
                 } else if (successObject != null && methodName.equals("getWorkOrders")) {
                     WorkOrders workOrders = (WorkOrders) successObject;
+                    boolean isFlightBoard = false;
+                    try {
+                        JsonObject options = new JsonObject(transactionParams.methodParams);
+                        if (options.has("getWorkOrdersOptions.fFlightboardTomorrow") && options.getBoolean("getWorkOrdersOptions.fFlightboardTomorrow"))
+                            isFlightBoard = true;
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+
+                    if (isFlightBoard)
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
+
                     if (workOrders.getMetadata() == null)
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 

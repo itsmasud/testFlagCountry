@@ -36,9 +36,12 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
             return false;
 
         try {
-            if (webTransaction.getKey() != null && WebTransaction.keyExists(webTransaction.getKey())) {
-                Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
-                return true;
+            if (webTransaction.getKey() != null) {
+                WebTransaction dbWt = WebTransaction.get(webTransaction.getKey());
+                if (dbWt != null && (dbWt.isSync() == webTransaction.isSync())) {
+                    Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
+                    return true;
+                }
             }
 
             if (webTransaction.getUUID() != null) {

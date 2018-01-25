@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
@@ -314,6 +315,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "addAttachment API"))
+                .addContext(new SpFileContext.Builder().name(filename).build())
                 .build()
         );
 
@@ -361,6 +363,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .addContext(new SpTracingContext(uuid))
                     .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                    .addContext(new SpFileContext.Builder().name(filename).build())
                     .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "addAttachment API"))
                     .build());
         } catch (Exception ex) {
