@@ -40,8 +40,9 @@
         android:layout_below="@+id/key"
         android:layout_marginBottom="4dp"
         android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/alert"
         android:gravity="left"
-        android:text="Value"
+        android:text="@string/placeholder_paragraph"
         android:textColor="@color/fn_light_text_statefull" />
 
     <ProgressBar
