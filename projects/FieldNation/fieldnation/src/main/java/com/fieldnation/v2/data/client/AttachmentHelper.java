@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpFileContext;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
@@ -50,6 +51,7 @@ public class AttachmentHelper {
                 .addContext(new SpTracingContext(uuid))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Attachment Helper"))
+                .addContext(new SpFileContext.Builder().name(filename).build())
                 .build());
 
         new AddAttachmentTask().executeEx(context, workOrderId, attachment, filename, uri, uuid);
@@ -87,6 +89,7 @@ public class AttachmentHelper {
                             .addContext(new SpTracingContext(uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                             .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Attachment Helper"))
+                            .addContext(new SpFileContext.Builder().name(filename).build())
                             .build());
 
                 } catch (Exception ex) {
@@ -94,6 +97,7 @@ public class AttachmentHelper {
                             .addContext(new SpTracingContext(uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                             .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Attachment Helper"))
+                            .addContext(new SpFileContext.Builder().name(filename).build())
                             .build());
                     Log.v(TAG, ex);
                 }
