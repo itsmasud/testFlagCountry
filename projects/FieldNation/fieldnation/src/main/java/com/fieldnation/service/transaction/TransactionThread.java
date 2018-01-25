@@ -48,7 +48,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
     private final Object SYNC_LOCK = new Object();
 
     private static final long[] RETRY_TIMES = new long[]{30000, 120000, 300000, 600000};
-//    private static final long[] RETRY_TIMES = new long[]{5000, 10000, 20000, 30000};
+    //private static final long[] RETRY_TIMES = new long[]{5000, 5000, 5000, 5000};
 
     private final WebTransactionSystem _service;
 
