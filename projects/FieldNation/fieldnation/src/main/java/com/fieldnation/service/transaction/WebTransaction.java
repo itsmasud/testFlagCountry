@@ -461,6 +461,35 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
+    public static WebTransaction get(String key) {
+//        Log.v(TAG, "get(" + id + ")");
+        WebTransaction obj = null;
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.KEY + "=?",
+                            new String[]{key + ""},
+                            null, null, null, "1");
+
+                    if (cursor.moveToFirst()) {
+                        obj = new WebTransaction(cursor);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return obj;
+    }
+
     public static List<WebTransaction> getZombies() {
         List<WebTransaction> zombies = new LinkedList<>();
         synchronized (TAG) {
