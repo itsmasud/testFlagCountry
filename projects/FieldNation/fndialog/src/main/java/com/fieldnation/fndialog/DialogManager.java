@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -88,12 +89,16 @@ public class DialogManager extends FrameLayout implements Constants {
 
             for (int i = 0; i < bundles.length; i++) {
                 Bundle bundle = (Bundle) bundles[i];
+                String uid = bundle.getString("uid");
+
+                if (!misc.isEmptyOrNull(uid) && _holderLookup.containsKey(uid))
+                    continue;
+
                 Bundle dialogSavedState = bundle.getBundle("savedState");
                 String className = bundle.getString("className");
                 Log.v(TAG, "restoring " + className);
                 ClassLoader classLoader = bundle.getClassLoader();
                 Bundle params = bundle.getBundle("params");
-                String uid = bundle.getString("uid");
 
                 DialogHolder holder = makeDialogHolder(className, classLoader);
                 if (holder != null) {
@@ -271,6 +276,13 @@ public class DialogManager extends FrameLayout implements Constants {
     private final Server _dialogServer = new Server() {
         @Override
         public void onShowDialog(String uid, String className, ClassLoader classLoader, Bundle params) {
+            Log.v(TAG, "onShowDialog " + uid);
+
+            if (!misc.isEmptyOrNull(uid) && _holderLookup.containsKey(uid)) {
+                Log.v(TAG, "onShowDialog " + uid + " dupliace, skipping");
+                return;
+            }
+
             try {
                 DialogHolder holder = makeDialogHolder(className, classLoader);
 
