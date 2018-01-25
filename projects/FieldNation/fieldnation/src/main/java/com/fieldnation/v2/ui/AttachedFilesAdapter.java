@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -536,7 +537,13 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 PausedUploadTuple t = (PausedUploadTuple) objects.get(position).object;
                 long timeLeft = t.transaction.getQueueTime() - System.currentTimeMillis();
+                WebTransaction wt = t.transaction;
                 if (timeLeft < 0) {
+                    if (App.get().isOffline()) {
+                        view.set(t.name, "Paused in offline mode");
+                    } else if (wt.isWifiRequired() && !App.get().haveWifi()) {
+                        view.set(t.name, "Waiting for wifi...");
+                    }
                     view.set(t.name, "Waiting for network...");
                 } else {
                     view.set(t.name, "Will retry in " + misc.convertMsToHuman(timeLeft, true));

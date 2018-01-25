@@ -104,6 +104,15 @@ class TransactionThread extends ThreadManager.ManagedThread {
     @Override
     public boolean doWork() {
         // try to get a transaction
+        if (App.get().isOffline()) {
+            Log.v(TAG, "Offline mode, skipping");
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ex) {
+            }
+            return false;
+        }
+
         if (!App.get().isConnected()) {
             if (!_isFirstThread) {
                 Log.v(TAG, "Connection down, skipping");
