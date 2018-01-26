@@ -217,6 +217,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult");
     }
 
     private final AuthClient _authClient = new AuthClient() {
