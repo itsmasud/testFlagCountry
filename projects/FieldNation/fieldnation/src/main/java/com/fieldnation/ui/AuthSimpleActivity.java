@@ -138,6 +138,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
+
+        if (doPermissionsChecks()) {
+            _permissionsListener.sub();
+            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        }
     }
 
     @Override
@@ -156,6 +161,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
+
+        if (doPermissionsChecks()) {
+            _permissionsListener.unsub();
+        }
 
         super.onPause();
     }
@@ -257,6 +266,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult");
         if (doPermissionsChecks()) {
             PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
