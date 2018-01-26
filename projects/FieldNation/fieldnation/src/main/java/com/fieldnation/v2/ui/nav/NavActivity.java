@@ -1,8 +1,10 @@
 package com.fieldnation.v2.ui.nav;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +20,8 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -159,6 +163,13 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onStart() {
         Log.v(TAG, "onStart");
+
+        boolean isLaunchingConfirm = !_isLoadingWorkOrder && App.get().needsConfirmation()
+                && App.get().confirmRemindMeExpired();
+        if (!isLaunchingConfirm) {
+            _permissionsListener.sub();
+        }
+
         super.onStart();
         _recyclerView.onStart();
     }
@@ -182,16 +193,29 @@ public class NavActivity extends AuthSimpleActivity {
             _recyclerView.startSearch(_savedList);
         }
 
+        boolean isLaunchingConfirm = false;
         if (!_isLoadingWorkOrder && App.get().needsConfirmation()
                 && App.get().confirmRemindMeExpired()) {
+            isLaunchingConfirm = true;
             launchConfirmActivity();
         } else if (_isLoadingWorkOrder) {
             _isLoadingWorkOrder = false;
         }
+
+        if (!isLaunchingConfirm) {
+            _permissionsListener.sub();
+        }
+
         _recyclerView.onResume();
 
         _workOrdersApi.sub();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+
+    }
+
+    @Override
+    public boolean doPermissionsChecks() {
+        return false;
     }
 
     @Override
@@ -199,6 +223,7 @@ public class NavActivity extends AuthSimpleActivity {
         Log.v(TAG, "onPause");
         _workOrdersApi.unsub();
         _recyclerView.onPause();
+        _permissionsListener.unsub();
         super.onPause();
     }
 
@@ -206,6 +231,7 @@ public class NavActivity extends AuthSimpleActivity {
     protected void onStop() {
         Log.v(TAG, "onStop");
         _recyclerView.onStop();
+        _permissionsListener.unsub();
         super.onStop();
     }
 
@@ -227,6 +253,12 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult");
+        PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -273,6 +305,13 @@ public class NavActivity extends AuthSimpleActivity {
             } else {
                 showDrawer();
             }
+        }
+    };
+
+    private final PermissionsRequestHandler _permissionsListener = new PermissionsRequestHandler() {
+        @Override
+        public Activity getActivity() {
+            return NavActivity.this;
         }
     };
 

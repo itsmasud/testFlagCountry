@@ -89,24 +89,28 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         _recyclerView.onStart();
     }
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         _recyclerView.onResume();
     }
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         _recyclerView.onPause();
         super.onPause();
     }
 
     @Override
     protected void onStop() {
+        Log.v(TAG, "onStop");
         _recyclerView.onStop();
         super.onStop();
     }

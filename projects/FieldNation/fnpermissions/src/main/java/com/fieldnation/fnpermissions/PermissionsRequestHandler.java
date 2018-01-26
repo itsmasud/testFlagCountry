@@ -79,6 +79,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
 
         // if we have requested... but no response we need to store these and wait
         if (!requesting && requestable.size() > 0) {
+            Log.v(TAG, "Requesting permissions" + getActivity().getLocalClassName());
             ActivityCompat.requestPermissions(
                     getActivity(), requestable.toArray(new String[requestable.size()]), 0);
             requesting = true;
