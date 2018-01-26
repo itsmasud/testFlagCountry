@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 
@@ -84,89 +85,36 @@ public class ListItemWebView extends RelativeLayout {
         populateUi();
     }
 
-    private final ViewTreeObserver.OnGlobalLayoutListener _globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
-        @Override
-        public void onGlobalLayout() {
-            if (!_switchCollapsed)
-                return;
-
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) _webView.getLayoutParams();
-
-            // move to collapsed state
-            if (_collapsed) {
-                if (_title == null) {
-                    _titleTextView.setVisibility(GONE);
-
-                    if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
-                        if (_webView.getHeight() < COLLAPSED_HEIGHT) {
-                            _button.setVisibility(GONE);
-                        } else {
-                            _button.setVisibility(VISIBLE);
-                            layoutParams.height = COLLAPSED_HEIGHT;
-                            _webView.setLayoutParams(layoutParams);
-                            post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    _button.startAnimation(_ccw);
-                                }
-                            });
-                        }
-                    }
-                } else {
-                    _button.setVisibility(VISIBLE);
-                    _webView.setVisibility(GONE);
-                    _titleTextView.setVisibility(VISIBLE);
-                    post(new Runnable() {
-                        @Override
-                        public void run() {
-                            _button.startAnimation(_ccw);
-                        }
-                    });
-                }
-                // move to expanded
-            } else {
-                if (_title == null) {
-                    if (layoutParams.height != LayoutParams.WRAP_CONTENT) {
-                        layoutParams.height = LayoutParams.WRAP_CONTENT;
-                        _webView.setLayoutParams(layoutParams);
-                        post(new Runnable() {
-                            @Override
-                            public void run() {
-                                _button.startAnimation(_cw);
-                            }
-                        });
-                    }
-                } else {
-                    _button.setVisibility(VISIBLE);
-                    _titleTextView.setVisibility(VISIBLE);
-                    _webView.setVisibility(VISIBLE);
-                    post(new Runnable() {
-                        @Override
-                        public void run() {
-                            _button.startAnimation(_cw);
-                        }
-                    });
-                }
-            }
-            _switchCollapsed = false;
-        }
-    };
-
     public void setTitle(String title) {
+        Log.v(TAG, "setTitle");
         _title = title;
-        _switchCollapsed = true;
         populateUi();
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                _switchCollapsed = true;
+                refreshThing();
+            }
+        }, 1000);
     }
 
     public void setData(String data) {
+        Log.v(TAG, "setData");
         _data = data.replaceAll("<del>", "<span style=\"color:#FFFFFF; background-color:#000000\">");
         _data = _data.replaceAll("</del>", "</span>");
         _data = Html.toHtml(misc.linkifyHtml(_data, Linkify.ALL));
-        _switchCollapsed = true;
         populateUi();
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                _switchCollapsed = true;
+                refreshThing();
+            }
+        }, 1000);
     }
 
     private void populateUi() {
+        Log.v(TAG, "populateUi");
         if (_title != null)
             _titleTextView.setText(_title);
 
@@ -174,6 +122,80 @@ public class ListItemWebView extends RelativeLayout {
             _webView.setVisibility(VISIBLE);
             _webView.loadData(_data, "text/html", "utf-8");
         }
+    }
+
+    private final ViewTreeObserver.OnGlobalLayoutListener _globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            Log.v(TAG, "onGlobalLayout");
+            refreshThing();
+        }
+    };
+
+    private void refreshThing() {
+        if (!_switchCollapsed)
+            return;
+        Log.v(TAG, "refreshThing");
+
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) _webView.getLayoutParams();
+
+        // move to collapsed state
+        if (_collapsed) {
+            if (_title == null) {
+                _titleTextView.setVisibility(GONE);
+
+                if (layoutParams.height == LayoutParams.WRAP_CONTENT) {
+                    if (_webView.getHeight() < COLLAPSED_HEIGHT) {
+                        _button.setVisibility(GONE);
+                    } else {
+                        _button.setVisibility(VISIBLE);
+                        layoutParams.height = COLLAPSED_HEIGHT;
+                        _webView.setLayoutParams(layoutParams);
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _button.startAnimation(_ccw);
+                            }
+                        });
+                    }
+                }
+            } else {
+                _button.setVisibility(VISIBLE);
+                _webView.setVisibility(GONE);
+                _titleTextView.setVisibility(VISIBLE);
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _button.startAnimation(_ccw);
+                    }
+                });
+            }
+            // move to expanded
+        } else {
+            if (_title == null) {
+                if (layoutParams.height != LayoutParams.WRAP_CONTENT) {
+                    layoutParams.height = LayoutParams.WRAP_CONTENT;
+                    _webView.setLayoutParams(layoutParams);
+                    post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _button.startAnimation(_cw);
+                        }
+                    });
+                }
+            } else {
+                _button.setVisibility(VISIBLE);
+                _titleTextView.setVisibility(VISIBLE);
+                _webView.setVisibility(VISIBLE);
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _button.startAnimation(_cw);
+                    }
+                });
+            }
+        }
+        _switchCollapsed = false;
     }
 
     /*-*********************************-*/
