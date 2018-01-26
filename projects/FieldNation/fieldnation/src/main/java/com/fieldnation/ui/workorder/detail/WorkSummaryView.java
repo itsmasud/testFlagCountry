@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -71,31 +70,28 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private void refresh() {
         setVisibility(View.VISIBLE);
 
-        _descriptionView.setData(_workOrder.getDescription().getHtml());
+        _descriptionView.setData(null, _workOrder.getDescription().getHtml());
         _qualificationsSummaryView.setWorkOrder(_workOrder);
 
         if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesView.setVisibility(View.GONE);
         } else {
             _policiesView.setVisibility(View.VISIBLE);
-            _policiesView.setTitle("Policies and Procedures");
-            _policiesView.setData(_workOrder.getPolicyAndProcedures().getHtml());
+            _policiesView.setData("Policies and Procedures", _workOrder.getPolicyAndProcedures().getHtml());
         }
 
         if (misc.isEmptyOrNull(_workOrder.getConfidential().getHtml())) {
             _confidentialInformationView.setVisibility(View.GONE);
         } else {
             _confidentialInformationView.setVisibility(View.VISIBLE);
-            _confidentialInformationView.setTitle("Confidential Information");
-            _confidentialInformationView.setData(_workOrder.getConfidential().getHtml());
+            _confidentialInformationView.setData("Confidential Information", _workOrder.getConfidential().getHtml());
         }
 
         if (misc.isEmptyOrNull(_workOrder.getStandardInstructions().getHtml())) {
             _standardInstructionsView.setVisibility(GONE);
         } else {
             _standardInstructionsView.setVisibility(VISIBLE);
-            _standardInstructionsView.setTitle("Standard Instructions");
-            _standardInstructionsView.setData(_workOrder.getStandardInstructions().getHtml());
+            _standardInstructionsView.setData("Standard Instructions", _workOrder.getStandardInstructions().getHtml());
         }
     }
 

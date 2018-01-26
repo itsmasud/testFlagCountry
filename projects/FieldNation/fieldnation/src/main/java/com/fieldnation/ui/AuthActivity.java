@@ -213,6 +213,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult");
         PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
