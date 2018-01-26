@@ -172,7 +172,7 @@ public class ListItemWebView extends RelativeLayout {
 
         if (_data != null) {
             _webView.setVisibility(VISIBLE);
-            _webView.loadData(_data, "text/html", "utf-8");
+            _webView.loadDataWithBaseURL(null,_data,"text/html", "utf-8", null);
         }
     }
 
