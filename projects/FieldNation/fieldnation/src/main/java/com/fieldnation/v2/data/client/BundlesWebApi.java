@@ -38,8 +38,16 @@ public abstract class BundlesWebApi extends Pigeon {
         PigeonRoost.sub(this, "ADDRESS_WEB_API_V2/BundlesWebApi");
     }
 
+    public void sub(boolean isSync) {
+        PigeonRoost.sub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/BundlesWebApi" : "ADDRESS_WEB_API_V2/BundlesWebApi");
+    }
+
     public void unsub() {
         PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/BundlesWebApi");
+    }
+
+    public void unsub(boolean isSync) {
+        PigeonRoost.unsub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/BundlesWebApi" : "ADDRESS_WEB_API_V2/BundlesWebApi");
     }
 
     /**
@@ -64,10 +72,10 @@ public abstract class BundlesWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/bundles/{bundle_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/BundlesWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/BundlesWebApi" : "ADDRESS_WEB_API_V2/BundlesWebApi",
                                     BundlesWebApi.class, "getBundleWorkOrders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)

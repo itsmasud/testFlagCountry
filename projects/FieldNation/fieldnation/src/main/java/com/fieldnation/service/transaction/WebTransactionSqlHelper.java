@@ -16,7 +16,7 @@ import java.util.List;
 public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 8; // last update: 1-15-2018 MAR-1214
+    private static final int TABLE_VER = 9; // last update: 1-26-2018 MAR-1304, added index on IS_SYNC
     public static final String TABLE_NAME = "transactions";
 
     private static WebTransactionSqlHelper _instance = null;
@@ -26,7 +26,7 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         LISTENER(1, "listener", "text"),
         LISTENER_PARAMS(2, "listener_params", "blob"),
         USE_AUTH(3, "use_auth", "integer not null"),
-        IS_SYNC(4, "is_sync", "integer not null"),
+        IS_SYNC(4, "is_sync", "integer not null", true),
         STATE(5, "state", "integer not null", true),
         REQUEST(6, "request", "text"),
         PRIORITY(7, "priority", "integer not null", true),

@@ -519,7 +519,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return zombies;
     }
 
-    public static List<WebTransaction> getPaused() {
+    public static List<WebTransaction> getPaused(boolean isSync) {
         List<WebTransaction> paused = new LinkedList<>();
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -530,7 +530,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.STATE + " =?",
+                            Column.STATE + " =? AND "
+                                    + Column.IS_SYNC + "=" + (isSync ? "1" : "0"),
                             new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
 
                     while (cursor.moveToNext()) {

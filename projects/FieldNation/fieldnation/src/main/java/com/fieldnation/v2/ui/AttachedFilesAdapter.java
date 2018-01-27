@@ -9,6 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -221,7 +222,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
     public void uploadProgress(UUIDGroup uuid, TransactionParams transactionParams, int progress) {
         Log.v(TAG, "uploadProgress");
-
         String name = null;
         try {
             JsonObject methodParams = new JsonObject(transactionParams.methodParams);

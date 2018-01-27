@@ -38,7 +38,9 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
         try {
             if (webTransaction.getKey() != null) {
                 WebTransaction dbWt = WebTransaction.get(webTransaction.getKey());
-                if (dbWt != null && (dbWt.isSync() == webTransaction.isSync())) {
+                if (dbWt != null
+                        && (dbWt.isSync() == webTransaction.isSync())
+                        && (dbWt.isWifiRequired() == webTransaction.isWifiRequired())) {
                     Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
                     return true;
                 }

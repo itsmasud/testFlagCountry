@@ -54,7 +54,7 @@ public class WebCrawlerService extends Service {
      * When set to true, this will force the web crawler to run on startup. Only possible when
      * running a debug build.
      */
-    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
+    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
     /**
      * When set to true, will force the web crawler to only download the first page of assigned work.
      * Only possible when running a debug build.
@@ -322,9 +322,9 @@ public class WebCrawlerService extends Service {
         ProfileClient.listMessages(WebCrawlerService.this, 0, true, false);
         ProfileClient.listNotifications(WebCrawlerService.this, 0, true, false);
 
-        _bundlesApi.sub();
+        _bundlesApi.sub(true);
 
-        _workOrdersApi.sub();
+        _workOrdersApi.sub(true);
         incrementPendingRequestCounter(1);
         incRequestCounter(1);
         WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
