@@ -104,7 +104,7 @@ public class Problems implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public Problems metadata(ListEnvelope metadata) throws ParseException {
@@ -159,7 +159,7 @@ public class Problems implements Parcelable {
         if (_sum == null)
             _sum = new ProblemsSum();
 
-            return _sum;
+        return _sum;
     }
 
     public Problems sum(ProblemsSum sum) throws ParseException {

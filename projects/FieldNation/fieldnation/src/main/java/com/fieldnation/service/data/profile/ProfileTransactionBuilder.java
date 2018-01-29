@@ -124,11 +124,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         }
     }
 
-    public static void action(Context context, long profileId, String action, String params,
-                              String contentType, String body) {
-        action(context, profileId, "POST/api/rest/v1/profile/[profileId]/" + action, action, params, contentType, body);
-    }
-
     public static void action(Context context, long profileId, String timingKey, String action, String params,
                               String contentType, String body) {
         try {
@@ -163,11 +158,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-    }
-
-    public static void actionAcceptTos(Context context, long profileId) {
-        action(context, profileId, "accept-toc", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, null);
     }
 
     public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {

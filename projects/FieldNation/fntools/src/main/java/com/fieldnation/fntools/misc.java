@@ -28,6 +28,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -96,6 +98,14 @@ public final class misc {
 //            return Bitmap.createScaledBitmap(b, w, h, false);
 //        }
         return b;
+    }
+
+    public static String to1Decimal(double value) {
+        return _maxOneDecimal.format(value);
+    }
+
+    public static String to1Decimal(float value) {
+        return _maxOneDecimal.format(value);
     }
 
     public static String to2Decimal(double value) {
@@ -517,6 +527,10 @@ public final class misc {
     }
 
     public static String convertMsToHuman(long milliseconds) {
+        return convertMSToDHMS(milliseconds, true);
+    }
+
+    public static String convertMsToHuman(long milliseconds, boolean includeSeconds) {
         String result = "";
 
         long Seconds = milliseconds / 1000;
@@ -530,20 +544,39 @@ public final class misc {
 
         result = "";
 
-        if (days > 0) {
+        if (days == 1) {
+            result += days + " day ";
+        } else if (days > 1) {
             result += days + " days ";
         }
-        if (hours > 0) {
+
+        if (hours == 1) {
+            result += hours + " hour ";
+        } else if (hours > 1) {
             result += hours + " hours ";
         }
-        if (min > 0) {
+
+        if (min == 1) {
             result += min + " min ";
+        } else if (min > 1) {
+            result += min + " mins ";
         }
-        if (sec > 0) {
+
+        if (includeSeconds && sec > 0) {
             result += sec + " sec";
         }
 
         return result.trim();
+    }
+
+    private static class Tupple {
+        String time;
+        String type;
+
+        public Tupple(String time, String type) {
+            this.time = time;
+            this.type = type;
+        }
     }
 
     public static String convertSecondsToDHMS(long Seconds, boolean only_available) {
@@ -574,20 +607,43 @@ public final class misc {
         }
 
         if (only_available) {
-            if (!"00".equals(days)) {
-                result = days + "d " + hours + "h " + min + "m " + sec + "s";
-            } else if (!"00".equals(hours)) {
-                result = hours + "h " + min + "m " + sec + "s";
-            } else if (!"00".equals(min)) {
-                result = min + "m " + sec + "s";
-            } else {
-                result = sec + "s";
+            List<Tupple> list = new LinkedList<>();
+            list.add(new Tupple(days, "d"));
+            list.add(new Tupple(hours, "h"));
+            list.add(new Tupple(min, "m"));
+            list.add(new Tupple(sec, "s"));
+
+            // remove from the front
+            while (list.size() > 0) {
+                if (list.get(0).time.equals("00")) {
+                    list.remove(0);
+                } else {
+                    break;
+                }
+            }
+
+            while (list.size() > 0) {
+                if (list.get(list.size() - 1).time.equals("00")) {
+                    list.remove(list.size() - 1);
+                } else {
+                    break;
+                }
+            }
+
+            for (Tupple tupple : list) {
+                result += tupple.time + tupple.type + " ";
+            }
+
+            result = result.trim();
+
+            if (misc.isEmptyOrNull(result)) {
+                result = "00s";
             }
         } else {
             result = days + "d " + hours + "h " + min + "m " + sec + "s";
         }
 
-        return result;
+        return result.trim();
     }
 
     public static void hideKeyboard(View v) {
@@ -624,7 +680,8 @@ public final class misc {
      * @param trackingId
      * @return 0 = Fedex, 1 = UPS, 2 = USPS, 3 = Other/unknown
      */
-    public static int getCarrierId(final String trackingId) {
+    public static int getCarrierId(String trackingId) {
+        trackingId = trackingId.toUpperCase();
         if (Pattern.compile("^E\\D{1}\\d{9}\\D{2}$|^9\\d{15,21}$").matcher(trackingId).matches()) {
             Log.e("ShipmentAddDialog", "tracking id: " + trackingId);
             return 2;

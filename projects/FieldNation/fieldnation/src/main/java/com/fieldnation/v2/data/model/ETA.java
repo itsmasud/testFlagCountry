@@ -119,7 +119,7 @@ public class ETA implements Parcelable {
         if (_condition == null)
             _condition = new Condition();
 
-            return _condition;
+        return _condition;
     }
 
     public ETA condition(Condition condition) throws ParseException {
@@ -144,7 +144,7 @@ public class ETA implements Parcelable {
         if (_end == null)
             _end = new Date();
 
-            return _end;
+        return _end;
     }
 
     public ETA end(Date end) throws ParseException {
@@ -235,7 +235,7 @@ public class ETA implements Parcelable {
         if (_start == null)
             _start = new Date();
 
-            return _start;
+        return _start;
     }
 
     public ETA start(Date start) throws ParseException {
@@ -260,7 +260,7 @@ public class ETA implements Parcelable {
         if (_status == null)
             _status = new ETAStatus();
 
-            return _status;
+        return _status;
     }
 
     public ETA status(ETAStatus status) throws ParseException {
@@ -285,7 +285,7 @@ public class ETA implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public ETA user(User user) throws ParseException {

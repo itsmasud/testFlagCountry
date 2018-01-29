@@ -3,14 +3,17 @@ package com.fieldnation.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.os.UserManager;
 import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,18 +32,22 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityRequestHandler;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.auth.AuthTopicConstants;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.data.profile.ProfileSystem;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
@@ -80,6 +87,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        PigeonRoost.clearAddressCache(AuthTopicConstants.ADDRESS_AUTH_COMMAND_NEED_PASSWORD);
+
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         getWindow().setFormat(PixelFormat.UNKNOWN);
         setContentView(R.layout.activity_login);
@@ -179,6 +188,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void finish() {
+        Log.v(TAG, "finish");
         super.finish();
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
@@ -192,7 +202,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
 
         AppMessagingClient.appShutdown();
-
         super.onBackPressed();
     }
 
@@ -204,6 +213,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult");
         PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
@@ -250,8 +260,35 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "Login Button");
             misc.hideKeyboard(getCurrentFocus());
-            startService(new Intent(AuthActivity.this, ProfileSystem.class));
+
+            try {
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("isUserAMonkey")
+                                .action(ActivityManager.isUserAMonkey() ? "true" : "false")
+                                .build());
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    UserManager um = (UserManager) getSystemService(Context.USER_SERVICE);
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("isUserAGoat")
+                                    .action(um.isUserAGoat() ? "true" : "false")
+                                    .build());
+                } else {
+                    Tracker.event(App.get(),
+                            new SimpleEvent.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("isUserAGoat")
+                                    .action("false")
+                                    .build());
+                }
+            } catch (Exception ex) {
+            }
 
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
@@ -261,78 +298,97 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 return;
             }
 
-            new AsyncTaskEx<Object, Object, OAuth>() {
-                @Override
-                protected OAuth doInBackground(Object... params) {
-                    String hostname = AuthActivity.this.getString(R.string.web_fn_hostname);
-                    String grantType = AuthActivity.this.getString(R.string.auth_fn_grant_type);
-                    String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
-                    String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
-                    String username = (String) params[0];
-                    String password = (String) params[1];
-
-                    try {
-                        OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
-                                grantType, clientId, clientSecret, username, password);
-
-                        AppMessagingClient.networkConnected();
-                        return auth;
-                    } catch (Exception ex) {
-                        // TODO, when we get here, app hangs at login screen. Need to do something
-                        Log.v(TAG, ex);
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(OAuth auth) {
-                    if (auth == null) {
-                        Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        AppMessagingClient.networkDisconnected();
-                        _contentLayout.setVisibility(View.VISIBLE);
-                        _signupButton.setVisibility(View.VISIBLE);
-                        _stiltView.setVisibility(View.VISIBLE);
-                        return;
-                    }
-                    String authToken = auth.getAccessToken();
-                    String error = auth.getErrorType();
-
-                    if ("invalid_client".equals(error)) {
-                        AppMessagingClient.updateApp();
-                    } else if (authToken != null) {
-                        Log.v(TAG, "have authtoken");
-                        Account account = new Account(_username, getString(R.string.auth_account_type));
-                        AccountManager am = AccountManager.get(AuthActivity.this);
-                        am.addAccountExplicitly(account, _password, null);
-                        am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
-
-                        Intent intent = new Intent();
-                        intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
-                        intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
-                        intent.putExtra(AccountManager.KEY_AUTHTOKEN, auth.getAccessToken());
-
-                        _authcomplete = true;
-
-                        AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
-                        AuthActivity.this.setResult(RESULT_OK, intent);
-                        AuthActivity.this.finish();
-
-                        AuthClient.addedAccountCommand();
-                        SplashActivity.startNew(AuthActivity.this);
-                    } else {
-                        _contentLayout.setVisibility(View.VISIBLE);
-                        _signupButton.setVisibility(View.VISIBLE);
-                        _stiltView.setVisibility(View.VISIBLE);
-                    }
-                    if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
-                        Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
-                    }
-                }
-            }.executeEx(_username, _password);
+            new LoginAsync(_loginListener).executeEx(_username, _password, App.get());
 
             _contentLayout.setVisibility(View.GONE);
             _signupButton.setVisibility(View.GONE);
             _stiltView.setVisibility(View.GONE);
+        }
+    };
+
+    private static class LoginAsync extends AsyncTaskEx<Object, Object, OAuth> {
+        private Listener _loginListener;
+
+        LoginAsync(Listener listener) {
+            super();
+            _loginListener = listener;
+        }
+
+        @Override
+        protected OAuth doInBackground(Object... params) {
+            String username = (String) params[0];
+            String password = (String) params[1];
+            Context context = (Context) params[2];
+            String hostname = context.getString(R.string.web_fn_hostname);
+            String grantType = context.getString(R.string.auth_fn_grant_type);
+            String clientId = context.getString(R.string.auth_fn_client_id);
+            String clientSecret = context.getString(R.string.auth_fn_client_secret);
+
+            try {
+                OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
+                        grantType, clientId, clientSecret, username, password);
+                return auth;
+            } catch (Exception ex) {
+                // TODO, when we get here, app hangs at login screen. Need to do something
+                Log.v(TAG, ex);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(OAuth auth) {
+            _loginListener.onComplete(auth);
+        }
+
+        public interface Listener {
+            void onComplete(OAuth oauth);
+        }
+    }
+
+    private final LoginAsync.Listener _loginListener = new LoginAsync.Listener() {
+        @Override
+        public void onComplete(OAuth oauth) {
+            if (oauth == null) {
+                Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
+                AppMessagingClient.networkDisconnected();
+                _contentLayout.setVisibility(View.VISIBLE);
+                _signupButton.setVisibility(View.VISIBLE);
+                _stiltView.setVisibility(View.VISIBLE);
+                return;
+            }
+            String authToken = oauth.getAccessToken();
+            String error = oauth.getErrorType();
+
+            if ("invalid_client".equals(error)) {
+                AppMessagingClient.updateApp();
+            } else if (authToken != null) {
+                Log.v(TAG, "have authtoken");
+                Account account = new Account(_username, getString(R.string.auth_account_type));
+                AccountManager am = AccountManager.get(AuthActivity.this);
+                am.addAccountExplicitly(account, _password, null);
+                am.setAuthToken(account, getString(R.string.auth_account_type), authToken);
+                AuthClient.addedAccountCommand();
+
+                Intent intent = new Intent();
+                intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, _username);
+                intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, getString(R.string.auth_account_type));
+                intent.putExtra(AccountManager.KEY_AUTHTOKEN, oauth.getAccessToken());
+
+                _authcomplete = true;
+
+                AuthActivity.this.setAccountAuthenticatorResult(intent.getExtras());
+                AuthActivity.this.setResult(RESULT_OK, intent);
+                AuthActivity.this.finish();
+
+                //SplashActivity.startNew(AuthActivity.this);
+            } else {
+                _contentLayout.setVisibility(View.VISIBLE);
+                _signupButton.setVisibility(View.VISIBLE);
+                _stiltView.setVisibility(View.VISIBLE);
+            }
+            if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
+                Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+            }
         }
     };
 
@@ -376,10 +432,21 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                /*| Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK*/);
 
         ActivityClient.startActivity(intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
-}
 
+    public static Intent startNewWithResponseIntent(Context context, Parcelable authenticatorResponse) {
+        Intent intent = new Intent(context, AuthActivity.class);
+
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                /*| Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK*/);
+
+        return intent;
+    }
+}

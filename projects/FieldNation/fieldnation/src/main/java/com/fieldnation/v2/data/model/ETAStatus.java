@@ -79,7 +79,7 @@ public class ETAStatus implements Parcelable {
         if (_updated == null)
             _updated = new Date();
 
-            return _updated;
+        return _updated;
     }
 
     public ETAStatus updated(Date updated) throws ParseException {

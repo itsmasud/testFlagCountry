@@ -6,19 +6,19 @@ import android.widget.EditText;
 
 public class EditTextAlertDialog extends Builder {
 
-	private final EditText _editText;
+    private final EditText _editText;
 
-	public EditTextAlertDialog(Context context, String title, String message) {
-		super(context);
-		setTitle(title);
-		setMessage(message);
+    public EditTextAlertDialog(Context context, String title, String message) {
+        super(context);
+        setTitle(title);
+        setMessage(message);
 
-		_editText = new EditText(context);
-		setView(_editText);
-	}
+        _editText = new EditText(context);
+        setView(_editText);
+    }
 
-	public String getInput() {
-		return _editText.getText().toString();
-	}
+    public String getInput() {
+        return _editText.getText().toString();
+    }
 
 }

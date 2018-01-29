@@ -8,16 +8,14 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
+import com.fieldnation.DataPurgeAsync;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnstore.StoredObject;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -52,7 +50,6 @@ public class WebCrawlerService extends Service {
     private long _lastRequestTime;
     private long _requestCounter = 0;
     private boolean _isRunning = false;
-    private long _imageDaysToLive = -1;
     private boolean _runningPurge = false;
     private boolean _monitorRunning = false;
     private int _pendingRequests = 0;
@@ -85,8 +82,6 @@ public class WebCrawlerService extends Service {
 
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
-
-        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_remove_rate), "-1")) * 2;
 
         purgeOldData();
 
@@ -138,54 +133,16 @@ public class WebCrawlerService extends Service {
             return;
 
         _runningPurge = true;
-        // TODO do the purge... cause we got nowhere else to do it right now
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                Log.v(TAG, "Flushing logs");
-                DebugUtils.flushLogs(WebCrawlerService.this, 86400000); // 1 day
-                Log.v(TAG, "Flushing data");
-                StoredObject.flush(App.get(), 604800000); // 1 week
-                //StoredObject.flush(1000); // 1 week
-
-                Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
-                // only flush if we have wifi, so that the app can get new ones without
-                // worrying about cell traffic
-                if (_imageDaysToLive > -1 && App.get().haveWifi()) {
-                    long days = _imageDaysToLive * 86400000;
-                    long cutoff = System.currentTimeMillis();
-                    List<StoredObject> list = StoredObject.list(App.get(), App.getProfileId(), "PhotoCache");
-
-                    Log.v(TAG, "Flushing photos");
-                    int count = 0;
-                    for (StoredObject obj : list) {
-                        if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(App.get(), obj);
-                            count++;
-                        }
-                    }
-
-                    list = StoredObject.list(App.get(), App.getProfileId(), "PhotoCacheCircle");
-
-                    for (StoredObject obj : list) {
-                        if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(App.get(), obj);
-                            count++;
-                        }
-                    }
-
-                    Log.v(TAG, "Flushing photos " + count);
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                _runningPurge = false;
-            }
-        }.executeEx();
+        new DataPurgeAsync().run(this, _dataPurgeListener);
     }
+
+    private final DataPurgeAsync.Listener _dataPurgeListener = new DataPurgeAsync.Listener() {
+        @Override
+        public void onFinish() {
+            _runningPurge = false;
+
+        }
+    };
 
     private synchronized void incrementPendingRequestCounter(int val) {
         _pendingRequests += val;
@@ -300,14 +257,14 @@ public class WebCrawlerService extends Service {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists")
                     || methodName.equals("getWorkOrders")
                     || methodName.equals("getWorkOrder");
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             try {
                 Log.v(TAG, "onComplete " + methodName);
                 if (successObject != null && methodName.equals("getWorkOrderLists")) {
@@ -326,14 +283,14 @@ public class WebCrawlerService extends Service {
                 } else if (successObject != null && methodName.equals("getWorkOrders")) {
                     WorkOrders workOrders = (WorkOrders) successObject;
                     if (workOrders.getMetadata() == null)
-                        return;
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                     Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
                     incrementPendingRequestCounter(-1);
 
                     if (!workOrders.getMetadata().getList().equals("workorders_assignments")) {
                         Log.v(TAG, "!!!!!! Not assigned work !!!!!!");
-                        return;
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
                     // get the details
@@ -356,7 +313,7 @@ public class WebCrawlerService extends Service {
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
                     if (workOrder.getId() == null)
-                        return;
+                        return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
                     Log.v(TAG, "getWorkOrder " + workOrder.getId());
                     incrementPendingRequestCounter(-1);
@@ -388,6 +345,7 @@ public class WebCrawlerService extends Service {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

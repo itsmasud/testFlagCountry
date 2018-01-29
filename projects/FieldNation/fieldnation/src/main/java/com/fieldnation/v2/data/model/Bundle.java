@@ -123,7 +123,7 @@ public class Bundle implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public Bundle metadata(ListEnvelope metadata) throws ParseException {

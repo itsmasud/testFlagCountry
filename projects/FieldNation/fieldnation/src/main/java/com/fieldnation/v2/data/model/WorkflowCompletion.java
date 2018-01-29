@@ -60,7 +60,7 @@ public class WorkflowCompletion implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public WorkflowCompletion metadata(ListEnvelope metadata) throws ParseException {

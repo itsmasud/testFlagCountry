@@ -4,37 +4,39 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ApatheticOnClickListener;
-import com.fieldnation.ui.HintArrayAdapter;
-import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
+import com.fieldnation.ui.RefreshView;
+import com.fieldnation.v2.ui.ListItemSummaryView;
+import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
 /**
  * Created by mc on 10/27/16.
  */
 
-public class RequestBundleDialog extends SimpleDialog {
+public class RequestBundleDialog extends FullScreenDialog {
     private static final String TAG = "RequestBundleDialog";
 
-    // State
-    private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
+    // Dialogs
+    private static final String DIALOG_UID_EXPIRE = TAG + ".expireDialog";
 
     private final static int INVALID_NUMBER = -1;
 
@@ -48,14 +50,14 @@ public class RequestBundleDialog extends SimpleDialog {
     private static final String PARAM_BUNDLE_SIZE = "bundleSize";
 
     // Ui
-    private TextView _titleTextView;
-    private TextView _bodyTextView;
-    private TextView _expiresTextView;
-    private CheckBox _expiresCheckBox;
-    private HintSpinner _expireSpinner;
-    private TextView _termsWarningTextView;
-    private Button _cancelButton;
-    private Button _okButton;
+    private Toolbar _toolbar;
+    private ActionMenuItemView _finishMenu;
+
+    private ListItemTwoHorizView _expiresView;
+    private ListItemSummaryView _bundleView;
+    private TextView _termsTextView;
+
+    private RefreshView _refreshView;
 
     // Data
     private int _type = TYPE_ACCEPT;
@@ -63,10 +65,9 @@ public class RequestBundleDialog extends SimpleDialog {
     private int _bundleSize = 0;
     private int _workOrderId = 0;
 
-    private int _currentPosition = 1;
     private long _expiringDurationSeconds = -1;
-    private int[] _durations;
     private boolean _expires;
+    private String _expiresTitle;
 
     public RequestBundleDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -76,34 +77,38 @@ public class RequestBundleDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_accept_bundle, container, false);
 
-        _titleTextView = v.findViewById(R.id.title_textview);
-        _bodyTextView = v.findViewById(R.id.body_textview);
-        _expiresTextView = v.findViewById(R.id.expires_textview);
-        _expiresCheckBox = v.findViewById(R.id.expires_checkbox);
-        _expireSpinner = v.findViewById(R.id.expire_duration_spinner);
-        _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
-        _cancelButton = v.findViewById(R.id.cancel_button);
-        _okButton = v.findViewById(R.id.ok_button);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
 
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getView().getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _expireSpinner.setAdapter(adapter);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
 
-        _durations = getView().getContext().getResources().getIntArray(R.array.expire_duration_values);
+        _expiresView = v.findViewById(R.id.expires_view);
+        _bundleView = v.findViewById(R.id.bundle_view);
+
+        _termsTextView = v.findViewById(R.id.termswarning_textview);
+
+        _refreshView = v.findViewById(R.id.refresh_view);
 
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
+        ExpireDialog.addOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        _cancelButton.setOnClickListener(_cancel_onClick);
-        _okButton.setOnClickListener(_ok_onClick);
-        _expiresCheckBox.setOnClickListener(_expires_onClick);
-        _expireSpinner.setOnItemSelectedListener(_expireSpinner_selected);
-
-        _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        _expiresView.setOnClickListener(_expires_onClick);
+        _termsTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -120,42 +125,75 @@ public class RequestBundleDialog extends SimpleDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        if (savedState.containsKey(STATE_SPINNER_POSITION))
-            _currentPosition = savedState.getInt(STATE_SPINNER_POSITION);
         super.onRestoreDialogState(savedState);
+
+        if (savedState.containsKey("_expires"))
+            _expires = savedState.getBoolean("_expires");
+
+        if (savedState.containsKey("_expiringDurationSeconds"))
+            _expiringDurationSeconds = savedState.getLong("_expiringDurationSeconds");
+
+        if (savedState.containsKey("_expiresTitle"))
+            _expiresTitle = savedState.getString("_expiresTitle");
+
+        populateUi();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        super.onSaveDialogState(outState);
+        if (_expires)
+            outState.putBoolean("_expires", _expires);
+
+        if (_expiringDurationSeconds != -1)
+            outState.putLong("_expiringDurationSeconds", _expiringDurationSeconds);
+
+        if (_expiresTitle != null)
+            outState.putString("_expiresTitle", _expiresTitle);
+    }
+
+    @Override
+    public void onStop() {
+        ExpireDialog.removeOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
+        super.onStop();
     }
 
     private void populateUi() {
         switch (_type) {
             case TYPE_ACCEPT: {
-                _titleTextView.setText(R.string.accept_bundle);
-                _bodyTextView.setText("If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
+                _toolbar.setTitle(R.string.accept_bundle);
+                _bundleView.setTitle("Work Orders in Bundle");
+                _bundleView.setCount(_bundleSize + "");
+                _bundleView.setCountBg(R.drawable.round_rect_gray);
                 setExpirationVisibility(false);
-                _okButton.setText(R.string.btn_accept);
+                _finishMenu.setText(R.string.btn_accept);
 
                 SpannableString spanned = new SpannableString("By accepting these work orders, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
                 spanned.setSpan(_standardTerms_onClick, 92, 132, spanned.getSpanFlags(_standardTerms_onClick));
                 spanned.setSpan(_pqap_onClick, 141, 174, spanned.getSpanFlags(_pqap_onClick));
-                _termsWarningTextView.setText(spanned);
-                _termsWarningTextView.setVisibility(View.VISIBLE);
+                _termsTextView.setText(spanned);
+                _termsTextView.setVisibility(View.VISIBLE);
 
                 break;
             }
             case TYPE_REQUEST: {
-                _titleTextView.setText(R.string.request_bundle);
-                _bodyTextView.setText("If you request this bundle you are requesting all " + _bundleSize + " work orders.");
+                _toolbar.setTitle(R.string.request_bundle);
+                _bundleView.setTitle("Work Orders in Bundle");
+                _bundleView.setCount(_bundleSize + "");
+                _bundleView.setCountBg(R.drawable.round_rect_gray);
                 setExpirationVisibility(true);
-                _okButton.setText(R.string.btn_request);
+                _finishMenu.setText(R.string.btn_request);
 
                 SpannableString spanned = new SpannableString("By requesting these work orders, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
                 spanned.setSpan(_standardTerms_onClick, 93, 133, spanned.getSpanFlags(_standardTerms_onClick));
                 spanned.setSpan(_pqap_onClick, 142, 175, spanned.getSpanFlags(_pqap_onClick));
-                _termsWarningTextView.setText(spanned);
-                _termsWarningTextView.setVisibility(View.VISIBLE);
+                _termsTextView.setText(spanned);
+                _termsTextView.setVisibility(View.VISIBLE);
 
-                if (_currentPosition != INVALID_NUMBER) {
-                    _expiringDurationSeconds = _durations[_currentPosition];
-                    _expireSpinner.setSelection(_currentPosition);
+                if (_expiringDurationSeconds == -1) {
+                    _expiresView.set("Expire Request", "Never");
+                } else {
+                    _expiresView.set("Expire Request", _expiresTitle);
                 }
 
                 break;
@@ -164,22 +202,28 @@ public class RequestBundleDialog extends SimpleDialog {
     }
 
     @Override
-    public void onSaveDialogState(Bundle outState) {
-        outState.putInt(STATE_SPINNER_POSITION, _currentPosition);
-
-        super.onSaveDialogState(outState);
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
     }
 
     private void setExpirationVisibility(boolean visible) {
-        _expiresCheckBox.setVisibility(visible ? View.VISIBLE : View.GONE);
-        _expireSpinner.setVisibility(visible ? View.VISIBLE : View.GONE);
-        _expiresTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        _expiresView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
+
+    private final ExpireDialog.OnOkListener _expireDialog_onOk = new ExpireDialog.OnOkListener() {
+        @Override
+        public void onOk(String title, int milliseconds) {
+            if (milliseconds == -1) {
+                _expiringDurationSeconds = -1;
+                _expires = false;
+            } else {
+                _expiresTitle = title;
+                _expiringDurationSeconds = milliseconds / 1000;
+                _expires = true;
+            }
+            populateUi();
+        }
+    };
 
     private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
         @Override
@@ -205,17 +249,16 @@ public class RequestBundleDialog extends SimpleDialog {
         _onCanceledDispatcher.dispatch(getUid(), _workOrderId);
     }
 
-    private final View.OnClickListener _cancel_onClick = new ApatheticOnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new ApatheticOnClickListener() {
         @Override
         public void onSingleClick(View v) {
-            cancel();
             dismiss(true);
         }
     };
 
-    private final View.OnClickListener _ok_onClick = new ApatheticOnClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
-        public void onSingleClick(View v) {
+        public boolean onSingleMenuItemClick(MenuItem item) {
             switch (_type) {
 //                case TYPE_ACCEPT:
 //                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
@@ -231,33 +274,16 @@ public class RequestBundleDialog extends SimpleDialog {
                     break;
             }
             dismiss(true);
-        }
-    };
-
-    private final AdapterView.OnItemSelectedListener _expireSpinner_selected = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            _currentPosition = position;
-            _expiringDurationSeconds = _durations[position];
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-            _currentPosition = 1;
+            return true;
         }
     };
 
     private final View.OnClickListener _expires_onClick = new ApatheticOnClickListener() {
         @Override
         public void onSingleClick(View v) {
-            _expires = _expiresCheckBox.isChecked();
-
-            if (!_expires) {
-                _expiringDurationSeconds = INVALID_NUMBER;
-            }
+            ExpireDialog.show(App.get(), DIALOG_UID_EXPIRE);
         }
     };
-
 
     /**
      * @param context     Application context

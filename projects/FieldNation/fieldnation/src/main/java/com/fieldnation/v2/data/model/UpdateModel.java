@@ -66,7 +66,7 @@ public class UpdateModel implements Parcelable {
         if (_metadata == null)
             _metadata = new UpdateModelMetadata();
 
-            return _metadata;
+        return _metadata;
     }
 
     public UpdateModel metadata(UpdateModelMetadata metadata) throws ParseException {
@@ -91,7 +91,7 @@ public class UpdateModel implements Parcelable {
         if (_params == null)
             _params = new UpdateModelParams();
 
-            return _params;
+        return _params;
     }
 
     public UpdateModel params(UpdateModelParams params) throws ParseException {

@@ -45,14 +45,13 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         protected Object doInBackground(Object... params) {
             Uri uri = (Uri) params[0];
             final UUIDGroup uuid = (UUIDGroup) params[1];
-            final String tag = (String) params[2];
 
-            cacheFileStart(uuid, tag, uri);
+            cacheFileStart(uuid, uri);
             StoredObject upFile = null;
 
             try {
-                if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uri.toString())) != null) {
-                    cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                if ((upFile = StoredObject.get(App.get(), App.getProfileId(), "CacheFile", uuid.uuid)) != null) {
+                    cacheFileEnd(uuid, upFile.getUri(), upFile.size(), true);
                     return null;
                 }
             } catch (Exception ex) {
@@ -60,7 +59,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
             }
 
             try {
-                upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uri.toString(),
+                upFile = StoredObject.put(App.get(), App.getProfileId(), "CacheFile", uuid.uuid,
                         new InputStreamMonitor(
                                 App.get().getContentResolver().openInputStream(uri), new InputStreamMonitor.Monitor() {
                             long last = 0;
@@ -69,7 +68,7 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                             public void progress(int bytesRead) {
                                 if (System.currentTimeMillis() > last) {
                                     last = System.currentTimeMillis() + 1000;
-                                    cacheFileProgress(uuid, tag, bytesRead);
+                                    cacheFileProgress(uuid, bytesRead);
                                 }
                             }
                         }), "uploadTemp.dat");
@@ -77,15 +76,15 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                 Log.v(TAG, ex);
             } finally {
                 if (upFile != null)
-                    cacheFileEnd(uuid, tag, upFile.getUri(), upFile.size(), true);
+                    cacheFileEnd(uuid, upFile.getUri(), upFile.size(), true);
                 else
-                    cacheFileEnd(uuid, tag, uri, -1, false);
+                    cacheFileEnd(uuid, uri, -1, false);
             }
             return null;
         }
     }
 
-    public static void cacheFileUpload(UUIDGroup uuid, String tag, Uri uri) {
+    public static void cacheFileUpload(UUIDGroup uuid, Uri uri) {
         Log.v(TAG, "cacheFileUpload");
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(uuid))
@@ -97,29 +96,27 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
                         .createdAt(System.currentTimeMillis() / 1000)
                         .build())
                 .build());
-        new UploadTask().executeEx(uri, uuid, tag);
+        new UploadTask().executeEx(uri, uuid);
     }
 
-    private static void cacheFileStart(UUIDGroup uuid, String tag, Uri uri) {
+    private static void cacheFileStart(UUIDGroup uuid, Uri uri) {
         Log.v(TAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
-        bundle.putString(PARAM_TAG, tag);
         bundle.putParcelable(PARAM_UUID, uuid);
 
         PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_START, bundle, Sticky.TEMP);
     }
 
-    private static void cacheFileProgress(UUIDGroup uuid, String tag, long position) {
+    private static void cacheFileProgress(UUIDGroup uuid, long position) {
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_TAG, tag);
         bundle.putLong(PARAM_POS, position);
         bundle.putParcelable(PARAM_UUID, uuid);
 
         PigeonRoost.sendMessage(ADDRESS_CACHE_FILE_PROGRESS, bundle, Sticky.NONE);
     }
 
-    private static void cacheFileEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
+    private static void cacheFileEnd(UUIDGroup uuid, Uri uri, long size, boolean success) {
         Log.v(TAG, "cacheFileEnd");
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpTracingContext(uuid))
@@ -134,7 +131,6 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
-        bundle.putString(PARAM_TAG, tag);
         bundle.putBoolean(PARAM_SUCCESS, success);
         bundle.putLong(PARAM_SIZE, size);
         bundle.putParcelable(PARAM_UUID, uuid);
@@ -154,13 +150,11 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         if (address.startsWith(ADDRESS_CACHE_FILE_START)) {
             onFileCacheStart(
                     (UUIDGroup) bundle.getParcelable(PARAM_UUID),
-                    bundle.getString(PARAM_TAG),
                     (Uri) bundle.getParcelable(PARAM_URI));
         } else if (address.startsWith(ADDRESS_CACHE_FILE_END)) {
             try {
                 onFileCacheEnd(
                         (UUIDGroup) bundle.getParcelable(PARAM_UUID),
-                        bundle.getString(PARAM_TAG),
                         (Uri) bundle.getParcelable(PARAM_URI),
                         bundle.getLong(PARAM_SIZE),
                         bundle.getBoolean(PARAM_SUCCESS)
@@ -173,7 +167,6 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
             try {
                 onFileCacheProgress(
                         (UUIDGroup) bundle.getParcelable(PARAM_UUID),
-                        bundle.getString(PARAM_TAG),
                         bundle.getLong(PARAM_POS));
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -181,12 +174,12 @@ public class FileCacheClient extends Pigeon implements FileCacheConstants {
         }
     }
 
-    public void onFileCacheStart(UUIDGroup uuid, String tag, Uri uri) {
+    public void onFileCacheStart(UUIDGroup uuid, Uri uri) {
     }
 
-    public void onFileCacheProgress(UUIDGroup uuid, String tag, long size) {
+    public void onFileCacheProgress(UUIDGroup uuid, long size) {
     }
 
-    public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
+    public void onFileCacheEnd(UUIDGroup uuid, Uri uri, long size, boolean success) {
     }
 }

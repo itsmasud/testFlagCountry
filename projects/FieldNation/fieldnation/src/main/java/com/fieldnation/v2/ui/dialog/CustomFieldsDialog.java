@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -117,13 +118,13 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.contains("getCustomFields")
                     || methodName.contains("updateCustomField");
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && methodName.equals("getCustomFields")) {
                 _customFields = (CustomFields) successObject;
                 populateUi();
@@ -132,6 +133,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
                 WorkordersWebApi.getCustomFields(App.get(), _workOrderId, false, false);
                 AppMessagingClient.setLoading(true);
             }
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

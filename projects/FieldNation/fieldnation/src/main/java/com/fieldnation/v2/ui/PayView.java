@@ -66,6 +66,16 @@ public class PayView extends LinearLayout {
         populateUi();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        _pay1View.setEnabled(enabled);
+        _pay2View.setEnabled(enabled);
+        _pay3View.setEnabled(enabled);
+        _pay4View.setEnabled(enabled);
+        _pay5View.setEnabled(enabled);
+    }
+
     private void populateUi() {
         if (_pay1View == null)
             return;

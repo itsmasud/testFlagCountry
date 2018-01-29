@@ -57,7 +57,7 @@ public class UserRating implements Parcelable {
         if (_marketplace == null)
             _marketplace = new Rating();
 
-            return _marketplace;
+        return _marketplace;
     }
 
     public UserRating marketplace(Rating marketplace) throws ParseException {
@@ -82,7 +82,7 @@ public class UserRating implements Parcelable {
         if (_myCompany == null)
             _myCompany = new Rating();
 
-            return _myCompany;
+        return _myCompany;
     }
 
     public UserRating myCompany(Rating myCompany) throws ParseException {

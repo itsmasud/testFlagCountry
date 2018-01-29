@@ -945,9 +945,9 @@ public abstract class CompanyWebApi extends Pigeon {
                 super(manager);
                 setName("CompanyWebApi/Parser");
                 start();
-        }
+            }
 
-        @Override
+            @Override
             public boolean doWork() {
                 CompanyWebApi webApi = null;
                 Bundle bundle = null;
@@ -968,89 +968,89 @@ public abstract class CompanyWebApi extends Pigeon {
                 boolean success = bundle.getBoolean("success");
                 byte[] data = bundle.getByteArray("data");
 
-            Stopwatch watch = new Stopwatch(true);
-            try {
-                if (data != null && success) {
-                    switch (transactionParams.apiFunction) {
-                        case "addTag":
-                            successObject = Tag.fromJson(new JsonObject(data));
-                            break;
-                        case "getCreditCardFees":
-                            successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
-                            break;
-                        case "getCompanyUserCreditCards":
-                            successObject = SavedCreditCards.fromJson(new JsonObject(data));
-                            break;
-                        case "getTags":
-                            successObject = Tags.fromJson(new JsonObject(data));
-                            break;
-                        case "getSelectionRules":
-                            //successObject = SelectionRules.fromJson(new JsonObject(data));
-                            break;
-                        case "getFeatures":
-                            successObject = CompanyFeatures.fromJson(new JsonObject(data));
-                            break;
-                        case "getIntegrations":
-                            successObject = CompanyIntegrations.fromJson(new JsonObject(data));
-                            break;
-                        case "getClients":
-                            successObject = Clients.fromJson(new JsonObject(data));
-                            break;
-                        case "getRatings":
-                            successObject = CompanyRating.fromJson(new JsonObject(data));
-                            break;
-                        case "getPredefinedExpenses":
-                            //successObject = PredefinedExpenses.fromJson(new JsonObject(data));
-                            break;
-                        case "getCompanyDetails":
-                        case "getCompanyManagers":
-                        case "getManagedProviders":
-                        case "requestFeature":
-                        case "updateFund":
-                            successObject = data;
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
+                Stopwatch watch = new Stopwatch(true);
+                try {
+                    if (data != null && success) {
+                        switch (transactionParams.apiFunction) {
+                            case "addTag":
+                                successObject = Tag.fromJson(new JsonObject(data));
+                                break;
+                            case "getCreditCardFees":
+                                successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
+                                break;
+                            case "getCompanyUserCreditCards":
+                                successObject = SavedCreditCards.fromJson(new JsonObject(data));
+                                break;
+                            case "getTags":
+                                successObject = Tags.fromJson(new JsonObject(data));
+                                break;
+                            case "getSelectionRules":
+                                //successObject = SelectionRules.fromJson(new JsonObject(data));
+                                break;
+                            case "getFeatures":
+                                successObject = CompanyFeatures.fromJson(new JsonObject(data));
+                                break;
+                            case "getIntegrations":
+                                successObject = CompanyIntegrations.fromJson(new JsonObject(data));
+                                break;
+                            case "getClients":
+                                successObject = Clients.fromJson(new JsonObject(data));
+                                break;
+                            case "getRatings":
+                                successObject = CompanyRating.fromJson(new JsonObject(data));
+                                break;
+                            case "getPredefinedExpenses":
+                                //successObject = PredefinedExpenses.fromJson(new JsonObject(data));
+                                break;
+                            case "getCompanyDetails":
+                            case "getCompanyManagers":
+                            case "getManagedProviders":
+                            case "requestFeature":
+                            case "updateFund":
+                                successObject = data;
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
+                    } else if (data != null) {
+                        switch (transactionParams.apiFunction) {
+                            case "addTag":
+                            case "getClients":
+                            case "getCompanyDetails":
+                            case "getCompanyManagers":
+                            case "getCompanyUserCreditCards":
+                            case "getCreditCardFees":
+                            case "getFeatures":
+                            case "getIntegrations":
+                            case "getManagedProviders":
+                            case "getPredefinedExpenses":
+                            case "getRatings":
+                            case "getSelectionRules":
+                            case "getTags":
+                            case "requestFeature":
+                            case "updateFund":
+                                failObject = Error.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
                     }
-                } else if (data != null) {
-                    switch (transactionParams.apiFunction) {
-                        case "addTag":
-                        case "getClients":
-                        case "getCompanyDetails":
-                        case "getCompanyManagers":
-                        case "getCompanyUserCreditCards":
-                        case "getCreditCardFees":
-                        case "getFeatures":
-                        case "getIntegrations":
-                        case "getManagedProviders":
-                        case "getPredefinedExpenses":
-                        case "getRatings":
-                        case "getSelectionRules":
-                        case "getTags":
-                        case "requestFeature":
-                        case "updateFund":
-                            failObject = Error.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
-                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                } finally {
+                    Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
                 }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            } finally {
-                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
-            }
 
-            try {
-                if (failObject != null && failObject instanceof Error) {
-                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                }
+                try {
+                    if (failObject != null && failObject instanceof Error) {
+                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                    }
                     getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
                 return true;
             }

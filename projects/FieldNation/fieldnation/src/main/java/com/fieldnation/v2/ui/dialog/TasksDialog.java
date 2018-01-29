@@ -1,8 +1,12 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,7 +22,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
@@ -35,9 +38,12 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -56,7 +62,6 @@ import com.fieldnation.v2.ui.TasksAdapter;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by Shoaib on 09/10/17.
@@ -260,7 +265,8 @@ public class TasksDialog extends FullScreenDialog {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrderId,
+                            _currentTask.getAttachments().getId(), true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
                             .addContext(new SpTracingContext(fui.uuid))
@@ -384,37 +390,8 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
-                    try {
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-
-                    try {
-                        if (task.getPhone() != null) {
-                            if (!TextUtils.isEmpty(task.getPhone()) && android.util.Patterns.PHONE.matcher(task.getPhone()).matches()) {
-                                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                                String phNum = "tel:" + task.getPhone();
-                                callIntent.setData(Uri.parse(phNum));
-                                ActivityClient.startActivity(callIntent);
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                                builder.setMessage(R.string.dialog_no_number_message);
-                                builder.setTitle(R.string.dialog_no_number_title);
-                                builder.setPositiveButton(R.string.btn_ok, null);
-                                builder.show();
-                            }
-
-                        } else {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                            builder.setMessage(R.string.dialog_no_number_message);
-                            builder.setTitle(R.string.dialog_no_number_title);
-                            builder.setPositiveButton(R.string.btn_ok, null);
-                            builder.show();
-                        }
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
+                    _currentTask = task;
+                    doCallTask();
                     break;
 
                 case EMAIL: // email
@@ -483,16 +460,90 @@ public class TasksDialog extends FullScreenDialog {
         }
     };
 
+    private void doCallTask() {
+        int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            _permissionsListener.sub();
+            PermissionsClient.requestPermissions(
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    new boolean[]{false});
+            return;
+        }
+
+        try {
+            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _currentTask.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        try {
+            if (!misc.isEmptyOrNull(_currentTask.getPhone())) {
+                if (!App.get().getPackageManager().hasSystemFeature(
+                        PackageManager.FEATURE_TELEPHONY)) {
+                    ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", _currentTask.getPhone());
+                    clipboard.setPrimaryClip(clip);
+                    ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
+                    return;
+                }
+
+                if (!TextUtils.isEmpty(_currentTask.getPhone()) && android.util.Patterns.PHONE.matcher(_currentTask.getPhone()).matches()) {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    String phNum = "tel:" + _currentTask.getPhone();
+                    callIntent.setData(Uri.parse(phNum));
+                    ActivityClient.startActivity(callIntent);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setMessage(R.string.dialog_no_number_message);
+                    builder.setTitle(R.string.dialog_no_number_title);
+                    builder.setPositiveButton(R.string.btn_ok, null);
+                    builder.show();
+                }
+
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage(R.string.dialog_no_number_message);
+                builder.setTitle(R.string.dialog_no_number_title);
+                builder.setPositiveButton(R.string.btn_ok, null);
+                builder.show();
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+    }
+
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
+        @Override
+        public void onComplete(String permission, int grantResult) {
+
+            if (permission.equals(Manifest.permission.CALL_PHONE)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    doCallTask();
+                    _permissionsListener.unsub();
+                } else {
+                    ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", _currentTask.getPhone());
+                    clipboard.setPrimaryClip(clip);
+
+                    ToastClient.toast(getContext(), "Couldn't call number: "
+                            + _currentTask.getPhone() + ". Permissions denied. Copied to clipboard.", Toast.LENGTH_LONG);
+                    _permissionsListener.unsub();
+                }
+            }
+        }
+    };
+
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.toLowerCase().contains("attachment")
                     || methodName.equals("getWorkOrder")
                     || methodName.equals("updateTask");
         }
 
         @Override
-        public void onQueued(TransactionParams transactionParams, String methodName) {
+        public void onQueued(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onQueued");
 
             if (!methodName.equals("addAttachment"))
@@ -510,7 +561,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onStart(TransactionParams transactionParams, String methodName) {
+        public void onStart(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onStart");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -527,7 +578,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onPaused(TransactionParams transactionParams, String methodName) {
+        public void onPaused(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             Log.v(TAG, "WorkordersWebApi.onPaused");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -544,7 +595,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+        public void onProgress(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, long pos, long size, long time) {
             Log.v(TAG, "WorkordersWebApi.onProgress");
             if (!methodName.equals("addAttachment"))
                 return;
@@ -571,7 +622,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             Log.v(TAG, "WorkordersWebApi.onComplete");
 
             if (successObject != null && (methodName.equals("getWorkOrder"))) {
@@ -603,6 +654,7 @@ public class TasksDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

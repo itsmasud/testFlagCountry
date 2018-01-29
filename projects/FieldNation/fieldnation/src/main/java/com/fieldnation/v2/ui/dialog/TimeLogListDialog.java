@@ -268,12 +268,12 @@ public class TimeLogListDialog extends FullScreenDialog {
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.toLowerCase().contains("workorder") || methodName.contains("TimeLog");
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (success && successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _workOrder = workOrder;
@@ -284,6 +284,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(true);
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 

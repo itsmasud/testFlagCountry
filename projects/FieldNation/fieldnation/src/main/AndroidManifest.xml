@@ -16,6 +16,9 @@
 
     <!-- Phone -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
 
     <!-- Currently Not dangerous permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -82,39 +85,19 @@
         <activity
             android:name=".v2.ui.nav.NavActivity"
             android:exported="false"
+            android:label="@string/app_name"
             android:process=":frontside" />
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true"
+            android:label="@string/app_name"
             android:process=":frontside">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.SignatureActivity"
-            android:exported="false"
-            android:label="@string/signature_title"
-            android:process=":frontside"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".ui.AuthActivity"
-            android:exported="true"
-            android:label="@string/activity_login_title"
-            android:process=":frontside" />
-        <activity
-            android:name=".ui.inbox.InboxActivity"
-            android:exported="false"
-            android:label="@string/inbox"
-            android:process=":frontside" />
-        <activity
-            android:name=".v2.ui.workorder.WorkOrderActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:process=":frontside">
-            <intent-filter>
 
+            <intent-filter>
                 <!-- fieldnation.com -->
                 <data
                     android:host="fieldnation.com"
@@ -170,6 +153,27 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.SignatureActivity"
+            android:exported="false"
+            android:label="@string/signature_title"
+            android:process=":frontside"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".ui.AuthActivity"
+            android:exported="true"
+            android:label="@string/activity_login_title"
+            android:process=":frontside" />
+        <activity
+            android:name=".ui.inbox.InboxActivity"
+            android:exported="false"
+            android:label="@string/inbox"
+            android:process=":frontside" />
+        <activity
+            android:name=".v2.ui.workorder.WorkOrderActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:process=":frontside" />
         <activity
             android:name=".ui.payment.PaymentListActivity"
             android:exported="false"
@@ -294,6 +298,10 @@
             android:process=":frontside" />
         <service
             android:name=".service.AnalyticsPassThroughService"
+            android:exported="false"
+            android:process=":frontside" />
+        <service
+            android:name=".service.tracker.RetryService"
             android:exported="false"
             android:process=":frontside" />
 

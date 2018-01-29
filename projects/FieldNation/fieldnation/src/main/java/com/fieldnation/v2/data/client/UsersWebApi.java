@@ -1239,9 +1239,9 @@ public abstract class UsersWebApi extends Pigeon {
                 super(manager);
                 setName("UsersWebApi/Parser");
                 start();
-        }
+            }
 
-        @Override
+            @Override
             public boolean doWork() {
                 UsersWebApi webApi = null;
                 Bundle bundle = null;
@@ -1262,103 +1262,103 @@ public abstract class UsersWebApi extends Pigeon {
                 boolean success = bundle.getBoolean("success");
                 byte[] data = bundle.getByteArray("data");
 
-            Stopwatch watch = new Stopwatch(true);
-            try {
-                if (data != null && success) {
-                    switch (transactionParams.apiFunction) {
-                        case "addCoords":
-                        case "addTypesOfWork":
-                        case "sendAccountActivationLink":
-                        case "sendVerificationCodeViaSms":
-                        case "sendVerificationCodeViaVoiceCall":
-                        case "setUserPreference":
-                        case "swipNotification":
-                        case "switchUser":
-                        case "updateTax":
-                        case "uploadProfilePhoto":
-                        case "verifyAccount":
-                            successObject = data;
-                            break;
-                        case "getProfileAndWorkHistory":
-                            successObject = ProfileAndWorkHistory.fromJson(new JsonObject(data));
-                            break;
-                        case "getWorkHistory":
-                            successObject = new JsonObject(data);
-                            break;
-                        case "getUserPreferenceValue":
-                            successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
-                            break;
-                        case "getUserPreferredProviderNetworks":
-                            successObject = PPNs.fromJson(new JsonObject(data));
-                            break;
-                        case "getUserTypesOfWork":
-                            successObject = TypesOfWork.fromJson(new JsonObject(data));
-                            break;
-                        case "getTax":
-                            successObject = UserTaxInfo.fromJson(new JsonObject(data));
-                            break;
-                        case "addPay":
-                        case "getPay":
-                        case "getSettings":
-                        case "getTour":
-                        case "getUser":
-                        case "updatePay":
-                        case "updateSettings":
-                        case "updateTour":
-                            successObject = User.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
+                Stopwatch watch = new Stopwatch(true);
+                try {
+                    if (data != null && success) {
+                        switch (transactionParams.apiFunction) {
+                            case "addCoords":
+                            case "addTypesOfWork":
+                            case "sendAccountActivationLink":
+                            case "sendVerificationCodeViaSms":
+                            case "sendVerificationCodeViaVoiceCall":
+                            case "setUserPreference":
+                            case "swipNotification":
+                            case "switchUser":
+                            case "updateTax":
+                            case "uploadProfilePhoto":
+                            case "verifyAccount":
+                                successObject = data;
+                                break;
+                            case "getProfileAndWorkHistory":
+                                successObject = ProfileAndWorkHistory.fromJson(new JsonObject(data));
+                                break;
+                            case "getWorkHistory":
+                                successObject = new JsonObject(data);
+                                break;
+                            case "getUserPreferenceValue":
+                                successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
+                                break;
+                            case "getUserPreferredProviderNetworks":
+                                successObject = PPNs.fromJson(new JsonObject(data));
+                                break;
+                            case "getUserTypesOfWork":
+                                successObject = TypesOfWork.fromJson(new JsonObject(data));
+                                break;
+                            case "getTax":
+                                successObject = UserTaxInfo.fromJson(new JsonObject(data));
+                                break;
+                            case "addPay":
+                            case "getPay":
+                            case "getSettings":
+                            case "getTour":
+                            case "getUser":
+                            case "updatePay":
+                            case "updateSettings":
+                            case "updateTour":
+                                successObject = User.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
+                    } else if (data != null) {
+                        switch (transactionParams.apiFunction) {
+                            case "addCoords":
+                            case "addPay":
+                            case "addTypesOfWork":
+                            case "getPay":
+                            case "getProfileAndWorkHistory":
+                            case "getSettings":
+                            case "getTax":
+                            case "getTour":
+                            case "getUser":
+                            case "getUserPreferenceValue":
+                            case "getUserPreferredProviderNetworks":
+                            case "getUserTypesOfWork":
+                            case "getWorkHistory":
+                            case "sendAccountActivationLink":
+                            case "sendVerificationCodeViaSms":
+                            case "sendVerificationCodeViaVoiceCall":
+                            case "setUserPreference":
+                            case "swipNotification":
+                            case "switchUser":
+                            case "updatePay":
+                            case "updateSettings":
+                            case "updateTax":
+                            case "updateTour":
+                            case "uploadProfilePhoto":
+                            case "verifyAccount":
+                                failObject = Error.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
                     }
-                } else if (data != null) {
-                    switch (transactionParams.apiFunction) {
-                        case "addCoords":
-                        case "addPay":
-                        case "addTypesOfWork":
-                        case "getPay":
-                        case "getProfileAndWorkHistory":
-                        case "getSettings":
-                        case "getTax":
-                        case "getTour":
-                        case "getUser":
-                        case "getUserPreferenceValue":
-                        case "getUserPreferredProviderNetworks":
-                        case "getUserTypesOfWork":
-                        case "getWorkHistory":
-                        case "sendAccountActivationLink":
-                        case "sendVerificationCodeViaSms":
-                        case "sendVerificationCodeViaVoiceCall":
-                        case "setUserPreference":
-                        case "swipNotification":
-                        case "switchUser":
-                        case "updatePay":
-                        case "updateSettings":
-                        case "updateTax":
-                        case "updateTour":
-                        case "uploadProfilePhoto":
-                        case "verifyAccount":
-                            failObject = Error.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
-                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                } finally {
+                    Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
                 }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            } finally {
-                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
-            }
 
-            try {
-                if (failObject != null && failObject instanceof Error) {
-                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                }
+                try {
+                    if (failObject != null && failObject instanceof Error) {
+                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                    }
                     getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
                 return true;
             }

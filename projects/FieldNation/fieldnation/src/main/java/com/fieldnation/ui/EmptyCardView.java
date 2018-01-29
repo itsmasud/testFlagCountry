@@ -273,6 +273,7 @@ public class EmptyCardView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             // go to available WOL
+            App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
             NavActivity.startNew(App.get());
         }
     };

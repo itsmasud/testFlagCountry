@@ -437,7 +437,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    ActivityClient.startActivity(WorkOrderActivity.makeIntentMessages(getContext(), _workOrder.getId()));
+                    ActivityClient.startActivity(WorkOrderActivity.makeIntentShow(getContext(), _workOrder.getId(), WorkOrderActivity.ACTION_MESSAGES, null));
                     break;
                 }
                 case ACTION_NAVIGATE: {

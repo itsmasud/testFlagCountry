@@ -128,7 +128,13 @@
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
     <string name="complete">Complete</string>
+    <string name="qualifications_missing">Qualifications Missing</string>
+    <string name="qualifications_met">Qualifications Met</string>
+    <string name="qualifications_statement">Increase your chances of being assigned to this work order by meeting all provider qualifications.</string>
     <string name="reasons">Reasons</string>
+
+    <string name="penalty_statement">This work order has possible penalty charges. If you are assigned to this work order you agree to be charged any of the following penalties if the conditions are met.</string>
+    <string name="bonuses_statement">This work order has possible bonuses. If you are assigned to this work order and the work is done correctly you may get bonuses.</string>
 
     <string name="toast_bundle_withdrawn_success">Bundle withdrawn</string>
     <string name="toast_bundle_declined_success">Bundle declined</string>
@@ -145,7 +151,7 @@
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
     <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
-    <string name="toast_job_duration_empty">Please fill up job duration.</string>
+    <string name="toast_job_duration_empty">Please fill out job duration.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_empty_counter_offer">Counter offer must have an expense, schedule or pay</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
@@ -199,8 +205,10 @@
     <!--<string name="notification_uploading_dot">Uploading…</string>-->
     <!--<string name="notification_success">Success!</string>-->
 
-    <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
-    <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
+    <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
+    <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
+    <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
+    <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
 
     <string name="dialog_withdraw_title">Withdraw Request?</string>
@@ -225,6 +233,7 @@
 
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
+    <string name="hint_text_additional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
@@ -363,6 +372,11 @@
     <string name="aborted">Aborted</string>
     <string name="accept_bundle">Accept Bundle</string>
     <string name="accept_penalty_and_cancel">Accept penalty and cancel job</string>
+    <string name="penalties">Penalties</string>
+    <string name="bonuses">Bonuses</string>
+    <string name="earned_pay">Earned Pay</string>
+    <string name="payment_breakdown">Payment Breakdown</string>
+    <string name="labor_earnings">Labor Earnings</string>
     <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
@@ -581,65 +595,13 @@
     <string name="number_of_devices">Number of Devices</string>
     <string name="number_of_device_completed">Devices Completed</string>
     <string name="num_failed">%1$d failed</string>
+    <string name="num_num_failed_to_upload">%1$d/%2$d failed to upload</string>
+    <string name="num_num_successfully_uploaded">%1$d/%2$d successfully uploaded</string>
+    <string name="num_num_uploaded">%1$d/%2$d uploaded</string>
     <string name="num_mi_driving"> \u2022 %1$smi (driving)</string>
     <string name="num_mi_straight_line"> \u2022 %1$smi (straight line)</string>
-
-    <plurals name="num_deliverables_uploading">
-        <item quantity="one">%1$d deliverable uploading</item>
-        <item quantity="other">%1$d deliverables uploading</item>
-    </plurals>
-
-    <plurals name="num_photos_uploading">
-        <item quantity="one">%1$d photo uploading</item>
-        <item quantity="other">%1$d photos uploading</item>
-    </plurals>
-
-    <plurals name="num_uploads_queued">
-        <item quantity="one">%1$d upload queued</item>
-        <item quantity="other">%1$d uploads queued</item>
-    </plurals>
-
-    <plurals name="num_files_to_upload">
-        <item quantity="one">%1$d files to upload</item>
-        <item quantity="other">%1$d files to upload</item>
-    </plurals>
-
-    <plurals name="num_photos_to_upload">
-        <item quantity="one">%1$d photo to upload</item>
-        <item quantity="other">%1$d photos to upload</item>
-    </plurals>
-
-    <plurals name="num_uploads_completed">
-        <item quantity="one">%1$d upload completed</item>
-        <item quantity="other">%1$d uploads completed</item>
-    </plurals>
-
-    <plurals name="num_deliverables_uploaded">
-        <item quantity="one">%1$d deliverable uploaded</item>
-        <item quantity="other">%1$d deliverables uploaded</item>
-    </plurals>
-
-    <plurals name="num_photos_uploaded">
-        <item quantity="one">%1$d photo uploaded</item>
-        <item quantity="other">%1$d photos uploaded</item>
-    </plurals>
-
-    <plurals name="num_uploads_failed">
-        <item quantity="one">%1$d upload failed</item>
-        <item quantity="other">%1$d uploads failed</item>
-    </plurals>
-
+    <string name="num_uploading">%1$d uploading</string>
     <string name="num_workorders_and_payments">%1$s %2$s</string>
-
-    <plurals name="num_other_payments">
-        <item quantity="one">and 1 other payment</item>
-        <item quantity="other">and %1$s other payments</item>
-    </plurals>
-
-    <plurals name="num_workorders">
-        <item quantity="one">1 Work Order</item>
-        <item quantity="other">%1$s Work Orders</item>
-    </plurals>
 
     <string name="offer_expires">Offer expires</string>
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
@@ -689,6 +651,8 @@
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
 
+    <string name="qualifications">Qualifications</string>
+
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="rate_us">Rate Us</string>
     <string name="reason">Reason</string>
@@ -698,7 +662,7 @@
     <string name="report_issue">Report Issue</string>
     <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
-    <string name="request_expires">Request expires</string>
+    <string name="request_expires">Expire Request</string>
     <string name="request_new_pay">Request New Pay</string>
     <string name="request_reschedule">Request reschedule</string>
     <string name="request_workorder">Request Work Order</string>
@@ -769,6 +733,7 @@
     <string name="update_your_payment_info">Update your payment info</string>
     <string name="update_payment_info">Update Payment Info</string>
     <string name="uploading">Uploading…</string>
+    <string name="uploading_to_wo">Uploading to WO %1$d</string>
     <string name="user_not_supported">User Not Supported</string>
 
     <string name="valid_until">Valid until</string>
@@ -779,6 +744,7 @@
     <string name="view_field_nation_terms">View Field Nation Terms</string>
 
     <string name="waiting_for_approval">Waiting for Approval</string>
+    <string name="waiting_for_network">Waiting for network connection</string>
     <string name="warning">Warning!</string>
     <string name="were_there_clear_expectations">Were there clear expectations?</string>
     <string name="were_they_professional">Were they professional?</string>
@@ -812,6 +778,61 @@
 
     <string name="zipcode">Zipcode</string>
     <string name="zip_code">ZIP code</string>
+
+    <plurals name="num_files_to_upload">
+        <item quantity="one">%1$d files to upload</item>
+        <item quantity="other">%1$d files to upload</item>
+    </plurals>
+
+    <plurals name="num_other_payments">
+        <item quantity="one">and 1 other payment</item>
+        <item quantity="other">and %1$s other payments</item>
+    </plurals>
+
+    <plurals name="num_photos_uploaded">
+        <item quantity="one">%1$d photo uploaded</item>
+        <item quantity="other">%1$d photos uploaded</item>
+    </plurals>
+
+    <plurals name="num_photos_uploading">
+        <item quantity="one">%1$d photo uploading</item>
+        <item quantity="other">%1$d photos uploading</item>
+    </plurals>
+
+    <plurals name="num_uploads_completed">
+        <item quantity="one">%1$d upload completed</item>
+        <item quantity="other">%1$d uploads completed</item>
+    </plurals>
+
+    <plurals name="num_uploads_complete_title">
+        <item quantity="one">Upload complete on WO %1$d</item>
+        <item quantity="other">Uploads complete on WO %1$d</item>
+    </plurals>
+
+    <plurals name="num_uploads_failed">
+        <item quantity="one">%1$d upload failed</item>
+        <item quantity="other">%1$d uploads failed</item>
+    </plurals>
+
+    <plurals name="num_uploads_failed_title">
+        <item quantity="one">Upload failed on WO %1$d</item>
+        <item quantity="other">Uploads failed on WO %1$d</item>
+    </plurals>
+
+    <plurals name="num_uploads_queued">
+        <item quantity="one">%1$d upload queued</item>
+        <item quantity="other">%1$d uploads queued</item>
+    </plurals>
+
+    <plurals name="num_uploads_retrying">
+        <item quantity="one">Retrying %1$d upload in %2$s</item>
+        <item quantity="other">Retrying %1$d uploads in %2$s</item>
+    </plurals>
+
+    <plurals name="num_workorders">
+        <item quantity="one">1 Work Order</item>
+        <item quantity="other">%1$s Work Orders</item>
+    </plurals>
 
     <!-- /general strings -->
 
@@ -934,6 +955,7 @@
     <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
 
     <!-- legal section -->
+    <string name="fieldnation_legal">Field Nation Legal</string>
     <string name="pref_string_data_settings_legal">Legal</string>
     <string name="pref_string_user_agreement">User Agreement</string>
     <string name="pref_string_tc_title">Terms and Conditions</string>
@@ -1048,6 +1070,32 @@
         <item>86400</item>
         <item>172800</item>
     </integer-array>
+
+    <string-array name="request_expire_duration_titles">
+        <item>Never</item>
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="request_expire_duration_values">
+        <item>-1</item>
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
 
     <string-array name="co_expire_duration_titles">
         <item>NEVER</item>

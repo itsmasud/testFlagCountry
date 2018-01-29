@@ -200,7 +200,7 @@ public class Request implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Request created(Date created) throws ParseException {
@@ -225,7 +225,7 @@ public class Request implements Parcelable {
         if (_eta == null)
             _eta = new ETA();
 
-            return _eta;
+        return _eta;
     }
 
     public Request eta(ETA eta) throws ParseException {
@@ -280,7 +280,7 @@ public class Request implements Parcelable {
         if (_expires == null)
             _expires = new Date();
 
-            return _expires;
+        return _expires;
     }
 
     public Request expires(Date expires) throws ParseException {
@@ -371,7 +371,7 @@ public class Request implements Parcelable {
         if (_pay == null)
             _pay = new Pay();
 
-            return _pay;
+        return _pay;
     }
 
     public Request pay(Pay pay) throws ParseException {
@@ -396,7 +396,7 @@ public class Request implements Parcelable {
         if (_schedule == null)
             _schedule = new Schedule();
 
-            return _schedule;
+        return _schedule;
     }
 
     public Request schedule(Schedule schedule) throws ParseException {
@@ -421,7 +421,7 @@ public class Request implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public Request user(User user) throws ParseException {
@@ -446,7 +446,7 @@ public class Request implements Parcelable {
         if (_workOrder == null)
             _workOrder = new WorkOrder();
 
-            return _workOrder;
+        return _workOrder;
     }
 
     public Request workOrder(WorkOrder workOrder) throws ParseException {

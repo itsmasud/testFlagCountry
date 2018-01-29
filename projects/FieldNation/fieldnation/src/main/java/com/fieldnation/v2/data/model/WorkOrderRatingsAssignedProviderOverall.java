@@ -57,7 +57,7 @@ public class WorkOrderRatingsAssignedProviderOverall implements Parcelable {
         if (_company == null)
             _company = new ProviderRatings();
 
-            return _company;
+        return _company;
     }
 
     public WorkOrderRatingsAssignedProviderOverall company(ProviderRatings company) throws ParseException {
@@ -82,7 +82,7 @@ public class WorkOrderRatingsAssignedProviderOverall implements Parcelable {
         if (_marketplace == null)
             _marketplace = new ProviderRatings();
 
-            return _marketplace;
+        return _marketplace;
     }
 
     public WorkOrderRatingsAssignedProviderOverall marketplace(ProviderRatings marketplace) throws ParseException {

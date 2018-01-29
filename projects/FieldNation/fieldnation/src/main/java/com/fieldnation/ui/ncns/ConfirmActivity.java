@@ -25,7 +25,6 @@ import com.fieldnation.ui.menu.RemindMeMenuButton;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrders;
-import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
  * Created by Michael on 10/3/2016.
@@ -69,6 +68,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
             _savedList = new SavedList()
                     .id("workorders_assignments")
                     .label("assigned");
+            _recyclerView.startSearch(_savedList, _options);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -89,25 +89,28 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         _recyclerView.onStart();
     }
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         _recyclerView.onResume();
-        _recyclerView.startSearch(_savedList, _options);
     }
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         _recyclerView.onPause();
         super.onPause();
     }
 
     @Override
     protected void onStop() {
+        Log.v(TAG, "onStop");
         _recyclerView.onStop();
         super.onStop();
     }
@@ -173,7 +176,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         public void onClick(View v) {
             if (!_needsConfirm) {
                 App.get().setNeedsConfirmation(false);
-                NavActivity.startNew(App.get());
+                //NavActivity.startNew(App.get());
                 finish();
             } else {
                 ToastClient.toast(App.get(), "Please confirm and set ETAs before continuing", Toast.LENGTH_SHORT);
@@ -196,7 +199,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
                             .build())
                     .build()
             );
-            NavActivity.startNew(App.get());
+            //NavActivity.startNew(App.get());
             finish();
         }
     };

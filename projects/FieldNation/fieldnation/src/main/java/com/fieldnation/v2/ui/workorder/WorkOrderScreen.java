@@ -11,8 +11,6 @@ import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -45,8 +42,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -56,7 +51,7 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.menu.MessagesMenuButton;
 import com.fieldnation.ui.menu.MoreMenuButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.ui.workorder.BundleDetailActivity;
+import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -97,7 +92,6 @@ import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
-import com.fieldnation.v2.ui.dialog.WebViewDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 
@@ -140,11 +134,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private ProblemSummaryView _problemSummaryView;
     private BuyerCustomFieldView _buyerCustomFieldView;
     private WorkSummaryView _sumView;
-    private CompanySummaryView _companySummaryView;
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
-    private ContactSummaryView _contactSummaryView;
-    private TextView _bundleWarningTextView;
     private RequestNewPayView _requestNewPayView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
@@ -152,10 +143,12 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private MessagesMenuButton _messagesMenuButton;
     private MoreMenuButton _moreMenuButton;
     private PopupMenu _morePopup;
+    private CounterOfferSummaryView _counterOfferSummaryView;
 
     private AdditionalInfoSectionView _additionalInfoSectionView;
     private PaymentSectionView _paymentSectionView;
     private TaskSectionView _taskSectionView;
+    private BuyerInfoSectionView _buyerInfoSectionView;
 
     // Data
     private WorkOrder _workOrder;
@@ -206,7 +199,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         _renderers.add(_topBar);
 
         _sumView = findViewById(R.id.summary_view);
-        _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
 
         _failedUploads = findViewById(R.id.failedUploads_view);
@@ -218,11 +210,11 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         _buyerCustomFieldView = findViewById(R.id.buyerCustomField_view);
         _renderers.add(_buyerCustomFieldView);
 
-        _companySummaryView = findViewById(R.id.companySummary_view);
-        _renderers.add(_companySummaryView);
+        _buyerInfoSectionView = findViewById(R.id.buyerInfoSectionView);
+        _renderers.add(_buyerInfoSectionView);
 
-        _contactSummaryView = findViewById(R.id.contactSummary_view);
-        _renderers.add(_contactSummaryView);
+        _counterOfferSummaryView = findViewById(R.id.counterOfferSummary_view);
+        _renderers.add(_counterOfferSummaryView);
 
         _locView = findViewById(R.id.location_view);
         _renderers.add(_locView);
@@ -238,9 +230,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _additionalInfoSectionView = findViewById(R.id.additionalInfoSeciontView);
         _renderers.add(_additionalInfoSectionView);
-
-        _bundleWarningTextView = findViewById(R.id.bundlewarning2_textview);
-        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
         _refreshView = findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
@@ -409,15 +398,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         setLoading(false);
 
-        if (_bundleWarningTextView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
-                _bundleWarningTextView.setVisibility(View.VISIBLE);
-            } else {
-                _bundleWarningTextView.setVisibility(View.GONE);
-            }
-        }
-
         Menu menu = _morePopup.getMenu();
         menu.clear();
 
@@ -485,6 +465,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         if (pay.getType() == Pay.TypeEnum.DEVICE
                 && pay.getBase().getUnits() != null) {
             _deviceCount = pay.getBase().getUnits().intValue();
+        } else {
+            _deviceCount = -1;
         }
 
         App.get().analActionTitle = null;
@@ -558,7 +540,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, false);
         }
     };
 
@@ -592,9 +574,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     WorkOrderTracker.onActionButtonEvent(
                             App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId,
-                            _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
-                            _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
                     break;
                 case 2: // not interested
                     WorkOrderTracker.onActionButtonEvent(
@@ -711,10 +691,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
 
-            ReportProblemDialog.show(
-                    App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems(),
-                    _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(),
-                    _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
         }
 
         @Override
@@ -873,26 +850,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
     };
 
-    private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
-        @Override
-        public void showConfidentialInfo(String body) {
-            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_confidential_information_title), body);
-        }
-
-        @Override
-        public void showCustomerPolicies(String body) {
-            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_policy_title), body);
-        }
-
-        @Override
-        public void showStandardInstructions(String body) {
-            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
-            WebViewDialog.show(App.get(), getContext().getString(R.string.dialog_standard_instruction_title), body);
-        }
-    };
-
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteWorkLog = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
@@ -907,14 +864,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
             WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
-        }
-    };
-
-    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
-            setLoading(true);
         }
     };
 
@@ -1060,7 +1009,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
-            CounterOfferDialog.show(App.get(), _workOrderId, _workOrder.getPay(), _workOrder.getSchedule());
+            CounterOfferDialog.show(App.get(), _workOrderId, false);
         }
 
         @Override
@@ -1182,16 +1131,17 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return methodName.contains("TimeLog");
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
                 setLoading(false);
             }
+            return false;
         }
     };
 }

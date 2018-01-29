@@ -12,84 +12,84 @@ import com.fieldnation.R;
 
 public class ProgressNode extends LinearLayout {
 
-	// UI
-	private ImageView _iconImageView;
-	private TextView _labelTextView;
-	private LinearLayout _linearlayoutWoProgressBar;
-	
-	private static final int PROGRESSBAR_STEP_COMPLETED = 1;
-	private static final int PROGRESSBAR_STEP_ACTIVE = 2;
-	private static final int PROGRESSBAR_STEP_INACTIVE = 3;
-	private static final int PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT = 4;
-	private static final int PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT = 5;
-	
+    // UI
+    private ImageView _iconImageView;
+    private TextView _labelTextView;
+    private LinearLayout _linearlayoutWoProgressBar;
 
-	// DATA
+    private static final int PROGRESSBAR_STEP_COMPLETED = 1;
+    private static final int PROGRESSBAR_STEP_ACTIVE = 2;
+    private static final int PROGRESSBAR_STEP_INACTIVE = 3;
+    private static final int PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT = 4;
+    private static final int PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT = 5;
 
-	public ProgressNode(Context context) {
-		super(context);
-		init(null);
-	}
 
-	public ProgressNode(Context context, AttributeSet attrs) {
-		super(context, attrs);
-		init(attrs);
-	}
+    // DATA
 
-	private void init(AttributeSet attrs) {
-		LayoutInflater.from(getContext()).inflate(R.layout.view_wd_progress_node, this);
+    public ProgressNode(Context context) {
+        super(context);
+        init(null);
+    }
 
-		if (isInEditMode())
-			return;
-		
-		_linearlayoutWoProgressBar = findViewById(R.id.linearlayout_wo_progress_bar);
-		_iconImageView = findViewById(R.id.icon_imageview);
-		_labelTextView = findViewById(R.id.label_textview);
+    public ProgressNode(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(attrs);
+    }
 
-		if (attrs != null) {
-			TypedArray t = getContext().obtainStyledAttributes(attrs, R.styleable.WorkorderDetail_ProgressLabel);
-			_labelTextView.setText(t.getString(R.styleable.WorkorderDetail_ProgressLabel_text));
-			t.recycle();
-		}
-	}
+    private void init(AttributeSet attrs) {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_wd_progress_node, this);
 
-	public int getIconWidth() {
-		return _iconImageView.getWidth();
-	}
-	
-	public void setActive(Integer ProgressBarStep) {
-		switch(ProgressBarStep){
-			case PROGRESSBAR_STEP_COMPLETED:
-				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_done);
-				break;
-			case PROGRESSBAR_STEP_ACTIVE:
-				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);
-				break;			
-			case PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT:
-				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_hold);
-				break;
-			case PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT:
-				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_hold_alert);
-				break;
-			default:
-				_iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
-				break;
-		}
-				
-		invalidate();
+        if (isInEditMode())
+            return;
 
-	}
+        _linearlayoutWoProgressBar = findViewById(R.id.linearlayout_wo_progress_bar);
+        _iconImageView = findViewById(R.id.icon_imageview);
+        _labelTextView = findViewById(R.id.label_textview);
 
-	public void setLabel(int resId) {
-		_labelTextView.setText(resId);
-	}
+        if (attrs != null) {
+            TypedArray t = getContext().obtainStyledAttributes(attrs, R.styleable.WorkorderDetail_ProgressLabel);
+            _labelTextView.setText(t.getString(R.styleable.WorkorderDetail_ProgressLabel_text));
+            t.recycle();
+        }
+    }
 
-	public void setLabel(String value) {
-		_labelTextView.setText(value);
-	}
+    public int getIconWidth() {
+        return _iconImageView.getWidth();
+    }
 
-	public void setBackground(int resId) {
+    public void setActive(Integer ProgressBarStep) {
+        switch (ProgressBarStep) {
+            case PROGRESSBAR_STEP_COMPLETED:
+                _iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_done);
+                break;
+            case PROGRESSBAR_STEP_ACTIVE:
+                _iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_active);
+                break;
+            case PROGRESSBAR_ON_HOLD_ACKNOWLEDGEMENT:
+                _iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_hold);
+                break;
+            case PROGRESSBAR_ON_HOLD_UNACKNOWLEDGEMENT:
+                _iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_hold_alert);
+                break;
+            default:
+                _iconImageView.setBackgroundResource(R.drawable.ic_wo_detail_progress_inactive);
+                break;
+        }
+
+        invalidate();
+
+    }
+
+    public void setLabel(int resId) {
+        _labelTextView.setText(resId);
+    }
+
+    public void setLabel(String value) {
+        _labelTextView.setText(value);
+    }
+
+    public void setBackground(int resId) {
         _iconImageView.setBackgroundResource(resId);
-	}
+    }
 
 }

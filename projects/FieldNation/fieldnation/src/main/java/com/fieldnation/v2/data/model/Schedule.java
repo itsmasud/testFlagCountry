@@ -163,7 +163,7 @@ public class Schedule implements Parcelable {
         if (_onMyWay == null)
             _onMyWay = new OnMyWay();
 
-            return _onMyWay;
+        return _onMyWay;
     }
 
     public Schedule onMyWay(OnMyWay onMyWay) throws ParseException {
@@ -210,7 +210,7 @@ public class Schedule implements Parcelable {
         if (_serviceWindow == null)
             _serviceWindow = new ScheduleServiceWindow();
 
-            return _serviceWindow;
+        return _serviceWindow;
     }
 
     public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) throws ParseException {
@@ -257,7 +257,7 @@ public class Schedule implements Parcelable {
         if (_timeZone == null)
             _timeZone = new TimeZone();
 
-            return _timeZone;
+        return _timeZone;
     }
 
     public Schedule timeZone(TimeZone timeZone) throws ParseException {

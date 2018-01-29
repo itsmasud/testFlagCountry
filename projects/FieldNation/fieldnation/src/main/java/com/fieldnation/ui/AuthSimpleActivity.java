@@ -24,6 +24,7 @@ import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
@@ -55,6 +56,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AuthSystem.start();
         setContentView(getLayoutResource());
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -127,7 +129,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _appMessagingClient.subGotProfile();
         _appMessagingClient.subUpdateApp();
-        _appMessagingClient.subAppShutdown();
+        _appMessagingClient.subShutdownUI();
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subFinishActivity();
         ProfileClient.get(App.get());
@@ -136,6 +138,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
+
+        if (doPermissionsChecks()) {
+            _permissionsListener.sub();
+            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        }
     }
 
     @Override
@@ -143,7 +150,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         Log.v(TAG, "onPause");
         _appMessagingClient.unsubGotProfile();
         _appMessagingClient.unsubUpdateApp();
-        _appMessagingClient.unsubAppShutdown();
+        _appMessagingClient.unsubShutdownUI();
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
 
@@ -154,6 +161,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
+
+        if (doPermissionsChecks()) {
+            _permissionsListener.unsub();
+        }
 
         super.onPause();
     }
@@ -255,6 +266,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Log.v(TAG, "onRequestPermissionsResult");
         if (doPermissionsChecks()) {
             PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
@@ -349,6 +361,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+            Log.v(TAG, "AuthActivity.startNewWithResponse");
             AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);
         }
     };
@@ -371,7 +384,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onShutdown() {
+        public void onShutdownUI() {
             finish();
         }
 

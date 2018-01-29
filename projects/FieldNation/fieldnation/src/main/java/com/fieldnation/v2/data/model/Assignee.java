@@ -223,7 +223,7 @@ public class Assignee implements Parcelable {
         if (_user == null)
             _user = new User();
 
-            return _user;
+        return _user;
     }
 
     public Assignee user(User user) throws ParseException {

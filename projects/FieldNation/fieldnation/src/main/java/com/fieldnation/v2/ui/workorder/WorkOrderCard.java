@@ -29,7 +29,6 @@ import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -55,6 +54,7 @@ import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.ContactListDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
@@ -66,7 +66,6 @@ import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.UUID;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -348,7 +347,8 @@ public class WorkOrderCard extends RelativeLayout {
     private void populatePay() {
         Pay pay = _workOrder.getPay();
 
-        if (pay.getType() == null) {
+        if (pay.getType() == null
+                || !pay.getCanView()) {
             _payTypeTextView.setVisibility(INVISIBLE);
             _amountTextView.setVisibility(INVISIBLE);
             return;
@@ -599,12 +599,22 @@ public class WorkOrderCard extends RelativeLayout {
 
         // phone
         if (_workOrder.getContacts().getResults().length > 0) {
-            button.setVisibility(VISIBLE);
-            button.setText(R.string.icon_phone_solid);
-            button.setOnClickListener(_phone_onClick);
-            buttonId++;
-            if (buttonId >= _secondaryButtons.length) return;
-            button = _secondaryButtons[buttonId];
+            boolean hasContacts = false;
+            for (Contact contact : _workOrder.getContacts().getResults()) {
+                if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
+                    hasContacts = true;
+                    break;
+                }
+            }
+
+            if (hasContacts) {
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_phone_solid);
+                button.setOnClickListener(_phone_onClick);
+                buttonId++;
+                if (buttonId >= _secondaryButtons.length) return;
+                button = _secondaryButtons[buttonId];
+            }
         }
 
         // message
@@ -839,7 +849,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId(), _workOrder.getProblems(), _workOrder.getRatings().getBuyer().getOverall().getApprovalPeriod(), _workOrder.getRatings().getBuyer().getWorkOrder().getRemainingApprovalPeriod());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId(), _workOrder.getProblems());
         }
     };
 
@@ -859,14 +869,11 @@ public class WorkOrderCard extends RelativeLayout {
             if (_onActionListener != null) _onActionListener.onAction();
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CALL_BUYER, null, _workOrder.getId());
-            try {
-                Contact contact = _workOrder.getContacts().getResults()[0];
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + contact.getPhone()));
-                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(callIntent);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+
+            String phone = null;
+            String phoneExt = null;
+            if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null && _workOrder.getContacts().getResults().length > 0) {
+                ContactListDialog.show(App.get(), null, _workOrder.getContacts());
             }
         }
     };
@@ -964,7 +971,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ConfirmActivity.startNew(App.get());
+            //ConfirmActivity.startNew(App.get());
             //_onMyWay_onClick.onClick(v);
         }
     };

@@ -144,7 +144,7 @@ public class CustomField implements Parcelable {
         if (_dependency == null)
             _dependency = new CustomFieldDependency();
 
-            return _dependency;
+        return _dependency;
     }
 
     public CustomField dependency(CustomFieldDependency dependency) throws ParseException {

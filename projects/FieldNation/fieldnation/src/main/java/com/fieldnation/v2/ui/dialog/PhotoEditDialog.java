@@ -94,7 +94,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
             if (getSavedState() == null
                     || !getSavedState().containsKey("_cachedUri"))
-                FileCacheClient.cacheFileUpload(_uuid, _sourceUri.toString(), _sourceUri);
+                FileCacheClient.cacheFileUpload(_uuid, _sourceUri);
         }
         _name = params.getString("name");
 
@@ -194,9 +194,9 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     private final FileCacheClient _fileCacheClient = new FileCacheClient() {
         @Override
-        public void onFileCacheEnd(UUIDGroup uuid, String tag, Uri uri, long size, boolean success) {
-            if (!tag.equals(_sourceUri.toString())) {
-                Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
+        public void onFileCacheEnd(UUIDGroup uuid, Uri uri, long size, boolean success) {
+            if (!uuid.uuid.equals(_uuid.uuid)) {
+                Log.v(TAG, "onFileCacheEnd uuid mismatch, skipping");
                 return;
             }
 

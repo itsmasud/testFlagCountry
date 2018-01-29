@@ -72,7 +72,7 @@ public class CheckInOut implements Parcelable {
         if (_actor == null)
             _actor = new User();
 
-            return _actor;
+        return _actor;
     }
 
     public CheckInOut actor(User actor) throws ParseException {
@@ -97,7 +97,7 @@ public class CheckInOut implements Parcelable {
         if (_coords == null)
             _coords = new Coords();
 
-            return _coords;
+        return _coords;
     }
 
     public CheckInOut coords(Coords coords) throws ParseException {
@@ -122,7 +122,7 @@ public class CheckInOut implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public CheckInOut created(Date created) throws ParseException {
@@ -191,7 +191,7 @@ public class CheckInOut implements Parcelable {
         if (_timeLog == null)
             _timeLog = new CheckInOutTimeLog();
 
-            return _timeLog;
+        return _timeLog;
     }
 
     public CheckInOut timeLog(CheckInOutTimeLog timeLog) throws ParseException {

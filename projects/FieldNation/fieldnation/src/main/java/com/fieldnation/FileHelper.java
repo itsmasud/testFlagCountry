@@ -81,96 +81,100 @@ public class FileHelper {
     }
 
     public static void viewOrDownloadFile(Context context, String url, String filename, String mimetype) {
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                String url = (String) params[1];
-                String filename = (String) params[2];
-                String mimetype = (String) params[3];
-                Intent intent = null;
+        new DownloadAsync1().executeEx(context, url, filename, mimetype);
+    }
 
-                if (mimetype != null) {
-                    intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse(url), mimetype);
-                } else {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    private static class DownloadAsync1 extends AsyncTaskEx<Object, Object, Object> {
+        @Override
+        protected Object doInBackground(Object... params) {
+            Context context = (Context) params[0];
+            String url = (String) params[1];
+            String filename = (String) params[2];
+            String mimetype = (String) params[3];
+            Intent intent = null;
+
+            if (mimetype != null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse(url), mimetype);
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            }
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            boolean doDownload = true;
+            try {
+                if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    context.startActivity(intent);
+                    doDownload = false;
                 }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
 
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (doDownload) {
+                // http://stackoverflow.com/questions/525204/android-download-intent
+                DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
+                r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                r.allowScanningByMediaScanner();
+                r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-                boolean doDownload = true;
+                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                dm.enqueue(r);
                 try {
-                    if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                        context.startActivity(intent);
-                        doDownload = false;
-                    }
+                    Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
-
-                if (doDownload) {
-                    // http://stackoverflow.com/questions/525204/android-download-intent
-                    DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
-                    r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                    r.allowScanningByMediaScanner();
-                    r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                    dm.enqueue(r);
-                    try {
-                        Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-
-                return null;
             }
-        }.executeEx(context, url, filename, mimetype);
+
+            return null;
+        }
     }
 
     public static void viewOrDownloadFile(Context context, String url, String filename) {
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                String url = (String) params[1];
-                String filename = (String) params[2];
-                Intent intent = null;
+        new DownloadAsync2().executeEx(context, url, filename);
+    }
 
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    private static class DownloadAsync2 extends AsyncTaskEx<Object, Object, Object> {
+        @Override
+        protected Object doInBackground(Object... params) {
+            Context context = (Context) params[0];
+            String url = (String) params[1];
+            String filename = (String) params[2];
+            Intent intent = null;
 
-                boolean doDownload = true;
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            boolean doDownload = true;
+            try {
+                if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    context.startActivity(intent);
+                    doDownload = false;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            if (doDownload) {
+                // http://stackoverflow.com/questions/525204/android-download-intent
+                DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
+                r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                r.allowScanningByMediaScanner();
+                r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                dm.enqueue(r);
                 try {
-                    if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                        context.startActivity(intent);
-                        doDownload = false;
-                    }
+                    Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
-
-                if (doDownload) {
-                    // http://stackoverflow.com/questions/525204/android-download-intent
-                    DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
-                    r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                    r.allowScanningByMediaScanner();
-                    r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-
-                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-                    dm.enqueue(r);
-                    try {
-                        Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-
-                return null;
             }
-        }.executeEx(context, url, filename);
+
+            return null;
+        }
     }
 
     public interface Listener {

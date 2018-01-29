@@ -66,7 +66,7 @@ public class EtaMassAcceptWithLocation implements Parcelable {
         if (_bundle == null)
             _bundle = new Bundle();
 
-            return _bundle;
+        return _bundle;
     }
 
     public EtaMassAcceptWithLocation bundle(Bundle bundle) throws ParseException {
@@ -91,7 +91,7 @@ public class EtaMassAcceptWithLocation implements Parcelable {
         if (_location == null)
             _location = new Location();
 
-            return _location;
+        return _location;
     }
 
     public EtaMassAcceptWithLocation location(Location location) throws ParseException {
@@ -116,7 +116,7 @@ public class EtaMassAcceptWithLocation implements Parcelable {
         if (_schedule == null)
             _schedule = new Schedule();
 
-            return _schedule;
+        return _schedule;
     }
 
     public EtaMassAcceptWithLocation schedule(Schedule schedule) throws ParseException {

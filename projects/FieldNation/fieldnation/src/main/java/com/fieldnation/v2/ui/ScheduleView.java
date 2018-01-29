@@ -63,6 +63,13 @@ public class ScheduleView extends LinearLayout {
         populateUi();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        _schedule1View.setEnabled(enabled);
+        _schedule2View.setEnabled(enabled);
+    }
+
     private void populateUi() {
         if (_schedule1View == null)
             return;

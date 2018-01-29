@@ -57,7 +57,7 @@ public class CompanyFeatures implements Parcelable {
         if (_metadata == null)
             _metadata = new ListEnvelope();
 
-            return _metadata;
+        return _metadata;
     }
 
     public CompanyFeatures metadata(ListEnvelope metadata) throws ParseException {

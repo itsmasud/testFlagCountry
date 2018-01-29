@@ -299,7 +299,7 @@ public class DeclineDialog extends FullScreenDialog {
                         AppMessagingClient.finishActivity();
                 }
             }
-            
+
             WorkOrderTracker.onActionButtonEvent(
                     App.get(),
                     App.get().analActionTitle,

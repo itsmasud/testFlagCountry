@@ -1,90 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Dialog.v3"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/DialogTitle.v3"
+    <ScrollView
+        style="@style/Dialog.v3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/accept_bundle" />
-
-    <TextView
-        android:id="@+id/body_textview"
-        style="?attr/dialogBodyStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title_textview"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="@string/placeholder_paragraph" />
-
-    <TextView
-        android:id="@+id/expires_textview"
-        style="@style/Text_Caption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/body_textview"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="@string/request_expires" />
-
-    <LinearLayout
-        android:id="@+id/expire_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/expires_textview"
-        android:layout_marginLeft="24dp"
-
-        android:layout_marginRight="24dp"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:id="@+id/expires_checkbox"
-            style="?attr/tileCheckBoxStyle"
-            android:layout_width="wrap_content"
-            android:text="@string/request_expires"
-            android:visibility="visible" />
-
-        <com.fieldnation.ui.HintSpinner
-            android:id="@+id/expire_duration_spinner"
-            style="@style/Widget.AppCompat.Spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="@+id/expires_checkbox"
-            android:layout_below="@+id/requestExpire_textview"
-            android:layout_gravity="center_vertical"
-            android:hint="30 mins"
-            android:visibility="visible" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/termswarning_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/expire_layout"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="By accepting this bundle you are agreeing to our Work Order Terms and Conditions" />
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/fn_primary_bg"
+        android:paddingBottom="@dimen/dialogActionBarPadding">
 
-    <Button
-        android:id="@+id/cancel_button"
-        style="@style/DialogButton.v3"
-        android:layout_below="@+id/termswarning_textview"
-        android:layout_marginRight="8dp"
-        android:layout_toLeftOf="@+id/ok_button"
-        android:text="@string/btn_cancel" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/ok_button"
-        style="@style/DialogButton.v3"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/termswarning_textview"
-        android:layout_marginRight="8dp"
-        android:text="@string/btn_accept" />
+            <com.fieldnation.v2.ui.ListItemTwoHorizView
+                android:id="@+id/expires_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.fieldnation.v2.ui.ListItemSummaryView
+                android:id="@+id/bundle_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expires_view" />
+
+            <TextView
+                android:id="@+id/termswarning_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/bundle_view"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:text="By accepting this bundle you are agreeing to our Work Order Terms and Conditions" />
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
 </RelativeLayout>

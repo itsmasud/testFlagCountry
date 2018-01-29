@@ -7,16 +7,20 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,12 +30,14 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     // Intent stuff
     public static final String INTENT_FIELD_WORKORDER_ID = TAG + ".workOrderId";
-    public static final String INTENT_FIELD_WORKORDER = TAG + ".workOrder";
     public static final String INTENT_FIELD_ACTION = TAG + ".action";
     public static final String INTENT_UI_UUID = TAG + ".uuid";
     public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
+
+    // Dialogs
+    private static final String DIALOG_NOT_AVAILABLE = TAG + ".notAvailableDialog";
 
     // UI
     private WorkOrderScreen _workOrderScreen;
@@ -115,7 +121,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             finish();
         } else {
             Log.v(TAG, "Opening work order " + _workOrderId);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         if (intent.hasExtra(INTENT_FIELD_ACTION)) {
@@ -161,6 +166,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStart() {
+        OneButtonDialog.addOnPrimaryListener(DIALOG_NOT_AVAILABLE, _notAvailable_onOk);
+
         super.onStart();
         _workOrderScreen.setUUID(_myUUID);
         _workOrderScreen.onStart();
@@ -183,6 +190,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
+        OneButtonDialog.removeOnPrimaryListener(DIALOG_NOT_AVAILABLE, _notAvailable_onOk);
         _workOrderScreen.onStop();
         super.onStop();
     }
@@ -194,37 +202,47 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         super.onBackPressed();
     }
 
+    private final OneButtonDialog.OnPrimaryListener _notAvailable_onOk = new OneButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary() {
+            finish();
+        }
+    };
+
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
     private final WorkordersWebApi _workorderApi = new WorkordersWebApi() {
         @Override
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+        public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
             return !methodName.equals("getWorkOrders");
         }
 
         @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
+
                 if (!success) {
-                    return;
+                    return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
 
                 if (_workOrderId == workOrder.getId()) {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
 
-                    if (_showAttachments && !_attachmentsShown) {
-                        AttachedFilesDialog.show(App.get(), null, _myUUID, _workOrder.getId());
-                        _showAttachments = false;
-                        _attachmentsShown = true;
-                    }
-                    if (_showMessages && !_messagesShown) {
-                        ChatDialog.show(App.get(), _workOrderId);
-                        _showMessages = false;
-                        _messagesShown = true;
+                    if (!isCached) {
+                        if (_showAttachments && !_attachmentsShown) {
+                            AttachedFilesDialog.show(App.get(), null, _myUUID, _workOrder.getId());
+                            _showAttachments = false;
+                            _attachmentsShown = true;
+                        }
+                        if (_showMessages && !_messagesShown) {
+                            ChatDialog.show(App.get(), _workOrderId);
+                            _showMessages = false;
+                            _messagesShown = true;
+                        }
                     }
 
                     _workOrderScreen.setWorkOrder(_workOrder);
@@ -233,12 +251,22 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
             }
 
+            if (!success && !isCached && methodName.equals("getWorkOrder")) {
+                if (failObject != null && failObject instanceof Error && "Unauthorized".equals(((Error) failObject).getMessage())) {
+                    PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
+                    OneButtonDialog.show(App.get(), DIALOG_NOT_AVAILABLE, "Not Available", "The work order you are looking for has been assigned to another provider, canceled, or does not exist", "GO BACK", false);
+                    return true;
+                }
+            }
+
             if (methodName.startsWith("get") || !success)
-                return;
+                return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
+            // only here if.. call doesn't start with get, was successfull
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };
 
@@ -250,34 +278,17 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         ActivityClient.startActivity(intent);
     }
 
-    public static Intent makeIntentAttachments(Context context, int workOrderId, String uuid) {
+    public static Intent makeIntentShow(Context context, int workOrderId, String action, String uuid) {
         Log.v(TAG, "makeIntentAttachments");
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, ACTION_ATTACHMENTS);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
-        intent.putExtra(INTENT_UI_UUID, uuid);
-        return intent;
-    }
 
-    public static Intent makeIntentMessages(Context context, int workOrderId) {
-        Log.v(TAG, "makeIntentMessages");
-        Intent intent = new Intent(context, WorkOrderActivity.class);
-        intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, ACTION_MESSAGES);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
-        return intent;
-    }
-
-    public static Intent makeIntentConfirm(Context context, int workOrderId) {
-        Log.v(TAG, "makeIntentMessages");
-        Intent intent = new Intent(context, WorkOrderActivity.class);
-        intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
+        if (action != null)
+            intent.putExtra(INTENT_FIELD_ACTION, action);
+        if (uuid != null)
+            intent.putExtra(INTENT_UI_UUID, uuid);
         return intent;
     }
 

@@ -127,6 +127,8 @@
     <color name="fn_dark_text_25">#3F333333</color>
     <color name="fn_dark_text_0">#00333333</color>
 
+    <color name="fn_disabled_text">#FFADADAD</color>
+
     <color name="fn_gray_lighter">#FFAAAAAA</color>
     <color name="fn_gray_dark">#FF333333</color>
     <color name="fn_gray_light">#FF555555</color>

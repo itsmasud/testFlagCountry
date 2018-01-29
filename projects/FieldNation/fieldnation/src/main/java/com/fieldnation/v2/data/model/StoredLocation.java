@@ -264,7 +264,7 @@ public class StoredLocation implements Parcelable {
         if (_client == null)
             _client = new Company();
 
-            return _client;
+        return _client;
     }
 
     public StoredLocation client(Company client) throws ParseException {
@@ -289,7 +289,7 @@ public class StoredLocation implements Parcelable {
         if (_company == null)
             _company = new Company();
 
-            return _company;
+        return _company;
     }
 
     public StoredLocation company(Company company) throws ParseException {
@@ -314,7 +314,7 @@ public class StoredLocation implements Parcelable {
         if (_contact == null)
             _contact = new Contact();
 
-            return _contact;
+        return _contact;
     }
 
     public StoredLocation contact(Contact contact) throws ParseException {
@@ -361,7 +361,7 @@ public class StoredLocation implements Parcelable {
         if (_geo == null)
             _geo = new Coords();
 
-            return _geo;
+        return _geo;
     }
 
     public StoredLocation geo(Coords geo) throws ParseException {
@@ -386,7 +386,7 @@ public class StoredLocation implements Parcelable {
         if (_group == null)
             _group = new LocationGroup();
 
-            return _group;
+        return _group;
     }
 
     public StoredLocation group(LocationGroup group) throws ParseException {
@@ -460,7 +460,7 @@ public class StoredLocation implements Parcelable {
         if (_notes == null)
             _notes = new LocationNote[0];
 
-            return _notes;
+        return _notes;
     }
 
     public StoredLocation notes(LocationNote[] notes) throws ParseException {
@@ -507,7 +507,7 @@ public class StoredLocation implements Parcelable {
         if (_timeZone == null)
             _timeZone = new TimeZone();
 
-            return _timeZone;
+        return _timeZone;
     }
 
     public StoredLocation timeZone(TimeZone timeZone) throws ParseException {
@@ -532,7 +532,7 @@ public class StoredLocation implements Parcelable {
         if (_type == null)
             _type = new LocationType();
 
-            return _type;
+        return _type;
     }
 
     public StoredLocation type(LocationType type) throws ParseException {

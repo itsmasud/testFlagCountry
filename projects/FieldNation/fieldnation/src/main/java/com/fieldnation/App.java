@@ -32,9 +32,9 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
-import com.fieldnation.fnstore.ObjectStoreSqlHelper;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -48,9 +48,9 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.transaction.TransformSqlHelper;
-import com.fieldnation.service.transaction.WebTransactionSqlHelper;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
+import com.fieldnation.v2.data.model.SavedList;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -87,6 +87,7 @@ public class App extends Application {
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
+    public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
 
     private static App _context;
 
@@ -152,7 +153,6 @@ public class App extends Application {
 //        }
 
         super.onCreate();
-
         HttpJson.setTempFolder(getTempFolder());
         HttpJson.setVersionName(BuildConfig.VERSION_NAME);
 
@@ -241,9 +241,12 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
+        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
+
+        new DataPurgeAsync().run(this, null);
     }
 
     private Runnable _anrReport = new Runnable() {
@@ -255,8 +258,21 @@ public class App extends Application {
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
-
                 anrReport();
+            }
+        }
+    };
+
+    private Runnable _pausedTest = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                try {
+                    Thread.sleep(2000);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
             }
         }
     };
@@ -288,6 +304,7 @@ public class App extends Application {
         return _memoryClass <= 70;
     }
 
+/* This doesn't get called in the wild. Leaving here for reference later
     @Override
     public void onTerminate() {
         _profileClient.unsubGet();
@@ -304,7 +321,7 @@ public class App extends Application {
         ObjectStoreSqlHelper.stop();
         super.onTerminate();
         _context = null;
-    }
+    }*/
 
     public static App get() {
         return _context;
@@ -458,6 +475,10 @@ public class App extends Application {
         @Override
         public void onGet(Profile profile, boolean failed) {
             Log.v(TAG, "onProfile");
+
+            if (profile == null) {
+                return;
+            }
 
             // had no profile previously, or new profile, then request new token
             if (_profile == null || !_profile.getUserId().equals(profile.getUserId())) {
@@ -649,21 +670,22 @@ public class App extends Application {
 
 
     private void setInstallTime() {
-        new AsyncTaskEx<Object, Object, Object>() {
+        new SetInstallTimeAsyncTask().executeEx(this);
+    }
 
-            @Override
-            protected Object doInBackground(Object... params) {
-                SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+    private static class SetInstallTimeAsyncTask extends AsyncTaskEx<Context, Object, Object> {
+        @Override
+        protected Object doInBackground(Context... params) {
+            SharedPreferences settings = (params[0]).getSharedPreferences(PREF_NAME, 0);
 
-                if (settings.contains(PREF_INSTALL_TIME))
-                    return null;
-
-                SharedPreferences.Editor edit = settings.edit();
-                edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
-                edit.apply();
+            if (settings.contains(PREF_INSTALL_TIME))
                 return null;
-            }
-        }.executeEx();
+
+            SharedPreferences.Editor edit = settings.edit();
+            edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+            edit.apply();
+            return null;
+        }
     }
 
     public long getInstallTime() {
@@ -716,6 +738,44 @@ public class App extends Application {
             return -1;
 
         return settings.getLong(PREF_RATE_SHOWN, 0);
+    }
+
+    public void setLastVisitedWoL(SavedList savedList) {
+        if (savedList == null) {
+            clearPrefKey(PREF_LAST_VISITED_WOL);
+            return;
+        }
+
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putString(PREF_LAST_VISITED_WOL, savedList.getJson().toString());
+
+        edit.apply();
+    }
+
+    public SavedList getLastVisitedWoL() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        String jsonData = settings.getString(PREF_LAST_VISITED_WOL, null);
+        SavedList _savedList = null;
+
+        try {
+            if (misc.isEmptyOrNull(jsonData)) {
+                _savedList = new SavedList()
+                        .id("workorders_available")
+                        .label("available");
+            } else {
+                _savedList = SavedList.fromJson(new JsonObject(jsonData));
+            }
+        } catch (Exception ex) {
+        }
+        return _savedList;
+
+    }
+
+    public void clearPrefKey(String key) {
+        SharedPreferences settings = App.get().getSharedPreferences(PREF_NAME, 0);
+        settings.edit().remove(key).apply();
     }
 
     public boolean onlyUploadWithWifi() {
@@ -844,23 +904,9 @@ public class App extends Application {
 
         PhotoClient.clearPhotoClientCache();
         PigeonRoost.pruneStickies();
-        switch (level) {
-            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
-                break;
-            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
-                break;
-            default:
-                break;
+
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+            PigeonRoost.clearAddressCacheAll(AppMessagingConstants.ADDRESS_SHUTDOWN_UI);
         }
     }
 

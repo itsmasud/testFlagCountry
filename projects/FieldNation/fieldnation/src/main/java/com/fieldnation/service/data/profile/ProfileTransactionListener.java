@@ -111,7 +111,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
 
     private void onStartUploadPhoto(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
         Log.v(TAG, "onStartUploadPhoto");
-        UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+        UploadTrackerClient.uploadStarted(transaction, transaction.getTrackType());
     }
 
     /*-**************************************-*/
@@ -257,11 +257,11 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         if (result == Result.CONTINUE) {
             ProfileDispatch.uploadProfilePhoto(transaction.getUUID(), filename, true, false);
             ProfileClient.get(context, false);
-            UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
+            UploadTrackerClient.uploadSuccess(transaction, transaction.getTrackType());
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
+            UploadTrackerClient.uploadFailed(transaction, transaction.getTrackType());
 
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);

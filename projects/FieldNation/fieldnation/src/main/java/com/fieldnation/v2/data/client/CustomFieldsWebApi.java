@@ -469,9 +469,9 @@ public abstract class CustomFieldsWebApi extends Pigeon {
                 super(manager);
                 setName("CustomFieldsWebApi/Parser");
                 start();
-        }
+            }
 
-        @Override
+            @Override
             public boolean doWork() {
                 CustomFieldsWebApi webApi = null;
                 Bundle bundle = null;
@@ -492,55 +492,55 @@ public abstract class CustomFieldsWebApi extends Pigeon {
                 boolean success = bundle.getBoolean("success");
                 byte[] data = bundle.getByteArray("data");
 
-            Stopwatch watch = new Stopwatch(true);
-            try {
-                if (data != null && success) {
-                    switch (transactionParams.apiFunction) {
-                        case "deleteCustomField":
-                        case "updateCustomField":
-                        case "updateCustomFieldVisibility":
-                        case "updateCustomFieldVisibilityByProjectId":
-                            successObject = data;
-                            break;
-                        case "addCustomField":
-                            successObject = IdResponse.fromJson(new JsonObject(data));
-                            break;
-                        case "getCustomFields":
-                            successObject = CustomFields.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
+                Stopwatch watch = new Stopwatch(true);
+                try {
+                    if (data != null && success) {
+                        switch (transactionParams.apiFunction) {
+                            case "deleteCustomField":
+                            case "updateCustomField":
+                            case "updateCustomFieldVisibility":
+                            case "updateCustomFieldVisibilityByProjectId":
+                                successObject = data;
+                                break;
+                            case "addCustomField":
+                                successObject = IdResponse.fromJson(new JsonObject(data));
+                                break;
+                            case "getCustomFields":
+                                successObject = CustomFields.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
+                    } else if (data != null) {
+                        switch (transactionParams.apiFunction) {
+                            case "addCustomField":
+                            case "deleteCustomField":
+                            case "getCustomFields":
+                            case "updateCustomField":
+                            case "updateCustomFieldVisibility":
+                            case "updateCustomFieldVisibilityByProjectId":
+                                failObject = Error.fromJson(new JsonObject(data));
+                                break;
+                            default:
+                                Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                                break;
+                        }
                     }
-                } else if (data != null) {
-                    switch (transactionParams.apiFunction) {
-                        case "addCustomField":
-                        case "deleteCustomField":
-                        case "getCustomFields":
-                        case "updateCustomField":
-                        case "updateCustomFieldVisibility":
-                        case "updateCustomFieldVisibilityByProjectId":
-                            failObject = Error.fromJson(new JsonObject(data));
-                            break;
-                        default:
-                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                            break;
-                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                } finally {
+                    Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
                 }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            } finally {
-                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
-            }
 
-            try {
-                if (failObject != null && failObject instanceof Error) {
-                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
-                }
+                try {
+                    if (failObject != null && failObject instanceof Error) {
+                        ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                    }
                     getHandler().post(new Deliverator(webApi, transactionParams, successObject, success, failObject));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
                 return true;
             }

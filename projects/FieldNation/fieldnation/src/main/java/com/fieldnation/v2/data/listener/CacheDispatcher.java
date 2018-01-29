@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
@@ -41,9 +42,15 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
             if (paramsObj == null)
                 return null;
 
-            _transactionParams = TransactionParams.fromJson(new JsonObject(paramsObj.getData()));
+            JsonObject p = new JsonObject(paramsObj.getData());
+
+            _transactionParams = TransactionParams.fromJson(p.getJsonObject("transactionParams"));
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", _transactionParams);
+            if (p.has("uuid"))
+                bundle.putParcelable("uuid", UUIDGroup.fromJson(p.getJsonObject("uuid")));
+            else
+                bundle.putParcelable("uuid", (UUIDGroup) null);
             bundle.putBoolean("success", true);
             if (obj.isUri()) {
                 bundle.putByteArray("data", StreamUtils.readAllFromStream(_context.getContentResolver().openInputStream(obj.getUri()), (int) obj.size(), 1000));
@@ -51,6 +58,7 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
                 bundle.putByteArray("data", obj.getData());
             }
             bundle.putString("type", "complete");
+            bundle.putBoolean("cached", true);
             return bundle;
         } catch (Exception ex) {
             Log.v(TAG, ex);

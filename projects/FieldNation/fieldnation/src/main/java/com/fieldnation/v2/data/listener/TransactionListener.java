@@ -1,12 +1,9 @@
 package com.fieldnation.v2.data.listener;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.fieldnation.App;
-import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
@@ -25,7 +22,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -64,10 +60,12 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "queued");
+            bundle.putParcelable("uuid", transaction.getUUID());
+
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
-                UploadTrackerClient.uploadQueued(context, transaction.getTrackType());
+                UploadTrackerClient.uploadQueued(transaction, transaction.getTrackType());
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -81,10 +79,11 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "start");
+            bundle.putParcelable("uuid", transaction.getUUID());
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
-                UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+                UploadTrackerClient.uploadStarted(transaction, transaction.getTrackType());
             }
 
             SimpleEvent.Builder se = new SimpleEvent.Builder()
@@ -111,10 +110,11 @@ public class TransactionListener extends WebTransactionListener {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", params);
             bundle.putString("type", "paused");
+            bundle.putParcelable("uuid", transaction.getUUID());
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
-                UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
+                UploadTrackerClient.uploadQueued(transaction, transaction.getTrackType());
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -131,6 +131,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putLong("pos", pos);
             bundle.putLong("size", size);
             bundle.putLong("time", time);
+            bundle.putParcelable("uuid", transaction.getUUID());
             PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -147,6 +148,7 @@ public class TransactionListener extends WebTransactionListener {
                 Log.v(TAG, "onComplete " + params.apiFunction + (transaction.getKey() != null ? transaction.getKey() : ""));
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("params", params);
+                bundle.putParcelable("uuid", transaction.getUUID());
 
                 if (httpResult.isFile()) {
                     //Log.v(TAG, "isFile true");
@@ -165,7 +167,7 @@ public class TransactionListener extends WebTransactionListener {
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
                 if (transaction.isTracked()) {
-                    UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
+                    UploadTrackerClient.uploadSuccess(transaction, transaction.getTrackType());
                 }
 
                 if (transaction.getUUID() != null)
@@ -184,7 +186,11 @@ public class TransactionListener extends WebTransactionListener {
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET") && !misc.isEmptyOrNull(transaction.getKey())) {
-                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
+                    JsonObject p = new JsonObject();
+                    p.put("transactionParams", params.toJson());
+                    if (transaction.getUUID() != null)
+                        p.put("uuid", transaction.getUUID().toJson());
+                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), p.toByteArray(), true);
                     if (httpResult.isFile()) {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
                     } else {
@@ -204,6 +210,7 @@ public class TransactionListener extends WebTransactionListener {
 
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("params", params);
+                bundle.putParcelable("uuid", transaction.getUUID());
 
                 if (httpResult != null) {
                     if (httpResult.isFile()) {
@@ -223,13 +230,7 @@ public class TransactionListener extends WebTransactionListener {
                 try {
                     JsonObject methodParams = new JsonObject(params.methodParams);
                     if (transaction.isTracked()) {
-                        if (methodParams.has("workOrderId")) {
-                            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), methodParams.getInt("workOrderId"));
-                            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
-                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
-                        } else {
-                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
-                        }
+                        UploadTrackerClient.uploadFailed(transaction, transaction.getTrackType());
                     }
 
                     Log.v(TAG, "Saving zombie transaction");
@@ -276,15 +277,10 @@ public class TransactionListener extends WebTransactionListener {
                 JsonObject methodParams = new JsonObject(params.methodParams);
 
                 Log.v(TAG, "Saving zombie transaction");
-                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")) {
+                if (methodParams.has("allowZombie") && methodParams.getBoolean("allowZombie")
+                        && transaction.getTryCount() >= transaction.getMaxTries()) {
                     if (transaction.isTracked()) {
-                        if (methodParams.has("workOrderId")) {
-                            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), methodParams.getInt("workOrderId"));
-                            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
-                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
-                        } else {
-                            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
-                        }
+                        UploadTrackerClient.uploadFailed(transaction, transaction.getTrackType());
                     }
 
                     SimpleEvent.Builder se = new SimpleEvent.Builder()
@@ -299,7 +295,7 @@ public class TransactionListener extends WebTransactionListener {
 
                     return Result.ZOMBIE;
                 } else if (transaction.isTracked()) {
-                    UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
+                    UploadTrackerClient.uploadRetry(transaction, transaction.getTrackType());
                 }
 
                 SimpleEvent.Builder se = new SimpleEvent.Builder()

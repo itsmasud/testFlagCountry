@@ -110,6 +110,16 @@ public class ContactTileView extends RelativeLayout {
         @Override
         public void onSingleClick(View v) {
             if (!misc.isEmptyOrNull(_phone)) {
+
+                if (!App.get().getPackageManager().hasSystemFeature(
+                        PackageManager.FEATURE_TELEPHONY)) {
+                    ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", _phone + (misc.isEmptyOrNull(_phoneExt) ? "" : " x" + _phoneExt));
+                    clipboard.setPrimaryClip(clip);
+                    ToastClient.toast(App.get(), R.string.toast_copied_to_clipboard, Toast.LENGTH_LONG);
+                    return;
+                }
+
                 try {
                     int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
                     if (permissionCheck == PackageManager.PERMISSION_DENIED) {
@@ -120,7 +130,6 @@ public class ContactTileView extends RelativeLayout {
                         return;
                     }
 
-                    // TODO Save this for when we upgrade to Android 6+
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
 
                     String phone = _phone;
@@ -147,6 +156,7 @@ public class ContactTileView extends RelativeLayout {
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
+
             if (permission.equals(Manifest.permission.CALL_PHONE)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     _this_onClick.onClick(ContactTileView.this);
