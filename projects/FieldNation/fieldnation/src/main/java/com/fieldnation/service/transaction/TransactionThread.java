@@ -98,6 +98,8 @@ class TransactionThread extends ThreadManager.ManagedThread {
         if (count >= RETRY_TIMES.length)
             count = RETRY_TIMES.length - 1;
 
+        Log.v(TAG, "getRetry " + RETRY_TIMES[count]);
+
         return RETRY_TIMES[count];
     }
 
@@ -185,8 +187,9 @@ class TransactionThread extends ThreadManager.ManagedThread {
             OAuth auth = _service.getAuth();
 
             if (auth == null) {
+                Log.v(TAG, "auth == null");
                 AuthClient.requestCommand();
-                trans.requeue(getRetry(trans.getTryCount()));
+                trans.requeue(4000);
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
                 return false;
@@ -195,7 +198,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
                 AuthClient.invalidateCommand();
-                trans.requeue(getRetry(trans.getTryCount()));
+                trans.requeue(4000);
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
                 return false;
@@ -203,7 +206,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (!_service.isAuthenticated()) {
                 Log.v(TAG, "skip no auth");
-                trans.requeue(getRetry(trans.getTryCount()));
+                trans.requeue(4000);
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
                 return false;
