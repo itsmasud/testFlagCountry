@@ -189,7 +189,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (auth == null) {
                 Log.v(TAG, "auth == null");
                 AuthClient.requestCommand();
-                trans.requeue(4000);
+                trans.requeue(5000);
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
@@ -199,7 +199,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
                 AuthClient.invalidateCommand();
-                trans.requeue(4000);
+                trans.requeue(5000);
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
@@ -208,7 +208,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (!_service.isAuthenticated()) {
                 Log.v(TAG, "skip no auth");
-                trans.requeue(4000);
+                trans.requeue(5000);
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
@@ -294,7 +294,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
 
                 generateNotification(notifId, notifRetry);
-                trans.requeue(getRetry(trans.getTryCount()));
+
+                if (trans.getMaxTries() > 0)
+                    trans.requeue(getRetry(trans.getTryCount()));
+                else
+                    trans.requeue(5000);
 
                 break;
             case ZOMBIE:
