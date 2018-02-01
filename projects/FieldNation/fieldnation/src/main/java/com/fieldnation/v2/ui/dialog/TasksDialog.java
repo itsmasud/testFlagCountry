@@ -69,6 +69,8 @@ import java.util.List;
 
 public class TasksDialog extends FullScreenDialog {
     private static final String TAG = "TasksDialog";
+    // State
+    private static final String STATE_TASK = "TasksDialog:TASK";
 
     // Dialog
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
@@ -114,6 +116,23 @@ public class TasksDialog extends FullScreenDialog {
 
         return v;
     }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_TASK))
+                _currentTask = savedState.getParcelable(STATE_TASK);
+        }
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+            outState.putParcelable(STATE_TASK, _currentTask);
+        super.onSaveDialogState(outState);
+    }
+
 
     @Override
     public void onStart() {
