@@ -290,12 +290,14 @@ public class AuthSystem implements AuthTopicConstants {
         public void onComplete(Object result) {
             Log.v(TAG, "_futureWaitAsync_remove.onComplete");
             setState(AuthState.NOT_AUTHENTICATED);
+            AuthClient.requestCommand();
         }
 
         @Override
         public void onFail(Exception ex) {
             Log.v(TAG, "_futureWaitAsync_remove.onFail");
             setState(AuthState.NOT_AUTHENTICATED);
+            AuthClient.requestCommand();
         }
     };
 
