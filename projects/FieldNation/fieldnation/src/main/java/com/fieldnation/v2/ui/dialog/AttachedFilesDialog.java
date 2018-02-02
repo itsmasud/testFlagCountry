@@ -33,6 +33,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -142,22 +143,32 @@ public class AttachedFilesDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
-        if (_list == null)
-            return;
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+            if (_list == null)
+                return;
 
-        if (folders == null)
-            return;
+            if (folders == null)
+                return;
 
-        if (adapter == null) {
-            adapter = new AttachedFilesAdapter();
-            adapter.setListener(_attachmentFolder_listener);
-            _list.setAdapter(adapter);
+            if (adapter == null) {
+                adapter = new AttachedFilesAdapter();
+                adapter.setListener(_attachmentFolder_listener);
+                _list.setAdapter(adapter);
+            }
+
+            Stopwatch sw = new Stopwatch(true);
+            adapter.setAttachments(folders);
+            Log.v(TAG, "setAttachments time: " + sw.finishAndRestart());
+            WebTransaction.cleanZombies(folders);
+            Log.v(TAG, "cleanZombies time: " + sw.finishAndRestart());
+            adapter.setFailedUploads(WebTransaction.getZombies());
+            Log.v(TAG, "setFailedUploads time: " + sw.finishAndRestart());
+            adapter.setPausedUploads(WebTransaction.getPaused(false));
+            Log.v(TAG, "setPausedUploads time: " + sw.finishAndRestart());
+        } finally {
+            Log.v(TAG, "populateUi time: " + stopwatch.finish());
         }
-
-        adapter.setAttachments(folders);
-        WebTransaction.cleanZombies(folders);
-        adapter.setFailedUploads(WebTransaction.getZombies());
-        adapter.setPausedUploads(WebTransaction.getPaused());
     }
 
     @Override

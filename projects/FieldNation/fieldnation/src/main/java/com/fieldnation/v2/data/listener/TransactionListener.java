@@ -62,7 +62,8 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putString("type", "queued");
             bundle.putParcelable("uuid", transaction.getUUID());
 
-            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
+            if (!transaction.isSync())
+                PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadQueued(transaction, transaction.getTrackType());
@@ -80,7 +81,9 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putParcelable("params", params);
             bundle.putString("type", "start");
             bundle.putParcelable("uuid", transaction.getUUID());
-            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
+
+            if (!transaction.isSync())
+                PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadStarted(transaction, transaction.getTrackType());
@@ -111,7 +114,9 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putParcelable("params", params);
             bundle.putString("type", "paused");
             bundle.putParcelable("uuid", transaction.getUUID());
-            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
+
+            if (!transaction.isSync())
+                PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadQueued(transaction, transaction.getTrackType());
@@ -132,7 +137,8 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putLong("size", size);
             bundle.putLong("time", time);
             bundle.putParcelable("uuid", transaction.getUUID());
-            PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
+            if (!transaction.isSync())
+                PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

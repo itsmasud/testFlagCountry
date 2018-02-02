@@ -104,8 +104,16 @@ public abstract class WorkordersWebApi extends Pigeon {
         PigeonRoost.sub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
+    public void sub(boolean isSync) {
+        PigeonRoost.sub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
+    }
+
     public void unsub() {
         PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
+    }
+
+    public void unSub(boolean isSync) {
+        PigeonRoost.unsub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     /**
@@ -2396,16 +2404,18 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param attachmentId File id
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, EventContext uiContext) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
-                .label(workOrderId + "")
-                .category("workorder")
-                .addContext(uiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
-                .property("folder_id")
-                .value(folderId)
-                .build()
-        );
+        if (uiContext != null) {
+            Tracker.event(context, new SimpleEvent.Builder()
+                    .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
+                    .label(workOrderId + "")
+                    .category("workorder")
+                    .addContext(uiContext)
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                    .property("folder_id")
+                    .value(folderId)
+                    .build()
+            );
+        }
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -3833,10 +3843,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/assignee")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getAssignee", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3873,10 +3883,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getAttachments", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3915,10 +3925,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getBonus", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3963,10 +3973,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getBonus", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4003,10 +4013,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getBonuses", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4043,10 +4053,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/contacts")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getContacts", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4085,10 +4095,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getCustomField", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4125,10 +4135,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getCustomFields", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4165,10 +4175,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/discounts")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getDiscounts", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4205,10 +4215,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/eta")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getETA", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4245,10 +4255,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/expenses")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getExpenses", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4289,10 +4299,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getFile", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4331,10 +4341,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getFolder", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4373,10 +4383,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getHold", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4418,10 +4428,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getHold", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4458,10 +4468,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getHolds", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4500,10 +4510,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getIncrease", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4545,10 +4555,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getIncrease", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4585,10 +4595,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getIncreases", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4625,10 +4635,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/location")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getLocation", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4665,10 +4675,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/messages")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getMessages", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4705,10 +4715,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/milestones")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getMilestones", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4745,10 +4755,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getOverview", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4785,10 +4795,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getOverviewValues", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4835,10 +4845,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getOverviewValues", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4875,10 +4885,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/pay")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getPay", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4915,10 +4925,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getPenalties", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4957,10 +4967,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getPenalty", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -4999,10 +5009,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProblem", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5039,10 +5049,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProblems", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5079,10 +5089,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5127,10 +5137,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5167,10 +5177,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/qualifications")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getQualifications", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5207,10 +5217,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/ratings")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRatings", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5249,10 +5259,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRequest", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5294,10 +5304,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRequest", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5334,10 +5344,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRequests", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5375,10 +5385,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/mass-accept")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "GetScheduleAndLocation", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5415,10 +5425,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/schedule")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getSchedule", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5455,10 +5465,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/shipments")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getShipments", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5497,10 +5507,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getSignature", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5537,10 +5547,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getSignatures", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5577,10 +5587,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/status")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getStatus", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5619,10 +5629,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tags/{tag_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTag", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5659,10 +5669,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tags")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTags", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5701,10 +5711,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTask", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5741,10 +5751,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTasks", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5781,10 +5791,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTimeLogs", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5821,10 +5831,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrder", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5859,10 +5869,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/lists")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrderLists", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -5897,10 +5907,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -6049,10 +6059,10 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
                     .key(key)
-                    .priority(Priority.HIGH)
+                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)

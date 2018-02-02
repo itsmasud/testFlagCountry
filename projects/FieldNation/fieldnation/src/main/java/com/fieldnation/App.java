@@ -267,7 +267,7 @@ public class App extends Application {
         @Override
         public void run() {
             while (true) {
-                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                Log.v(TAG, "PAUSED CHECK " + (WebTransaction.getPaused(true).size() + WebTransaction.getPaused(false).size()));
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
