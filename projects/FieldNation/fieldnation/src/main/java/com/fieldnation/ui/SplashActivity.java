@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
@@ -224,12 +225,6 @@ public class SplashActivity extends AuthSimpleActivity {
             Log.v(TAG, "onAuthenticated");
             _isAuth = true;
             doNextStep();
-        }
-
-        @Override
-        public void onNotAuthenticated() {
-            Log.v(TAG, "onNotAuthenticated");
-            AuthClient.requestCommand();
         }
     };
 

@@ -45,7 +45,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private boolean _wasZombie = false;
     private UUIDGroup _uuid;
     private int _tryCount = 0;
-    private int _maxTries = 1;
+    private int _maxTries = 0;
 
     private int _notifId = -1;
 
@@ -791,7 +791,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putInt(PARAM_NOTIFICATION_ID, -1);
             params.putParcelable(PARAM_UUID, null);
             params.putInt(PARAM_TRY_COUNT, 0);
-            params.putInt(PARAM_MAX_TRIES, 1);
+            params.putInt(PARAM_MAX_TRIES, 0);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_FAILED, (byte[]) null);
