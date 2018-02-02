@@ -229,7 +229,6 @@ public class SplashActivity extends AuthSimpleActivity {
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-            AuthClient.requestCommand();
         }
     };
 
