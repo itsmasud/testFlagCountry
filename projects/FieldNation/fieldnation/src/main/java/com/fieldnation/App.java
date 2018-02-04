@@ -359,7 +359,6 @@ public class App extends Application {
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
             setAuth(null);
-            AuthClient.requestCommand();
         }
     };
 
