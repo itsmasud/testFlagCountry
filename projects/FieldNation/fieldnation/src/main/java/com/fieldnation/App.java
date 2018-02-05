@@ -231,6 +231,7 @@ public class App extends Application {
         ProfileClient.get(App.this);
 
         _authClient.subAuthStateChange();
+        _authClient.subRemoveCommand();
         AuthClient.requestCommand();
         Log.v(TAG, "start topic clients time: " + watch.finishAndRestart());
 
@@ -352,6 +353,11 @@ public class App extends Application {
         public void onAuthenticated(OAuth oauth) {
             _isConnected = true;
             setAuth(oauth);
+        }
+
+        @Override
+        public void onCommandRemove() {
+            _profile = null;
         }
 
         @Override
@@ -535,12 +541,12 @@ public class App extends Application {
         }
     };
 
-    public Profile getProfile() {
-        return _profile;
+    public static Profile getProfile() {
+        return get()._profile;
     }
 
     public static long getProfileId() {
-        Profile profile = get().getProfile();
+        Profile profile = getProfile();
         if (profile != null && profile.getUserId() != null) {
             return profile.getUserId();
         }

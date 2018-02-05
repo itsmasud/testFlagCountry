@@ -112,7 +112,7 @@ public abstract class WorkordersWebApi extends Pigeon {
         PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
-    public void unSub(boolean isSync) {
+    public void unsub(boolean isSync) {
         PigeonRoost.unsub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 

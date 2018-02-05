@@ -153,7 +153,7 @@ public class ChatDialog extends FullScreenDialog {
                 return;
             }
 
-            if (App.get().getProfile() == null) {
+            if (App.getProfile() == null) {
                 ToastClient.toast(App.get(), "Can't send message right now, please try again later", Toast.LENGTH_LONG);
                 return;
             }
@@ -161,7 +161,7 @@ public class ChatDialog extends FullScreenDialog {
             _refreshView.startRefreshing();
             Log.v(TAG, "_send_onClick");
 
-            //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));``
+            //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.getProfile().toJson()), _inputView.getInputText()));``
 
             try {
                 Message msg = new Message();

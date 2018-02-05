@@ -76,11 +76,11 @@ public class InboxActivity extends TabActionBarFragmentActivity {
 
     @Override
     public String getFragmentTitle(int index) {
-        if (App.get().getProfile() != null) {
-            if (index == 0 && App.get().getProfile().getUnreadMessageCount() > 0)
-                return _titles[0] + " (" + App.get().getProfile().getUnreadMessageCount() + ")";
-            if (index == 1 && App.get().getProfile().getNewNotificationCount() > 0)
-                return _titles[1] + " (" + App.get().getProfile().getNewNotificationCount() + ")";
+        if (App.getProfile() != null) {
+            if (index == 0 && App.getProfile().getUnreadMessageCount() > 0)
+                return _titles[0] + " (" + App.getProfile().getUnreadMessageCount() + ")";
+            if (index == 1 && App.getProfile().getNewNotificationCount() > 0)
+                return _titles[1] + " (" + App.getProfile().getNewNotificationCount() + ")";
         }
         return _titles[index];
     }

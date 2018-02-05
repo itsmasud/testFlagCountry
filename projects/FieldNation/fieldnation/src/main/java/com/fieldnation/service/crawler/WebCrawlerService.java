@@ -24,6 +24,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -54,7 +55,7 @@ public class WebCrawlerService extends Service {
      * When set to true, this will force the web crawler to run on startup. Only possible when
      * running a debug build.
      */
-    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
+    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
     /**
      * When set to true, will force the web crawler to only download the first page of assigned work.
      * Only possible when running a debug build.
@@ -255,12 +256,13 @@ public class WebCrawlerService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _workOrdersApi.unsub();
+        _workOrdersApi.unsub(true);
         _profileClient.unsubListMessages(true);
         _profileClient.unsubListNotifications(true);
         _profileClient.unsubGet(true);
 
         _bundlesApi.unsub();
+        _authClient.unsubRemoveCommand();
 
         _isRunning = false;
         super.onDestroy();
@@ -311,6 +313,7 @@ public class WebCrawlerService extends Service {
         startActivityMonitor();
 
         Log.v(TAG, "_profileClient_listener.onConnected");
+        _authClient.subRemoveCommand();
         _profileClient.subListMessages(true);
         _profileClient.subListNotifications(true);
         _profileClient.subGet(true);
@@ -329,6 +332,18 @@ public class WebCrawlerService extends Service {
         incRequestCounter(1);
         WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
     }
+
+    private final AuthClient _authClient = new AuthClient() {
+        @Override
+        public void onCommandRemove() {
+            _workOrdersApi.unsub(true);
+            _profileClient.unsubListMessages(true);
+            _profileClient.unsubListNotifications(true);
+            _profileClient.unsubGet(true);
+            _bundlesApi.unsub(true);
+            _isRunning = false;
+        }
+    };
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override

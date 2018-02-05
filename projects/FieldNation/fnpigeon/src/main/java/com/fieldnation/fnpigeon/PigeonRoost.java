@@ -179,6 +179,12 @@ public class PigeonRoost {
         }
     }
 
+    public static void reset() {
+        synchronized (TAG) {
+            _stickies.clear();
+        }
+    }
+
     public static void pruneStickies() {
         Hashtable<String, StickyContainer> ns = new Hashtable<>();
         synchronized (TAG) {
