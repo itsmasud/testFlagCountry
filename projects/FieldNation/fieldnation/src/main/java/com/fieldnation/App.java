@@ -3,6 +3,7 @@ package com.fieldnation;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -25,7 +27,6 @@ import android.support.multidex.MultiDex;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Toast;
 
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
@@ -252,7 +253,32 @@ public class App extends Application {
         Log.v(TAG, "onCreate time: " + mwatch.finish());
 
         new DataPurgeAsync().run(this, null);
+
+        registerReceiver(broadcastReceiver, new IntentFilter(
+                WebCrawlerService.BROADCAST_ACTION));
+
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateProgressOfflineMode(intent);
+        }
+    };
+
+    private void updateProgressOfflineMode(Intent intent) {
+        Bundle pendingRequests = intent.getBundleExtra(WebCrawlerService.UPDATE_OFFLINE_MODE);
+
+        Log.v(TAG, "Total assigned wos: " + pendingRequests.get(WebCrawlerService.TOTAL_ASSIGNED_WOS));
+        Log.v(TAG, "Total requested wos: " + pendingRequests.get(WebCrawlerService.TOTAL_REQUESTED));
+        Log.v(TAG, "Total served request: " + pendingRequests.get(WebCrawlerService.TOTAL_REQUEST_SERVED));
+
+
+
+//        Log.e(TAG, "pending request: " + pendingRequests);
+    }
+
+
 
     private Runnable _anrReport = new Runnable() {
         @Override

@@ -1,11 +1,14 @@
 package com.fieldnation.ui.nav;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -28,6 +31,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -173,6 +177,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         ProfileClient.get(App.get(), false);
 
         AdditionalOptionsTracker.onShow(App.get());
+
     }
 
     public void setListener(Listener listener) {

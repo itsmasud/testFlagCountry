@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -48,6 +49,15 @@ import java.util.Random;
  */
 public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
+
+    public final static String UPDATE_OFFLINE_MODE= "UPDATE_OFFLINE_MODE ";
+    public final static String BROADCAST_ACTION = "BROADCAST_ACTION ";
+    public final static String TOTAL_ASSIGNED_WOS = "TOTAL_ASSIGNED_WOS";
+    public final static String TOTAL_REQUESTED = "TOTAL_REQUESTED";
+    public final static String TOTAL_REQUEST_SERVED = "TOTAL_REQUEST_SERVED";
+    private Intent intent = new Intent(BROADCAST_ACTION);
+
+
     private final Object LOCK = new Object();
 
     /**
@@ -71,6 +81,10 @@ public class WebCrawlerService extends Service {
     private boolean _monitorRunning = false;
     private int _pendingRequests = 0;
     private static int NOTIFICATION_ID = App.secureRandom.nextInt();
+    private int _totalAssignedWOs = -1;
+    private int _totalRequested = -1;
+    private int _totalCompleted = -1;
+
 
     public WebCrawlerService() {
         super();
@@ -227,6 +241,19 @@ public class WebCrawlerService extends Service {
         _requestCounter += val;
         if (_requestCounter % 5 == 0)
             Log.v(TAG, "_requestCounter = " + _requestCounter);
+    }
+
+    // this method will be used to send the update of offline mode
+    private void sendProgressOflineMode(int pendingRequests) {
+        Log.v(TAG, "sendProgressOflineMode");
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(TOTAL_ASSIGNED_WOS, _totalAssignedWOs);
+        bundle.putInt(TOTAL_REQUESTED, _totalRequested);
+        bundle.putInt(TOTAL_REQUEST_SERVED, _totalCompleted);
+
+        intent.putExtra(UPDATE_OFFLINE_MODE, bundle);
+        sendBroadcast(intent);
     }
 
     private void startActivityMonitor() {
