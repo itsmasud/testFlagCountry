@@ -106,7 +106,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
     @Override
     public boolean doWork() {
         // try to get a transaction
-        if (App.get().isOffline()) {
+        if (App.get().isOffline() && !App.get().isOfflineRunning()) {
             Log.v(TAG, "Offline mode, skipping");
             try {
                 Thread.sleep(10000);

@@ -233,6 +233,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             AppMessagingClient.setOfflineMode(!App.get().isOffline());
+            _offlineSwitch.setChecked(App.get().isOffline());
 
             ToastClient.toast(App.get(), "Offline: " + App.get().isOffline(), Toast.LENGTH_SHORT);
         }

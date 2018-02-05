@@ -25,6 +25,7 @@ import android.support.multidex.MultiDex;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
@@ -46,6 +47,7 @@ import com.fieldnation.gcm.RegClient;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -88,7 +90,8 @@ public class App extends Application {
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
     public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
-    public static final String PREF_OFFLINE_MODE = "PREF_OFFLINE_MODE";
+    public static final String PREF_OFFLINE_MODE_ENABLED = "PREF_OFFLINE_MODE_ENABLED";
+    public static final String PREF_OFFLINE_MODE_RUNNING = "PREF_OFFLINE_MODE_RUNNING";
 
     private static App _context;
 
@@ -223,6 +226,7 @@ public class App extends Application {
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subNetworkConnect();
         _appMessagingClient.subNetworkState();
+        _appMessagingClient.subOfflineMode();
 
         _profileClient.subGet();
         _profileClient.subSwitchUser();
@@ -472,6 +476,16 @@ public class App extends Application {
                 }, Snackbar.LENGTH_INDEFINITE);
             }
         }
+
+        @Override
+        public void onOfflineMode(boolean isOffline) {
+            Log.v(TAG, "onOfflineMode");
+            setOfflineRunning(isOffline);
+            if (isOffline) {
+                startService(new Intent(App.get(), WebCrawlerService.class));
+            } else
+                stopService(new Intent(App.get(), WebCrawlerService.class));
+        }
     };
 
     private final ProfileClient _profileClient = new ProfileClient() {
@@ -553,13 +567,25 @@ public class App extends Application {
 
     public boolean isOffline() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.getBoolean(PREF_OFFLINE_MODE, false);
+        return settings.getBoolean(PREF_OFFLINE_MODE_ENABLED, false);
     }
 
     public void setOffline(boolean isOffline) {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_OFFLINE_MODE, isOffline);
+        edit.putBoolean(PREF_OFFLINE_MODE_ENABLED, isOffline);
+        edit.apply();
+    }
+
+    public boolean isOfflineRunning() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_OFFLINE_MODE_RUNNING, false);
+    }
+
+    public void setOfflineRunning(boolean isOfflineRunning) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_OFFLINE_MODE_RUNNING, isOfflineRunning);
         edit.apply();
     }
 

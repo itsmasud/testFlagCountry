@@ -54,7 +54,7 @@ public class WebCrawlerService extends Service {
      * When set to true, this will force the web crawler to run on startup. Only possible when
      * running a debug build.
      */
-    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
+    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
     /**
      * When set to true, will force the web crawler to only download the first page of assigned work.
      * Only possible when running a debug build.
@@ -103,13 +103,15 @@ public class WebCrawlerService extends Service {
         }
 
         // we're not allowed to run, stop
-        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun) {
+        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun && !App.get().isOffline()) {
             Log.v(TAG, "sync disabled, quiting");
             startActivityMonitor();
             return START_NOT_STICKY;
         }
 
-        scheduleNext();
+        // schedule if sync is enabled
+        if (settings.getBoolean(getString(R.string.pref_key_sync_enabled), false))
+            scheduleNext();
 
         // if already running, then return
         if (_isRunning) {
@@ -117,8 +119,8 @@ public class WebCrawlerService extends Service {
             return START_STICKY;
         }
 
-        if (forceRun) {
-            Log.v(TAG, "force run, running");
+        if (forceRun || App.get().isOffline()) {
+            Log.v(TAG, "force run/ offline mode enabled, running");
 
             startNotification();
             runCrawler();
@@ -263,6 +265,7 @@ public class WebCrawlerService extends Service {
         _bundlesApi.unsub();
 
         _isRunning = false;
+        App.get().setOfflineRunning(false);
         super.onDestroy();
     }
 

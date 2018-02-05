@@ -60,6 +60,10 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sub(this, ADDRESS_SHOW_LOADING);
     }
 
+    public void subOfflineMode() {
+        PigeonRoost.sub(this, ADDRESS_OFFLINE_MODE);
+    }
+
     public void unsubGcm() {
         PigeonRoost.unsub(this, ADDRESS_GCM_MESSAGE);
     }
@@ -98,6 +102,10 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
 
     public void unsubLoading() {
         PigeonRoost.unsub(this, ADDRESS_SHOW_LOADING);
+    }
+
+    public void unsubOfflineMode() {
+        PigeonRoost.unsub(this, ADDRESS_OFFLINE_MODE);
     }
 
     public static void updateApp() {
