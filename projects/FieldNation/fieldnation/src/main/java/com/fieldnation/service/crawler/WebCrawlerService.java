@@ -54,7 +54,7 @@ public class WebCrawlerService extends Service {
      * When set to true, this will force the web crawler to run on startup. Only possible when
      * running a debug build.
      */
-    private static final boolean FORCE_RUN = true && BuildConfig.DEBUG;
+    private static final boolean FORCE_RUN = false && BuildConfig.DEBUG;
     /**
      * When set to true, will force the web crawler to only download the first page of assigned work.
      * Only possible when running a debug build.
