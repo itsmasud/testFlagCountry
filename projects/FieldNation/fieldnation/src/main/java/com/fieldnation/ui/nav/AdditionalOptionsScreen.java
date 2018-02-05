@@ -240,7 +240,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onGet(Profile profile, boolean failed) {
             if (profile != null) {
-                Log.v(TAG, "onGetProfile" + profile.getUserId());
+                Log.v(TAG, "onGetProfile " + profile.getUserId());
 
                 _profile = profile;
                 populateUi();
@@ -272,7 +272,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         @Override
         public void onProfileImage(BitmapDrawable drawable) {
-            Log.v(TAG, "onProfileImage ");
+            Log.v(TAG, "onProfileImage");
             _profilePic = new WeakReference<>((Drawable) drawable);
             addProfilePhoto();
         }
