@@ -753,7 +753,7 @@ public class EtaDialog extends FullScreenDialog {
                 return;
             }
 
-            if (_woSchedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
+            if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
                 _durationMilliseconds = milliseconds;
                 _isDirty = true;
                 populateUi();
@@ -823,6 +823,7 @@ public class EtaDialog extends FullScreenDialog {
                     eta.setStart(new Date(_etaStart));
                     eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                     eta.setUser(new User().id((int) App.getProfileId()));
+                    eta.setMode(_woEta.getMode());
                     eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                     eta.setNotes(_noteEditText.getText().toString().trim());
 
@@ -853,6 +854,7 @@ public class EtaDialog extends FullScreenDialog {
                             eta.setStart(new Date(_etaStart));
                             eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                             eta.setUser(new User().id((int) App.getProfileId()));
+                            eta.setMode(_woEta.getMode());
                             eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                             eta.setNotes(_noteEditText.getText().toString().trim());
                             request.setEta(eta);
@@ -891,6 +893,7 @@ public class EtaDialog extends FullScreenDialog {
                         eta.setStart(new Date(_etaStart));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
+                        eta.setMode(_woEta.getMode());
                         eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                         eta.setNotes(_noteEditText.getText().toString().trim());
 
