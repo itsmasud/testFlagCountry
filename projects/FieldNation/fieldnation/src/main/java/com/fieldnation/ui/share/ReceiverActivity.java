@@ -237,7 +237,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     public void finish() {
         Tracker.event(App.get(), new CustomEvent.Builder()
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(_selectedWorkOrder.getId()).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Leaving Receiver"))
