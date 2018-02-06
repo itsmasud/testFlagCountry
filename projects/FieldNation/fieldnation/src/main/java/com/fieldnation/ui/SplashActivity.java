@@ -162,7 +162,7 @@ public class SplashActivity extends AuthSimpleActivity {
         opts.setList("workorders_assignments");
         opts.setFFlightboardTomorrow(true);
         opts.setPage(1);
-        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, true, false);
 
         doNextStep();
     }
