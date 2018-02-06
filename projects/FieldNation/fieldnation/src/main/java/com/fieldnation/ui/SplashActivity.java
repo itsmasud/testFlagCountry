@@ -42,11 +42,9 @@ public class SplashActivity extends AuthSimpleActivity {
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
-    private static final String STATE_PROFILE = "STATE_PROFILE";
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
     private static final String STATE_CONFIRM = "STATE_CONFIRM";
 
-    private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
     private boolean _gotConfirmList = false;
@@ -116,9 +114,6 @@ public class SplashActivity extends AuthSimpleActivity {
             if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
                 _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
             }
-            if (savedInstanceState.containsKey(STATE_PROFILE)) {
-                _profile = savedInstanceState.getParcelable(STATE_PROFILE);
-            }
         }
 
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
@@ -146,9 +141,6 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(STATE_IS_AUTH, _isAuth);
-        if (_profile != null) {
-            outState.putParcelable(STATE_PROFILE, _profile);
-        }
         super.onSaveInstanceState(outState);
     }
 
@@ -164,7 +156,6 @@ public class SplashActivity extends AuthSimpleActivity {
             AuthClient.removeCommand();
             return;
         }
-        _profile = profile;
 
         GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
         opts.setPerPage(25);
@@ -236,14 +227,14 @@ public class SplashActivity extends AuthSimpleActivity {
             return;
 
         Log.v(TAG, "doNextStep 2");
-        if (_profile == null) {
+        if (App.getProfile() == null) {
             ProfileClient.get(this);
             return;
         }
 
         Log.v(TAG, "doNextStep 3");
 
-        if (_profile.isProvider() && _gotConfirmList && !_calledMyWork) {
+        if (App.getProfile().isProvider() && _gotConfirmList && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
             _calledMyWork = true;
             finish();
