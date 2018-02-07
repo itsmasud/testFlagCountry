@@ -157,7 +157,8 @@ public abstract class CustomFieldsWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CustomFieldsWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

@@ -249,7 +249,7 @@ public class WebCrawlerService extends Service {
 
         if (!_monitorRunning) {
             _monitorRunning = true;
-            _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+            _activityHandler.postDelayed(_activityMonitor_runnable, 600000);
         }
     }
 
@@ -257,7 +257,7 @@ public class WebCrawlerService extends Service {
         @Override
         public void run() {
             _monitorRunning = false;// check timer
-            if (System.currentTimeMillis() - _lastRequestTime > 60000
+            if (System.currentTimeMillis() - _lastRequestTime > 600000
                     && !_runningPurge) {
 
                 // shutdown
