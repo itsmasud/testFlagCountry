@@ -53,8 +53,7 @@ public class WebCrawlerService extends Service {
     public final static String UPDATE_OFFLINE_MODE= "UPDATE_OFFLINE_MODE ";
     public final static String BROADCAST_ACTION = "BROADCAST_ACTION ";
     public final static String TOTAL_ASSIGNED_WOS = "TOTAL_ASSIGNED_WOS";
-    public final static String TOTAL_REQUESTED = "TOTAL_REQUESTED";
-    public final static String TOTAL_REQUEST_SERVED = "TOTAL_REQUEST_SERVED";
+    public final static String TOTAL_LEFT_DOWNLOADING = "TOTAL_LEFT_DOWNLOADING";
     private Intent intent = new Intent(BROADCAST_ACTION);
 
 
@@ -82,8 +81,7 @@ public class WebCrawlerService extends Service {
     private int _pendingRequests = 0;
     private static int NOTIFICATION_ID = App.secureRandom.nextInt();
     private int _totalAssignedWOs = -1;
-    private int _totalRequested = -1;
-    private int _totalCompleted = -1;
+    private int _totalLeftDownloading = -1;
 
 
     public WebCrawlerService() {
@@ -243,14 +241,13 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_requestCounter = " + _requestCounter);
     }
 
-    // this method will be used to send the update of offline mode
+    // TODO this method will be called to send the update of offline mode to App.java or can be configurable to any activity we want
     private void sendProgressOflineMode(int pendingRequests) {
         Log.v(TAG, "sendProgressOflineMode");
 
         Bundle bundle = new Bundle();
         bundle.putInt(TOTAL_ASSIGNED_WOS, _totalAssignedWOs);
-        bundle.putInt(TOTAL_REQUESTED, _totalRequested);
-        bundle.putInt(TOTAL_REQUEST_SERVED, _totalCompleted);
+        bundle.putInt(TOTAL_LEFT_DOWNLOADING, _totalLeftDownloading);
 
         intent.putExtra(UPDATE_OFFLINE_MODE, bundle);
         sendBroadcast(intent);
@@ -414,6 +411,7 @@ public class WebCrawlerService extends Service {
 
                     // get the details
                     WorkOrder[] works = workOrders.getResults();
+                    _totalAssignedWOs = _totalLeftDownloading = workOrders.getMetadata().getTotal();
                     for (WorkOrder workOrder : works) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);

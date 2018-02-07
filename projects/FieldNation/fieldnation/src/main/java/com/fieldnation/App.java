@@ -267,15 +267,11 @@ public class App extends Application {
     };
 
     private void updateProgressOfflineMode(Intent intent) {
-        Bundle pendingRequests = intent.getBundleExtra(WebCrawlerService.UPDATE_OFFLINE_MODE);
+        Bundle bundle = intent.getBundleExtra(WebCrawlerService.UPDATE_OFFLINE_MODE);
 
-        Log.v(TAG, "Total assigned wos: " + pendingRequests.get(WebCrawlerService.TOTAL_ASSIGNED_WOS));
-        Log.v(TAG, "Total requested wos: " + pendingRequests.get(WebCrawlerService.TOTAL_REQUESTED));
-        Log.v(TAG, "Total served request: " + pendingRequests.get(WebCrawlerService.TOTAL_REQUEST_SERVED));
+        Log.v(TAG, "Total assigned wos: " + bundle.get(WebCrawlerService.TOTAL_ASSIGNED_WOS));
+        Log.v(TAG, "Total left downloading wos: " + bundle.get(WebCrawlerService.TOTAL_LEFT_DOWNLOADING));
 
-
-
-//        Log.e(TAG, "pending request: " + pendingRequests);
     }
 
 
