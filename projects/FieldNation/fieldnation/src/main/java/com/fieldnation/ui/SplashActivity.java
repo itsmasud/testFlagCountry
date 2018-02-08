@@ -14,6 +14,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthClient;
@@ -263,11 +264,24 @@ public class SplashActivity extends AuthSimpleActivity {
                 if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
-                _gotConfirmList = true;
-                if (workOrders.getMetadata().getTotal() != null
-                        && workOrders.getMetadata().getTotal() > 0) {
-                    Log.v(TAG, "onComplete setNeedsConfirmation");
-                    App.get().setNeedsConfirmation(true);
+
+                boolean isFlightBoard = false;
+                try {
+                    JsonObject options = new JsonObject(transactionParams.methodParams);
+                    if (options.has("getWorkOrdersOptions.fFlightboardTomorrow") && options.getBoolean("getWorkOrdersOptions.fFlightboardTomorrow"))
+                        isFlightBoard = true;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                if (isFlightBoard) {
+                    _gotConfirmList = true;
+
+                    if (workOrders.getMetadata().getTotal() != null
+                            && workOrders.getMetadata().getTotal() > 0) {
+                        Log.v(TAG, "onComplete setNeedsConfirmation");
+                        App.get().setNeedsConfirmation(true);
+                    }
                 }
                 doNextStep();
             }
