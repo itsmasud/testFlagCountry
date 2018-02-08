@@ -22,8 +22,10 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
     private static final String TAG = "CacheDispatcher";
     Context _context;
     TransactionParams _transactionParams;
+    String topicId;
 
-    public CacheDispatcher(Context context, String key) {
+    public CacheDispatcher(Context context, String key, String topicId) {
+        this.topicId = topicId;
         executeEx(context, key);
     }
 
@@ -45,6 +47,7 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
             JsonObject p = new JsonObject(paramsObj.getData());
 
             _transactionParams = TransactionParams.fromJson(p.getJsonObject("transactionParams"));
+            _transactionParams.topicId = topicId;
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", _transactionParams);
             if (p.has("uuid"))

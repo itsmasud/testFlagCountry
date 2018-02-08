@@ -162,7 +162,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -202,7 +203,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -240,7 +242,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -278,7 +281,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -318,7 +322,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -359,7 +364,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -402,7 +408,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -440,7 +447,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -484,7 +492,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -524,7 +533,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -564,7 +574,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -602,7 +613,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -640,7 +652,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -680,7 +693,8 @@ public abstract class CompanyWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/CompanyWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
