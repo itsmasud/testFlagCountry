@@ -23,7 +23,7 @@ import java.text.ParseException;
 public class DocumentTransactionListener extends WebTransactionListener implements DocumentConstants {
     private static final String TAG = "DocumentTransactionListener";
 
-    public static byte[] pDownload(long documentId, String filename) {
+    public static byte[] pDownload(int documentId, String filename) {
         try {
             JsonObject obj = new JsonObject("action", "pDownload");
             obj.put("documentId", documentId);
@@ -53,7 +53,7 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
     }
 
     public void onStartDownload(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
-        long documentId = params.getLong("documentId");
+        int documentId = params.getInt("documentId");
         DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.isSync());
     }
 
@@ -76,7 +76,7 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
 
     private Result onDownload(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException, IOException {
         String filename = params.getString("filename");
-        long documentId = params.getLong("documentId");
+        int documentId = params.getInt("documentId");
 
         if (result == Result.CONTINUE) {
             StoredObject obj = null;

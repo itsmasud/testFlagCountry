@@ -26,6 +26,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.data.client.BundlesWebApi;
@@ -40,7 +41,10 @@ import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -50,14 +54,17 @@ import java.util.Random;
 public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
 
-    public final static String UPDATE_OFFLINE_MODE= "UPDATE_OFFLINE_MODE ";
+    public final static String UPDATE_OFFLINE_MODE = "UPDATE_OFFLINE_MODE ";
     public final static String BROADCAST_ACTION = "BROADCAST_ACTION ";
     public final static String TOTAL_ASSIGNED_WOS = "TOTAL_ASSIGNED_WOS";
     public final static String TOTAL_LEFT_DOWNLOADING = "TOTAL_LEFT_DOWNLOADING";
+    private final int NO_VALUE_ASSIGNED = Integer.MIN_VALUE;
     private Intent intent = new Intent(BROADCAST_ACTION);
 
 
     private final Object LOCK = new Object();
+    private final HashSet<String> _uploadingFiles = new HashSet<>();
+
 
     /**
      * When set to true, this will force the web crawler to run on startup. Only possible when
@@ -80,9 +87,35 @@ public class WebCrawlerService extends Service {
     private boolean _monitorRunning = false;
     private int _pendingRequests = 0;
     private static int NOTIFICATION_ID = App.secureRandom.nextInt();
-    private int _totalAssignedWOs = -1;
-    private int _totalLeftDownloading = -1;
+    // sometimes getWorkOrder list api call happens and thus value gets reset
+    private int _totalAssignedWOs = NO_VALUE_ASSIGNED;
+    private int _totalLeftDownloading = NO_VALUE_ASSIGNED;
 
+    /**
+     * We are tracking download progress using the following
+     */
+
+    private HashSet<DownloadTuple> downloads = new HashSet<>();
+    private DownloadTuple _tuple;
+
+    public class DownloadTuple {
+        private int workOrderId = 0;
+        private int totalAttachments = 0;
+        private int countCompletedDownloading = 0;
+        private HashSet<Integer> documentIdList = new HashSet<>();
+
+        DownloadTuple() {
+        }
+
+        public DownloadTuple(int workOrderId) {
+            this.workOrderId = workOrderId;
+        }
+
+        public DownloadTuple(int workOrderId, int totalAttachments) {
+            this.workOrderId = workOrderId;
+            this.totalAttachments = totalAttachments;
+        }
+    }
 
     public WebCrawlerService() {
         super();
@@ -241,13 +274,16 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_requestCounter = " + _requestCounter);
     }
 
-    // TODO this method will be called to send the update of offline mode to App.java or can be configurable to any activity we want
-    private void sendProgressOflineMode(int pendingRequests) {
-        Log.v(TAG, "sendProgressOflineMode");
+    // TODO send the update of offline mode to App.java or can be configurable to any activity we want
+    private void broadcastDownloadProgress() {
+        Log.v(TAG, "broadcastDownloadProgress");
 
         Bundle bundle = new Bundle();
         bundle.putInt(TOTAL_ASSIGNED_WOS, _totalAssignedWOs);
         bundle.putInt(TOTAL_LEFT_DOWNLOADING, _totalLeftDownloading);
+
+        Log.e(TAG, "_totalAssignedWOs: " + _totalAssignedWOs);
+        Log.e(TAG, "_totalLeftDownloading: " + _totalLeftDownloading);
 
         intent.putExtra(UPDATE_OFFLINE_MODE, bundle);
         sendBroadcast(intent);
@@ -285,6 +321,7 @@ public class WebCrawlerService extends Service {
         _profileClient.unsubListMessages(true);
         _profileClient.unsubListNotifications(true);
         _profileClient.unsubGet(true);
+        _documentClient.unsub();
 
         _bundlesApi.unsub();
 
@@ -324,6 +361,23 @@ public class WebCrawlerService extends Service {
         }
     }
 
+    private synchronized void updateDownloadProgress() {
+        Log.v(TAG, "updateDownloadProgress");
+        --_totalLeftDownloading;
+        broadcastDownloadProgress();
+
+        if (_totalLeftDownloading == 0) {
+            Log.e(TAG, "You hav finished all downloading.");
+            Log.e(TAG, "Total number of assigned workorders: " + _totalAssignedWOs);
+        }
+    }
+
+    private boolean isDownloadable(Attachment attachment) {
+        // We cannot download the link as attachment, printable badge. So ignoring.
+        return attachment.getActionsSet().contains(Attachment.ActionsEnum.EDIT)
+                || attachment.getActionsSet().contains(Attachment.ActionsEnum.DELETE);
+    }
+
     public void runCrawler() {
         Log.v(TAG, "runCrawler");
 
@@ -352,6 +406,7 @@ public class WebCrawlerService extends Service {
         _bundlesApi.sub(true);
 
         _workOrdersApi.sub(true);
+        _documentClient.sub();
         incrementPendingRequestCounter(1);
         incRequestCounter(1);
         WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
@@ -411,7 +466,9 @@ public class WebCrawlerService extends Service {
 
                     // get the details
                     WorkOrder[] works = workOrders.getResults();
-                    _totalAssignedWOs = _totalLeftDownloading = workOrders.getMetadata().getTotal();
+                    if (_totalAssignedWOs == NO_VALUE_ASSIGNED)
+                        _totalAssignedWOs = _totalLeftDownloading = workOrders.getMetadata().getTotal();
+
                     for (WorkOrder workOrder : works) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
@@ -429,6 +486,30 @@ public class WebCrawlerService extends Service {
                     }
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
+
+                    // download progress tracking
+                    _tuple = new DownloadTuple(workOrder.getId());
+                    AttachmentFolder[] attachmentFolders = workOrder.getAttachments().getResults();
+                    for (AttachmentFolder attachmentFolder : attachmentFolders) {
+                        for (Attachment attachment : attachmentFolder.getResults()) {
+                            if (isDownloadable(attachment)) {
+                                _tuple.documentIdList.add(attachment.getId());
+                                _tuple.totalAttachments += 1;
+                            }
+                        }
+                    }
+
+                    if (_tuple.totalAttachments == 0) {
+                        updateDownloadProgress();
+                    } else {
+                        downloads.add(_tuple);
+                    }
+
+                    Log.e(TAG, "workorderId: " + _tuple.workOrderId);
+                    Log.e(TAG, "total number of attachments in the server: " + _tuple.totalAttachments);
+                    Log.e(TAG, "total number of attachments to be downloadable: " + _tuple.documentIdList.size());
+
+
                     if (workOrder.getId() == null)
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
@@ -468,15 +549,20 @@ public class WebCrawlerService extends Service {
 
                 } else if (successObject != null && methodName.equals("getAttachments")) {
                     incrementPendingRequestCounter(-1);
+
                     // get attachments
                     AttachmentFolders folders = (AttachmentFolders) successObject;
+
+
                     if (folders.getResults().length > 0) {
                         for (AttachmentFolder folder : folders.getResults()) {
                             Attachment[] attachments = folder.getResults();
                             if (attachments.length > 0) {
                                 for (Attachment attachment : attachments) {
-                                    incRequestCounter(1);
-                                    DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                    if (isDownloadable(attachment)) {
+                                        incRequestCounter(1);
+                                        DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                    }
                                 }
                             }
                         }
@@ -566,4 +652,57 @@ public class WebCrawlerService extends Service {
             }
         }
     };
+
+
+    private final DocumentClient _documentClient = new DocumentClient() {
+        @Override
+        public boolean processDownload(int documentId) {
+            return true;
+        }
+
+        @Override
+        public void onDownload(int documentId, File file, int state, boolean isSync) {
+            Log.v(TAG, "DocumentClient.onDownload");
+            Log.v(TAG, "documentId: " + documentId);
+
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
+                Log.e(TAG, "Downloading not finished.");
+                // TODO If cannot be downloaded
+//                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                return;
+            }
+
+            Log.v(TAG, "Downloading finished");
+
+            if (documentId > 0) {
+                if (downloads != null && downloads.size() > 0) {
+                    Log.e(TAG, "....Download status....");
+                    Log.e(TAG, "Total workorders: " + _totalAssignedWOs);
+                    Log.e(TAG, "Total eligible workorders for downloading: " + downloads.size());
+                    Log.e(TAG, "_totalLeftDownloading: " + _totalLeftDownloading);
+
+                    Iterator<DownloadTuple> itr = downloads.iterator();
+                    while (itr.hasNext()) {
+                        DownloadTuple ob = itr.next();
+                        if (ob.documentIdList.contains(documentId)) {
+                            ++ob.countCompletedDownloading;
+                            Log.e(TAG, "Workorder id: " + ob.workOrderId);
+                            Log.e(TAG, "Workorder attachments no: " + ob.totalAttachments);
+                            Log.e(TAG, "Workorder attachments no: " + ob.documentIdList.size());
+                            Log.e(TAG, "Attachments downloaded: " + ob.countCompletedDownloading);
+
+                            if (ob.countCompletedDownloading == ob.totalAttachments) {
+                                updateDownloadProgress();
+                                Log.e(TAG, "Total number of attachments: " + ob.countCompletedDownloading);
+                                Log.e(TAG, "All documents has been downloaded.");
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+
 }

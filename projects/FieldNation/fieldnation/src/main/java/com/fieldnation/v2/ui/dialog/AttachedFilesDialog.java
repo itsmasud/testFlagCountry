@@ -381,12 +381,12 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     private final DocumentClient _documentClient = new DocumentClient() {
         @Override
-        public boolean processDownload(long documentId) {
+        public boolean processDownload(int documentId) {
             return true;
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state, boolean isSync) {
+        public void onDownload(int documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
