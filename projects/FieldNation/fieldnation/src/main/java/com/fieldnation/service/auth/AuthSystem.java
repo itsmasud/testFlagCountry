@@ -12,11 +12,13 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.FutureWaitAsyncTask;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.profile.ProfileConstants;
+import com.fieldnation.service.profileimage.ProfilePhotoConstants;
 
 import java.util.List;
 
@@ -162,6 +164,8 @@ public class AuthSystem implements AuthTopicConstants {
         Log.v(TAG, "removeAccount 2");
         OAuth.flushAll();
         StoredObject.flushAllOfType(App.get(), ProfileConstants.PSO_PROFILE);
+        PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
 
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);

@@ -47,7 +47,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
 
     // Data
-    private Profile _profile;
     private boolean _profileBounceProtect = false;
 
     /*-*************************************-*/
@@ -206,13 +205,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     private void gotProfile() {
-        if (_profile == null)
+        if (App.getProfile() == null)
             return;
 
         if (_profileBounceProtect)
             return;
 
-        if (!_profile.isProvider()) {
+        if (!App.getProfile().isProvider()) {
             OneButtonDialog.show(App.get(), DIALOG_NOT_PROVIDER, R.string.user_not_supported,
                     R.string.buyer_not_supported, R.string.btn_ok, true);
             return;
@@ -220,7 +219,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _profileBounceProtect = true;
 
-        if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
+        if (App.getProfile() != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             Log.v(TAG, "show release notes");
             WhatsNewDialog.show(App.get(), DIALOG_WHATS_NEW_DIALOG);
             return;
@@ -233,14 +232,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
 
         App gs = App.get();
-        if (!_profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
+        if (!App.getProfile().hasValidCoi() && gs.canRemindCoi() && App.getProfile().getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             TwoButtonDialog.show(App.get(), DIALOG_COI, getString(R.string.dialog_coi_title),
-                    getString(R.string.dialog_coi_body, _profile.insurancePercent()),
+                    getString(R.string.dialog_coi_body, App.getProfile().insurancePercent()),
                     getString(R.string.btn_later), getString(R.string.btn_no_later), false, null);
         } else {
             Log.v(TAG, "toc/coi check done");
-            onProfile(_profile);
+            onProfile(App.getProfile());
             _profileBounceProtect = false;
         }
     }
@@ -369,7 +368,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onGotProfile(Profile profile) {
-            _profile = profile;
             AuthSimpleActivity.this.gotProfile();
         }
 

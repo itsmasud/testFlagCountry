@@ -78,7 +78,8 @@ public abstract class MapsWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/MapsWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
