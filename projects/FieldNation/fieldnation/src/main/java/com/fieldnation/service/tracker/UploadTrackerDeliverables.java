@@ -126,7 +126,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 builder.setOnlyAlertOnce(true);
                 builder.setCategory(Notification.CATEGORY_PROGRESS);
                 builder.setOngoing(true);
-                
+
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
                 if (uploading > 0) {

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -26,6 +27,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -41,7 +43,10 @@ import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 
+import java.io.File;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -50,7 +55,18 @@ import java.util.Random;
  */
 public class WebCrawlerService extends Service {
     private static final String TAG = "WebCrawlerService";
+
+    public final static String UPDATE_OFFLINE_MODE = "UPDATE_OFFLINE_MODE ";
+    public final static String BROADCAST_ACTION = "BROADCAST_ACTION ";
+    public final static String TOTAL_ASSIGNED_WOS = "TOTAL_ASSIGNED_WOS";
+    public final static String TOTAL_LEFT_DOWNLOADING = "TOTAL_LEFT_DOWNLOADING";
+    private final int NO_VALUE_ASSIGNED = Integer.MIN_VALUE;
+    private Intent intent = new Intent(BROADCAST_ACTION);
+
+
     private final Object LOCK = new Object();
+    private final HashSet<String> _uploadingFiles = new HashSet<>();
+
 
     /**
      * When set to true, this will force the web crawler to run on startup. Only possible when
@@ -73,6 +89,35 @@ public class WebCrawlerService extends Service {
     private boolean _monitorRunning = false;
     private int _pendingRequests = 0;
     private static int NOTIFICATION_ID = App.secureRandom.nextInt();
+    // sometimes getWorkOrder list api call happens and thus value gets reset
+    private int _totalAssignedWOs = NO_VALUE_ASSIGNED;
+    private int _totalLeftDownloading = NO_VALUE_ASSIGNED;
+
+    /**
+     * We are tracking download progress using the following
+     */
+
+    private HashSet<DownloadTuple> downloads = new HashSet<>();
+    private DownloadTuple _tuple;
+
+    public class DownloadTuple {
+        private int workOrderId = 0;
+        private int totalAttachments = 0;
+        private int countCompletedDownloading = 0;
+        private HashSet<Integer> documentIdList = new HashSet<>();
+
+        DownloadTuple() {
+        }
+
+        public DownloadTuple(int workOrderId) {
+            this.workOrderId = workOrderId;
+        }
+
+        public DownloadTuple(int workOrderId, int totalAttachments) {
+            this.workOrderId = workOrderId;
+            this.totalAttachments = totalAttachments;
+        }
+    }
 
     public WebCrawlerService() {
         super();
@@ -110,13 +155,15 @@ public class WebCrawlerService extends Service {
         }
 
         // we're not allowed to run, stop
-        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun) {
+        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun && !App.get().isOffline()) {
             Log.v(TAG, "sync disabled, quiting");
             startActivityMonitor();
             return START_NOT_STICKY;
         }
 
-        scheduleNext();
+        // schedule if sync is enabled
+        if (settings.getBoolean(getString(R.string.pref_key_sync_enabled), false))
+            scheduleNext();
 
         // if already running, then return
         if (_isRunning) {
@@ -124,9 +171,11 @@ public class WebCrawlerService extends Service {
             return START_STICKY;
         }
 
-        if (forceRun) {
-            Log.v(TAG, "force run, running");
 
+        if (forceRun || (App.get().isOffline() && !App.get().isOfflineRunning())) {
+            Log.v(TAG, "force run/ offline mode enabled, running");
+
+            App.get().setOfflineRunning(true);
             startNotification();
             runCrawler();
 
@@ -243,6 +292,18 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "_requestCounter = " + _requestCounter);
     }
 
+    // TODO send the update of offline mode to App.java or can be configurable to any activity we want
+    private synchronized void broadcastDownloadProgress() {
+        Log.v(TAG, "broadcastDownloadProgress");
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(TOTAL_ASSIGNED_WOS, _totalAssignedWOs);
+        bundle.putInt(TOTAL_LEFT_DOWNLOADING, _totalLeftDownloading);
+
+        intent.putExtra(UPDATE_OFFLINE_MODE, bundle);
+        sendBroadcast(intent);
+    }
+
     private void startActivityMonitor() {
         if (_activityHandler == null)
             _activityHandler = new Handler();
@@ -261,7 +322,7 @@ public class WebCrawlerService extends Service {
                     && !_runningPurge) {
 
                 // shutdown
-                stopSelf();
+                killMe();
             } else {
                 startActivityMonitor();
             }
@@ -275,12 +336,18 @@ public class WebCrawlerService extends Service {
         _profileClient.unsubListMessages(true);
         _profileClient.unsubListNotifications(true);
         _profileClient.unsubGet(true);
+        _documentClient.unsub();
+
         _bundlesApi.unsub();
         _authClient.unsubRemoveCommand();
         _isRunning = false;
-
+        App.get().setOfflineRunning(false);
         cancelNotification();
         super.onDestroy();
+    }
+
+    private void killMe(){
+        stopSelf();
     }
 
     private void scheduleNext() {
@@ -314,6 +381,22 @@ public class WebCrawlerService extends Service {
         }
     }
 
+    private synchronized void updateDownloadProgress() {
+        Log.v(TAG, "updateDownloadProgress");
+        --_totalLeftDownloading;
+        broadcastDownloadProgress();
+
+        if (_totalLeftDownloading == 0) {
+            killMe();
+        }
+    }
+
+    private boolean isDownloadable(Attachment attachment) {
+        // We cannot download the link, printable badge. So ignoring.
+        return attachment.getActionsSet().contains(Attachment.ActionsEnum.EDIT)
+                || attachment.getActionsSet().contains(Attachment.ActionsEnum.DELETE);
+    }
+
     public void runCrawler() {
         Log.v(TAG, "runCrawler");
 
@@ -343,6 +426,7 @@ public class WebCrawlerService extends Service {
         _bundlesApi.sub(true);
 
         _workOrdersApi.sub(true);
+        _documentClient.sub();
         incrementPendingRequestCounter(1);
         incRequestCounter(1);
         WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
@@ -425,6 +509,9 @@ public class WebCrawlerService extends Service {
 
                     // get the details
                     WorkOrder[] works = workOrders.getResults();
+                    if (_totalAssignedWOs == NO_VALUE_ASSIGNED)
+                        _totalAssignedWOs = _totalLeftDownloading = workOrders.getMetadata().getTotal();
+
                     for (WorkOrder workOrder : works) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
@@ -442,6 +529,25 @@ public class WebCrawlerService extends Service {
                     }
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
+
+                    // download progress tracking
+                    _tuple = new DownloadTuple(workOrder.getId());
+                    AttachmentFolder[] attachmentFolders = workOrder.getAttachments().getResults();
+                    for (AttachmentFolder attachmentFolder : attachmentFolders) {
+                        for (Attachment attachment : attachmentFolder.getResults()) {
+                            if (isDownloadable(attachment)) {
+                                _tuple.documentIdList.add(attachment.getId());
+                                _tuple.totalAttachments += 1;
+                            }
+                        }
+                    }
+
+                    if (_tuple.totalAttachments == 0) {
+                        updateDownloadProgress();
+                    } else {
+                        downloads.add(_tuple);
+                    }
+
                     if (workOrder.getId() == null)
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
@@ -488,8 +594,10 @@ public class WebCrawlerService extends Service {
                             Attachment[] attachments = folder.getResults();
                             if (attachments.length > 0) {
                                 for (Attachment attachment : attachments) {
-                                    incRequestCounter(1);
-                                    DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                    if (isDownloadable(attachment)) {
+                                        incRequestCounter(1);
+                                        DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                    }
                                 }
                             }
                         }
@@ -579,4 +687,42 @@ public class WebCrawlerService extends Service {
             }
         }
     };
+
+
+    private final DocumentClient _documentClient = new DocumentClient() {
+        @Override
+        public boolean processDownload(int documentId) {
+            return true;
+        }
+
+        @Override
+        public void onDownload(int documentId, File file, int state, boolean isSync) {
+
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
+                Log.v(TAG, "Downloading not finished.");
+                return;
+            }
+
+
+            if (documentId > 0) {
+                if (downloads != null && downloads.size() > 0) {
+
+                    Iterator<DownloadTuple> itr = downloads.iterator();
+                    while (itr.hasNext()) {
+                        DownloadTuple ob = itr.next();
+                        if (ob.documentIdList.contains(documentId)) {
+                            ++ob.countCompletedDownloading;
+
+                            if (ob.countCompletedDownloading == ob.totalAttachments) {
+                                updateDownloadProgress();
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+
 }

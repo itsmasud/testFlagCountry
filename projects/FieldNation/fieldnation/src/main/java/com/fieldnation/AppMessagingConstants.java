@@ -14,6 +14,7 @@ public interface AppMessagingConstants {
     String ADDRESS_GCM_MESSAGE = "AppMessagingConstants:ADDRESS_GCM_MESSAGE";
     String ADDRESS_USER_SWITCHED = "AppMessagingConstants:ADDRESS_USER_SWITCHED";
     String ADDRESS_SHOW_LOADING = "AppMessagingConstants:ADDRESS_SHOW_LOADING";
+    String ADDRESS_OFFLINE_MODE = "AppMessagingConstants:ADDRESS_OFFLINE_MODE";
 
     String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
     String PARAM_PROFILE = "PARAM_PROFILE";

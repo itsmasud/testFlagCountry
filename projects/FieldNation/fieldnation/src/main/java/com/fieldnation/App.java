@@ -3,6 +3,7 @@ package com.fieldnation;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -46,6 +48,7 @@ import com.fieldnation.gcm.RegClient;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -88,6 +91,8 @@ public class App extends Application {
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
     public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
+    public static final String PREF_OFFLINE_MODE_ENABLED = "PREF_OFFLINE_MODE_ENABLED";
+    public static final String PREF_OFFLINE_MODE_RUNNING = "PREF_OFFLINE_MODE_RUNNING";
 
     private static App _context;
 
@@ -222,6 +227,7 @@ public class App extends Application {
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subNetworkConnect();
         _appMessagingClient.subNetworkState();
+        _appMessagingClient.subOfflineMode();
 
         _profileClient.subGet();
         _profileClient.subSwitchUser();
@@ -242,13 +248,34 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
 
         new DataPurgeAsync().run(this, null);
+
+        registerReceiver(broadcastReceiver, new IntentFilter(
+                WebCrawlerService.BROADCAST_ACTION));
+
     }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateProgressOfflineMode(intent);
+        }
+    };
+
+    private void updateProgressOfflineMode(Intent intent) {
+        Bundle bundle = intent.getBundleExtra(WebCrawlerService.UPDATE_OFFLINE_MODE);
+
+        Log.v(TAG, "Total assigned wos: " + bundle.get(WebCrawlerService.TOTAL_ASSIGNED_WOS));
+        Log.v(TAG, "Total left downloading wos: " + bundle.get(WebCrawlerService.TOTAL_LEFT_DOWNLOADING));
+
+    }
+
+
 
     private Runnable _anrReport = new Runnable() {
         @Override
@@ -466,13 +493,25 @@ public class App extends Application {
         public void onNetworkDisconnected() {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
-            ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AppMessagingClient.networkConnected();
-                    WebTransactionSystem.getInstance();
-                }
-            }, Snackbar.LENGTH_INDEFINITE);
+
+            if (!isOffline()) {
+                ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AppMessagingClient.networkConnected();
+                        WebTransactionSystem.getInstance();
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
+            }
+        }
+
+        @Override
+        public void onOfflineMode(boolean isOffline) {
+            Log.v(TAG, "onOfflineMode");
+            if (isOffline) {
+                startService(new Intent(App.get(), WebCrawlerService.class));
+            } else
+                stopService(new Intent(App.get(), WebCrawlerService.class));
         }
     };
 
@@ -551,6 +590,30 @@ public class App extends Application {
             return profile.getUserId();
         }
         return -1;
+    }
+
+    public boolean isOffline() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_OFFLINE_MODE_ENABLED, false);
+    }
+
+    public void setOffline(boolean isOffline) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_OFFLINE_MODE_ENABLED, isOffline);
+        edit.apply();
+    }
+
+    public boolean isOfflineRunning() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_OFFLINE_MODE_RUNNING, false);
+    }
+
+    public void setOfflineRunning(boolean isOfflineRunning) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_OFFLINE_MODE_RUNNING, isOfflineRunning);
+        edit.apply();
     }
 
     public boolean canRemindCoi() {

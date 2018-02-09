@@ -5,9 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -220,7 +222,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
     public void uploadProgress(UUIDGroup uuid, TransactionParams transactionParams, int progress) {
         Log.v(TAG, "uploadProgress");
-
         String name = null;
         try {
             JsonObject methodParams = new JsonObject(transactionParams.methodParams);
@@ -536,7 +537,13 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 PausedUploadTuple t = (PausedUploadTuple) objects.get(position).object;
                 long timeLeft = t.transaction.getQueueTime() - System.currentTimeMillis();
+                WebTransaction wt = t.transaction;
                 if (timeLeft < 0) {
+                    if (App.get().isOffline()) {
+                        view.set(t.name, "Paused in offline mode");
+                    } else if (wt.isWifiRequired() && !App.get().haveWifi()) {
+                        view.set(t.name, "Waiting for wifi...");
+                    }
                     view.set(t.name, "Waiting for network...");
                 } else {
                     view.set(t.name, "Will retry in " + misc.convertMsToHuman(timeLeft, true));

@@ -1,7 +1,9 @@
 package com.fieldnation.ui.nav;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -11,7 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,10 +27,14 @@ import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
@@ -51,6 +59,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private IconFontButton _profileExpandButton;
     private NavProfileDetailListView _profileListView = null;
 
+    private Switch _offlineSwitch;
     private View _profileMenu;
     private View _paymentMenu;
     private View _settingsMenu;
@@ -99,6 +108,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             return;
 
         setSaveEnabled(true);
+
+        _offlineSwitch = findViewById(R.id.offline_switch);
+        _offlineSwitch.setOnCheckedChangeListener(_switch_onChange);
 
         _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -166,6 +178,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         ProfileClient.get(App.get(), false);
 
         AdditionalOptionsTracker.onShow(App.get());
+
     }
 
     public void setListener(Listener listener) {
@@ -226,6 +239,17 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+
+    private final CompoundButton.OnCheckedChangeListener _switch_onChange = new CompoundButton.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            AppMessagingClient.setOfflineMode(!App.get().isOffline());
+            _offlineSwitch.setChecked(App.get().isOffline());
+
+            ToastClient.toast(App.get(), "Offline: " + App.get().isOffline(), Toast.LENGTH_SHORT);
+        }
+    };
+
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {

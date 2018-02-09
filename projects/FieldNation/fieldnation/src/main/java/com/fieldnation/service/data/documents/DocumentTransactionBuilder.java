@@ -17,7 +17,7 @@ import com.fieldnation.service.transaction.WebTransactionSystem;
 public class DocumentTransactionBuilder {
     private static final String TAG = "DocumentTransactionBuilder";
 
-    public static void download(Context context, long documentId, String link, String filename, boolean isSync) {
+    public static void download(Context context, int documentId, String link, String filename, boolean isSync) {
         try {
             Resources res = context.getResources();
             HttpJsonBuilder builder = new HttpJsonBuilder().path(link);
