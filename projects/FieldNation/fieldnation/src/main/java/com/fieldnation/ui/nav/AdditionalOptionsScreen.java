@@ -23,10 +23,17 @@ import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.profile.ProfileConstants;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.service.profileimage.ProfilePhotoConstants;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
@@ -324,7 +331,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
-            AuthClient.removeCommand();
+
+            App.logout();
+
             AppMessagingClient.finishActivity();
         }
     };
