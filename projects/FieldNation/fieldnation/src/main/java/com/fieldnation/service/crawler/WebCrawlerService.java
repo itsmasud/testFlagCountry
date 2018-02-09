@@ -164,9 +164,11 @@ public class WebCrawlerService extends Service {
             return START_STICKY;
         }
 
-        if (forceRun || App.get().isOffline()) {
+
+        if (forceRun || (App.get().isOffline() && !App.get().isOfflineRunning())) {
             Log.v(TAG, "force run/ offline mode enabled, running");
 
+            App.get().setOfflineRunning(true);
             startNotification();
             runCrawler();
 
@@ -275,15 +277,12 @@ public class WebCrawlerService extends Service {
     }
 
     // TODO send the update of offline mode to App.java or can be configurable to any activity we want
-    private void broadcastDownloadProgress() {
+    private synchronized void broadcastDownloadProgress() {
         Log.v(TAG, "broadcastDownloadProgress");
 
         Bundle bundle = new Bundle();
         bundle.putInt(TOTAL_ASSIGNED_WOS, _totalAssignedWOs);
         bundle.putInt(TOTAL_LEFT_DOWNLOADING, _totalLeftDownloading);
-
-        Log.e(TAG, "_totalAssignedWOs: " + _totalAssignedWOs);
-        Log.e(TAG, "_totalLeftDownloading: " + _totalLeftDownloading);
 
         intent.putExtra(UPDATE_OFFLINE_MODE, bundle);
         sendBroadcast(intent);
@@ -307,7 +306,7 @@ public class WebCrawlerService extends Service {
                     && !_runningPurge) {
 
                 // shutdown
-                stopSelf();
+                killMe();
             } else {
                 startActivityMonitor();
             }
@@ -328,6 +327,10 @@ public class WebCrawlerService extends Service {
         _isRunning = false;
         App.get().setOfflineRunning(false);
         super.onDestroy();
+    }
+
+    private void killMe(){
+        stopSelf();
     }
 
     private void scheduleNext() {
@@ -367,13 +370,12 @@ public class WebCrawlerService extends Service {
         broadcastDownloadProgress();
 
         if (_totalLeftDownloading == 0) {
-            Log.e(TAG, "You hav finished all downloading.");
-            Log.e(TAG, "Total number of assigned workorders: " + _totalAssignedWOs);
+            killMe();
         }
     }
 
     private boolean isDownloadable(Attachment attachment) {
-        // We cannot download the link as attachment, printable badge. So ignoring.
+        // We cannot download the link, printable badge. So ignoring.
         return attachment.getActionsSet().contains(Attachment.ActionsEnum.EDIT)
                 || attachment.getActionsSet().contains(Attachment.ActionsEnum.DELETE);
     }
@@ -504,11 +506,6 @@ public class WebCrawlerService extends Service {
                     } else {
                         downloads.add(_tuple);
                     }
-
-                    Log.e(TAG, "workorderId: " + _tuple.workOrderId);
-                    Log.e(TAG, "total number of attachments in the server: " + _tuple.totalAttachments);
-                    Log.e(TAG, "total number of attachments to be downloadable: " + _tuple.documentIdList.size());
-
 
                     if (workOrder.getId() == null)
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
@@ -662,39 +659,24 @@ public class WebCrawlerService extends Service {
 
         @Override
         public void onDownload(int documentId, File file, int state, boolean isSync) {
-            Log.v(TAG, "DocumentClient.onDownload");
-            Log.v(TAG, "documentId: " + documentId);
 
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
-                Log.e(TAG, "Downloading not finished.");
-                // TODO If cannot be downloaded
-//                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                Log.v(TAG, "Downloading not finished.");
                 return;
             }
 
-            Log.v(TAG, "Downloading finished");
 
             if (documentId > 0) {
                 if (downloads != null && downloads.size() > 0) {
-                    Log.e(TAG, "....Download status....");
-                    Log.e(TAG, "Total workorders: " + _totalAssignedWOs);
-                    Log.e(TAG, "Total eligible workorders for downloading: " + downloads.size());
-                    Log.e(TAG, "_totalLeftDownloading: " + _totalLeftDownloading);
 
                     Iterator<DownloadTuple> itr = downloads.iterator();
                     while (itr.hasNext()) {
                         DownloadTuple ob = itr.next();
                         if (ob.documentIdList.contains(documentId)) {
                             ++ob.countCompletedDownloading;
-                            Log.e(TAG, "Workorder id: " + ob.workOrderId);
-                            Log.e(TAG, "Workorder attachments no: " + ob.totalAttachments);
-                            Log.e(TAG, "Workorder attachments no: " + ob.documentIdList.size());
-                            Log.e(TAG, "Attachments downloaded: " + ob.countCompletedDownloading);
 
                             if (ob.countCompletedDownloading == ob.totalAttachments) {
                                 updateDownloadProgress();
-                                Log.e(TAG, "Total number of attachments: " + ob.countCompletedDownloading);
-                                Log.e(TAG, "All documents has been downloaded.");
                             }
                             break;
                         }

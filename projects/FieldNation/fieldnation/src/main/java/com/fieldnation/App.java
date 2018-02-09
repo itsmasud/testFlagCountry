@@ -502,7 +502,6 @@ public class App extends Application {
         @Override
         public void onOfflineMode(boolean isOffline) {
             Log.v(TAG, "onOfflineMode");
-            setOfflineRunning(isOffline);
             if (isOffline) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
             } else
