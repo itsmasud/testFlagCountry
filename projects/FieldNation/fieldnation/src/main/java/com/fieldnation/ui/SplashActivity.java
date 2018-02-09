@@ -14,6 +14,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthClient;
@@ -42,11 +43,9 @@ public class SplashActivity extends AuthSimpleActivity {
     public static final String ACTION_MESSAGES = "ACTION_MESSAGES";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
-    private static final String STATE_PROFILE = "STATE_PROFILE";
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
     private static final String STATE_CONFIRM = "STATE_CONFIRM";
 
-    private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
     private boolean _gotConfirmList = false;
@@ -116,9 +115,6 @@ public class SplashActivity extends AuthSimpleActivity {
             if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
                 _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
             }
-            if (savedInstanceState.containsKey(STATE_PROFILE)) {
-                _profile = savedInstanceState.getParcelable(STATE_PROFILE);
-            }
         }
 
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
@@ -146,9 +142,6 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(STATE_IS_AUTH, _isAuth);
-        if (_profile != null) {
-            outState.putParcelable(STATE_PROFILE, _profile);
-        }
         super.onSaveInstanceState(outState);
     }
 
@@ -164,14 +157,13 @@ public class SplashActivity extends AuthSimpleActivity {
             AuthClient.removeCommand();
             return;
         }
-        _profile = profile;
 
         GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
         opts.setPerPage(25);
         opts.setList("workorders_assignments");
         opts.setFFlightboardTomorrow(true);
         opts.setPage(1);
-        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, true, false);
 
         doNextStep();
     }
@@ -236,14 +228,14 @@ public class SplashActivity extends AuthSimpleActivity {
             return;
 
         Log.v(TAG, "doNextStep 2");
-        if (_profile == null) {
+        if (App.getProfile() == null) {
             ProfileClient.get(this);
             return;
         }
 
         Log.v(TAG, "doNextStep 3");
 
-        if (_profile.isProvider() && _gotConfirmList && !_calledMyWork) {
+        if (App.getProfile().isProvider() && _gotConfirmList && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
             _calledMyWork = true;
             finish();
@@ -272,11 +264,24 @@ public class SplashActivity extends AuthSimpleActivity {
                 if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                 }
-                _gotConfirmList = true;
-                if (workOrders.getMetadata().getTotal() != null
-                        && workOrders.getMetadata().getTotal() > 0) {
-                    Log.v(TAG, "onComplete setNeedsConfirmation");
-                    App.get().setNeedsConfirmation(true);
+
+                boolean isFlightBoard = false;
+                try {
+                    JsonObject options = new JsonObject(transactionParams.methodParams);
+                    if (options.has("getWorkOrdersOptions.fFlightboardTomorrow") && options.getBoolean("getWorkOrdersOptions.fFlightboardTomorrow"))
+                        isFlightBoard = true;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                if (isFlightBoard) {
+                    _gotConfirmList = true;
+
+                    if (workOrders.getMetadata().getTotal() != null
+                            && workOrders.getMetadata().getTotal() > 0) {
+                        Log.v(TAG, "onComplete setNeedsConfirmation");
+                        App.get().setNeedsConfirmation(true);
+                    }
                 }
                 doNextStep();
             }

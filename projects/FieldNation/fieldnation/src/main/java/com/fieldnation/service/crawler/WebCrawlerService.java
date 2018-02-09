@@ -25,10 +25,12 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -141,6 +143,11 @@ public class WebCrawlerService extends Service {
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
         purgeOldData();
 
+        if (App.get().getAuth() == null) {
+            Log.v(TAG, "not logged in, quiting");
+            return START_NOT_STICKY;
+        }
+
         boolean forceRun = FORCE_RUN;
 
         if (intent != null && intent.hasExtra("force")) {
@@ -248,6 +255,15 @@ public class WebCrawlerService extends Service {
         }
     }
 
+    private void cancelNotification() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            stopForeground(STOP_FOREGROUND_REMOVE);
+        else {
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.cancel(NOTIFICATION_ID);
+        }
+    }
+
     private void purgeOldData() {
         if (_runningPurge)
             return;
@@ -316,16 +332,17 @@ public class WebCrawlerService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _workOrdersApi.unsub();
+        _workOrdersApi.unsub(true);
         _profileClient.unsubListMessages(true);
         _profileClient.unsubListNotifications(true);
         _profileClient.unsubGet(true);
         _documentClient.unsub();
 
         _bundlesApi.unsub();
-
+        _authClient.unsubRemoveCommand();
         _isRunning = false;
         App.get().setOfflineRunning(false);
+        cancelNotification();
         super.onDestroy();
     }
 
@@ -394,6 +411,7 @@ public class WebCrawlerService extends Service {
         startActivityMonitor();
 
         Log.v(TAG, "_profileClient_listener.onConnected");
+        _authClient.subRemoveCommand();
         _profileClient.subListMessages(true);
         _profileClient.subListNotifications(true);
         _profileClient.subGet(true);
@@ -413,6 +431,29 @@ public class WebCrawlerService extends Service {
         incRequestCounter(1);
         WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
     }
+
+    private final AuthClient _authClient = new AuthClient() {
+        @Override
+        public void onCommandRemove() {
+            Log.v(TAG, "onCommandRemove");
+            _workOrdersApi.unsub(true);
+            _profileClient.unsubListMessages(true);
+            _profileClient.unsubListNotifications(true);
+            _profileClient.unsubGet(true);
+            _bundlesApi.unsub(true);
+
+            cancelNotification();
+
+            try {
+                List<WebTransaction> list = WebTransaction.getSyncing();
+                for (WebTransaction webTransaction : list) {
+                    WebTransaction.delete(webTransaction.getId());
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
 
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
@@ -546,11 +587,8 @@ public class WebCrawlerService extends Service {
 
                 } else if (successObject != null && methodName.equals("getAttachments")) {
                     incrementPendingRequestCounter(-1);
-
                     // get attachments
                     AttachmentFolders folders = (AttachmentFolders) successObject;
-
-
                     if (folders.getResults().length > 0) {
                         for (AttachmentFolder folder : folders.getResults()) {
                             Attachment[] attachments = folder.getResults();

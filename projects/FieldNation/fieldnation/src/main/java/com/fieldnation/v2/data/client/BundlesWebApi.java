@@ -60,6 +60,7 @@ public abstract class BundlesWebApi extends Pigeon {
     public static void getBundleWorkOrders(Context context, Integer bundleId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/bundles/" + bundleId + (isBackground ? ":isBackground" : ""));
+            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/BundlesWebApi" : "ADDRESS_WEB_API_V2/BundlesWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -75,7 +76,7 @@ public abstract class BundlesWebApi extends Pigeon {
                     .priority(isBackground ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params(isBackground ? "ADDRESS_WEB_API_V2_SYNC/BundlesWebApi" : "ADDRESS_WEB_API_V2/BundlesWebApi",
+                            TransactionListener.params(topicId,
                                     BundlesWebApi.class, "getBundleWorkOrders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -84,7 +85,7 @@ public abstract class BundlesWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key, topicId);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

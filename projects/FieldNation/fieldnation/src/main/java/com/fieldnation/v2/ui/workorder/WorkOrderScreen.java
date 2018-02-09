@@ -524,7 +524,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     Log.v(TAG, "signature response");
                     requestWorkorder();
 
-                    if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+                    if (App.getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                         RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
                     }
                 }
@@ -906,7 +906,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkordersWebApi.completeWorkOrder(App.get(), _workOrderId, uiContext);
             setLoading(true);
 
-            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+            if (App.getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                 RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
             }
         }
