@@ -738,6 +738,24 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return success;
     }
 
+    public static boolean deleteAll() {
+//        Log.v(TAG, "delete(" + id + ")");
+        Transform.deleteAll();
+        boolean success = false;
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                success = db.delete(
+                        WebTransactionSqlHelper.TABLE_NAME,
+                        null, null) > 0;
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return success;
+    }
+
     public static int count() {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
