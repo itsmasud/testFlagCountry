@@ -250,7 +250,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {
