@@ -151,9 +151,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         //_arrowTextView.startAnimation(_cw);
 
-        if (!App.get().isOffline()) {
-            _savedList = App.get().getLastVisitedWoL();
-        }
+        _savedList = App.get().getLastVisitedWoL();
 
         SavedSearchTracker.onShow(App.get());
 
@@ -185,17 +183,6 @@ public class NavActivity extends AuthSimpleActivity {
         Log.v(TAG, "onResume");
         super.onResume();
 
-        if (App.get().isOffline()){
-             _arrowTextView.setText(null);
-            _toolbar.setOnClickListener(null);
-            _searchesView.setEnabled(false);
-        } else {
-            _arrowTextView.setText(getString(R.string.icon_arrow_down));
-            _toolbar.setOnClickListener(_toolbar_onClick);
-            _searchesView.setEnabled(true);
-
-        }
-
         SavedList savedList = App.get().getLastVisitedWoL();
         if (_savedList == null) {
             setNavTitle(misc.capitalize("LOADING..."));
@@ -226,7 +213,19 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView.onResume();
 
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+
+        if (App.get().isOffline()) {
+            _arrowTextView.setText(null);
+            _toolbar.setOnClickListener(null);
+            _searchesView.setEnabled(false);
+
+        } else {
+            _arrowTextView.setText(getString(R.string.icon_arrow_down));
+            _toolbar.setOnClickListener(_toolbar_onClick);
+            _searchesView.setEnabled(true);
+            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+        }
+
 
         invalidateOptionsMenu();
     }

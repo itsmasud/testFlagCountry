@@ -828,6 +828,13 @@ public class App extends Application {
         SavedList _savedList = null;
 
         try {
+
+            if (App.get().isOffline()){
+                return new SavedList()
+                        .id("workorders_assignments")
+                        .label("assigned");
+            }
+
             if (misc.isEmptyOrNull(jsonData)) {
                 _savedList = new SavedList()
                         .id("workorders_available")
