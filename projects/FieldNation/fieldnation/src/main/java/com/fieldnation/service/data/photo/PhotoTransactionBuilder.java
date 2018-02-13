@@ -19,7 +19,7 @@ public class PhotoTransactionBuilder implements PhotoConstants {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET/ProfilePhotoDownload")
                     .key((isSync ? "Sync/" : "") + objectName + ":" + sourceUrl)
-                    .priority(Priority.LOW)
+                    .priority(Priority.HIGH)
                     .listener(PhotoTransactionListener.class)
                     .listenerParams(PhotoTransactionListener.pGet(sourceUrl, getCircle))
                     .isSyncCall(isSync)
