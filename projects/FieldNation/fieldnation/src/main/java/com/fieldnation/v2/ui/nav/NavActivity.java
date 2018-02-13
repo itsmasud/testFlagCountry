@@ -19,7 +19,6 @@ import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
@@ -27,6 +26,8 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.menu.InboxMenuButton;
+import com.fieldnation.ui.menu.SearchMenuButton;
 import com.fieldnation.ui.nav.SearchToolbarView;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -60,6 +61,8 @@ public class NavActivity extends AuthSimpleActivity {
     private CoordinatorLayout _layout;
     private AppBarLayout _appBarLayout;
     private SearchToolbarView _searchToolbarView;
+    private InboxMenuButton _inboxMenu;
+    private SearchMenuButton _searchMenu;
 
     // Animations
     private Animation _ccw;
@@ -148,16 +151,18 @@ public class NavActivity extends AuthSimpleActivity {
 
         //_arrowTextView.startAnimation(_cw);
 
-        _savedList = App.get().getLastVisitedWoL();
+        if (!App.get().isOffline()) {
+            _savedList = App.get().getLastVisitedWoL();
+        }
 
         SavedSearchTracker.onShow(App.get());
 
         if (_savedList != null) {
             _recyclerView.startSearch(_savedList);
-            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+            setNavTitle(_savedList);
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
         } else {
-            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+            setNavTitle(misc.capitalize("LOADING..."));
         }
     }
 
@@ -180,14 +185,25 @@ public class NavActivity extends AuthSimpleActivity {
         Log.v(TAG, "onResume");
         super.onResume();
 
+        if (App.get().isOffline()){
+             _arrowTextView.setText(null);
+            _toolbar.setOnClickListener(null);
+            _searchesView.setEnabled(false);
+        } else {
+            _arrowTextView.setText(getString(R.string.icon_arrow_down));
+            _toolbar.setOnClickListener(_toolbar_onClick);
+            _searchesView.setEnabled(true);
+
+        }
+
         SavedList savedList = App.get().getLastVisitedWoL();
         if (_savedList == null) {
-            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+            setNavTitle(misc.capitalize("LOADING..."));
         } else if (savedList == null) {
-            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+            setNavTitle(misc.capitalize("LOADING..."));
             _savedList = null;
         } else if (savedList.getId().equals(_savedList.getId())) {
-            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+            setNavTitle(_savedList);
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
         } else {
             _savedList = savedList;
@@ -212,6 +228,7 @@ public class NavActivity extends AuthSimpleActivity {
         _workOrdersApi.sub();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -269,7 +286,10 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        menu.findItem(R.id.search_menuitem).getActionView().setOnClickListener(new View.OnClickListener() {
+        _inboxMenu = (InboxMenuButton) menu.findItem(R.id.inbox_menuitem).getActionView();
+        _searchMenu = (SearchMenuButton) menu.findItem(R.id.search_menuitem).getActionView();
+
+        _searchMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (_searchToolbarView.isShowing()) {
@@ -280,6 +300,18 @@ public class NavActivity extends AuthSimpleActivity {
                 }
             }
         });
+
+        if (App.get().isOffline()) {
+            _inboxMenu.setEnabled(false);
+            _searchMenu.setEnabled(false);
+            _searchToolbarView.hide();
+            _searchToolbarView.setVisibility(View.GONE);
+        } else {
+            _inboxMenu.setEnabled(true);
+            _searchMenu.setEnabled(true);
+            _searchToolbarView.setVisibility(View.VISIBLE);
+
+        }
 
         return true;
     }
@@ -296,6 +328,21 @@ public class NavActivity extends AuthSimpleActivity {
             _searchesView.hide();
             Log.v(TAG, "hideDrawer");
         }
+    }
+
+    private void setNavTitle(SavedList savedList) {
+        if (App.get().isOffline()) {
+            setNavTitle(getString(R.string.offline));
+        } else
+            NavActivity.this.setTitle(misc.capitalize(savedList.getTitle()));
+    }
+
+    private void setNavTitle(String titleText) {
+        if (App.get().isOffline()) {
+            titleText = getString(R.string.offline);
+        }
+
+        NavActivity.this.setTitle(titleText);
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -336,7 +383,7 @@ public class NavActivity extends AuthSimpleActivity {
             _savedList = savedList;
             App.get().setLastVisitedWoL(savedList);
             _recyclerView.startSearch(_savedList);
-            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+            setNavTitle(_savedList);
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
         }
     };
@@ -355,12 +402,12 @@ public class NavActivity extends AuthSimpleActivity {
                     _savedList = savedList[0];
                     App.get().setLastVisitedWoL(_savedList);
                     _recyclerView.startSearch(_savedList);
-                    NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                    setNavTitle(_savedList);
                 } else {
                     for (SavedList list : savedList) {
                         if (list.getId().equals(_savedList.getId())) {
                             _savedList = list;
-                            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                            setNavTitle(_savedList);
                             break;
                         }
                     }

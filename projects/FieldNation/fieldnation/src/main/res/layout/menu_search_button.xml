@@ -4,12 +4,12 @@
     android:layout_height="match_parent">
 
     <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/message_imageview"
+        android:id="@+id/search_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/icon_search2"
-        android:textColor="@color/fn_clickable_bg"
+        android:textColor="@color/btn_toolbar_text"
         android:textSize="20sp"
         android:textStyle="normal" />
 
