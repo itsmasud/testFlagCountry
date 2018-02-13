@@ -1,9 +1,7 @@
 package com.fieldnation.ui.nav;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -29,9 +26,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -110,7 +105,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         setSaveEnabled(true);
 
         _offlineSwitch = findViewById(R.id.offline_switch);
-        _offlineSwitch.setOnCheckedChangeListener(_switch_onChange);
+        _offlineSwitch.setOnClickListener(_switch_onClick);
 
         _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -219,6 +214,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             _profileListView.setProfile(null);
         }
 
+        _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
+
         addProfilePhoto();
     }
 
@@ -239,16 +236,20 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-
-    private final CompoundButton.OnCheckedChangeListener _switch_onChange = new CompoundButton.OnCheckedChangeListener() {
+    private final ApatheticOnClickListener _switch_onClick = new ApatheticOnClickListener() {
         @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            AppMessagingClient.setOfflineMode(!App.get().isOffline());
-            _offlineSwitch.setChecked(App.get().isOffline());
+        public void onSingleClick(View v) {
+            if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+                AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
+            } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
+                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+            }
+            _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
 
-            ToastClient.toast(App.get(), "Offline: " + App.get().isOffline(), Toast.LENGTH_SHORT);
+            ToastClient.toast(App.get(), "Offline: " + App.get().getOfflineState(), Toast.LENGTH_SHORT);
         }
     };
+
 
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
