@@ -29,8 +29,8 @@ public abstract class ToastClient extends Pigeon {
     private static final String STAG = "ToastClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    private static final String ADDRESS_SNACKBAR = "ToastClient:ADDRESS_SNACKBAR";
-    private static final String ADDRESS_TOAST = "ToastClient:ADDRESS_TOAST";
+    public static final String ADDRESS_SNACKBAR = "ToastClient:ADDRESS_SNACKBAR";
+    public static final String ADDRESS_TOAST = "ToastClient:ADDRESS_TOAST";
 
     private static final String PARAM_ACTION = "PARAM_ACTION";
     private static final String PARAM_ACTION_SNACKBAR = "PARAM_ACTION_SNACKBAR";

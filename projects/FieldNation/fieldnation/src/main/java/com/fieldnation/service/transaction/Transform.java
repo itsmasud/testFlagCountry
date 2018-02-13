@@ -264,6 +264,23 @@ public class Transform implements Parcelable, TransformConstants {
         return success;
     }
 
+    public static boolean deleteAll() {
+//        Log.v(TAG, "delete(" + id + ")");
+        boolean success = false;
+        synchronized (TAG) {
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                success = db.delete(
+                        TransformSqlHelper.TABLE_NAME,
+                        null, null) > 0;
+            } finally {
+                db.close();
+            }
+        }
+        return success;
+    }
+
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
