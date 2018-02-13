@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,13 +23,13 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
+import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.profile.ProfileConstants;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
@@ -36,8 +37,13 @@ import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.ui.dialog.ContactUsDialog;
+import com.fieldnation.v2.ui.dialog.DownloadProgressDialog;
 import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 import java.io.File;
@@ -49,12 +55,15 @@ import java.lang.ref.WeakReference;
 public class AdditionalOptionsScreen extends RelativeLayout {
     private static final String TAG = "AdditionalOptionsScreen";
 
+    private static final String DIALOG_DOWNLOAD_WARNING = "DIALOG_DOWNLOAD_WARNING";
+
     // Ui
     private ProfilePicView _profilePicView;
     private TextView _profileNameTextView;
     private IconFontButton _profileExpandButton;
     private NavProfileDetailListView _profileListView = null;
 
+    private View _offlineMenu;
     private Switch _offlineSwitch;
     private View _profileMenu;
     private View _paymentMenu;
@@ -73,6 +82,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private Profile _profile = null;
     private Uri _profileImageUri = null;
     private WeakReference<Drawable> _profilePic = null;
+    private int _listSize = 0;
 
     private Listener _listener = null;
     private boolean _activated = false;
@@ -105,8 +115,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         setSaveEnabled(true);
 
+        _offlineMenu = findViewById(R.id.offline_menu);
+        _offlineMenu.setOnClickListener(_switch_onClick);
+
         _offlineSwitch = findViewById(R.id.offline_switch);
-        _offlineSwitch.setOnClickListener(_switch_onClick);
+        _offlineSwitch.setClickable(false);
 
         _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -182,10 +195,22 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        _workOrdersApi.sub();
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
         _authClient.unsubRemoveCommand();
         _profilePhotoClient.unsub();
         _profileClient.unsubGet(false);
+        _workOrdersApi.unsub();
 
         super.onDetachedFromWindow();
     }
@@ -241,7 +266,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onSingleClick(View v) {
             if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
-                AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
+                TwoButtonDialog.show(App.get(), DIALOG_DOWNLOAD_WARNING, "Download Size",
+                        "You are about to download " + _listSize + " assigned work orders including all attachments. Data rates may apply.",
+                        "CONTINUE", "CANCEL", true, null);
+
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
                 AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
             }
@@ -250,6 +278,22 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             ToastClient.toast(App.get(), "Offline: " + App.get().getOfflineState(), Toast.LENGTH_SHORT);
         }
     };
+
+    private final TwoButtonDialog.OnPrimaryListener _downloadWarning_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            // TODO launch progress dialog
+            DownloadProgressDialog.show(App.get(), null);
+        }
+    };
+
+    private final TwoButtonDialog.OnSecondaryListener _downloadWarning_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
+        @Override
+        public void onSecondary(Parcelable extraData) {
+            TwoButtonDialog.dismiss(App.get(), DIALOG_DOWNLOAD_WARNING);
+        }
+    };
+
 
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
@@ -415,6 +459,29 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             TestTrackers.runTests(App.get());
+        }
+    };
+
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
+        @Override
+        public boolean processTransaction(UUIDGroup uuid, TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrderLists");
+        }
+
+        @Override
+        public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+            if (successObject != null && methodName.equals("getWorkOrderLists")) {
+                SavedList[] savedList = (SavedList[]) successObject;
+                for (SavedList sl : savedList) {
+                    if (sl.getId().equals("workorders_assignments")) {
+                        Log.v(TAG, "List size: " + sl.getCount());
+                        _listSize = sl.getCount();
+                        break;
+                    }
+                }
+            }
+            return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
+
         }
     };
 

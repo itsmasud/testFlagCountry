@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog.v3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/DialogTitle.v3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Downloading Assigned" />
+
+    <TextView
+        android:id="@+id/body_textview"
+        style="@style/DialogBody.v3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:text="You will only be able to view your assigned work orders." />
+
+    <ProgressBar
+        android:id="@+id/progressbar_view"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/body_textview"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:min="0" />
+
+    <TextView
+        android:id="@+id/progress_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/progressbar_view"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="0/100" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/DialogButton.v3"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/progress_textview"
+        android:layout_marginRight="8dp"
+        android:text="@string/btn_cancel" />
+</RelativeLayout>

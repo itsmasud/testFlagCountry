@@ -9662,7 +9662,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param failObject
      * @return true if data handled, false if not
      */
-    public boolean onComplete(UUIDGroup uuid, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+    public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
         return false;
     }
 
