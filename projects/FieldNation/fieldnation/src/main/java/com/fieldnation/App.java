@@ -37,6 +37,7 @@ import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -50,7 +51,10 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.profile.ProfileConstants;
+import com.fieldnation.service.profileimage.ProfilePhotoConstants;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.model.SavedList;
@@ -384,6 +388,7 @@ public class App extends Application {
 
         @Override
         public void onCommandRemove() {
+            Log.v(TAG, "onCommandRemove profile");
             _profile = null;
         }
 
@@ -1001,4 +1006,15 @@ public class App extends Application {
         return FileProvider.getUriForFile(get(), get().getApplicationContext().getPackageName() + ".provider", file);
     }
 
+    public static void logout() {
+        WebTransactionSystem.stop();
+        PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(PhotoConstants.ADDRESS_GET_PHOTO);
+        PigeonRoost.clearAddressCache(ToastClient.ADDRESS_TOAST);
+        PigeonRoost.clearAddressCache(ToastClient.ADDRESS_SNACKBAR);
+        StoredObject.delete(App.get(), StoredObject.list(App.get()));
+        AuthClient.removeCommand();
+        WebTransaction.deleteAll();
+    }
 }
