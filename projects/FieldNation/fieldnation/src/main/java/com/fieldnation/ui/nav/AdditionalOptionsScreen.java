@@ -30,6 +30,7 @@ import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.profile.ProfileConstants;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
