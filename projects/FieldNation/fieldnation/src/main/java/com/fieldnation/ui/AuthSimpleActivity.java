@@ -122,7 +122,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _toastClient.subToast();
 
         startService(new Intent(this, TopicService.class));
-        startService(new Intent(this, WebCrawlerService.class));
 
         if (doAuthChecks())
             _authClient.subNeedUsernameAndPassword();
