@@ -164,6 +164,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _activityRequestHandler.sub();
 
         _dialogManager.onResume();
+
+        App.logout();
     }
 
     @Override

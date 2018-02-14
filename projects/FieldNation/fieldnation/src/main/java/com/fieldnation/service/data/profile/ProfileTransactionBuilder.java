@@ -265,7 +265,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST/api/rest/v2/users/[profileId]/profile/avatar")
-                    .priority(Priority.LOW)
+                    .priority(Priority.HIGH)
                     .listener(ProfileTransactionListener.class)
                     .listenerParams(ProfileTransactionListener.pUploadPhoto(profileId, filename))
                     .useAuth(true)
