@@ -576,6 +576,34 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return paused;
     }
 
+    public static List<WebTransaction> getPaused() {
+        List<WebTransaction> paused = new LinkedList<>();
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.STATE + " =? ",
+                            new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        WebTransaction trans = new WebTransaction(cursor);
+                        paused.add(trans);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return paused;
+    }
+
     public static void list() {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -602,7 +630,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
-    private static final String GET_NEXT_SORT = Column.QUEUE_TIME + " ASC, " + Column.PRIORITY + " DESC, " + Column.ID + " ASC";
+    private static final String GET_NEXT_SORT = Column.PRIORITY + " DESC, " + Column.QUEUE_TIME + " ASC, " + Column.ID + " ASC";
 
     public static WebTransaction getNext(boolean allowSync, boolean allowAuth, Priority minPriority) {
 //        Log.v(TAG, "getNext()");
@@ -638,6 +666,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 obj.setState(State.WORKING);
                 obj.save();
             }
+        }
+        if (obj != null && obj.isSync()) {
+            Log.v(TAG, "sync: " + obj.getPriority() + ", " + obj.getQueueTime() + ", " + obj.getId());
         }
         return obj;
     }
@@ -731,6 +762,24 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         WebTransactionSqlHelper.TABLE_NAME,
                         Column.ID + "=?",
                         new String[]{id + ""}) > 0;
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return success;
+    }
+
+    public static boolean deleteAll() {
+//        Log.v(TAG, "delete(" + id + ")");
+        Transform.deleteAll();
+        boolean success = false;
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                success = db.delete(
+                        WebTransactionSqlHelper.TABLE_NAME,
+                        null, null) > 0;
             } finally {
                 if (db != null) db.close();
             }
@@ -886,8 +935,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder isSyncCall(boolean sync) {
             params.putBoolean(PARAM_IS_SYNC, sync);
-            if (sync)
-                params.putSerializable(PARAM_PRIORITY, Priority.LOW);
             return this;
         }
 

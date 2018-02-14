@@ -512,8 +512,7 @@ public class App extends Application {
 
         @Override
         public void onOfflineMode(App.OfflineState state) {
-            Log.e(TAG, "onOfflineMode");
-            Log.e(TAG, "state: " + state.name());
+            Log.v(TAG, "onOfflineMode");
             if (state == OfflineState.DOWNLOADING) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
             } else

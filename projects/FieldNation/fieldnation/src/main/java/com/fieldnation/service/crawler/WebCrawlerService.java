@@ -14,7 +14,6 @@ import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.DataPurgeAsync;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -24,6 +23,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -85,7 +85,6 @@ public class WebCrawlerService extends Service {
     private long _lastRequestTime;
     private long _requestCounter = 0;
     private boolean _isRunning = false;
-    private boolean _runningPurge = false;
     private boolean _monitorRunning = false;
     private int _pendingRequests = 0;
     private static int NOTIFICATION_ID = App.secureRandom.nextInt();
@@ -98,7 +97,6 @@ public class WebCrawlerService extends Service {
      */
 
     private HashSet<DownloadTuple> downloads = new HashSet<>();
-    private DownloadTuple _tuple;
 
     public class DownloadTuple {
         private int workOrderId = 0;
@@ -106,17 +104,10 @@ public class WebCrawlerService extends Service {
         private int countCompletedDownloading = 0;
         private HashSet<Integer> documentIdList = new HashSet<>();
 
-        DownloadTuple() {
-        }
-
         public DownloadTuple(int workOrderId) {
             this.workOrderId = workOrderId;
         }
 
-        public DownloadTuple(int workOrderId, int totalAttachments) {
-            this.workOrderId = workOrderId;
-            this.totalAttachments = totalAttachments;
-        }
     }
 
     public WebCrawlerService() {
@@ -141,7 +132,6 @@ public class WebCrawlerService extends Service {
 
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
-        purgeOldData();
 
         if (App.get().getAuth() == null) {
             Log.v(TAG, "not logged in, quiting");
@@ -155,7 +145,8 @@ public class WebCrawlerService extends Service {
         }
 
         // we're not allowed to run, stop
-        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun && !App.get().isOffline()) {
+        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun
+                && App.get().getOfflineState() != App.OfflineState.DOWNLOADING) {
             Log.v(TAG, "sync disabled, quiting");
             startActivityMonitor();
             return START_NOT_STICKY;
@@ -172,10 +163,9 @@ public class WebCrawlerService extends Service {
         }
 
 
-        if (forceRun || (App.get().isOffline() && !App.get().isOfflineRunning())) {
+        if (forceRun || App.get().getOfflineState() == App.OfflineState.DOWNLOADING) {
             Log.v(TAG, "force run/ offline mode enabled, running");
 
-            App.get().setOfflineRunning(true);
             startNotification();
             runCrawler();
 
@@ -264,21 +254,6 @@ public class WebCrawlerService extends Service {
         }
     }
 
-    private void purgeOldData() {
-        if (_runningPurge)
-            return;
-
-        _runningPurge = true;
-        new DataPurgeAsync().run(this, _dataPurgeListener);
-    }
-
-    private final DataPurgeAsync.Listener _dataPurgeListener = new DataPurgeAsync.Listener() {
-        @Override
-        public void onFinish() {
-            _runningPurge = false;
-        }
-    };
-
     private synchronized void incrementPendingRequestCounter(int val) {
         _pendingRequests += val;
         if (_pendingRequests % 5 == 0)
@@ -310,7 +285,7 @@ public class WebCrawlerService extends Service {
 
         if (!_monitorRunning) {
             _monitorRunning = true;
-            _activityHandler.postDelayed(_activityMonitor_runnable, 600000);
+            _activityHandler.postDelayed(_activityMonitor_runnable, 10000);
         }
     }
 
@@ -318,10 +293,11 @@ public class WebCrawlerService extends Service {
         @Override
         public void run() {
             _monitorRunning = false;// check timer
-            if (System.currentTimeMillis() - _lastRequestTime > 600000
-                    && !_runningPurge) {
+            if (System.currentTimeMillis() - _lastRequestTime > 10000
+                    && WebTransaction.getPaused().size() == 0) {
 
                 // shutdown
+                Log.v(TAG, "activity killMe");
                 killMe();
             } else {
                 startActivityMonitor();
@@ -341,12 +317,15 @@ public class WebCrawlerService extends Service {
         _bundlesApi.unsub();
         _authClient.unsubRemoveCommand();
         _isRunning = false;
-        App.get().setOfflineRunning(false);
+        App.get().setOffline(App.OfflineState.OFFLINE);
         cancelNotification();
+
+        Log.v(TAG, "onDestroy " + _crawlerWatch.finish());
         super.onDestroy();
     }
 
-    private void killMe(){
+    private void killMe() {
+
         stopSelf();
     }
 
@@ -386,7 +365,8 @@ public class WebCrawlerService extends Service {
         --_totalLeftDownloading;
         broadcastDownloadProgress();
 
-        if (_totalLeftDownloading == 0) {
+        if (_totalLeftDownloading == 0 && WebTransaction.getPaused().size() == 0) {
+            Log.v(TAG, "updateDownloadProgress kill");
             killMe();
         }
     }
@@ -397,6 +377,8 @@ public class WebCrawlerService extends Service {
                 || attachment.getActionsSet().contains(Attachment.ActionsEnum.DELETE);
     }
 
+    private Stopwatch _crawlerWatch = new Stopwatch();
+
     public void runCrawler() {
         Log.v(TAG, "runCrawler");
 
@@ -404,6 +386,8 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "crawler skipping");
             return;
         }
+
+        _crawlerWatch.start();
 
         _lastRequestTime = System.currentTimeMillis();
         _isRunning = true;
@@ -507,6 +491,16 @@ public class WebCrawlerService extends Service {
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
+                    // request the other lists
+                    ListEnvelope metadata = workOrders.getMetadata();
+                    if (metadata.getPage() == 1 && !LIMIT_ONE_PAGE) {
+                        for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
+                            incrementPendingRequestCounter(1);
+                            incRequestCounter(1);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                        }
+                    }
+
                     // get the details
                     WorkOrder[] works = workOrders.getResults();
                     if (_totalAssignedWOs == NO_VALUE_ASSIGNED)
@@ -518,35 +512,22 @@ public class WebCrawlerService extends Service {
                         WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
                     }
 
-                    // request the other lists
-                    ListEnvelope metadata = workOrders.getMetadata();
-                    if (metadata.getPage() == 1 && !LIMIT_ONE_PAGE) {
-                        for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
-                            incrementPendingRequestCounter(1);
-                            incRequestCounter(1);
-                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
-                        }
-                    }
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
                     WorkOrder workOrder = (WorkOrder) successObject;
 
                     // download progress tracking
-                    _tuple = new DownloadTuple(workOrder.getId());
+                    DownloadTuple tuple = new DownloadTuple(workOrder.getId());
                     AttachmentFolder[] attachmentFolders = workOrder.getAttachments().getResults();
                     for (AttachmentFolder attachmentFolder : attachmentFolders) {
                         for (Attachment attachment : attachmentFolder.getResults()) {
                             if (isDownloadable(attachment)) {
-                                _tuple.documentIdList.add(attachment.getId());
-                                _tuple.totalAttachments += 1;
+                                tuple.documentIdList.add(attachment.getId());
+                                tuple.totalAttachments += 1;
                             }
                         }
                     }
 
-                    if (_tuple.totalAttachments == 0) {
-                        updateDownloadProgress();
-                    } else {
-                        downloads.add(_tuple);
-                    }
+                    downloads.add(tuple);
 
                     if (workOrder.getId() == null)
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
@@ -554,20 +535,18 @@ public class WebCrawlerService extends Service {
                     Log.v(TAG, "getWorkOrder " + workOrder.getId());
                     incrementPendingRequestCounter(-1);
 
+                    incrementPendingRequestCounter(1);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, true);
+
                     if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
                         BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
                     }
 
-                    // get messages for work order
                     incRequestCounter(1);
                     WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, true);
-
-                    incrementPendingRequestCounter(1);
-                    incRequestCounter(1);
-                    WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, true);
-
                     incRequestCounter(1);
                     WorkordersWebApi.getBonuses(WebCrawlerService.this, workOrder.getId(), false, true);
                     incRequestCounter(1);
@@ -586,6 +565,7 @@ public class WebCrawlerService extends Service {
                     WorkordersWebApi.getSignatures(WebCrawlerService.this, workOrder.getId(), false, true);
 
                 } else if (successObject != null && methodName.equals("getAttachments")) {
+                    int downloadable = 0;
                     incrementPendingRequestCounter(-1);
                     // get attachments
                     AttachmentFolders folders = (AttachmentFolders) successObject;
@@ -597,10 +577,22 @@ public class WebCrawlerService extends Service {
                                     if (isDownloadable(attachment)) {
                                         incRequestCounter(1);
                                         DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
+                                        downloadable++;
                                     }
                                 }
                             }
                         }
+                    }
+                    if (downloadable == 0 && downloads != null && downloads.size() > 0) {
+                        int workOrderId = transactionParams.getMethodParamInt("workOrderId");
+                        Iterator<DownloadTuple> itr = downloads.iterator();
+                        while (itr.hasNext()) {
+                            DownloadTuple dt = itr.next();
+                            if (dt.workOrderId == workOrderId) {
+                                updateDownloadProgress();
+                            }
+                        }
+
                     }
                 }
             } catch (Exception ex) {

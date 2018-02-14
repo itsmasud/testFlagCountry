@@ -122,9 +122,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _toastClient.subToast();
 
         startService(new Intent(this, TopicService.class));
-        startService(new Intent(this, WebCrawlerService.class));
 
-        _authClient.subNeedUsernameAndPassword();
+        if (doAuthChecks())
+            _authClient.subNeedUsernameAndPassword();
 
         _appMessagingClient.subGotProfile();
         _appMessagingClient.subUpdateApp();
@@ -153,7 +153,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
 
-        _authClient.unsubNeedUsernameAndPassword();
+        if (doAuthChecks())
+            _authClient.unsubNeedUsernameAndPassword();
         _toastClient.unSubToast();
         _toastClient.unSubSnackbar();
         _activityRequestHandler.unsub();
@@ -245,6 +246,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     public abstract void onProfile(Profile profile);
+
+    public boolean doAuthChecks() {
+        return true;
+    }
 
     @Override
     public void onBackPressed() {
@@ -360,8 +365,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final AuthClient _authClient = new AuthClient() {
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
-            Log.v(TAG, "AuthActivity.startNewWithResponse");
-            AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);
+            Log.v(TAG, "SplashActivity.startNew");
+            SplashActivity.startNew(App.get());
         }
     };
 

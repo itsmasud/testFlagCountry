@@ -9,7 +9,6 @@ import com.fieldnation.App;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -539,7 +538,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 long timeLeft = t.transaction.getQueueTime() - System.currentTimeMillis();
                 WebTransaction wt = t.transaction;
                 if (timeLeft < 0) {
-                    if (App.get().isOffline()) {
+                    if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
                         view.set(t.name, "Paused in offline mode");
                     } else if (wt.isWifiRequired() && !App.get().haveWifi()) {
                         view.set(t.name, "Waiting for wifi...");

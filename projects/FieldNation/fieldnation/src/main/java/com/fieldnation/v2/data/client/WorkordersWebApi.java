@@ -3844,7 +3844,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/assignee")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -3885,7 +3885,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -3928,7 +3928,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -3977,7 +3977,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4018,7 +4018,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4059,7 +4059,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/contacts")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4102,7 +4102,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4143,7 +4143,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4184,7 +4184,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/discounts")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4225,7 +4225,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/eta")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4266,7 +4266,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/expenses")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4311,7 +4311,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4354,7 +4354,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4397,7 +4397,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4443,7 +4443,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4484,7 +4484,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4527,7 +4527,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4573,7 +4573,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4614,7 +4614,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4655,7 +4655,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/location")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4696,7 +4696,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/messages")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4737,7 +4737,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/milestones")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4778,7 +4778,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4819,7 +4819,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4870,7 +4870,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4911,7 +4911,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/pay")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4952,7 +4952,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -4995,7 +4995,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5038,7 +5038,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5079,7 +5079,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5120,7 +5120,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5169,7 +5169,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5210,7 +5210,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/qualifications")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5251,7 +5251,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/ratings")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5294,7 +5294,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5340,7 +5340,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5381,7 +5381,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5423,7 +5423,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/mass-accept")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5464,7 +5464,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/schedule")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5505,7 +5505,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/shipments")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5548,7 +5548,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5589,7 +5589,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5630,7 +5630,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/status")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5673,7 +5673,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tags/{tag_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5714,7 +5714,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tags")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5757,7 +5757,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5798,7 +5798,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5839,7 +5839,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -5919,7 +5919,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/lists")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId, WorkordersWebApi.class,
@@ -5958,7 +5958,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
@@ -6061,7 +6061,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority(isBackground ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,

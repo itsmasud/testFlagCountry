@@ -75,7 +75,9 @@ public class HttpResult {
                 }
 
                 if (_baResults != null) {
-                    Log.v("HttpJson", "data size " + misc.readableFileSize(conn.getContentLength()) + ", " + misc.readableFileSize(_baResults.length));
+                    Log.v("HttpJson", "data size " + misc.readableFileSize(_baResults.length));
+                } else if (_file != null) {
+                    Log.v("HttpJson", "data size " + misc.readableFileSize(_file.length()));
                 }
             }
         } catch (Exception ex) {
