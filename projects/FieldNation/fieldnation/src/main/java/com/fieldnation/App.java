@@ -37,6 +37,7 @@ import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -50,7 +51,10 @@ import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.profile.ProfileConstants;
+import com.fieldnation.service.profileimage.ProfilePhotoConstants;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.model.SavedList;
@@ -91,8 +95,7 @@ public class App extends Application {
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
     public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
-    public static final String PREF_OFFLINE_MODE_ENABLED = "PREF_OFFLINE_MODE_ENABLED";
-    public static final String PREF_OFFLINE_MODE_RUNNING = "PREF_OFFLINE_MODE_RUNNING";
+    public static final String PREF_OFFLINE_STATE = "PREF_OFFLINE_STATE";
 
     private static App _context;
 
@@ -114,6 +117,10 @@ public class App extends Application {
     private static final int THRESHOLD_FREE_MB = 5;
 
     public static final SecureRandom secureRandom = new SecureRandom();
+
+    public enum OfflineState {
+        NORMAL, DOWNLOADING, OFFLINE, SYNC
+    }
 
     static {
         Log.setRoller(new DebugLogRoller());
@@ -248,7 +255,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        //new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
@@ -272,10 +279,7 @@ public class App extends Application {
 
         Log.v(TAG, "Total assigned wos: " + bundle.get(WebCrawlerService.TOTAL_ASSIGNED_WOS));
         Log.v(TAG, "Total left downloading wos: " + bundle.get(WebCrawlerService.TOTAL_LEFT_DOWNLOADING));
-
     }
-
-
 
     private Runnable _anrReport = new Runnable() {
         @Override
@@ -295,7 +299,7 @@ public class App extends Application {
         @Override
         public void run() {
             while (true) {
-                Log.v(TAG, "PAUSED CHECK " + (WebTransaction.getPaused(true).size() + WebTransaction.getPaused(false).size()));
+                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
@@ -384,6 +388,7 @@ public class App extends Application {
 
         @Override
         public void onCommandRemove() {
+            Log.v(TAG, "onCommandRemove profile");
             _profile = null;
         }
 
@@ -494,7 +499,7 @@ public class App extends Application {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
 
-            if (!isOffline()) {
+            if (getOfflineState() != OfflineState.NORMAL) {
                 ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -506,9 +511,10 @@ public class App extends Application {
         }
 
         @Override
-        public void onOfflineMode(boolean isOffline) {
-            Log.v(TAG, "onOfflineMode");
-            if (isOffline) {
+        public void onOfflineMode(App.OfflineState state) {
+            Log.e(TAG, "onOfflineMode");
+            Log.e(TAG, "state: " + state.name());
+            if (state == OfflineState.DOWNLOADING) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
             } else
                 stopService(new Intent(App.get(), WebCrawlerService.class));
@@ -592,27 +598,15 @@ public class App extends Application {
         return -1;
     }
 
-    public boolean isOffline() {
+    public OfflineState getOfflineState() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.getBoolean(PREF_OFFLINE_MODE_ENABLED, false);
+        return OfflineState.valueOf(settings.getString(PREF_OFFLINE_STATE, OfflineState.NORMAL.name()));
     }
 
-    public void setOffline(boolean isOffline) {
+    public void setOffline(OfflineState state) {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_OFFLINE_MODE_ENABLED, isOffline);
-        edit.apply();
-    }
-
-    public boolean isOfflineRunning() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.getBoolean(PREF_OFFLINE_MODE_RUNNING, false);
-    }
-
-    public void setOfflineRunning(boolean isOfflineRunning) {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_OFFLINE_MODE_RUNNING, isOfflineRunning);
+        edit.putString(PREF_OFFLINE_STATE, state.name());
         edit.apply();
     }
 
@@ -1001,4 +995,15 @@ public class App extends Application {
         return FileProvider.getUriForFile(get(), get().getApplicationContext().getPackageName() + ".provider", file);
     }
 
+    public static void logout() {
+        WebTransactionSystem.stop();
+        PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(PhotoConstants.ADDRESS_GET_PHOTO);
+        PigeonRoost.clearAddressCache(ToastClient.ADDRESS_TOAST);
+        PigeonRoost.clearAddressCache(ToastClient.ADDRESS_SNACKBAR);
+        StoredObject.delete(App.get(), StoredObject.list(App.get()));
+        AuthClient.removeCommand();
+        WebTransaction.deleteAll();
+    }
 }
