@@ -42,7 +42,7 @@
         android:layout_marginBottom="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="0/100" />
+        android:text="Starting Up..." />
 
     <Button
         android:id="@+id/cancel_button"

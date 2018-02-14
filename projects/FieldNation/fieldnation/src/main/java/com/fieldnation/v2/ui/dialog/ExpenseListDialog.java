@@ -18,6 +18,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -92,7 +93,7 @@ public class ExpenseListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -173,7 +174,7 @@ public class ExpenseListDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
-                WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getExpenses(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }

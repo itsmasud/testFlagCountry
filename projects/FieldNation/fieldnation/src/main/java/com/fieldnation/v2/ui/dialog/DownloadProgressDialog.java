@@ -17,6 +17,7 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.crawler.WebCrawlerService;
 
 /**
@@ -43,7 +44,6 @@ public class DownloadProgressDialog extends SimpleDialog {
         _progressTextView = v.findViewById(R.id.progress_textview);
 
         _cancelButton = v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
 
         return v;
     }
@@ -51,6 +51,13 @@ public class DownloadProgressDialog extends SimpleDialog {
     @Override
     public boolean isCancelable() {
         return false;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        _cancelButton.setOnClickListener(_cancel_onClick);
     }
 
     @Override
@@ -91,15 +98,16 @@ public class DownloadProgressDialog extends SimpleDialog {
             _progressBar.setMax(total);
             _progressBar.setProgress(total - remain);
             _progressBar.setIndeterminate(false);
+            _progressTextView.setVisibility(View.VISIBLE);
 
             _progressTextView.setText(total - remain + " / " + total);
         }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
-
         @Override
         public void onClick(View view) {
+            Log.v(TAG, "_cancel_onClick");
             AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
         }
     };

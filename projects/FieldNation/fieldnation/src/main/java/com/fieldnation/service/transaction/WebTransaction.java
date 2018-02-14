@@ -32,7 +32,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private String _listenerClassName;
     private byte[] _listenerParams;
     private boolean _useAuth;
-    private boolean _isSync;
+    private Type _type;
     private State _state;
     private Priority _priority;
     private String _requestString;
@@ -65,6 +65,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         BUILDING, IDLE, WORKING, ZOMBIE
     }
 
+    public enum Type {
+        ANY, NORMAL, CRAWLER, SYNC
+    }
+
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
@@ -74,7 +78,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _listenerParams = cursor.getBlob(Column.LISTENER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
-        _isSync = cursor.getInt(Column.IS_SYNC.getIndex()) == 1;
+        _type = Type.values()[cursor.getInt(Column.TYPE.getIndex())];
         _queueTime = cursor.getLong(Column.QUEUE_TIME.getIndex());
         _tryCount = cursor.getInt(Column.TRY_COUNT.getIndex());
         _maxTries = cursor.getInt(Column.MAX_TRIES.getIndex());
@@ -107,7 +111,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _listenerParams = bundle.getByteArray(PARAM_LISTENER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
         _state = (State) bundle.getSerializable(PARAM_STATE);
-        _isSync = bundle.getBoolean(PARAM_IS_SYNC);
+        _type = (Type) bundle.getSerializable(PARAM_TYPE);
         _queueTime = bundle.getLong(PARAM_QUEUE_TIME);
         _tryCount = bundle.getInt(PARAM_TRY_COUNT);
         _maxTries = bundle.getInt(PARAM_MAX_TRIES);
@@ -152,7 +156,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             bundle.putString(PARAM_KEY, _key);
 
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
-        bundle.putBoolean(PARAM_IS_SYNC, _isSync);
+        bundle.putSerializable(PARAM_TYPE, _type);
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
         bundle.putInt(PARAM_TRY_COUNT, _tryCount);
         bundle.putInt(PARAM_MAX_TRIES, _maxTries);
@@ -203,8 +207,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return _useAuth;
     }
 
-    public boolean isSync() {
-        return _isSync;
+    public Type getType() {
+        return _type;
     }
 
     public State getState() {
@@ -530,7 +534,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.IS_SYNC + "=1",
+                            Column.TYPE + "=" + Type.SYNC.ordinal(),
                             null, null, null, null, null);
 
                     while (cursor.moveToNext()) {
@@ -547,7 +551,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return syncing;
     }
 
-    public static List<WebTransaction> getPaused(boolean isSync) {
+    public static List<WebTransaction> getPaused(Type type) {
         List<WebTransaction> paused = new LinkedList<>();
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -558,8 +562,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.STATE + " =? AND "
-                                    + Column.IS_SYNC + "=" + (isSync ? "1" : "0"),
+                            Column.STATE + " =?"
+                                    + ((type == Type.ANY) ? "" : " AND " + Column.TYPE + "=" + type.ordinal()),
                             new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
 
                     while (cursor.moveToNext()) {
@@ -632,7 +636,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
     private static final String GET_NEXT_SORT = Column.PRIORITY + " DESC, " + Column.QUEUE_TIME + " ASC, " + Column.ID + " ASC";
 
-    public static WebTransaction getNext(boolean allowSync, boolean allowAuth, Priority minPriority) {
+    public static WebTransaction getNext(Type type, boolean allowAuth, Priority minPriority) {
 //        Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
@@ -648,7 +652,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                                     + " AND " + Column.PRIORITY + " >= " + minPriority.ordinal()
                                     + " AND " + Column.QUEUE_TIME + " < " + System.currentTimeMillis()
                                     + " AND " + Column.STATE + " <> " + State.ZOMBIE.ordinal()
-                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0")
+                                    + (type == Type.ANY ? "" : " AND " + Column.TYPE + " = " + type.ordinal())
                                     + (allowAuth ? "" : " AND " + Column.USE_AUTH + " = 0")
                                     + ((!App.get().haveWifi()) ? " AND " + Column.WIFI_REQUIRED + " = 0" : ""),
                             GET_NEXT_PARAMS, null, null, GET_NEXT_SORT, "1");
@@ -667,7 +671,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 obj.save();
             }
         }
-        if (obj != null && obj.isSync()) {
+        if (obj != null && obj.getType() != Type.NORMAL) {
             Log.v(TAG, "sync: " + obj.getPriority() + ", " + obj.getQueueTime() + ", " + obj.getId());
         }
         return obj;
@@ -709,7 +713,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
         v.put(Column.KEY.getName(), obj._key);
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
-        v.put(Column.IS_SYNC.getName(), obj._isSync ? 1 : 0);
+        v.put(Column.TYPE.getName(), obj._type.ordinal());
         v.put(Column.QUEUE_TIME.getName(), obj._queueTime);
         v.put(Column.TRY_COUNT.getName(), obj._tryCount);
         v.put(Column.MAX_TRIES.getName(), obj._maxTries);
@@ -890,7 +894,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder() {
             params.putSerializable(PARAM_PRIORITY, Priority.NORMAL);
-            params.putBoolean(PARAM_IS_SYNC, false);
+            params.putSerializable(PARAM_TYPE, Type.NORMAL);
             params.putBoolean(PARAM_WIFI_REQUIRED, false);
             params.putBoolean(PARAM_TRACK, false);
             params.putInt(PARAM_TRACK_ENUM, 0);
@@ -933,8 +937,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             return this;
         }
 
-        public Builder isSyncCall(boolean sync) {
-            params.putBoolean(PARAM_IS_SYNC, sync);
+        public Builder setType(Type type) {
+            params.putSerializable(PARAM_TYPE, type);
             return this;
         }
 

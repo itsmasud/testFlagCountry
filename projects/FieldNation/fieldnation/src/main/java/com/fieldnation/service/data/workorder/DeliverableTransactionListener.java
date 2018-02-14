@@ -78,7 +78,7 @@ public class DeliverableTransactionListener extends WebTransactionListener imple
 
         StoredObject.put(context, App.getProfileId(), PSO_DELIVERABLE, deliverableId, data);
 
-        WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, false, transaction.isSync());
+        WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, false, transaction.getType() == WebTransaction.Type.SYNC);
 
         return Result.CONTINUE;
     }

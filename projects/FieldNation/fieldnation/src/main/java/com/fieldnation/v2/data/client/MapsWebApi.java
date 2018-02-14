@@ -47,12 +47,12 @@ public abstract class MapsWebApi extends Pigeon {
      * Swagger operationId: getMaps
      * This endpoint returns a list of exact coordinates as well as additional info such as the address and whether the coordinates are an exact match.
      *
-     * @param type         Type and id of the item being looked up separated by a colon, e.g. workorder:21
-     * @param isBackground indicates that this call is low priority
+     * @param type Type and id of the item being looked up separated by a colon, e.g. workorder:21
+     * @param type indicates that this call is low priority
      */
-    public static void getMaps(Context context, String type, boolean allowCacheResponse, boolean isBackground) {
+    public static void getMaps(Context context, String type, boolean allowCacheResponse, WebTransaction.Type wtype) {
         try {
-            String key = misc.md5("GET//api/rest/v2/maps/search?type=" + type + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/maps/search?type=" + type);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -72,7 +72,7 @@ public abstract class MapsWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/MapsWebApi",
                                     MapsWebApi.class, "getMaps", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(wtype)
                     .request(builder)
                     .build();
 

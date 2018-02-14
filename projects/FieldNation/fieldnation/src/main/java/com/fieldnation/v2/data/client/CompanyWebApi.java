@@ -134,11 +134,11 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getClients
      * Get a list of clients and projects of the clients
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getClients(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getClients(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/clients" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/clients");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -156,7 +156,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getClients", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -173,12 +173,12 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getCompanyDetails
      * Get Company Details
      *
-     * @param companyId    ID of company
-     * @param isBackground indicates that this call is low priority
+     * @param companyId ID of company
+     * @param type      indicates that this call is low priority
      */
-    public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/" + companyId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -197,7 +197,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyDetails", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -214,11 +214,11 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getCompanyManagers
      * Gets a list of company managers
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getCompanyManagers(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCompanyManagers(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/managers" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/managers");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -236,7 +236,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyManagers", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -253,11 +253,11 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getCompanyUserCreditCards
      * Get a list of all credit cards for a company user.
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getCompanyUserCreditCards(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCompanyUserCreditCards(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/creditcards" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/creditcards");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -275,7 +275,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyUserCreditCards", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -292,12 +292,12 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getCreditCardFeesByCompany
      * Get credit card processing fees
      *
-     * @param companyId    ID of company
-     * @param isBackground indicates that this call is low priority
+     * @param companyId ID of company
+     * @param type      indicates that this call is low priority
      */
-    public static void getCreditCardFees(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCreditCardFees(Context context, Integer companyId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/settings/ccfees" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/settings/ccfees");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -316,7 +316,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCreditCardFees", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -333,12 +333,12 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getFeatures
      * Get a list of all features for a company.
      *
-     * @param status       Company feature status (enabled, disabled, requested, denied)
-     * @param isBackground indicates that this call is low priority
+     * @param status Company feature status (enabled, disabled, requested, denied)
+     * @param type   indicates that this call is low priority
      */
-    public static void getFeatures(Context context, String status, boolean allowCacheResponse, boolean isBackground) {
+    public static void getFeatures(Context context, String status, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/features?status=" + status + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/features?status=" + status);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -358,7 +358,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getFeatures", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -375,13 +375,13 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getIntegrations
      * Get a list of all company_integrations for a company.
      *
-     * @param companyId    null
-     * @param accessToken  null
-     * @param isBackground indicates that this call is low priority
+     * @param companyId   null
+     * @param accessToken null
+     * @param type        indicates that this call is low priority
      */
-    public static void getIntegrations(Context context, String companyId, String accessToken, boolean allowCacheResponse, boolean isBackground) {
+    public static void getIntegrations(Context context, String companyId, String accessToken, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -402,7 +402,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getIntegrations", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -419,11 +419,11 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getManagedProviders
      * Get Company Managed Providers
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getManagedProviders(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getManagedProviders(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/managed-providers" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/managed-providers");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -441,7 +441,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getManagedProviders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -459,13 +459,13 @@ public abstract class CompanyWebApi extends Pigeon {
      * Get Company Managed Providers
      *
      * @param getManagedProvidersOptions Additional optional parameters
-     * @param isBackground               indicates that this call is low priority
+     * @param type                       indicates that this call is low priority
      */
-    public static void getManagedProviders(Context context, GetManagedProvidersOptions getManagedProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getManagedProviders(Context context, GetManagedProvidersOptions getManagedProvidersOptions, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/company/managed-providers" + (getManagedProvidersOptions.getCompanyId() != null ? "?company_id=" + getManagedProvidersOptions.getCompanyId() : "")
                     + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
-                    + (isBackground ? ":isBackground" : ""));
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -486,7 +486,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getManagedProviders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -503,12 +503,12 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getPredefinedExpensesByWorkOrder
      * Get a list of predefined expenses by work order.
      *
-     * @param workOrderId  null
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId null
+     * @param type        indicates that this call is low priority
      */
-    public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -527,7 +527,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getPredefinedExpenses", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -544,12 +544,12 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getRatingsByCompanyId
      * Get Rating Details of a Company
      *
-     * @param companyId    Company ID
-     * @param isBackground indicates that this call is low priority
+     * @param companyId Company ID
+     * @param type      indicates that this call is low priority
      */
-    public static void getRatings(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getRatings(Context context, Integer companyId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/ratings" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/ratings");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -568,7 +568,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getRatings", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -585,11 +585,11 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getSelectionRulesByCompany
      * Returns a list of selection rules for company
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getSelectionRules(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getSelectionRules(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/selection_rules" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/selection_rules");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -607,7 +607,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getSelectionRules", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -624,11 +624,11 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getTags
      * Gets tags/labels
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getTags(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTags(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/tags" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/tags");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -646,7 +646,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getTags", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -663,12 +663,12 @@ public abstract class CompanyWebApi extends Pigeon {
      * Swagger operationId: getTagsByWorkOrder
      * Gets available tags for a work order and the company it belongs to (provider friendly route)
      *
-     * @param workOrderId  work order ID
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId work order ID
+     * @param type        indicates that this call is low priority
      */
-    public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/company/tags/" + workOrderId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/company/tags/" + workOrderId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -687,7 +687,7 @@ public abstract class CompanyWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getTags", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

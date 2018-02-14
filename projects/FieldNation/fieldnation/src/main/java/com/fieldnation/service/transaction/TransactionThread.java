@@ -52,7 +52,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
     private final WebTransactionSystem _service;
 
-    private boolean _syncThread = false;
     private boolean _allowSync = true;
     private long _syncCheckCoolDown = 0;
 
@@ -68,11 +67,10 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
     }
 
-    public TransactionThread(ThreadManager manager, WebTransactionSystem service, boolean syncThread) {
+    public TransactionThread(ThreadManager manager, WebTransactionSystem service) {
         super(manager);
         setName(TAG);
         _service = service;
-        _syncThread = syncThread;
         start();
     }
 
@@ -144,8 +142,15 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
         WebTransaction trans = null;
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
-                    _syncThread ? Priority.LOW : Priority.NORMAL);
+            WebTransaction.Type wtype = WebTransaction.Type.ANY;
+            if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+                //
+            } else if (App.get().getOfflineState() == App.OfflineState.DOWNLOADING) {
+                wtype = WebTransaction.Type.CRAWLER;
+            } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
+                wtype = WebTransaction.Type.NORMAL;
+            }
+            trans = WebTransaction.getNext(wtype, _service.isAuthenticated(), Priority.LOW);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(ContextProvider.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
@@ -154,6 +159,12 @@ class TransactionThread extends ThreadManager.ManagedThread {
         // if failed, then exit
         if (trans == null) {
             return false;
+        }
+
+        if (App.get().getOfflineState() == App.OfflineState.NORMAL && trans.getType() == WebTransaction.Type.CRAWLER) {
+            Log.v(TAG, "Removing Crawler Call");
+            WebTransaction.delete(trans.getId());
+            return true;
         }
 
         if (trans.getUUID() != null) {

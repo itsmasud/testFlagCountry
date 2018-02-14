@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
@@ -21,6 +20,7 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -164,7 +164,7 @@ public class SplashActivity extends AuthSimpleActivity {
         opts.setList("workorders_assignments");
         opts.setFFlightboardTomorrow(true);
         opts.setPage(1);
-        WorkordersWebApi.getWorkOrders(App.get(), opts, true, false);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, true, WebTransaction.Type.NORMAL);
 
         doNextStep();
     }

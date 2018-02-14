@@ -31,6 +31,7 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
@@ -198,7 +199,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
     }

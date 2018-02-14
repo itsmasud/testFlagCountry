@@ -184,12 +184,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getPayByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getPay(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getPay(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -208,7 +208,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getPay", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -225,13 +225,13 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getProfileAndWorkHistory
      * Get Profile and Work History By The User and Work Order
      *
-     * @param userId       User ID
-     * @param workOrderId  Work Order ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId      User ID
+     * @param workOrderId Work Order ID
+     * @param type        indicates that this call is low priority
      */
-    public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -251,7 +251,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getProfileAndWorkHistory", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -268,12 +268,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getSettingsByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getSettings(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getSettings(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -292,7 +292,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getSettings", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -309,12 +309,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getTaxByUser
      * Get tax info
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getTax(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTax(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -333,7 +333,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getTax", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -350,12 +350,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getTourByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getTour(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTour(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -374,7 +374,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getTour", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -391,12 +391,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getUser
      * Returns summary details about a user profile.
      *
-     * @param user         User ID
-     * @param isBackground indicates that this call is low priority
+     * @param user User ID
+     * @param type indicates that this call is low priority
      */
-    public static void getUser(Context context, String user, boolean allowCacheResponse, boolean isBackground) {
+    public static void getUser(Context context, String user, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + user + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + user);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -415,7 +415,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUser", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -432,13 +432,13 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getUserPreferenceValueByKey
      * Get user preference value
      *
-     * @param userId       User ID
-     * @param preference   Preference Key
-     * @param isBackground indicates that this call is low priority
+     * @param userId     User ID
+     * @param preference Preference Key
+     * @param type       indicates that this call is low priority
      */
-    public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean allowCacheResponse, boolean isBackground) {
+    public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -458,7 +458,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserPreferenceValue", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -475,12 +475,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getUserPreferredProviderNetworks
      * Get the Preferred Provider Networks the user is a part of
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -499,7 +499,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserPreferredProviderNetworks", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -516,12 +516,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getUserTypesOfWork
      * Get all types of work of a specific user
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getUserTypesOfWork(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getUserTypesOfWork(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -540,7 +540,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserTypesOfWork", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -557,12 +557,12 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getWorkHistory
      * Get work history of a user
      *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
+     * @param userId User ID
+     * @param type   indicates that this call is low priority
      */
-    public static void getWorkHistory(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getWorkHistory(Context context, Integer userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/work_history" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/work_history");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -581,7 +581,7 @@ public abstract class UsersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getWorkHistory", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

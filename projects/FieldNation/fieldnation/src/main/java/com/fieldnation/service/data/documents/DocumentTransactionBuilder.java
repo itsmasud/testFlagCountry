@@ -28,7 +28,7 @@ public class DocumentTransactionBuilder {
                     .listenerParams(DocumentTransactionListener.pDownload(documentId, filename))
                     .key((isSync ? "Sync/" : "") + "Document/" + documentId)
                     .useAuth(false)
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(builder);
 
             if (!isSync) {

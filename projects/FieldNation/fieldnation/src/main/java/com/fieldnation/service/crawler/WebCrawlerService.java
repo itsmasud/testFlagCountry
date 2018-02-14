@@ -292,6 +292,9 @@ public class WebCrawlerService extends Service {
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
+            if (!_isRunning)
+                return;
+            
             _monitorRunning = false;// check timer
             if (System.currentTimeMillis() - _lastRequestTime > 10000
                     && WebTransaction.getPaused().size() == 0) {
@@ -318,7 +321,6 @@ public class WebCrawlerService extends Service {
         _authClient.unsubRemoveCommand();
         _isRunning = false;
         cancelNotification();
-
 
         Log.v(TAG, "onDestroy " + _crawlerWatch.finish());
         super.onDestroy();
@@ -413,7 +415,7 @@ public class WebCrawlerService extends Service {
         _documentClient.sub();
         incrementPendingRequestCounter(1);
         incRequestCounter(1);
-        WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
+        WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, WebTransaction.Type.CRAWLER);
     }
 
     private final AuthClient _authClient = new AuthClient() {
@@ -463,7 +465,7 @@ public class WebCrawlerService extends Service {
                         incRequestCounter(1);
                         // only run on assigned work
                         if (list.getId().equals("workorders_assignments"))
-                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, WebTransaction.Type.CRAWLER);
                     }
 
                 } else if (successObject != null && methodName.equals("getWorkOrders")) {
@@ -497,7 +499,7 @@ public class WebCrawlerService extends Service {
                         for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
                             incrementPendingRequestCounter(1);
                             incRequestCounter(1);
-                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, WebTransaction.Type.CRAWLER);
                         }
                     }
 
@@ -509,7 +511,7 @@ public class WebCrawlerService extends Service {
                     for (WorkOrder workOrder : works) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
-                        WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
+                        WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     }
 
                 } else if (successObject != null && methodName.equals("getWorkOrder")) {
@@ -537,32 +539,32 @@ public class WebCrawlerService extends Service {
 
                     incrementPendingRequestCounter(1);
                     incRequestCounter(1);
-                    WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
 
                     if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
-                        BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
+                        BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, WebTransaction.Type.CRAWLER);
                     }
 
                     incRequestCounter(1);
-                    WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getMessages(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getBonuses(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getBonuses(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getCustomFields(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getCustomFields(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getDiscounts(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getDiscounts(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getPay(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getPay(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getExpenses(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getExpenses(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getPenalties(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getPenalties(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getQualifications(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getQualifications(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
                     incRequestCounter(1);
-                    WorkordersWebApi.getSignatures(WebCrawlerService.this, workOrder.getId(), false, true);
+                    WorkordersWebApi.getSignatures(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
 
                 } else if (successObject != null && methodName.equals("getAttachments")) {
                     int downloadable = 0;

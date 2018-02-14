@@ -24,6 +24,7 @@ import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.nav.SearchToolbarView;
@@ -208,7 +209,7 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView.onResume();
 
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
 
     }
 

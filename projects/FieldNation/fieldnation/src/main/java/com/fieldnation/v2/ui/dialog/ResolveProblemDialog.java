@@ -17,6 +17,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.menu.ResolveMenuButton;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -148,7 +149,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.equals("updateProblem") && success) {
                 PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 dismiss(true);
             } else {
                 Log.v(TAG, "onComplete");

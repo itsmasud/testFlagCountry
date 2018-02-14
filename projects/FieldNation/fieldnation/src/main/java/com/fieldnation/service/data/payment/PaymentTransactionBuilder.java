@@ -25,7 +25,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                     )
                     .key((isSync ? "Sync/" : "") + "PaymentPage" + page)
                     .useAuth(true)
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
@@ -48,7 +48,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                     .listenerParams(PaymentTransactionListener.pGet(paymentId))
                     .key((isSync ? "Sync/" : "") + "Payment/" + paymentId)
                     .useAuth(true)
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")

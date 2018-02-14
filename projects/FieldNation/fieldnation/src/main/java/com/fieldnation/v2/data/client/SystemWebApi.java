@@ -47,11 +47,11 @@ public abstract class SystemWebApi extends Pigeon {
      * Swagger operationId: getBanners
      * Get a list of all banners.
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getBanners(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBanners(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/system/banners" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/system/banners");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -69,7 +69,7 @@ public abstract class SystemWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/SystemWebApi",
                                     SystemWebApi.class, "getBanners", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -87,13 +87,12 @@ public abstract class SystemWebApi extends Pigeon {
      * Get a list of all banners.
      *
      * @param getBannersOptions Additional optional parameters
-     * @param isBackground      indicates that this call is low priority
+     * @param type              indicates that this call is low priority
      */
-    public static void getBanners(Context context, GetBannersOptions getBannersOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBanners(Context context, GetBannersOptions getBannersOptions, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/system/banners" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
-                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
-                    + (isBackground ? ":isBackground" : ""));
+                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -114,7 +113,7 @@ public abstract class SystemWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/SystemWebApi",
                                     SystemWebApi.class, "getBanners", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

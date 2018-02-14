@@ -19,6 +19,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
@@ -176,7 +177,7 @@ public class SearchResultScreen extends RelativeLayout {
         if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
             _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
 
-            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, WebTransaction.Type.NORMAL);
 
             if (_refreshView != null)
                 _refreshView.startRefreshing();
@@ -272,7 +273,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
-                WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
+                WorkordersWebApi.getWorkOrderLists(App.get(), false, WebTransaction.Type.NORMAL);
 
                 _adapter.refreshAll();
                 post(new Runnable() {
