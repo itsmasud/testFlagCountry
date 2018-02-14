@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.service.crawler.WebCrawlerService;
 
 /**
@@ -92,6 +90,7 @@ public class DownloadProgressDialog extends SimpleDialog {
 
             _progressBar.setMax(total);
             _progressBar.setProgress(total - remain);
+            _progressBar.setIndeterminate(false);
 
             _progressTextView.setText(total - remain + " / " + total);
         }
@@ -101,40 +100,13 @@ public class DownloadProgressDialog extends SimpleDialog {
 
         @Override
         public void onClick(View view) {
-            // TODO stop the crawler
-
+            AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
         }
     };
 
 
     public static void show(Context context, String uid) {
         Controller.show(context, uid, DownloadProgressDialog.class, null);
-    }
-
-    /*-************************************-*/
-    /*-         Primary Listener           -*/
-    /*-************************************-*/
-    public interface OnPrimaryListener {
-        void onPrimary(Parcelable extraData);
-    }
-
-    private static KeyedDispatcher<OnPrimaryListener> _onPrimaryDispatcher = new KeyedDispatcher<OnPrimaryListener>() {
-        @Override
-        public void onDispatch(OnPrimaryListener listener, Object... parameters) {
-            listener.onPrimary((Parcelable) parameters[0]);
-        }
-    };
-
-    public static void addOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
-        _onPrimaryDispatcher.add(uid, onPrimaryListener);
-    }
-
-    public static void removeOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
-        _onPrimaryDispatcher.remove(uid, onPrimaryListener);
-    }
-
-    public static void removeAllOnPrimaryListener(String uid) {
-        _onPrimaryDispatcher.removeAll(uid);
     }
 
 }

@@ -317,15 +317,15 @@ public class WebCrawlerService extends Service {
         _bundlesApi.unsub();
         _authClient.unsubRemoveCommand();
         _isRunning = false;
-        App.get().setOffline(App.OfflineState.OFFLINE);
         cancelNotification();
+
 
         Log.v(TAG, "onDestroy " + _crawlerWatch.finish());
         super.onDestroy();
     }
 
     private void killMe() {
-
+        App.get().setOffline(App.OfflineState.OFFLINE);
         stopSelf();
     }
 
