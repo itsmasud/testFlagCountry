@@ -17,7 +17,6 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.crawler.WebCrawlerService;
 
 /**
@@ -107,8 +106,8 @@ public class DownloadProgressDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Log.v(TAG, "_cancel_onClick");
             AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+            dismiss(true);
         }
     };
 

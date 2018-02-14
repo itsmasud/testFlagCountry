@@ -162,7 +162,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
 
         if (App.get().getOfflineState() == App.OfflineState.NORMAL && trans.getType() == WebTransaction.Type.CRAWLER) {
-            Log.v(TAG, "Removing Crawler Call");
             WebTransaction.delete(trans.getId());
             return true;
         }

@@ -29,7 +29,6 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
         WebTransaction webTransaction = null;
         synchronized (WebTransactionSystem.TRANSACTION_QUEUE) {
             if (WebTransactionSystem.TRANSACTION_QUEUE.size() > 0) {
-                Log.v(TAG, "TRANSACTION_QUEUE " + WebTransactionSystem.TRANSACTION_QUEUE.size());
                 webTransaction = WebTransactionSystem.TRANSACTION_QUEUE.remove(0);
             }
         }

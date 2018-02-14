@@ -671,9 +671,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 obj.save();
             }
         }
-        if (obj != null && obj.getType() != Type.NORMAL) {
-            Log.v(TAG, "sync: " + obj.getPriority() + ", " + obj.getQueueTime() + ", " + obj.getId());
-        }
         return obj;
     }
 
