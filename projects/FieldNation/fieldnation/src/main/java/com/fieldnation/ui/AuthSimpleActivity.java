@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
@@ -66,6 +67,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
         }
 
+        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+            setVisibilityOfflineBar(false);
+        } else
+            setVisibilityOfflineBar(true);
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
                 TAG = savedInstanceState.getString(STATE_TAG);
@@ -86,6 +92,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public abstract void onFinishCreate(Bundle savedInstanceState);
 
     public abstract int getToolbarId();
+
+    public abstract int getOfflineBarId();
 
     public abstract DialogManager getDialogManager();
 
@@ -204,6 +212,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
+    }
+
+    private void setVisibilityOfflineBar(boolean isVisible) {
+        if (getOfflineBarId() != 0) {
+            TextView offlineBar = (TextView) findViewById(getOfflineBarId());
+            offlineBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void gotProfile() {
@@ -403,11 +418,15 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onOfflineMode(App.OfflineState state) {
-           // TODO turn on the orange bar
+            // TODO turn on the orange bar
             Log.v(TAG, "onOfflineMode");
             if (state != App.OfflineState.NORMAL) {
                 Log.e(TAG, "Turn on the orange bar");
-            } else Log.e(TAG, "Turn off the orange bar");
+                setVisibilityOfflineBar(true);
+            } else {
+                Log.e(TAG, "Turn off the orange bar");
+                setVisibilityOfflineBar(false);
+            }
         }
     };
 

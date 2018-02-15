@@ -44,6 +44,11 @@ public class SettingsActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public int getOfflineBarId() {
+        return 0;
+    }
+
+    @Override
     public DialogManager getDialogManager() {
         return (DialogManager) findViewById(R.id.dialogManager);
     }

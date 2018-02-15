@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -56,6 +57,7 @@ public class NavActivity extends AuthSimpleActivity {
     // Ui
     private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
+    private TextView _offlineBar;
     private SavedSearchList _searchesView;
     private IconFontTextView _arrowTextView;
     private CoordinatorLayout _layout;
@@ -134,6 +136,8 @@ public class NavActivity extends AuthSimpleActivity {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
+
+        _offlineBar = (TextView) findViewById(R.id.offline_bar_textview);
 
         _searchToolbarView = (SearchToolbarView) findViewById(R.id.searchToolbarView);
 
@@ -219,11 +223,13 @@ public class NavActivity extends AuthSimpleActivity {
             _arrowTextView.setText(null);
             _toolbar.setOnClickListener(null);
             _searchesView.setEnabled(false);
-
+            _offlineBar.setVisibility(View.VISIBLE);
+            setNavTitle(getString(R.string.offline));
         } else {
             _arrowTextView.setText(getString(R.string.icon_arrow_down));
             _toolbar.setOnClickListener(_toolbar_onClick);
             _searchesView.setEnabled(true);
+            _offlineBar.setVisibility(View.GONE);
             WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
         }
 
@@ -271,6 +277,11 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public int getOfflineBarId() {
+        return R.id.offline_bar_textview;
     }
 
     @Override

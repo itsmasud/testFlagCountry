@@ -2,6 +2,7 @@
 <resources>
     <!-- new colors -->
 
+    <color name="fn_offline_bar_color">#FFF16522</color>
     <color name="fn_brandcolor">#FFFF5F00</color>
     <color name="fn_brandcolor_80">#CCFF5F00</color>
     <color name="fn_brandcolor_50">#80FF5F00</color>

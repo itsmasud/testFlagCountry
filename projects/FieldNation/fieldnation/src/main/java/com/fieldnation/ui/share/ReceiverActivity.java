@@ -107,6 +107,11 @@ public class ReceiverActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public int getOfflineBarId() {
+        return 0;
+    }
+
+    @Override
     public void onProfile(Profile profile) {
     }
 
