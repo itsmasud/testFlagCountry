@@ -9,6 +9,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 
@@ -20,7 +21,6 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
     private static final String TAG = "ProfilePhotoSystem";
 
     // Data
-    private Profile _profile = null;
     private Uri _currentProfileImage;
 
     private static ProfilePhotoSystem _instance = null;
@@ -36,11 +36,13 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
     private ProfilePhotoSystem() {
         _photoClient.sub();
         _profileClient.subGet();
+        _authClient.subRemoveCommand();
     }
 
     public void shutdown() {
         _photoClient.unsub();
         _profileClient.unsubGet();
+        _authClient.unsubRemoveCommand();
     }
 
     public void get(Context context, String url) {
@@ -53,7 +55,7 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
 
     public void upload(Context context, UUIDGroup uuid, Uri uri) {
         _currentProfileImage = uri;
-        ProfileClient.uploadProfilePhoto(context, uuid, _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
+        ProfileClient.uploadProfilePhoto(context, uuid, App.getProfileId(), FileUtils.getFileNameFromUri(App.get(), uri), uri);
         ProfilePhotoClient.dispatchGet(context, _currentProfileImage);
     }
 
@@ -64,10 +66,10 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
         @Override
         public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
             if (isCircle
-                    && _profile != null
-                    && _profile.getPhoto() != null
-                    && !misc.isEmptyOrNull(_profile.getPhoto().getLarge())
-                    && sourceUri.equals(_profile.getPhoto().getLarge())) {
+                    && App.getProfile() != null
+                    && App.getProfile().getPhoto() != null
+                    && !misc.isEmptyOrNull(  App.getProfile().getPhoto().getLarge())
+                    && sourceUri.equals(App.getProfile().getPhoto().getLarge())) {
                 _currentProfileImage = localUri;
                 ProfilePhotoClient.dispatchGet(App.get(), _currentProfileImage);
             }
@@ -91,13 +93,11 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
                 return;
 
             // first run
-            if (_profile == null) {
-                _profile = profile;
-
-                if (_profile != null
-                        && _profile.getPhoto() != null
-                        && !misc.isEmptyOrNull(_profile.getPhoto().getLarge()))
-                    PhotoClient.get(App.get(), _profile.getPhoto().getLarge(), true, false);
+            if (App.getProfile() == null) {
+                if (App.getProfile() != null
+                        && App.getProfile().getPhoto() != null
+                        && !misc.isEmptyOrNull(App.getProfile().getPhoto().getLarge()))
+                    PhotoClient.get(App.get(), App.getProfile().getPhoto().getLarge(), true, false);
             } else {
                 // we already have a profile, this one is shit
                 if (profile == null
@@ -106,19 +106,24 @@ public class ProfilePhotoSystem implements ProfilePhotoConstants {
                     return;
 
                 // bad existing profile object
-                if (_profile.getPhoto() == null || misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
-                    _profile = profile;
-                    PhotoClient.get(App.get(), _profile.getPhoto().getLarge(), true, false);
+                if (App.getProfile().getPhoto() == null || misc.isEmptyOrNull(App.getProfile().getPhoto().getLarge())) {
+                    PhotoClient.get(App.get(), App.getProfile().getPhoto().getLarge(), true, false);
                     return;
                 }
 
                 // check new url against existing. If different then update
                 String newUrl = profile.getPhoto().getLarge();
-                if (!_profile.getPhoto().getLarge().equals(newUrl)) {
-                    _profile = profile;
-                    PhotoClient.get(App.get(), _profile.getPhoto().getLarge(), true, false);
+                if (!App.getProfile().getPhoto().getLarge().equals(newUrl)) {
+                    PhotoClient.get(App.get(), App.getProfile().getPhoto().getLarge(), true, false);
                 }
             }
+        }
+    };
+
+    private final AuthClient _authClient = new AuthClient() {
+        @Override
+        public void onCommandRemove() {
+            _currentProfileImage = null;
         }
     };
 }

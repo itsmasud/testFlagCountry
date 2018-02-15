@@ -106,7 +106,7 @@ public class ListItemWebView extends RelativeLayout {
             _titleTextView.setText(_title);
 
         if (_data != null) {
-            _webView.loadData(_data, "text/html", "utf-8");
+            _webView.loadDataWithBaseURL(null, _data, "text/html", "utf-8", null);
         }
     }
 

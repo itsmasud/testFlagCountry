@@ -461,6 +461,35 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
+    public static WebTransaction get(String key) {
+//        Log.v(TAG, "get(" + id + ")");
+        WebTransaction obj = null;
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.KEY + "=?",
+                            new String[]{key + ""},
+                            null, null, null, "1");
+
+                    if (cursor.moveToFirst()) {
+                        obj = new WebTransaction(cursor);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return obj;
+    }
+
     public static List<WebTransaction> getZombies() {
         List<WebTransaction> zombies = new LinkedList<>();
         synchronized (TAG) {
@@ -490,7 +519,35 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return zombies;
     }
 
-    public static List<WebTransaction> getPaused() {
+    public static List<WebTransaction> getSyncing() {
+        List<WebTransaction> syncing = new LinkedList<>();
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.IS_SYNC + "=1",
+                            null, null, null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        WebTransaction trans = new WebTransaction(cursor);
+                        syncing.add(trans);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return syncing;
+    }
+
+    public static List<WebTransaction> getPaused(boolean isSync) {
         List<WebTransaction> paused = new LinkedList<>();
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -501,7 +558,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor = db.query(
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
-                            Column.STATE + " =?",
+                            Column.STATE + " =? AND "
+                                    + Column.IS_SYNC + "=" + (isSync ? "1" : "0"),
                             new String[]{State.IDLE.ordinal() + ""}, null, null, null, null);
 
                     while (cursor.moveToNext()) {
@@ -559,12 +617,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             WebTransactionSqlHelper.TABLE_NAME,
                             WebTransactionSqlHelper.getColumnNames(),
                             Column.STATE + "=?"
-                                    + " AND priority >= " + minPriority.ordinal()
-                                    + " AND queue_time < " + System.currentTimeMillis()
-                                    + " AND state <> " + State.ZOMBIE.ordinal()
-                                    + (allowSync ? "" : " AND is_sync = 0")
-                                    + (allowAuth ? "" : " AND use_auth = 0")
-                                    + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),
+                                    + " AND " + Column.PRIORITY + " >= " + minPriority.ordinal()
+                                    + " AND " + Column.QUEUE_TIME + " < " + System.currentTimeMillis()
+                                    + " AND " + Column.STATE + " <> " + State.ZOMBIE.ordinal()
+                                    + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0")
+                                    + (allowAuth ? "" : " AND " + Column.USE_AUTH + " = 0")
+                                    + ((!App.get().haveWifi()) ? " AND " + Column.WIFI_REQUIRED + " = 0" : ""),
                             GET_NEXT_PARAMS, null, null, GET_NEXT_SORT, "1");
 
                     if (cursor.moveToFirst()) {
@@ -680,6 +738,24 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return success;
     }
 
+    public static boolean deleteAll() {
+//        Log.v(TAG, "delete(" + id + ")");
+        Transform.deleteAll();
+        boolean success = false;
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                success = db.delete(
+                        WebTransactionSqlHelper.TABLE_NAME,
+                        null, null) > 0;
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return success;
+    }
+
     public static int count() {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
@@ -712,7 +788,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 try {
                     cursor = db.rawQuery(
                             "SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME
-                                    + " WHERE wifi_req = 1", null);
+                                    + " WHERE " + Column.WIFI_REQUIRED + " = 1", null);
                     if (cursor.moveToNext()) {
                         return cursor.getInt(0);
                     }
@@ -735,7 +811,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 try {
                     cursor = db.rawQuery(
                             "SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME
-                                    + " WHERE track = 1", null);
+                                    + " WHERE " + Column.TRACK + " = 1", null);
                     if (cursor.moveToNext()) {
                         return cursor.getInt(0);
                     }

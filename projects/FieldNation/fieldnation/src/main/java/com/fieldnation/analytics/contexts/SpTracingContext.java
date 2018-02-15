@@ -2,6 +2,7 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.MonotonicNumber;
 import com.fieldnation.R;
 import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -32,6 +33,10 @@ public class SpTracingContext implements EventContext, SpContext {
     public String uuid;
     @Json
     public String parentUUID;
+    @Json
+    public int order;
+    @Json
+    public long timestamp;
 
     static {
         SnowplowWrapper.registerContext(TAG, SpTracingContext.class);
@@ -44,6 +49,8 @@ public class SpTracingContext implements EventContext, SpContext {
         this.name = builder.name;
         this.uuid = builder.uuid;
         this.parentUUID = builder.parentUUID;
+        this.order = MonotonicNumber.next();
+        this.timestamp = System.currentTimeMillis();
 
         Log.v(TAG, toString());
     }
@@ -51,6 +58,8 @@ public class SpTracingContext implements EventContext, SpContext {
     public SpTracingContext(String parentUUID, String uuid) {
         this.uuid = uuid;
         this.parentUUID = parentUUID;
+        this.order = MonotonicNumber.next();
+        this.timestamp = System.currentTimeMillis();
 
         Log.v(TAG, toString());
     }
@@ -58,6 +67,8 @@ public class SpTracingContext implements EventContext, SpContext {
     public SpTracingContext(UUIDGroup uuidGroup) {
         this.uuid = uuidGroup.uuid;
         this.parentUUID = uuidGroup.parentUUID;
+        this.order = MonotonicNumber.next();
+        this.timestamp = System.currentTimeMillis();
 
         Log.v(TAG, toString());
     }
@@ -66,6 +77,8 @@ public class SpTracingContext implements EventContext, SpContext {
         this.uuid = uuidGroup.uuid;
         this.parentUUID = uuidGroup.parentUUID;
         this.name = name;
+        this.order = MonotonicNumber.next();
+        this.timestamp = System.currentTimeMillis();
 
         Log.v(TAG, toString());
     }
@@ -75,6 +88,9 @@ public class SpTracingContext implements EventContext, SpContext {
         Map<String, Object> dataMap = new HashMap<>();
 
         dataMap.put("uuid", uuid);
+
+        dataMap.put("timestamp", timestamp);
+        dataMap.put("order", order);
 
         if (!misc.isEmptyOrNull(parentUUID))
             dataMap.put("parent_uuid", parentUUID);
@@ -106,7 +122,7 @@ public class SpTracingContext implements EventContext, SpContext {
 
     @Override
     public String toString() {
-        String str = "";
+        String str = "O:" + order + " ";
 
         if (!misc.isEmptyOrNull(name)) {
             str = name;

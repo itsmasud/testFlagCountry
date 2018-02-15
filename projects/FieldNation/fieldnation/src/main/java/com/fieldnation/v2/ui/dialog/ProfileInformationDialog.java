@@ -117,7 +117,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         PhotoEditDialog.addOnSaveListener(DIALOG_EDIT_PHOTO, _photoEdit_onSave);
         PhotoEditDialog.addOnCancelListener(DIALOG_EDIT_PHOTO, _photoEdit_onCancel);
 
-        _profile = App.get().getProfile();
+        _profile = App.getProfile();
         populateUi();
     }
 

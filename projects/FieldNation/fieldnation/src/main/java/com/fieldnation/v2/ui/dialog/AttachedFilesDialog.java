@@ -22,6 +22,7 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.AttachmentTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnanalytics.Tracker;
@@ -32,6 +33,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -130,6 +132,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         _myUUID = payload.getString("uuid");
 
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Files Dialog"))
@@ -140,22 +143,32 @@ public class AttachedFilesDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
-        if (_list == null)
-            return;
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+            if (_list == null)
+                return;
 
-        if (folders == null)
-            return;
+            if (folders == null)
+                return;
 
-        if (adapter == null) {
-            adapter = new AttachedFilesAdapter();
-            adapter.setListener(_attachmentFolder_listener);
-            _list.setAdapter(adapter);
+            if (adapter == null) {
+                adapter = new AttachedFilesAdapter();
+                adapter.setListener(_attachmentFolder_listener);
+                _list.setAdapter(adapter);
+            }
+
+            Stopwatch sw = new Stopwatch(true);
+            adapter.setAttachments(folders);
+            Log.v(TAG, "setAttachments time: " + sw.finishAndRestart());
+            WebTransaction.cleanZombies(folders);
+            Log.v(TAG, "cleanZombies time: " + sw.finishAndRestart());
+            adapter.setFailedUploads(WebTransaction.getZombies());
+            Log.v(TAG, "setFailedUploads time: " + sw.finishAndRestart());
+            adapter.setPausedUploads(WebTransaction.getPaused(false));
+            Log.v(TAG, "setPausedUploads time: " + sw.finishAndRestart());
+        } finally {
+            Log.v(TAG, "populateUi time: " + stopwatch.finish());
         }
-
-        adapter.setAttachments(folders);
-        WebTransaction.cleanZombies(folders);
-        adapter.setFailedUploads(WebTransaction.getZombies());
-        adapter.setPausedUploads(WebTransaction.getPaused());
     }
 
     @Override
@@ -187,6 +200,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _myUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Files Dialog"))
@@ -304,6 +318,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                             _selectedFolderId, false, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                             .addContext(new SpTracingContext(fui.uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                             .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Files Dialog, no uri"))
@@ -319,6 +334,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                                 .label(misc.isEmptyOrNull(getUid()) ? TAG : getUid())
                                 .action("start")
                                 .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Files Dialog Upload"))
                                 .build());
@@ -370,7 +386,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
@@ -401,6 +417,10 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.toLowerCase().contains("attachment");
         }
 

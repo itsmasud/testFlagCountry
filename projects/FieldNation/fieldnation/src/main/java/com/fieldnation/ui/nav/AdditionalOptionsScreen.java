@@ -6,6 +6,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -22,10 +23,17 @@ import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthClient;
+import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.profile.ProfileConstants;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.service.profileimage.ProfilePhotoConstants;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
@@ -161,6 +169,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _profilePhotoClient.sub();
         _profileClient.subGet(false);
+        _authClient.subRemoveCommand();
         ProfileClient.get(App.get(), false);
 
         AdditionalOptionsTracker.onShow(App.get());
@@ -172,6 +181,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
+        _authClient.unsubRemoveCommand();
         _profilePhotoClient.unsub();
         _profileClient.unsubGet(false);
 
@@ -197,6 +207,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
             if (_profileListView != null)
                 _profileListView.setProfile(_profile);
+        } else {
+            _profileNameTextView.setVisibility(GONE);
+            _profileExpandButton.setVisibility(GONE);
+            _profileListView.setProfile(null);
         }
 
         addProfilePhoto();
@@ -233,16 +247,28 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onGet(Profile profile, boolean failed) {
             if (profile != null) {
-                _profile = profile;
+                Log.v(TAG, "onGetProfile " + profile.getUserId());
 
+                _profile = profile;
                 populateUi();
             }
+        }
+    };
+
+    private final AuthClient _authClient = new AuthClient() {
+        @Override
+        public void onCommandRemove() {
+            _profilePic = null;
+            _profile = null;
+            _profileImageUri = null;
+            populateUi();
         }
     };
 
     private final ProfilePhotoClient _profilePhotoClient = new ProfilePhotoClient() {
         @Override
         public boolean getProfileImage(Uri uri) {
+            Log.v(TAG, "getProfileImage " + uri);
             if (_profileImageUri == null
                     || !_profileImageUri.toString().equals(uri.toString())) {
                 _profileImageUri = uri;
@@ -253,6 +279,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         @Override
         public void onProfileImage(BitmapDrawable drawable) {
+            Log.v(TAG, "onProfileImage");
             _profilePic = new WeakReference<>((Drawable) drawable);
             addProfilePhoto();
         }
@@ -304,7 +331,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
-            AuthClient.removeCommand();
+
+            App.logout();
+
             AppMessagingClient.finishActivity();
         }
     };

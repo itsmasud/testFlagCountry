@@ -73,17 +73,17 @@ public class WebTransactionSystem implements WebTransactionConstants {
         _appMessagingClient.subNetworkConnect();
 
         _manager = new ThreadManager();
+
+        _manager.addThread(new QueueProcessingThread(_manager));
+
         TransactionThread t = new TransactionThread(_manager, this, false);
         t._isFirstThread = true;
         _manager.addThread(t); // 0
 
-        _manager.addThread(new QueueProcessingThread(_manager));
-
-        //_manager.addThread(new TransactionThread(_manager, this, false)); // 0
         _manager.addThread(new TransactionThread(_manager, this, true)); // 1
         for (int i = 2; i < threadCount; i++) {
             // every other can do sync
-            _manager.addThread(new TransactionThread(_manager, this, i % 2 == 1));
+            _manager.addThread(new TransactionThread(_manager, this, false));
         }
 
         startActivityMonitor();

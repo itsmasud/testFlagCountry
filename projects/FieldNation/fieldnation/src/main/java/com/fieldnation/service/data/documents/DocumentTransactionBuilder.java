@@ -23,7 +23,7 @@ public class DocumentTransactionBuilder {
             HttpJsonBuilder builder = new HttpJsonBuilder().path(link);
 
             WebTransaction.Builder webBuilder = new WebTransaction.Builder()
-                    .priority(Priority.HIGH)
+                    .priority(isSync ? Priority.LOW : Priority.HIGH)
                     .listener(DocumentTransactionListener.class)
                     .listenerParams(DocumentTransactionListener.pDownload(documentId, filename))
                     .key((isSync ? "Sync/" : "") + "Document/" + documentId)

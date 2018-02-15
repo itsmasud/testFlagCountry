@@ -31,6 +31,23 @@ public class TransactionParams implements Parcelable {
     public TransactionParams() {
     }
 
+    public JsonObject getMethodParamsJson() {
+        try {
+            return new JsonObject(methodParams);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
+    public Integer getMethodParamInt(String key) {
+        try {
+            return getMethodParamsJson().getInt(key);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

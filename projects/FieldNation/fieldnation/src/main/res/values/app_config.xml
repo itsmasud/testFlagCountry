@@ -33,7 +33,7 @@
     <string name="sp_file_context_schema_uri">iglu:com.fieldnation/file_context/jsonschema/1-0-0</string>
     <string name="sp_stack_context_schema_uri">iglu:com.fieldnation/stack_context/jsonschema/1-0-0</string>
     <string name="sp_status_context_schema_uri">iglu:com.fieldnation/status_context/jsonschema/1-0-0</string>
-    <string name="sp_tracing_context_schema_uri">iglu:com.fieldnation/tracing_context/jsonschema/1-0-0</string>
+    <string name="sp_tracing_context_schema_uri">iglu:com.fieldnation/tracing_context/jsonschema/1-0-1</string>
 
     <!-- Placeholders -->
     <string name="placeholder_word">Word</string>

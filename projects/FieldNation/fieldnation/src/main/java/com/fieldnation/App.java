@@ -35,6 +35,7 @@ import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -47,7 +48,10 @@ import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.profile.ProfileConstants;
+import com.fieldnation.service.profileimage.ProfilePhotoConstants;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.model.SavedList;
@@ -231,6 +235,7 @@ public class App extends Application {
         ProfileClient.get(App.this);
 
         _authClient.subAuthStateChange();
+        _authClient.subRemoveCommand();
         AuthClient.requestCommand();
         Log.v(TAG, "start topic clients time: " + watch.finishAndRestart());
 
@@ -267,7 +272,7 @@ public class App extends Application {
         @Override
         public void run() {
             while (true) {
-                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                Log.v(TAG, "PAUSED CHECK " + (WebTransaction.getPaused(true).size() + WebTransaction.getPaused(false).size()));
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
@@ -352,6 +357,12 @@ public class App extends Application {
         public void onAuthenticated(OAuth oauth) {
             _isConnected = true;
             setAuth(oauth);
+        }
+
+        @Override
+        public void onCommandRemove() {
+            Log.v(TAG, "onCommandRemove profile");
+            _profile = null;
         }
 
         @Override
@@ -535,12 +546,12 @@ public class App extends Application {
         }
     };
 
-    public Profile getProfile() {
-        return _profile;
+    public static Profile getProfile() {
+        return get()._profile;
     }
 
     public static long getProfileId() {
-        Profile profile = get().getProfile();
+        Profile profile = getProfile();
         if (profile != null && profile.getUserId() != null) {
             return profile.getUserId();
         }
@@ -932,4 +943,15 @@ public class App extends Application {
         return FileProvider.getUriForFile(get(), get().getApplicationContext().getPackageName() + ".provider", file);
     }
 
+    public static void logout() {
+        WebTransactionSystem.stop();
+        PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
+        PigeonRoost.clearAddressCache(PhotoConstants.ADDRESS_GET_PHOTO);
+        PigeonRoost.clearAddressCache(ToastClient.ADDRESS_TOAST);
+        PigeonRoost.clearAddressCache(ToastClient.ADDRESS_SNACKBAR);
+        StoredObject.delete(App.get(), StoredObject.list(App.get()));
+        AuthClient.removeCommand();
+        WebTransaction.deleteAll();
+    }
 }

@@ -105,7 +105,7 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
         }
 
         PayModifier[] fees = pay.getFees();
-        if (fees != null) {
+        if (fees != null && pay.getTotal() > 0) {
             for (PayModifier fee : fees) {
                 if (fee.getName() != null && fee.getName().equals("insurance") && fee.getAmount() != null
                         && fee.getModifier() != null) {

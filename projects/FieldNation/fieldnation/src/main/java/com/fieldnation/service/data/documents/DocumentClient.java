@@ -32,9 +32,11 @@ public abstract class DocumentClient extends Pigeon implements DocumentConstants
         }
         if (!url.startsWith("http://") && !url.startsWith("https://")) {
             try {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
+                if (!isSync) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(intent);
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
 
@@ -105,9 +107,9 @@ public abstract class DocumentClient extends Pigeon implements DocumentConstants
             file = (File) bundle.getSerializable(PARAM_FILE);
 
         onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
-                file, state);
+                file, state, bundle.getBoolean(PARAM_IS_SYNC));
     }
 
-    public void onDownload(long documentId, File file, int state) {
+    public void onDownload(long documentId, File file, int state, boolean isSync) {
     }
 }

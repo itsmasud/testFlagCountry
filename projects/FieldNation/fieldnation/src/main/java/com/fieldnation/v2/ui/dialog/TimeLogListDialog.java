@@ -18,6 +18,7 @@ import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnanalytics.EventContext;
@@ -109,6 +110,7 @@ public class TimeLogListDialog extends FullScreenDialog {
         _uiUUID = params.getString("uiUUID");
 
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Time Log List Dialog"))
@@ -134,6 +136,7 @@ public class TimeLogListDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Time Log List Dialog"))
@@ -160,6 +163,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                     WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - add")
                     }
@@ -199,6 +203,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                     WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - edit")
                     }
@@ -216,6 +221,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                     WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - delete")
                     }
@@ -243,6 +249,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                         WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                         new EventContext[]{
                                 new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                 new SpStackContext(DebugUtils.getStackTraceElement()),
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - add")
                         }
@@ -256,6 +263,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                         WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                         new EventContext[]{
                                 new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                                new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                 new SpStackContext(DebugUtils.getStackTraceElement()),
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Time Log List Dialog - edit")
                         }
@@ -269,6 +277,10 @@ public class TimeLogListDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.toLowerCase().contains("workorder") || methodName.contains("TimeLog");
         }
 

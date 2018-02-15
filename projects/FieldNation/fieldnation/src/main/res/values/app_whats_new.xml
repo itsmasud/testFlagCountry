@@ -3,34 +3,18 @@
     <string name="added_new_feature">
 &lt;b&gt;What\'s new with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
-Our redesign of the work order details is now complete including improvements to our upload process. Each upload will auto-retry up to 5 times. If it is still unsuccessful, you have the option to retry from the push notification.
+Our work order sync setting is now available for all phones with supported Android versions including Android O.
 &lt;br/&gt;
 &lt;br/&gt;
 
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;More information on our file upload push notifications&lt;/li&gt;
-&lt;li&gt;Auto-retry feature for file uploads&lt;/li&gt;
-&lt;li&gt;\'Retry all\' action to failed file upload push notification&lt;/li&gt;
-&lt;li&gt;Support for tablets without phone capabilities&lt;/li&gt;
-&lt;li&gt;Provider qualifications information&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;b&gt;What we changed:&lt;/b&gt;
-&lt;ul&gt;
-&lt;li&gt;App will now open on the last list you were looking at&lt;/li&gt;
-&lt;li&gt;Work order list remembers your last position when browsing&lt;/li&gt;
-&lt;li&gt;Updated the look and feel of various dialogs and work order detail sections&lt;/li&gt;
-&lt;li&gt;Replaced \'Unauthorized\' error message with an informational dialog&lt;/li&gt;
-&lt;li&gt;Updated our feedback form to display multiple lines&lt;/li&gt;
+&lt;li&gt;Work order sync setting support for Android O&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Error messages not triggering for unauthorized users&lt;/li&gt;
-&lt;li&gt;Upload dialogs using excessive memory&lt;/li&gt;
-&lt;li&gt;Contact list not displaying when trying to access from work order list&lt;/li&gt;
-&lt;li&gt;Uploads not honoring the \'upload with wifi\' setting&lt;/li&gt;
+&lt;li&gt;Work order sync setting not working on older Android versions&lt;/li&gt;
 &lt;/ul&gt;
 </string>
 </resources>

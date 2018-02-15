@@ -29,6 +29,7 @@ import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -523,7 +524,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     Log.v(TAG, "signature response");
                     requestWorkorder();
 
-                    if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+                    if (App.getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                         RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
                     }
                 }
@@ -626,6 +627,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     _workOrderId,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -642,6 +644,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     _workOrderId,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -658,6 +661,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     _workOrderId,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -902,7 +906,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkordersWebApi.completeWorkOrder(App.get(), _workOrderId, uiContext);
             setLoading(true);
 
-            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+            if (App.getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                 RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
             }
         }
@@ -983,6 +987,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                         new EventContext[]{
                                 new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                 new SpStackContext(DebugUtils.getStackTraceElement()),
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                         }
@@ -996,6 +1001,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                         new EventContext[]{
                                 new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                                new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                                 new SpStackContext(DebugUtils.getStackTraceElement()),
                                 new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                         }
@@ -1029,6 +1035,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _myUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Work Order Screen")
                     }
@@ -1068,6 +1075,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             UUIDGroup uuid = new UUIDGroup(null, _myUUID);
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "WoD BottomSheet Add Attachment"))
                     .build());
@@ -1086,13 +1094,16 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
                     ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
                 return;
             }
+
+            if (isSync)
+                return;
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -1132,6 +1143,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.contains("TimeLog");
         }
 

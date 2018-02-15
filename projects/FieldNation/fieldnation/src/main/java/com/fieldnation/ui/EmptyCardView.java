@@ -81,7 +81,7 @@ public class EmptyCardView extends RelativeLayout {
     }
 
     private void setNoAvailableWorkOrder() {
-        Profile profile = App.get().getProfile();
+        Profile profile = App.getProfile();
         if (profile != null && !profile.getMarketplaceStatusOn() && profile.getMarketplaceStatusExplanation() != null) {
             try {
                 if (profile.getMarketplaceStatusReason() != null

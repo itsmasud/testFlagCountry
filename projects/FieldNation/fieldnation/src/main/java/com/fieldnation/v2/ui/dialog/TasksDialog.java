@@ -28,6 +28,7 @@ import com.fieldnation.analytics.contexts.SpStackContext;
 import com.fieldnation.analytics.contexts.SpStatusContext;
 import com.fieldnation.analytics.contexts.SpTracingContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityClient;
@@ -149,6 +150,7 @@ public class TasksDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.COMPLETE, "Tasks Dialog"))
@@ -177,6 +179,7 @@ public class TasksDialog extends FullScreenDialog {
         _uiUUID = params.getString("uiUUID");
 
         Tracker.event(App.get(), new CustomEvent.Builder()
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Tasks Dialog"))
@@ -261,6 +264,7 @@ public class TasksDialog extends FullScreenDialog {
 
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpTracingContext(uuid))
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                     .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog, start get file"))
                     .build());
@@ -288,6 +292,7 @@ public class TasksDialog extends FullScreenDialog {
                             _currentTask.getAttachments().getId(), true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
+                            .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                             .addContext(new SpTracingContext(fui.uuid))
                             .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                             .addContext(new SpStatusContext(SpStatusContext.Status.FAIL, "Tasks Dialog, no uri"))
@@ -303,6 +308,7 @@ public class TasksDialog extends FullScreenDialog {
                                 .label("WorkOrderScreen - multiple")
                                 .action("start")
                                 .addContext(new SpTracingContext(fui.uuid))
+                                .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog Upload"))
                                 .build());
@@ -336,6 +342,7 @@ public class TasksDialog extends FullScreenDialog {
                     WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS,
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog")
                     }
@@ -367,6 +374,7 @@ public class TasksDialog extends FullScreenDialog {
                     _workOrder.getId(),
                     new EventContext[]{
                             new SpTracingContext(new UUIDGroup(null, _uiUUID)),
+                            new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build(),
                             new SpStackContext(DebugUtils.getStackTraceElement()),
                             new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog")
                     });
@@ -556,6 +564,10 @@ public class TasksDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
+
             return methodName.toLowerCase().contains("attachment")
                     || methodName.equals("getWorkOrder")
                     || methodName.equals("updateTask");
@@ -684,7 +696,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)

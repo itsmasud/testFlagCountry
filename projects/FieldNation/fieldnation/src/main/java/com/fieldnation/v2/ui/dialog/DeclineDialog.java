@@ -255,7 +255,7 @@ public class DeclineDialog extends FullScreenDialog {
 
                     ProfileClient.actionBlockCompany(
                             App.get(),
-                            App.get().getProfile().getUserId(),
+                            App.getProfile().getUserId(),
                             _companyId,
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
@@ -270,7 +270,7 @@ public class DeclineDialog extends FullScreenDialog {
                         WorkorderClient.actionDecline(App.get(), _workOrderId);
                     ProfileClient.actionBlockCompany(
                             App.get(),
-                            App.get().getProfile().getUserId(),
+                            App.getProfile().getUserId(),
                             _companyId,
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());

@@ -214,7 +214,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -256,7 +257,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -296,7 +298,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -336,7 +339,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -376,7 +380,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -416,7 +421,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -458,7 +464,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -498,7 +505,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -538,7 +546,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -578,7 +587,8 @@ public abstract class UsersWebApi extends Pigeon {
 
             WebTransactionSystem.queueTransaction(context, transaction);
 
-            if (allowCacheResponse) new CacheDispatcher(context, key);
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/UsersWebApi");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
