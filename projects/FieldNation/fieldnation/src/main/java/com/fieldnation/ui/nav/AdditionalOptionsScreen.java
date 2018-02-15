@@ -26,7 +26,6 @@ import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityClient;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -199,6 +198,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         _workOrdersApi.sub();
+        _appClient.subOfflineMode();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
@@ -212,6 +212,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _profilePhotoClient.unsub();
         _profileClient.unsubGet(false);
         _workOrdersApi.unsub();
+        _appClient.unsubOfflineMode();
 
         super.onDetachedFromWindow();
     }
@@ -275,8 +276,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                 AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
             }
             _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
-
-            ToastClient.toast(App.get(), "Offline: " + App.get().getOfflineState(), Toast.LENGTH_SHORT);
         }
     };
 
@@ -485,6 +484,14 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         }
     };
+
+    private final AppMessagingClient _appClient = new AppMessagingClient() {
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            populateUi();
+        }
+    };
+
 
     public interface Listener {
         void onSwitchUser(long userId);

@@ -57,6 +57,7 @@ public class DownloadProgressDialog extends SimpleDialog {
         super.onStart();
 
         _cancelButton.setOnClickListener(_cancel_onClick);
+        _appClient.subOfflineMode();
     }
 
     @Override
@@ -71,6 +72,7 @@ public class DownloadProgressDialog extends SimpleDialog {
     public void onPause() {
         getContext().unregisterReceiver(broadcastReceiver);
 
+        _appClient.unsubOfflineMode();
         super.onPause();
     }
 
@@ -115,5 +117,13 @@ public class DownloadProgressDialog extends SimpleDialog {
     public static void show(Context context, String uid) {
         Controller.show(context, uid, DownloadProgressDialog.class, null);
     }
+
+    private final AppMessagingClient _appClient = new AppMessagingClient() {
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            if (state == App.OfflineState.OFFLINE)
+                dismiss(true);
+        }
+    };
 
 }

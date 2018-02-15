@@ -13,6 +13,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
@@ -294,10 +295,10 @@ public class WebCrawlerService extends Service {
         public void run() {
             if (!_isRunning)
                 return;
-            
+
             _monitorRunning = false;// check timer
             if (System.currentTimeMillis() - _lastRequestTime > 10000
-                    && WebTransaction.getPaused().size() == 0) {
+                    && WebTransaction.getPaused(WebTransaction.Type.CRAWLER).size() == 0) {
 
                 // shutdown
                 Log.v(TAG, "activity killMe");
@@ -327,7 +328,7 @@ public class WebCrawlerService extends Service {
     }
 
     private void killMe() {
-        App.get().setOffline(App.OfflineState.OFFLINE);
+        AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);
         stopSelf();
     }
 
@@ -367,7 +368,7 @@ public class WebCrawlerService extends Service {
         --_totalLeftDownloading;
         broadcastDownloadProgress();
 
-        if (_totalLeftDownloading == 0 && WebTransaction.getPaused().size() == 0) {
+        if (_totalLeftDownloading == 0 && WebTransaction.getPaused(WebTransaction.Type.CRAWLER).size() == 0) {
             Log.v(TAG, "updateDownloadProgress kill");
             killMe();
         }
