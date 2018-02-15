@@ -499,7 +499,7 @@ public class App extends Application {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
 
-            if (getOfflineState() != OfflineState.NORMAL) {
+            if (getOfflineState() == OfflineState.NORMAL) {
                 ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
