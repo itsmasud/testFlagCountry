@@ -317,7 +317,6 @@ public class WebCrawlerService extends Service {
         _bundlesApi.unsub();
         _authClient.unsubRemoveCommand();
         _isRunning = false;
-        App.get().setOffline(App.OfflineState.OFFLINE);
         cancelNotification();
 
         Log.v(TAG, "onDestroy " + _crawlerWatch.finish());
@@ -325,7 +324,8 @@ public class WebCrawlerService extends Service {
     }
 
     private void killMe() {
-
+        if (App.get().getOfflineState() == App.OfflineState.DOWNLOADING)
+            App.get().setOffline(App.OfflineState.OFFLINE);
         stopSelf();
     }
 

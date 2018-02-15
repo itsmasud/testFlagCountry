@@ -25,7 +25,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
@@ -131,6 +130,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.subShutdownUI();
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subFinishActivity();
+        _appMessagingClient.subOfflineMode();
         ProfileClient.get(App.get());
 
         _activityRequestHandler.sub();
@@ -152,6 +152,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubShutdownUI();
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
+        _appMessagingClient.unsubOfflineMode();
 
         if (doAuthChecks())
             _authClient.unsubNeedUsernameAndPassword();
@@ -398,6 +399,15 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             AuthSimpleActivity.this.finish();
+        }
+
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+           // TODO turn on the orange bar
+            Log.v(TAG, "onOfflineMode");
+            if (state != App.OfflineState.NORMAL) {
+                Log.e(TAG, "Turn on the orange bar");
+            } else Log.e(TAG, "Turn off the orange bar");
         }
     };
 

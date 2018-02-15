@@ -199,7 +199,8 @@ public class NavActivity extends AuthSimpleActivity {
 
         boolean isLaunchingConfirm = false;
         if (!_isLoadingWorkOrder && App.get().needsConfirmation()
-                && App.get().confirmRemindMeExpired()) {
+                && App.get().confirmRemindMeExpired()
+                && App.get().getOfflineState() == App.OfflineState.NORMAL) {
             isLaunchingConfirm = true;
             launchConfirmActivity();
         } else if (_isLoadingWorkOrder) {
@@ -214,7 +215,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         _workOrdersApi.sub();
 
-        if (App.get().isOffline()) {
+        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
             _arrowTextView.setText(null);
             _toolbar.setOnClickListener(null);
             _searchesView.setEnabled(false);
@@ -300,7 +301,7 @@ public class NavActivity extends AuthSimpleActivity {
             }
         });
 
-        if (App.get().isOffline()) {
+        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
             _inboxMenu.setEnabled(false);
             _searchMenu.setEnabled(false);
             _searchToolbarView.hide();
@@ -330,14 +331,14 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     private void setNavTitle(SavedList savedList) {
-        if (App.get().isOffline()) {
+        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
             setNavTitle(getString(R.string.offline));
         } else
             NavActivity.this.setTitle(misc.capitalize(savedList.getTitle()));
     }
 
     private void setNavTitle(String titleText) {
-        if (App.get().isOffline()) {
+        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
             titleText = getString(R.string.offline);
         }
 
