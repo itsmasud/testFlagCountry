@@ -118,7 +118,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     @Override
     public int getOfflineBarId() {
-        return 0;
+        return R.id.offline_bar_textview;
     }
 
     @Override
