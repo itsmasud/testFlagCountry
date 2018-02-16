@@ -41,7 +41,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.ui.dialog.ContactUsDialog;
-import com.fieldnation.v2.ui.dialog.DownloadProgressDialog;
 import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
@@ -282,8 +281,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final TwoButtonDialog.OnPrimaryListener _downloadWarning_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            // TODO launch progress dialog
-            DownloadProgressDialog.show(App.get(), null);
+            //DownloadProgressDialog.show(App.get());
+            AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
         }
     };
 
@@ -293,7 +292,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             TwoButtonDialog.dismiss(App.get(), DIALOG_DOWNLOAD_WARNING);
         }
     };
-
 
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override

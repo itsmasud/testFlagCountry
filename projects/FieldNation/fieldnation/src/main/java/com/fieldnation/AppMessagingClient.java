@@ -170,7 +170,7 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         App.get().setOffline(isOffline);
         Bundle bundle = new Bundle();
         bundle.putString("offline", isOffline.name());
-        PigeonRoost.sendMessage(ADDRESS_OFFLINE_MODE, bundle, Sticky.NONE);
+        PigeonRoost.sendMessage(ADDRESS_OFFLINE_MODE, bundle, Sticky.FOREVER);
     }
 
     @Override

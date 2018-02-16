@@ -255,7 +255,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        //new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
@@ -264,7 +264,6 @@ public class App extends Application {
 
         registerReceiver(broadcastReceiver, new IntentFilter(
                 WebCrawlerService.BROADCAST_ACTION));
-
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -300,6 +299,7 @@ public class App extends Application {
         public void run() {
             while (true) {
                 Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
