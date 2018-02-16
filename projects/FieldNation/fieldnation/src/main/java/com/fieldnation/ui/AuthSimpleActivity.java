@@ -67,11 +67,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
         }
 
-        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
-            setVisibilityOfflineBar(false);
-        } else
-            setVisibilityOfflineBar(true);
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
                 TAG = savedInstanceState.getString(STATE_TAG);
@@ -125,6 +120,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+
+        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+            setVisibilityOfflineBar(false);
+        } else
+            setVisibilityOfflineBar(true);
+
         _toastClient.subSnackbar();
         _toastClient.subToast();
 
@@ -418,13 +419,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onOfflineMode(App.OfflineState state) {
-            // TODO turn on the orange bar
             Log.v(TAG, "onOfflineMode");
             if (state != App.OfflineState.NORMAL) {
-                Log.e(TAG, "Turn on the orange bar");
                 setVisibilityOfflineBar(true);
             } else {
-                Log.e(TAG, "Turn off the orange bar");
                 setVisibilityOfflineBar(false);
             }
         }
