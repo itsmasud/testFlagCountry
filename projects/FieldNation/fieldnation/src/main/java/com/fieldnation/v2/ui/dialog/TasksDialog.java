@@ -47,6 +47,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -130,7 +131,7 @@ public class TasksDialog extends FullScreenDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-            outState.putParcelable(STATE_TASK, _currentTask);
+        outState.putParcelable(STATE_TASK, _currentTask);
         super.onSaveDialogState(outState);
     }
 
@@ -188,7 +189,7 @@ public class TasksDialog extends FullScreenDialog {
         populateUi();
 
         AppMessagingClient.setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -665,7 +666,7 @@ public class TasksDialog extends FullScreenDialog {
                 }
 
             } else if (methodName.equals("updateTask")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
                 AppMessagingClient.setLoading(true);
 
             } else if (methodName.equals("addAttachment")) {
@@ -675,7 +676,7 @@ public class TasksDialog extends FullScreenDialog {
                     int folderId = obj.getInt("attachment.folder_id");
                     _adapter.uploadStop(transactionParams);
                     AppMessagingClient.setLoading(true);
-                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

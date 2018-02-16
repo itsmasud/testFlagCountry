@@ -16,6 +16,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -82,7 +83,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
         _workOrderId = params.getInt("workOrderId");
         AppMessagingClient.setLoading(true);
-        WorkordersWebApi.getCustomFields(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getCustomFields(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -134,7 +135,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
                 populateUi();
                 AppMessagingClient.setLoading(false);
             } else if (methodName.equals("updateCustomField")) {
-                WorkordersWebApi.getCustomFields(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getCustomFields(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 AppMessagingClient.setLoading(true);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
