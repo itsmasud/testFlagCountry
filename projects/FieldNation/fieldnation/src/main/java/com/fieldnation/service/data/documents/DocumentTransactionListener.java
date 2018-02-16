@@ -54,7 +54,7 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
 
     public void onStartDownload(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
         int documentId = params.getInt("documentId");
-        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.isSync());
+        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.getType() == WebTransaction.Type.SYNC);
     }
 
     @Override
@@ -92,12 +92,12 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
             if (!dlFolder.exists())
                 FileUtils.writeStream(context.getContentResolver().openInputStream(uri), dlFolder);
 
-            DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, transaction.isSync());
+            DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, transaction.getType() == WebTransaction.Type.SYNC);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.isSync());
+            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {

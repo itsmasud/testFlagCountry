@@ -25,6 +25,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -105,7 +106,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
         _workOrderId = params.getInt("workOrderId");
         _uiUUID = params.getString("uiUUID");
-        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
 
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
@@ -241,9 +242,9 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
-                if (transactionParams.getMethodParamInt("workOrderId") == null
-                        || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
-                    return false;
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
 
             return methodName.toLowerCase().contains("attachment");
         }

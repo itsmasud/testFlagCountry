@@ -18,6 +18,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -89,7 +90,7 @@ public class ShipmentListDialog extends FullScreenDialog {
         super.show(params, animate);
         _workOrderId = params.getInt("workOrderId");
         AppMessagingClient.setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
     }
 
     private void populateUi() {
@@ -169,7 +170,7 @@ public class ShipmentListDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(false);
             } else {
                 AppMessagingClient.setLoading(true);
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }

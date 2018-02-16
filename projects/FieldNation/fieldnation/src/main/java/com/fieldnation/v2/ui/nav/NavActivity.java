@@ -19,12 +19,12 @@ import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.nav.SearchToolbarView;
@@ -67,7 +67,6 @@ public class NavActivity extends AuthSimpleActivity {
 
     // Data
     private SavedList _savedList = null;
-    private WorkordersWebApi _workOrderClient;
     private boolean _isLoadingWorkOrder = false;
 
     @Override
@@ -210,7 +209,7 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView.onResume();
 
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
 
     }
 

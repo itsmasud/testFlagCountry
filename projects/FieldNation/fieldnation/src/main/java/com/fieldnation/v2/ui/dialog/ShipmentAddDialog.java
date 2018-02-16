@@ -42,6 +42,7 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.share.SharedFile;
@@ -180,7 +181,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Shipment Dialog"))
                 .build());
 
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
 
         populateUi();
         super.show(payload, animate);

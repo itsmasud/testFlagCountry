@@ -129,11 +129,11 @@ public abstract class CustomFieldsWebApi extends Pigeon {
      * Swagger operationId: getCustomFields
      * Gets a list of work order custom fields
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getCustomFields(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCustomFields(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/custom-fields" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/custom-fields");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -151,7 +151,7 @@ public abstract class CustomFieldsWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "getCustomFields", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

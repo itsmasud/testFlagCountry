@@ -76,12 +76,12 @@ public class WebTransactionSystem implements WebTransactionConstants {
 
         _manager.addThread(new QueueProcessingThread(_manager));
 
-        TransactionThread t = new TransactionThread(_manager, this, true);
+        TransactionThread t = new TransactionThread(_manager, this);
         t._isFirstThread = true;
         _manager.addThread(t); // 0
 
         for (int i = 1; i < threadCount; i++) {
-            _manager.addThread(new TransactionThread(_manager, this, true));
+            _manager.addThread(new TransactionThread(_manager, this));
         }
 
         startActivityMonitor();

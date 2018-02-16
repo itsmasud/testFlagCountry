@@ -46,6 +46,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.NestedScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -434,7 +435,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         Log.v(TAG, "getData.startRefreshing");
         setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
     }
 
     public void setLoading(boolean isLoading) {

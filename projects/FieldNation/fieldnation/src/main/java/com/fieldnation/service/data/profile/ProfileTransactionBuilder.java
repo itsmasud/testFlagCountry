@@ -44,7 +44,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .listener(ProfileTransactionListener.class)
                     .listenerParams(ProfileTransactionListener.pGet(profileId))
                     .key((isSync ? "Sync/" : "") + "ProfileGet")
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .useAuth(true)
                     .request(http)
                     .build();
@@ -64,7 +64,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .listenerParams(ProfileTransactionListener.pListNotifications(page))
                     .key((isSync ? "Sync/" : "") + "NotificationPage" + page)
                     .useAuth(true)
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")
@@ -88,7 +88,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .listenerParams(ProfileTransactionListener.pListMessages(page))
                     .key((isSync ? "Sync/" : "") + "MessagePage" + page)
                     .useAuth(true)
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(
                             new HttpJsonBuilder()
                                     .protocol("https")

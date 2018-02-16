@@ -324,11 +324,11 @@ public abstract class LocationsWebApi extends Pigeon {
      * Swagger operationId: getCountries
      * Get a list of supported countries for selection
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getCountries(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCountries(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/locations/countries" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/locations/countries");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -346,7 +346,7 @@ public abstract class LocationsWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "getCountries", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -363,11 +363,11 @@ public abstract class LocationsWebApi extends Pigeon {
      * Swagger operationId: getLocations
      * Gets stored locations
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getLocations(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getLocations(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/locations" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/locations");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -385,7 +385,7 @@ public abstract class LocationsWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "getLocations", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -402,12 +402,12 @@ public abstract class LocationsWebApi extends Pigeon {
      * Swagger operationId: getProvidersByLocationId
      * Get Providers Info By Location ID
      *
-     * @param locationId   Location ID
-     * @param isBackground indicates that this call is low priority
+     * @param locationId Location ID
+     * @param type       indicates that this call is low priority
      */
-    public static void getProviders(Context context, Integer locationId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProviders(Context context, Integer locationId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/locations/" + locationId + "/providers" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/locations/" + locationId + "/providers");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -426,7 +426,7 @@ public abstract class LocationsWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

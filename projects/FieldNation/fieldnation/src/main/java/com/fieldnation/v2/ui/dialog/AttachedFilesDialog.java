@@ -138,7 +138,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Files Dialog"))
                 .build());
 
-        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         AppMessagingClient.setLoading(true);
     }
 
@@ -164,7 +164,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             Log.v(TAG, "cleanZombies time: " + sw.finishAndRestart());
             adapter.setFailedUploads(WebTransaction.getZombies());
             Log.v(TAG, "setFailedUploads time: " + sw.finishAndRestart());
-            adapter.setPausedUploads(WebTransaction.getPaused(false));
+            adapter.setPausedUploads(WebTransaction.getPaused(WebTransaction.Type.NORMAL));
             Log.v(TAG, "setPausedUploads time: " + sw.finishAndRestart());
         } finally {
             Log.v(TAG, "populateUi time: " + stopwatch.finish());
@@ -368,7 +368,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             WebTransaction.delete(_selectedTransactionId);
             populateUi();
             // Todo, this is to force the WoD to update after the transaction is deleted
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
         }
     };
 
@@ -409,7 +409,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
         @Override
         public void onNetworkConnected() {
-            WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+            WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             AppMessagingClient.setLoading(true);
         }
     };
@@ -502,13 +502,13 @@ public class AttachedFilesDialog extends FullScreenDialog {
                     if (adapter != null)
                         adapter.uploadStop(uuidGroup, transactionParams);
                     AppMessagingClient.setLoading(true);
-                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
             } else if (methodName.equals("deleteAttachment")) {
                 AppMessagingClient.setLoading(true);
-                WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             } else if (successObject != null && methodName.equals("getAttachments")) {
                 folders = (AttachmentFolders) successObject;
                 populateUi();

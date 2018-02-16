@@ -35,11 +35,16 @@ class QueueProcessingThread extends ThreadManager.ManagedThread {
         if (webTransaction == null)
             return false;
 
+        if (webTransaction.getType() == WebTransaction.Type.CRAWLER && App.get().getOfflineState() == App.OfflineState.NORMAL) {
+            Log.v(TAG, "Throwing out transaction");
+            return true;
+        }
+
         try {
             if (webTransaction.getKey() != null) {
                 WebTransaction dbWt = WebTransaction.get(webTransaction.getKey());
                 if (dbWt != null
-                        && (dbWt.isSync() == webTransaction.isSync())
+                        && (dbWt.getType() == webTransaction.getType())
                         && (dbWt.isWifiRequired() == webTransaction.isWifiRequired())) {
                     Log.v(TAG, "processIntent end duplicate " + webTransaction.getKey());
                     return true;
