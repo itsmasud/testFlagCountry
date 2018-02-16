@@ -17,6 +17,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -91,7 +92,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
     public void setWorkOrderId(int workOrderId) {
         _workOrderId = workOrderId;
         _workOrderApi.sub();
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
 
         postDelayed(new Runnable() {
             @Override
@@ -185,7 +186,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
                     populateUi();
                 }
             } else if (!methodName.startsWith("get")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             }
 
             if (methodName.startsWith("get") || !success)
@@ -193,7 +194,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };

@@ -20,6 +20,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -97,7 +98,7 @@ public class ChatDialog extends FullScreenDialog {
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
         _workOrderId = params.getInt("workOrderId");
         _refreshView.startRefreshing();
-        WorkordersWebApi.getMessages(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getMessages(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         ProfileClient.get(App.get(), false);
 
     }

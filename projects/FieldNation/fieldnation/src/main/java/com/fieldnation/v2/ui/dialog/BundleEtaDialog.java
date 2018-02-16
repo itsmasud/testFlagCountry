@@ -19,6 +19,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -127,7 +128,7 @@ public class BundleEtaDialog extends FullScreenDialog {
         super.show(params, animate);
         _bundleId = params.getInt("bundleId", 0);
         if (_bundleId != 0)
-            BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
     }
 
     @Override

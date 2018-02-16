@@ -16,6 +16,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.nav.ToolbarMenuBehavior;
 import com.fieldnation.ui.nav.ToolbarMenuInterface;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -71,7 +72,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         super.onAttachedToWindow();
 
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
 
         _appMessagingClient.subUserSwitched();
     }
@@ -216,7 +217,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
-            WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
+            WorkordersWebApi.getWorkOrderLists(App.get(), false, WebTransaction.Type.NORMAL);
         }
     };
 

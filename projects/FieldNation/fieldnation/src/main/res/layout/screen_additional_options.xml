@@ -12,34 +12,47 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/switchLabel_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Offline Mode"
-                android:textSize="16sp" />
 
-            <Switch
-                android:id="@+id/offline_switch"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/offline_menu"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignBaseline="@+id/switchLabel_textview"
-                android:layout_below="@+id/title"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="" />
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/switchLabel_textview"
+                        style="@style/OptionsMenuTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="Offline Mode" />
+
+                    <Switch
+                        android:id="@+id/offline_switch"
+                        style="@style/OptionsMenuTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="16dp"
+                        android:text="" />
+
+                </RelativeLayout>
+
+                <View style="@style/DividerFull" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/options_textview"
                 style="@style/OptionsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/offline_switch"
+                android:layout_below="@+id/offline_menu"
                 android:text="@string/account" />
 
             <View
@@ -324,7 +337,7 @@
                         style="@style/OptionsMenuTitle"
                         android:layout_toRightOf="@+id/rate_us_iconfont"
                         android:text="@string/rate_us" />
-        </RelativeLayout>
+                </RelativeLayout>
 
                 <View style="@style/DividerFull" />
 

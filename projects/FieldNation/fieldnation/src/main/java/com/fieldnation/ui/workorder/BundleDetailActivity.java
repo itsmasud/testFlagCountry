@@ -22,6 +22,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
@@ -108,7 +109,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         _listview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         _listview.setAdapter(_adapter);
 
-        BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+        BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
     }
 
     @Override
@@ -351,11 +352,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void onAction(long workorderId, String action, boolean failed) {
             if (action.contains("decline") && !failed) {
                 ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
             }
             if (action.contains("delete_request") && !failed) {
                 ToastClient.toast(App.get(), R.string.toast_bundle_withdrawn_success, Toast.LENGTH_LONG);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
             }
             _adapter.refreshAll();
         }
@@ -374,20 +375,20 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), R.string.toast_bundle_declined_success, Toast.LENGTH_LONG);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
             }
             if (methodName.contains("deleteRequest") && success) {
                 ToastClient.toast(App.get(), R.string.toast_bundle_withdrawn_success, Toast.LENGTH_LONG);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
             }
             if (methodName.contains("MassAcceptWorkOrder") && success) {
                 setLoading(false);
                 ToastClient.toast(App.get(), R.string.toast_bundle_accepted, Toast.LENGTH_LONG);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
             }
             if (methodName.contains("updateETA") && success) {
                 setLoading(false);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
@@ -435,14 +436,14 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void requestPage(int page, boolean allowCache) {
             Log.v(TAG, "requestPage");
             if (_bundleId != 0)
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
         }
     };
 
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
         public void onWithdraw(int workOrderId) {
-            BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
         }
     };
 

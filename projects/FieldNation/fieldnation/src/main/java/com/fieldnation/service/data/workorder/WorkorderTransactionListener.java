@@ -433,7 +433,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             byte[] workorderData = httpResult.getByteArray();
             JsonObject workorder = new JsonObject(workorderData);
             Transform.applyTransform(workorder, PSO_WORKORDER, workorderId);
-            WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync(), false);
+            WorkorderDispatch.get(context, workorder, workorderId, false, transaction.getType() == WebTransaction.Type.SYNC, false);
             if (workorder.has("_action"))
                 Log.v(TAG, "onDetails _action=" + workorder.get("_action"));
             // store it in the store
@@ -442,7 +442,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get work order from server"), Toast.LENGTH_LONG);
-            WorkorderDispatch.get(context, null, workorderId, true, transaction.isSync(), false);
+            WorkorderDispatch.get(context, null, workorderId, true, transaction.getType() == WebTransaction.Type.SYNC, false);
             return Result.DELETE;
 
         } else { // RETRY
@@ -471,14 +471,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             }
             Log.v(TAG, "onSuccessList 3");
 
-            WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync(), false);
+            WorkorderDispatch.list(context, ja, page, selector, false, transaction.getType() == WebTransaction.Type.SYNC, false);
             Log.v(TAG, "onSuccessList 4");
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get list"), Toast.LENGTH_LONG);
-            WorkorderDispatch.list(context, null, page, selector, true, transaction.isSync(), false);
+            WorkorderDispatch.list(context, null, page, selector, true, transaction.getType() == WebTransaction.Type.SYNC, false);
             return Result.DELETE;
 
         } else { // RETRY
@@ -492,7 +492,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
-            WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.isSync());
+            WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.getType() == WebTransaction.Type.SYNC);
 
             //store the signature data
             StoredObject.put(context, App.getProfileId(), PSO_SIGNATURE, signatureId, data);
@@ -501,7 +501,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get signature"), Toast.LENGTH_LONG);
-            WorkorderDispatch.signature(context, null, workorderId, signatureId, true, transaction.isSync());
+            WorkorderDispatch.signature(context, null, workorderId, signatureId, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {
@@ -784,7 +784,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
-            WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
+            WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.getType() == WebTransaction.Type.SYNC);
 
             if (params.has("isRead") && params.getBoolean("isRead")) {
                 AppMessagingClient.profileInvalid();
@@ -796,7 +796,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return Result.CONTINUE;
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get messages"), Toast.LENGTH_LONG);
-            WorkorderDispatch.listMessages(context, workorderId, null, true, transaction.isSync());
+            WorkorderDispatch.listMessages(context, workorderId, null, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {
@@ -811,7 +811,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
-            WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
+            WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.getType() == WebTransaction.Type.SYNC);
             if (params.has("isRead") && params.getBoolean("isRead")) {
                 AppMessagingClient.profileInvalid();
                 WorkorderClient.get(context, workorderId, false);
@@ -822,7 +822,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get alerts"), Toast.LENGTH_LONG);
-            WorkorderDispatch.listAlerts(context, workorderId, null, true, transaction.isSync());
+            WorkorderDispatch.listAlerts(context, workorderId, null, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {
@@ -837,14 +837,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
-            WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.isSync());
+            WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.getType() == WebTransaction.Type.SYNC);
             StoredObject.put(context, App.getProfileId(), PSO_TASK_LIST, workorderId, data);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get tasks"), Toast.LENGTH_LONG);
-            WorkorderDispatch.listTasks(context, workorderId, null, true, transaction.isSync());
+            WorkorderDispatch.listTasks(context, workorderId, null, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {
@@ -858,13 +858,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
-            WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.isSync());
+            WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.getType() == WebTransaction.Type.SYNC);
             StoredObject.put(context, App.getProfileId(), PSO_BUNDLE, bundleId, data);
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not load bundle details"), Toast.LENGTH_LONG);
-            WorkorderDispatch.bundle(context, null, bundleId, true, transaction.isSync());
+            WorkorderDispatch.bundle(context, null, bundleId, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {

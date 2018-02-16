@@ -17,6 +17,7 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Signature;
@@ -87,7 +88,7 @@ public class SignOffActivity extends AuthSimpleActivity {
                 _completeWorkorder = extras.getBoolean("_completeWorkorder");
         }
 
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -212,7 +213,7 @@ public class SignOffActivity extends AuthSimpleActivity {
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                         WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
                 WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId(), uiContext);
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, WebTransaction.Type.NORMAL);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);

@@ -13,6 +13,7 @@ import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -183,7 +184,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         super.onResume();
         _workOrderScreen.onResume();
         _workorderApi.sub();
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
     }
 
     @Override
@@ -256,7 +257,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     _workOrderScreen.setWorkOrder(_workOrder);
                 }
             } else if (!methodName.startsWith("get")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             }
 
             if (!success && !isCached && methodName.equals("getWorkOrder")) {
@@ -273,7 +274,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             // only here if.. call doesn't start with get, was successfull
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
     };

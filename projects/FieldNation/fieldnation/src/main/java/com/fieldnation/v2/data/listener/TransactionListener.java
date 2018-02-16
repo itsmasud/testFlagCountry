@@ -62,7 +62,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putString("type", "queued");
             bundle.putParcelable("uuid", transaction.getUUID());
 
-            if (!transaction.isSync())
+            if (transaction.getType() == WebTransaction.Type.NORMAL)
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
@@ -82,7 +82,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putString("type", "start");
             bundle.putParcelable("uuid", transaction.getUUID());
 
-            if (!transaction.isSync())
+            if (transaction.getType() == WebTransaction.Type.NORMAL)
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
@@ -115,7 +115,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putString("type", "paused");
             bundle.putParcelable("uuid", transaction.getUUID());
 
-            if (!transaction.isSync())
+            if (transaction.getType() == WebTransaction.Type.NORMAL)
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
 
             if (transaction.isTracked()) {
@@ -137,7 +137,7 @@ public class TransactionListener extends WebTransactionListener {
             bundle.putLong("size", size);
             bundle.putLong("time", time);
             bundle.putParcelable("uuid", transaction.getUUID());
-            if (!transaction.isSync())
+            if (transaction.getType() == WebTransaction.Type.NORMAL)
                 PigeonRoost.sendMessage(params.topicId, bundle, Sticky.NONE);
         } catch (Exception ex) {
             Log.v(TAG, ex);

@@ -25,6 +25,7 @@ import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.menu.InboxMenuButton;
@@ -71,7 +72,6 @@ public class NavActivity extends AuthSimpleActivity {
 
     // Data
     private SavedList _savedList = null;
-    private WorkordersWebApi _workOrderClient;
     private boolean _isLoadingWorkOrder = false;
 
     @Override
@@ -225,9 +225,8 @@ public class NavActivity extends AuthSimpleActivity {
             _arrowTextView.setText(getString(R.string.icon_arrow_down));
             _toolbar.setOnClickListener(_toolbar_onClick);
             _searchesView.setEnabled(true);
-            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
+            WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
         }
-
 
         invalidateOptionsMenu();
     }

@@ -18,6 +18,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -95,7 +96,7 @@ public class SignatureListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getSignatures(App.get(), _workOrderId, false, false);
+        WorkordersWebApi.getSignatures(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -182,7 +183,7 @@ public class SignatureListDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
-                WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
                 AppMessagingClient.setLoading(true);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
