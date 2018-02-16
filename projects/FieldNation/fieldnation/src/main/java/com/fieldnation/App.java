@@ -515,7 +515,7 @@ public class App extends Application {
             Log.v(TAG, "onOfflineMode");
             if (state == OfflineState.DOWNLOADING) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
-            } else
+            } else if (state == OfflineState.OFFLINE)
                 stopService(new Intent(App.get(), WebCrawlerService.class));
         }
     };
@@ -821,6 +821,13 @@ public class App extends Application {
         SavedList _savedList = null;
 
         try {
+
+            if (App.get().getOfflineState() != OfflineState.NORMAL) {
+                return new SavedList()
+                        .id("workorders_assignments")
+                        .label("assigned");
+            }
+
             if (misc.isEmptyOrNull(jsonData)) {
                 _savedList = new SavedList()
                         .id("workorders_available")

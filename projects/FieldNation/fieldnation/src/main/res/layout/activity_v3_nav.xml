@@ -43,6 +43,7 @@
                 android:theme="@style/FieldNation.Material.ToolBar"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed">
 
+
                 <com.fieldnation.ui.IconFontTextView
                     android:id="@+id/arrow_textview"
                     android:layout_width="wrap_content"
@@ -52,6 +53,14 @@
                     android:paddingRight="4dp"
                     android:text="@string/icon_arrow_down" />
             </android.support.v7.widget.Toolbar>
+
+            <TextView
+                android:id="@+id/offline_bar_textview"
+                style="@style/Text_Subhead_Offline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/appbar" />
+
         </android.support.design.widget.AppBarLayout>
 
         <com.fieldnation.fndialog.DialogManager
