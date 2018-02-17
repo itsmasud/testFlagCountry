@@ -1002,6 +1002,7 @@ public class App extends Application {
     }
 
     public static void logout() {
+        get().setOffline(OfflineState.NORMAL);
         WebTransactionSystem.stop();
         PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
         PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
