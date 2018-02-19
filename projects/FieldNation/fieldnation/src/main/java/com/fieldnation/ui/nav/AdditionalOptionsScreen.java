@@ -217,7 +217,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     private void populateUi() {
-        if (_profile != null && _profile.getCanViewPayments()) {
+        if (_profile != null && _profile.getCanViewPayments() && App.get().getOfflineState() == App.OfflineState.NORMAL) {
             _paymentMenu.setVisibility(VISIBLE);
         } else {
             _paymentMenu.setVisibility(GONE);
