@@ -29,6 +29,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
     private long _id;
+    private long _createdTime;
     private String _listenerClassName;
     private byte[] _listenerParams;
     private boolean _useAuth;
@@ -74,6 +75,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************-*/
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
+        _createdTime = cursor.getLong(Column.CREATED_TIME.getIndex());
         _listenerClassName = cursor.getString(Column.LISTENER.getIndex());
         _listenerParams = cursor.getBlob(Column.LISTENER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
@@ -107,6 +109,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public WebTransaction(Bundle bundle) {
         _id = bundle.getLong(PARAM_ID, -1);
+        _createdTime = bundle.getLong(PARAM_CREATED_TIME);
         _listenerClassName = bundle.getString(PARAM_LISTENER_NAME);
         _listenerParams = bundle.getByteArray(PARAM_LISTENER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
@@ -139,6 +142,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_ID, _id);
+        bundle.putLong(PARAM_CREATED_TIME, _createdTime);
 
         if (_listenerClassName != null)
             bundle.putString(PARAM_LISTENER_NAME, _listenerClassName);
@@ -193,6 +197,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*************************************-*/
     public long getId() {
         return _id;
+    }
+
+    public long getCreatedTime() {
+        return _createdTime;
     }
 
     public String getListenerName() {
@@ -695,6 +703,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static WebTransaction put(WebTransaction obj) {
 //        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
+        v.put(Column.CREATED_TIME.getName(), obj._createdTime);
         v.put(Column.LISTENER.getName(), obj._listenerClassName);
         v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
@@ -890,6 +899,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         private List<Parcelable> transforms = new LinkedList<>();
 
         public Builder() {
+            params.putLong(PARAM_CREATED_TIME, System.currentTimeMillis());
             params.putSerializable(PARAM_PRIORITY, Priority.NORMAL);
             params.putSerializable(PARAM_TYPE, Type.NORMAL);
             params.putBoolean(PARAM_WIFI_REQUIRED, false);

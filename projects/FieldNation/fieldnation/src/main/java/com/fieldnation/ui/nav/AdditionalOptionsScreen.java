@@ -40,6 +40,7 @@ import com.fieldnation.ui.settings.SettingsActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.ui.UnsyncedActivity;
 import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
@@ -297,7 +298,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final ApatheticOnClickListener _unsynced_onClick = new ApatheticOnClickListener() {
         @Override
         public void onSingleClick(View v) {
-
+            UnsyncedActivity.startNew(App.get());
         }
     };
 
