@@ -11,7 +11,7 @@
         style="@style/DialogTitle.v3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Downloading Assigned" />
+        android:text="Downloading Assigned Work" />
 
     <TextView
         android:id="@+id/body_textview"
