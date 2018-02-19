@@ -121,10 +121,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         Log.v(TAG, "onResume");
         super.onResume();
 
-        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
-            setVisibilityOfflineBar(false);
-        } else
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.SYNC) {
             setVisibilityOfflineBar(true);
+        } else
+            setVisibilityOfflineBar(false);
 
         _toastClient.subSnackbar();
         _toastClient.subToast();
@@ -420,7 +420,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onOfflineMode(App.OfflineState state) {
             Log.v(TAG, "onOfflineMode");
-            if (state != App.OfflineState.NORMAL) {
+            if (state == App.OfflineState.OFFLINE || state == App.OfflineState.SYNC) {
                 setVisibilityOfflineBar(true);
             } else {
                 setVisibilityOfflineBar(false);
