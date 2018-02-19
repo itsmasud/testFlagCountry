@@ -281,7 +281,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final TwoButtonDialog.OnPrimaryListener _downloadWarning_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            //DownloadProgressDialog.show(App.get());
             AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
         }
     };
