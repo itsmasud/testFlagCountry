@@ -276,6 +276,12 @@ public class TasksDialog extends FullScreenDialog {
         }
     }
 
+    private void showAvailableDialog(){
+        TwoButtonDialog.show(App.get(), null, getContext().getString(R.string.not_available),
+                getContext().getString(R.string.not_available_body_text),
+                getContext().getString(R.string.btn_close), null, true, null);
+    }
+
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
@@ -393,10 +399,18 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_IN: // check in
+                    if (App.get().getOfflineState()!= App.OfflineState.NORMAL){
+                        showAvailableDialog();
+                        return;
+                    }
                     doCheckin();
                     break;
 
                 case CHECK_OUT: // check out
+                    if (App.get().getOfflineState()!= App.OfflineState.NORMAL){
+                        showAvailableDialog();
+                        return;
+                    }
                     doCheckOut();
                     break;
 
