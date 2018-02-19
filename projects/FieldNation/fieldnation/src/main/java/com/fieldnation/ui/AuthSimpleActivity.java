@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
@@ -27,6 +28,7 @@ import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.v2.ui.dialog.DownloadProgressDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
@@ -56,6 +58,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AuthSystem.start();
+        startService(new Intent(App.get(), WebCrawlerService.class));
         setContentView(getLayoutResource());
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -88,6 +91,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     public abstract int getToolbarId();
 
+    public abstract int getOfflineBarId();
+
     public abstract DialogManager getDialogManager();
 
     public boolean doPermissionsChecks() {
@@ -118,6 +123,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+
+        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+            setVisibilityOfflineBar(false);
+        } else
+            setVisibilityOfflineBar(true);
+
         _toastClient.subSnackbar();
         _toastClient.subToast();
 
@@ -131,6 +142,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.subShutdownUI();
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subFinishActivity();
+        _appMessagingClient.subOfflineMode();
         ProfileClient.get(App.get());
 
         _activityRequestHandler.sub();
@@ -152,6 +164,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubShutdownUI();
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
+        _appMessagingClient.unsubOfflineMode();
 
         if (doAuthChecks())
             _authClient.unsubNeedUsernameAndPassword();
@@ -203,6 +216,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
+    }
+
+    private void setVisibilityOfflineBar(boolean isVisible) {
+        if (getOfflineBarId() != 0) {
+            TextView offlineBar = (TextView) findViewById(getOfflineBarId());
+            offlineBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void gotProfile() {
@@ -398,6 +418,20 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onFinish() {
             AuthSimpleActivity.this.finish();
+        }
+
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            Log.v(TAG, "onOfflineMode");
+            if (state != App.OfflineState.NORMAL) {
+                setVisibilityOfflineBar(true);
+            } else {
+                setVisibilityOfflineBar(false);
+            }
+
+            if (state == App.OfflineState.DOWNLOADING) {
+                DownloadProgressDialog.show(App.get());
+            }
         }
     };
 

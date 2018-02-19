@@ -7,9 +7,12 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.ui.IconFontTextView;
 
 public class SearchMenuButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("SearchActionBarButton");
+
+    private IconFontTextView _searchButton;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -36,7 +39,15 @@ public class SearchMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _searchButton = findViewById(R.id.search_textview);
+
         //setOnClickListener(_this_onClick);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        _searchButton.setEnabled(enabled);
+        if (!enabled) setOnClickListener(null);
     }
 
 //    private final View.OnClickListener _this_onClick = new OnClickListener() {

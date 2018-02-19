@@ -255,7 +255,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        //new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
@@ -264,7 +264,6 @@ public class App extends Application {
 
         registerReceiver(broadcastReceiver, new IntentFilter(
                 WebCrawlerService.BROADCAST_ACTION));
-
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -300,6 +299,7 @@ public class App extends Application {
         public void run() {
             while (true) {
                 Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
@@ -515,7 +515,7 @@ public class App extends Application {
             Log.v(TAG, "onOfflineMode");
             if (state == OfflineState.DOWNLOADING) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
-            } else
+            } else if (state == OfflineState.OFFLINE)
                 stopService(new Intent(App.get(), WebCrawlerService.class));
         }
     };
@@ -821,6 +821,13 @@ public class App extends Application {
         SavedList _savedList = null;
 
         try {
+
+            if (App.get().getOfflineState() != OfflineState.NORMAL) {
+                return new SavedList()
+                        .id("workorders_assignments")
+                        .label("assigned");
+            }
+
             if (misc.isEmptyOrNull(jsonData)) {
                 _savedList = new SavedList()
                         .id("workorders_available")
@@ -995,7 +1002,9 @@ public class App extends Application {
     }
 
     public static void logout() {
+        get().setOffline(OfflineState.NORMAL);
         WebTransactionSystem.stop();
+        PigeonRoost.clearAddressCache(AppMessagingClient.ADDRESS_OFFLINE_MODE);
         PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
         PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
         PigeonRoost.clearAddressCache(PhotoConstants.ADDRESS_GET_PHOTO);

@@ -131,6 +131,11 @@ public class SplashActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public int getOfflineBarId() {
+        return 0;
+    }
+
+    @Override
     public DialogManager getDialogManager() {
         return (DialogManager) findViewById(R.id.dialogManager);
     }
@@ -248,7 +253,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
         Log.v(TAG, "doNextStep 3");
 
-        if (App.getProfile().isProvider() && _gotConfirmList && !_calledMyWork) {
+        if (App.getProfile().isProvider() && (_gotConfirmList || App.get().getOfflineState()== App.OfflineState.OFFLINE) && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
             _calledMyWork = true;
             finish();
