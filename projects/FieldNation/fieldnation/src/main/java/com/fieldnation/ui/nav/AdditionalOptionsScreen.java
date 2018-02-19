@@ -64,6 +64,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     private View _offlineMenu;
     private Switch _offlineSwitch;
+    private View _unsyncedMenu;
+    private TextView _unsyncedCoungTextView;
     private View _profileMenu;
     private View _paymentMenu;
     private View _settingsMenu;
@@ -119,6 +121,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _offlineSwitch = findViewById(R.id.offline_switch);
         _offlineSwitch.setClickable(false);
+
+        _unsyncedMenu = findViewById(R.id.unsynced_menu);
+        _unsyncedMenu.setOnClickListener(_unsynced_onClick);
+
+        _unsyncedCoungTextView = findViewById(R.id.unsyncedCount_textview);
 
         _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -241,6 +248,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             _profileListView.setProfile(null);
         }
 
+
+        int size = WebTransaction.getSyncing().size();
+        if (size == 0 && (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.DOWNLOADING)) {
+            _unsyncedMenu.setVisibility(GONE);
+        } else {
+            _unsyncedMenu.setVisibility(VISIBLE);
+            _unsyncedCoungTextView.setText(size + "");
+        }
+
         _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
 
         addProfilePhoto();
@@ -272,9 +288,16 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                         "CONTINUE", "CANCEL", true, null);
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+                AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
             }
             _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
+        }
+    };
+
+    private final ApatheticOnClickListener _unsynced_onClick = new ApatheticOnClickListener() {
+        @Override
+        public void onSingleClick(View v) {
+
         }
     };
 
