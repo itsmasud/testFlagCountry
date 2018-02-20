@@ -257,15 +257,19 @@ public class WebCrawlerService extends Service {
 
     private synchronized void incrementPendingRequestCounter(int val) {
         _pendingRequests += val;
+/*
         if (_pendingRequests % 5 == 0)
             Log.v(TAG, "_pendingRequests = " + _pendingRequests);
+*/
     }
 
     private synchronized void incRequestCounter(int val) {
         _lastRequestTime = System.currentTimeMillis();
         _requestCounter += val;
+/*
         if (_requestCounter % 5 == 0)
             Log.v(TAG, "_requestCounter = " + _requestCounter);
+*/
     }
 
     // TODO send the update of offline mode to App.java or can be configurable to any activity we want
@@ -293,8 +297,10 @@ public class WebCrawlerService extends Service {
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
-            if (!_isRunning)
+            if (!_isRunning) {
+                Log.v(TAG, "_activityMonitor_runnable not running");
                 return;
+            }
 
             _monitorRunning = false;// check timer
             if (System.currentTimeMillis() - _lastRequestTime > 10000
