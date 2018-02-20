@@ -389,6 +389,11 @@ public class TasksDialog extends FullScreenDialog {
             switch (getType(task)) {
 
                 case SET_ETA: // set eta
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                        showAvailableDialog();
+                        return;
+                    }
+
                     App.get().analActionTitle = null;
                     EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                             _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
@@ -466,11 +471,6 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case SHIPMENT: // shipment
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
-                        showAvailableDialog();
-                        return;
-                    }
-
                     List<Shipment> shipments = new LinkedList();
                     for (Shipment shipment : _workOrder.getShipments().getResults()) {
                         if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
