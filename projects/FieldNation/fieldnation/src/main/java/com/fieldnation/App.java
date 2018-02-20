@@ -515,8 +515,9 @@ public class App extends Application {
             Log.v(TAG, "onOfflineMode");
             if (state == OfflineState.DOWNLOADING) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
-            } else if (state == OfflineState.OFFLINE)
+            } else if (state == OfflineState.OFFLINE || state == OfflineState.NORMAL) {
                 stopService(new Intent(App.get(), WebCrawlerService.class));
+            }
         }
     };
 
