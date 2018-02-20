@@ -399,7 +399,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_IN: // check in
-                    if (App.get().getOfflineState()!= App.OfflineState.NORMAL){
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
                         showAvailableDialog();
                         return;
                     }
@@ -407,7 +407,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_OUT: // check out
-                    if (App.get().getOfflineState()!= App.OfflineState.NORMAL){
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
                         showAvailableDialog();
                         return;
                     }
