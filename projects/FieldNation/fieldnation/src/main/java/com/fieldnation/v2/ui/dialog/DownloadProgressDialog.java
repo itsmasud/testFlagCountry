@@ -17,6 +17,7 @@ import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.crawler.WebCrawlerService;
 
 /**
@@ -114,6 +115,7 @@ public class DownloadProgressDialog extends SimpleDialog {
         @Override
         public void onClick(View view) {
             AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+            Log.v(TAG, "_cancel_onClick");
             dismiss(true);
         }
     };
@@ -126,9 +128,10 @@ public class DownloadProgressDialog extends SimpleDialog {
     private final AppMessagingClient _appClient = new AppMessagingClient() {
         @Override
         public void onOfflineMode(App.OfflineState state) {
-            if (state == App.OfflineState.OFFLINE)
+            if (state == App.OfflineState.OFFLINE) {
+                Log.v(TAG, "onOfflineMode");
                 dismiss(true);
+            }
         }
     };
-
 }
