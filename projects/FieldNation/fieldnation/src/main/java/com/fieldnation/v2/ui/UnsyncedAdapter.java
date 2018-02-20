@@ -63,6 +63,10 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
         return webTransactions.get(workOrderId);
     }
 
+    public int getWorkOrderCount() {
+        return webTransactions.size();
+    }
+
     public void refresh() {
         webTransactions.clear();
         List<WebTransaction> list = WebTransaction.getSyncing();

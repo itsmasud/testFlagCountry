@@ -119,7 +119,7 @@ public class App extends Application {
     public static final SecureRandom secureRandom = new SecureRandom();
 
     public enum OfflineState {
-        NORMAL, DOWNLOADING, OFFLINE, SYNC
+        NORMAL, DOWNLOADING, OFFLINE, SYNC, UPLOADING
     }
 
     static {

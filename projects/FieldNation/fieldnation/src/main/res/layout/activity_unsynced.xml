@@ -11,8 +11,8 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true">
 
-        <com.fieldnation.v2.ui.UnsyncedScreen
-            android:id="@+id/unsyncedScreen"
+        <com.fieldnation.ui.OverScrollRecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
