@@ -53,6 +53,11 @@ public class DownloadProgressDialog extends SimpleDialog {
     }
 
     @Override
+    public boolean onBackPressed() {
+        return false;
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
@@ -114,8 +119,8 @@ public class DownloadProgressDialog extends SimpleDialog {
     };
 
 
-    public static void show(Context context, String uid) {
-        Controller.show(context, uid, DownloadProgressDialog.class, null);
+    public static void show(Context context) {
+        Controller.show(context, TAG, DownloadProgressDialog.class, null);
     }
 
     private final AppMessagingClient _appClient = new AppMessagingClient() {

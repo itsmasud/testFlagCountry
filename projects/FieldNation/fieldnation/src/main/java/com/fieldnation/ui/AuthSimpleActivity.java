@@ -26,7 +26,9 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.v2.ui.dialog.DownloadProgressDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
@@ -56,6 +58,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AuthSystem.start();
+        startService(new Intent(App.get(), WebCrawlerService.class));
         setContentView(getLayoutResource());
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
@@ -424,6 +427,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
                 setVisibilityOfflineBar(true);
             } else {
                 setVisibilityOfflineBar(false);
+            }
+
+            if (state == App.OfflineState.DOWNLOADING) {
+                DownloadProgressDialog.show(App.get());
             }
         }
     };
