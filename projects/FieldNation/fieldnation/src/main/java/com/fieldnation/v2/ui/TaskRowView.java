@@ -8,6 +8,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
@@ -333,6 +334,12 @@ public class TaskRowView extends RelativeLayout {
                 || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE))) {
             _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_dark_text));
             setEnabled(true);
+
+            // offline mode
+            if ((getType(_task).equals(TaskTypeEnum.CHECK_IN) || getType(_task).equals(TaskTypeEnum.CHECK_OUT)|| getType(_task).equals(TaskTypeEnum.SET_ETA))
+                    && (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.SYNC))
+                _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
+
         } else {
             _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
             setEnabled(false);

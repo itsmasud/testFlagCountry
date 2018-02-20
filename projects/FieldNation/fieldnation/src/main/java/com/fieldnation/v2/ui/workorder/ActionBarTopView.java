@@ -21,6 +21,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
 import java.util.Set;
 
@@ -108,6 +109,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightGreenButton.setText(R.string.btn_on_hold);
                 _rightGreenButton.setEnabled(false);
+                _rightGreenButton.setBackgroundColor(R.drawable.btn_bg_gray);
             } else {
                 _rightGreenButton.setText(R.string.btn_review_hold);
                 _rightGreenButton.setEnabled(true);
@@ -278,6 +280,12 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
             _rightGreenButton.setEnabled(true);
         }
+
+        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+            _rightGreenButton.setEnabled(true);
+            _rightGreenButton.setOnClickListener(_disable_onClick);
+            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_gray_normal));
+        }
     }
 
     public void setListener(Listener listener) {
@@ -441,6 +449,16 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             if (_listener != null) _listener.onViewPayment();
         }
     };
+
+    private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TwoButtonDialog.show(App.get(), null, getResources().getString(R.string.not_available),
+                    getResources().getString(R.string.not_available_body_text),
+                    getResources().getString(R.string.btn_close), null, true, null);
+        }
+    };
+
 
     public interface Listener {
         void onNotInterested();
