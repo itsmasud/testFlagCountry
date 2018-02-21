@@ -295,7 +295,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
                 // TODO will need new dialog from adam
-                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync?", "Do you want to sync?", "SYNC", "CANCEL", true, null);
+                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
+                        "Would you like to upload your unsynced activity list of "
+                                + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
+                                + " work orders including all attachments? Data rates may apply.",
+                        "SYNC ACTIVITY", "NOT NOW", false, null);
             } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
                 // TODO  should we go back into download mode?
                 AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);

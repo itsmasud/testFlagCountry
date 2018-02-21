@@ -111,11 +111,11 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         public boolean onSingleMenuItemClick(MenuItem item) {
             if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
                 TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
-                        "Offline mode will be turned off and your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments will be uploaded. Data rates may apply",
+                        "Offline mode will be turned off and your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments will be uploaded. Data rates may apply.",
                         "CONTINUE", "CANCEL", true, null);
             } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
                 TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
-                        "Offline mode will be turned off and your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments will be uploaded. Data rates may apply",
+                        "You are about to upload your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments. Data rates may apply.",
                         "CONTINUE", "CANCEL", true, null);
             }
 

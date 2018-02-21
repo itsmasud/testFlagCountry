@@ -16,11 +16,14 @@ import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Michael Carver on 3/3/2015.
@@ -529,6 +532,22 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
         return zombies;
+    }
+
+    public static int getWorkOrderCount(List<WebTransaction> list) {
+        Set<Integer> workorders = new HashSet<>();
+
+        for (WebTransaction wt : list) {
+            try {
+                TransactionParams tl = TransactionParams.fromJson(new JsonObject(wt.getListenerParams()));
+                int workOrderId = tl.getMethodParamInt("workOrderId");
+                workorders.add(workOrderId);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        return workorders.size();
     }
 
     public static List<WebTransaction> getSyncing() {

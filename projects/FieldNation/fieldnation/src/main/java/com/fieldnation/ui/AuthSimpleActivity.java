@@ -28,6 +28,7 @@ import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.ui.dialog.DownloadProgressDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.SyncProgressDialog;
@@ -341,7 +342,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final View.OnClickListener _offline_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            TwoButtonDialog.show(App.get(), DIALOG_OFFLINE_ASK, "GO ONLINE?", "body", "GO ONLINE", "CANCEL", false, null);
+            TwoButtonDialog.show(App.get(), DIALOG_OFFLINE_ASK, "Offline Mode",
+                    "You are current only viewing your offline content. Would you like to go online?",
+                    "GO ONLINE", "CANCEL", false, null);
             Log.v(TAG, "_offline_onClick");
         }
     };
@@ -350,7 +353,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onPrimary(Parcelable extraData) {
             // yes please!
-            TwoButtonDialog.show(App.get(), DIALOG_SYNC_ASK, "START SYNC?", "", "CONTINUE", "CANCEL", false, null);
+            TwoButtonDialog.show(App.get(), DIALOG_SYNC_ASK, "Sync Activity",
+                    "Would you like to upload your unsynced activity list of "
+                            + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
+                            + " work orders including all attachments? Data rates may apply.",
+                    "SYNC ACTIVITY", "NOT NOW", false, null);
         }
     };
 
