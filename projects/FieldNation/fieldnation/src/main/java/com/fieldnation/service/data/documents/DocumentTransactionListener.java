@@ -86,7 +86,9 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
                 obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getByteArray(), filename);
             }
 
-            if (transaction.getType() != WebTransaction.Type.CRAWLER) {
+            if (transaction.getType() == WebTransaction.Type.CRAWLER) {
+                DocumentDispatch.download(context, documentId, new File(obj.getUri().toString()), DocumentConstants.PARAM_STATE_FINISH, true);
+            } else {
 
                 Uri uri = obj.getUri();
                 String name = FileUtils.getFileNameFromUri(context, uri);
