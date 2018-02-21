@@ -209,7 +209,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _appClient.subOfflineMode();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
-        TwoButtonDialog.addOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
         TwoButtonDialog.addOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
@@ -218,7 +217,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
-        TwoButtonDialog.removeOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
         TwoButtonDialog.removeOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
@@ -265,7 +263,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             _unsyncedCoungTextView.setText(size + "");
         }
 
-        _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
+        _offlineSwitch.setChecked(App.get().getOfflineState() == App.OfflineState.OFFLINE);
 
         addProfilePhoto();
     }
@@ -302,7 +300,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                 // TODO  should we go back into download mode?
                 AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);
             }
-            _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
+            _offlineSwitch.setChecked(App.get().getOfflineState() == App.OfflineState.OFFLINE);
         }
     };
 
@@ -317,13 +315,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
-        }
-    };
-
-    private final TwoButtonDialog.OnSecondaryListener _downloadWarning_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
-        @Override
-        public void onSecondary(Parcelable extraData) {
-            TwoButtonDialog.dismiss(App.get(), DIALOG_DOWNLOAD_WARNING);
         }
     };
 

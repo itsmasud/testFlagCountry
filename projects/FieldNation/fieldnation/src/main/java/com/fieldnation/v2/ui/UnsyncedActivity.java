@@ -77,7 +77,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         _unsyncedAdapter.refresh();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
-        TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_WARNING, _syncWarning_onSecondary);
     }
 
     @Override
@@ -93,7 +92,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
-        TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_WARNING, _syncWarning_onSecondary);
 
         super.onStop();
     }
@@ -130,13 +128,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         @Override
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setOfflineMode(App.OfflineState.UPLOADING);
-        }
-    };
-
-    private final TwoButtonDialog.OnSecondaryListener _syncWarning_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
-        @Override
-        public void onSecondary(Parcelable extraData) {
-            TwoButtonDialog.dismiss(App.get(), DIALOG_SYNC_WARNING);
         }
     };
 
