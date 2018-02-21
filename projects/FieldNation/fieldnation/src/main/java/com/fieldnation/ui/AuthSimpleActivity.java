@@ -30,6 +30,7 @@ import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.ui.dialog.DownloadProgressDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
+import com.fieldnation.v2.ui.dialog.SyncProgressDialog;
 import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
@@ -431,6 +432,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
             if (state == App.OfflineState.DOWNLOADING) {
                 DownloadProgressDialog.show(App.get());
+            } else if (state == App.OfflineState.UPLOADING) {
+                SyncProgressDialog.show(App.get());
             }
         }
     };

@@ -43,7 +43,6 @@ import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.ui.UnsyncedActivity;
 import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
-import com.fieldnation.v2.ui.dialog.ThreeStackedButtonDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
@@ -56,8 +55,8 @@ import java.lang.ref.WeakReference;
 public class AdditionalOptionsScreen extends RelativeLayout {
     private static final String TAG = "AdditionalOptionsScreen";
 
-    private static final String DIALOG_DOWNLOAD_WARNING = "DIALOG_DOWNLOAD_WARNING";
-    private static final String DIALOG_SYNC_WARNING = "DIALOG_SYNC_WARNING";
+    private static final String DIALOG_DOWNLOAD_WARNING = TAG + ".DIALOG_DOWNLOAD_WARNING";
+    private static final String DIALOG_SYNC_WARNING = TAG + ".DIALOG_SYNC_WARNING";
 
     // Ui
     private ProfilePicView _profilePicView;
@@ -211,18 +210,18 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
-        ThreeStackedButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_doSync);
-        ThreeStackedButtonDialog.addOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_noSync);
-        ThreeStackedButtonDialog.addOnTertiaryListener(DIALOG_SYNC_WARNING, _sync_onCancel);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
+        TwoButtonDialog.addOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
-        ThreeStackedButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_doSync);
-        ThreeStackedButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_noSync);
-        ThreeStackedButtonDialog.removeOnTertiaryListener(DIALOG_SYNC_WARNING, _sync_onCancel);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
+        TwoButtonDialog.removeOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
         _authClient.unsubRemoveCommand();
         _profilePhotoClient.unsub();
         _profileClient.unsubGet(false);
@@ -297,10 +296,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                         "CONTINUE", "CANCEL", true, null);
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING);
-                ThreeStackedButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Offline Mode",
-                        "You are about to turn off offline mode with unsynced activity. Would you like to upload your unsynced activity as well? Data rates may apply.",
-                        "TURN OFF & SYNC ACTIVITY", "TURN OFF OFFLINE MODE", "CANCEL", false, null);
+                // TODO will need new dialog from adam
+                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync?", "Do you want to sync?", "SYNC", "CANCEL", true, null);
+            } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
+                // TODO  should we go back into download mode?
+                AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);
             }
             _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
         }
@@ -327,25 +327,24 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final ThreeStackedButtonDialog.OnPrimaryListener _sync_doSync = new ThreeStackedButtonDialog.OnPrimaryListener() {
+    private final TwoButtonDialog.OnPrimaryListener _sync_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            // TODO turn off & sync
+            AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
+        }
+    };
+
+    private final TwoButtonDialog.OnSecondaryListener _sync_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
+        @Override
+        public void onSecondary(Parcelable extraData) {
             AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
         }
     };
 
-    private final ThreeStackedButtonDialog.OnSecondaryListener _sync_noSync = new ThreeStackedButtonDialog.OnSecondaryListener() {
+    private final TwoButtonDialog.OnCanceledListener _sync_onCancel = new TwoButtonDialog.OnCanceledListener() {
         @Override
-        public void onSecondary(Parcelable extraData) {
-            AppMessagingClient.setOfflineMode(App.OfflineState.UPLOADING);
-        }
-    };
-
-    private final ThreeStackedButtonDialog.OnTertiaryListener _sync_onCancel = new ThreeStackedButtonDialog.OnTertiaryListener() {
-        @Override
-        public void onTertiary(Parcelable extraData) {
-            ThreeStackedButtonDialog.dismiss(App.get(), DIALOG_SYNC_WARNING);
+        public void onCanceled(Parcelable extraData) {
+            AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
         }
     };
 

@@ -30,7 +30,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     private static final String TAG = "UnsyncedActivity";
 
     // Dialogs
-    private static final String DIALOG_SYNC_WARNING = "DIALOG_SYNC_WARNING";
+    private static final String DIALOG_SYNC_WARNING = TAG + ".DIALOG_SYNC_WARNING";
 
     // UI
     private Toolbar _toolbar;
@@ -111,9 +111,16 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
         public boolean onSingleMenuItemClick(MenuItem item) {
-            TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
-                    "Offline mode will be turned off and your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments will be uploaded. Data rates may apply",
-                    "CONTINUE", "CANCEL", true, null);
+            if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
+                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
+                        "Offline mode will be turned off and your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments will be uploaded. Data rates may apply",
+                        "CONTINUE", "CANCEL", true, null);
+            } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
+                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
+                        "Offline mode will be turned off and your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments will be uploaded. Data rates may apply",
+                        "CONTINUE", "CANCEL", true, null);
+            }
+
 
             return false;
         }
