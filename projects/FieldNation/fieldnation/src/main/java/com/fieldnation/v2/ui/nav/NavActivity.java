@@ -12,9 +12,9 @@ import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -174,6 +174,7 @@ public class NavActivity extends AuthSimpleActivity {
         if (!isLaunchingConfirm) {
             _permissionsListener.sub();
         }
+        _appClient.subOfflineMode();
 
         super.onStart();
         _recyclerView.onStart();
@@ -250,6 +251,7 @@ public class NavActivity extends AuthSimpleActivity {
         Log.v(TAG, "onStop");
         _recyclerView.onStop();
         _permissionsListener.unsub();
+        _appClient.unsubOfflineMode();
         super.onStop();
     }
 
@@ -390,6 +392,13 @@ public class NavActivity extends AuthSimpleActivity {
             _recyclerView.startSearch(_savedList);
             setNavTitle(_savedList);
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
+        }
+    };
+
+    private final AppMessagingClient _appClient = new AppMessagingClient() {
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            setNavTitle(_savedList);
         }
     };
 
