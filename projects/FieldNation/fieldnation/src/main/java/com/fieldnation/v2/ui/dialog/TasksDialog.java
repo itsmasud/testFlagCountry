@@ -276,6 +276,12 @@ public class TasksDialog extends FullScreenDialog {
         }
     }
 
+    private void showAvailableDialog(){
+        TwoButtonDialog.show(App.get(), null, getContext().getString(R.string.not_available),
+                getContext().getString(R.string.not_available_body_text),
+                getContext().getString(R.string.btn_close), null, true, null);
+    }
+
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
@@ -383,6 +389,11 @@ public class TasksDialog extends FullScreenDialog {
             switch (getType(task)) {
 
                 case SET_ETA: // set eta
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                        showAvailableDialog();
+                        return;
+                    }
+
                     App.get().analActionTitle = null;
                     EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                             _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
@@ -393,10 +404,18 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_IN: // check in
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                        showAvailableDialog();
+                        return;
+                    }
                     doCheckin();
                     break;
 
                 case CHECK_OUT: // check out
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                        showAvailableDialog();
+                        return;
+                    }
                     doCheckOut();
                     break;
 
