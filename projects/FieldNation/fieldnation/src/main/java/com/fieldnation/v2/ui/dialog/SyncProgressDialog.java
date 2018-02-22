@@ -137,7 +137,6 @@ public class SyncProgressDialog extends SimpleDialog {
         }
     };
 
-
     public static void show(Context context) {
         Controller.show(context, TAG, SyncProgressDialog.class, null);
     }

@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -39,6 +40,9 @@ public class UnsyncedActivity extends AuthSimpleActivity {
 
     // Data
     private UnsyncedAdapter _unsyncedAdapter = new UnsyncedAdapter();
+    private boolean _runTimmer = false;
+    private boolean _timerRunning = false;
+    private Handler _handler = new Handler();
 
 
     @Override
@@ -77,6 +81,9 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         _unsyncedAdapter.refresh();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
+
+        _runTimmer = true;
+        queueTimer();
     }
 
     @Override
@@ -92,9 +99,30 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
-
+        _runTimmer = false;
         super.onStop();
     }
+
+    private void queueTimer() {
+        if (_runTimmer && !_timerRunning) {
+            _timerRunning = true;
+            _handler.postDelayed(_listUpdate, 500);
+        }
+    }
+
+    private final Runnable _listUpdate = new Runnable() {
+        @Override
+        public void run() {
+            if (_runTimmer) {
+                _unsyncedAdapter.refresh();
+                if (_unsyncedAdapter.getWorkOrderCount() == 0)
+                    finish();
+            }
+
+            _timerRunning = false;
+            queueTimer();
+        }
+    };
 
     @Override
     public int getToolbarId() {
@@ -118,7 +146,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
                         "You are about to upload your unsynced activity list of " + _unsyncedAdapter.getWorkOrderCount() + " work orders including all attachments. Data rates may apply.",
                         "CONTINUE", "CANCEL", true, null);
             }
-
 
             return false;
         }

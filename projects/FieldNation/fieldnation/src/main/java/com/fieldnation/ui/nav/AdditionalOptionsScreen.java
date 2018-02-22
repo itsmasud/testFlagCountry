@@ -57,6 +57,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     private static final String DIALOG_DOWNLOAD_WARNING = TAG + ".DIALOG_DOWNLOAD_WARNING";
     private static final String DIALOG_SYNC_WARNING = TAG + ".DIALOG_SYNC_WARNING";
+    private static final String DIALOG_UNSYNC_WARNING = TAG + ".DIALOG_UNSYNC_WARNING";
 
     // Ui
     private ProfilePicView _profilePicView;
@@ -212,6 +213,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
         TwoButtonDialog.addOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_UNSYNC_WARNING, _unsync_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_UNSYNC_WARNING, _unsync_onSecondary);
     }
 
     @Override
@@ -220,6 +223,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
         TwoButtonDialog.removeOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_UNSYNC_WARNING, _unsync_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_UNSYNC_WARNING, _unsync_onSecondary);
         _authClient.unsubRemoveCommand();
         _profilePhotoClient.unsub();
         _profileClient.unsubGet(false);
@@ -311,7 +316,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final ApatheticOnClickListener _unsynced_onClick = new ApatheticOnClickListener() {
         @Override
         public void onSingleClick(View v) {
-            UnsyncedActivity.startNew(App.get());
+            if (_listSize != 0)
+                UnsyncedActivity.startNew(App.get());
         }
     };
 
@@ -439,12 +445,37 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _logout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (WebTransaction.getSyncing().size() == 0) {
+                App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
+                AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
+
+                App.logout();
+
+                AppMessagingClient.finishActivity();
+            } else {
+                TwoButtonDialog.show(App.get(), DIALOG_UNSYNC_WARNING, "Unsynced Activity",
+                        "Logging out will cause all your unsynced activity to be deleted.",
+                        "LOG OUT", "VIEW ACTIVITY", true, null);
+            }
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _unsync_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
             App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
 
             App.logout();
 
             AppMessagingClient.finishActivity();
+        }
+    };
+
+    private final TwoButtonDialog.OnSecondaryListener _unsync_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
+        @Override
+        public void onSecondary(Parcelable extraData) {
+            UnsyncedActivity.startNew(App.get());
         }
     };
 
