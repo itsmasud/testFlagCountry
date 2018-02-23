@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.Bundle;
@@ -281,7 +282,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setEnabled(true);
         }
 
-        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.SYNC || App.get().getOfflineState() == App.OfflineState.OFFLINE) {
+            Log.e(TAG, "disabling action");
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setOnClickListener(_disable_onClick);
             _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_gray_normal));
