@@ -137,7 +137,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "acceptSwapRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -180,7 +180,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "acknowledgeDelay", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -233,7 +233,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addAlertToWorkOrderAndTask", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -361,7 +361,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                     "ADDRESS_WEB_API_V2/WorkordersWebApi", WorkordersWebApi.class,
                                     "addAttachment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .setTrack(true)
                     .setTrackType(TrackerEnum.DELIVERABLES)
@@ -469,7 +469,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addBonus", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -522,7 +522,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addBonus", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -571,7 +571,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addContact", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -620,7 +620,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addDiscount", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -669,7 +669,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addExpense", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -721,7 +721,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addExpense", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -770,7 +770,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -822,7 +822,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -871,7 +871,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addHold", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -923,7 +923,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addHold", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -972,7 +972,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addIncrease", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1024,7 +1024,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addIncrease", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1073,7 +1073,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addMessage", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1125,7 +1125,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addMessage", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1172,7 +1172,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addPenalty", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1225,7 +1225,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addPenalty", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1274,7 +1274,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addProblem", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1326,7 +1326,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addProblem", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1375,7 +1375,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addQualification", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1424,7 +1424,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addShipment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1476,7 +1476,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addShipment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1525,7 +1525,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1577,7 +1577,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1626,7 +1626,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTag", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1678,7 +1678,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTag", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1727,7 +1727,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTask", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1781,7 +1781,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .uuid(uuid)
                     .build();
@@ -1826,7 +1826,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1869,7 +1869,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "approveWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1915,7 +1915,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "approveWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1964,7 +1964,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "assignUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2016,7 +2016,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "assignUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2047,7 +2047,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "cancelSwapRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2092,7 +2092,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2140,7 +2140,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2183,7 +2183,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "decline", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2229,7 +2229,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "decline", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2276,7 +2276,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2326,7 +2326,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2357,7 +2357,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineSwapRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2395,7 +2395,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAlert", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2431,7 +2431,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAlerts", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2482,7 +2482,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAttachment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2534,7 +2534,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAttachment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2581,7 +2581,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteBonus", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2628,7 +2628,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteContact", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2675,7 +2675,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteDiscount", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2722,7 +2722,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteExpense", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2772,7 +2772,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteExpense", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2819,7 +2819,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteFolder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2869,7 +2869,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteFolder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2916,7 +2916,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteHold", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2966,7 +2966,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteHold", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3013,7 +3013,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteIncrease", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3063,7 +3063,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteIncrease", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3110,7 +3110,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteMessage", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3157,7 +3157,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deletePenalty", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3204,7 +3204,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteProblem", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3254,7 +3254,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteProblem", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3301,7 +3301,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3351,7 +3351,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteRequest", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3398,7 +3398,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteShipment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3448,7 +3448,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteShipment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3495,7 +3495,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteSignature", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3545,7 +3545,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteSignature", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3592,7 +3592,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTag", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3642,7 +3642,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTag", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3689,7 +3689,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTask", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3736,7 +3736,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3786,7 +3786,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3835,7 +3835,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3887,7 +3887,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3926,7 +3926,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getAssignee", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6196,7 +6196,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "groupTask", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6239,7 +6239,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6286,7 +6286,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6324,7 +6324,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6365,7 +6365,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6403,7 +6403,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "massRequests", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6446,7 +6446,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6497,7 +6497,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6540,7 +6540,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeProvider", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6587,7 +6587,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeQualification", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6627,7 +6627,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "reorderTask", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6680,7 +6680,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "replyMessage", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6736,7 +6736,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "replyMessage", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6785,7 +6785,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "request", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6837,7 +6837,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "request", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6880,7 +6880,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "revertWorkOrderToDraft", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6926,7 +6926,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "revertWorkOrderToDraft", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6975,7 +6975,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "routeUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7027,7 +7027,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "routeUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7070,7 +7070,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unapproveWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7116,7 +7116,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unapproveWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7165,7 +7165,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unassignUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7217,7 +7217,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unassignUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7260,7 +7260,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unpublish", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7306,7 +7306,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unpublish", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7355,7 +7355,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unRouteUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7407,7 +7407,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unRouteUser", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7456,7 +7456,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAllTimeLogs", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7508,7 +7508,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAllTimeLogs", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7563,7 +7563,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAttachment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7621,7 +7621,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAttachment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7674,7 +7674,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateBonus", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7727,7 +7727,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateContact", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7780,7 +7780,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateCustomField", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7836,7 +7836,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateCustomField", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7889,7 +7889,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateDiscount", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7938,7 +7938,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateETA", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7992,7 +7992,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateETA", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8039,7 +8039,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateExpense", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8094,7 +8094,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateExpense", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8147,7 +8147,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateFolder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8203,7 +8203,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateFolder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8256,7 +8256,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHold", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8312,7 +8312,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHold", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8365,7 +8365,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateIncrease", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8421,7 +8421,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateIncrease", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8470,7 +8470,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateLocation", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8522,7 +8522,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateLocation", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8575,7 +8575,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateMessage", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8624,7 +8624,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8676,7 +8676,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8723,7 +8723,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePenalty", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8776,7 +8776,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePenalty", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8829,7 +8829,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateProblem", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8885,7 +8885,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateProblem", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8934,7 +8934,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateQualification", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8983,7 +8983,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateRatings", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9035,7 +9035,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateRatings", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9084,7 +9084,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateSchedule", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9136,7 +9136,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateSchedule", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9189,7 +9189,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9245,7 +9245,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9298,7 +9298,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTag", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9354,7 +9354,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTag", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9407,7 +9407,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTask", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9465,7 +9465,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .uuid(uuid)
                     .build();
@@ -9533,7 +9533,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .uuid(uuid)
                     .build();
@@ -9589,7 +9589,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9641,7 +9641,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateWorkOrder", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9688,7 +9688,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "verifyTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9738,7 +9738,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "verifyTimeLog", methodParams))
                     .useAuth(true)
-                    .setType(App.get().getOfflineState() == App.OfflineState.SYNC ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 

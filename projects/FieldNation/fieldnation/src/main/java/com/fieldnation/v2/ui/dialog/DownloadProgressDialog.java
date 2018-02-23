@@ -82,15 +82,6 @@ public class DownloadProgressDialog extends SimpleDialog {
         super.onPause();
     }
 
-    @Override
-    public void show(Bundle payload, boolean animate) {
-        super.show(payload, animate);
-
-        if (App.get().getOfflineState() == App.OfflineState.NORMAL)
-            AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
-
-    }
-
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
