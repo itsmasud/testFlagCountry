@@ -261,7 +261,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
 
         int size = WebTransaction.getSyncing().size();
-        if (size == 0 && (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.DOWNLOADING)) {
+        if (size == 0) {
             _unsyncedMenu.setVisibility(GONE);
         } else {
             _unsyncedMenu.setVisibility(VISIBLE);
@@ -299,14 +299,12 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                         "CONTINUE", "CANCEL", true, null);
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-                // TODO will need new dialog from adam
                 TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
                         "Would you like to upload your unsynced activity list of "
                                 + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
                                 + " work orders including all attachments? Data rates may apply.",
                         "SYNC ACTIVITY", "NOT NOW", false, null);
             } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
-                // TODO  should we go back into download mode?
                 AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);
             }
             _offlineSwitch.setChecked(App.get().getOfflineState() == App.OfflineState.OFFLINE);
@@ -316,8 +314,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final ApatheticOnClickListener _unsynced_onClick = new ApatheticOnClickListener() {
         @Override
         public void onSingleClick(View v) {
-            if (_listSize != 0)
-                UnsyncedActivity.startNew(App.get());
+            UnsyncedActivity.startNew(App.get());
         }
     };
 
