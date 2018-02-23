@@ -1,11 +1,13 @@
 package com.fieldnation.service.transaction;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -30,6 +32,8 @@ import java.util.Set;
  */
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
+
+    public static final String BROADCASE_ON_CHANGE = "WebTransaction.BROADCASE_ON_CHANGE";
 
     private long _id;
     private long _createdTime;
@@ -717,6 +721,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
+
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
     }
 
     public static WebTransaction put(WebTransaction obj) {
@@ -772,10 +778,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
-        if (success) {
-            return get(id);
-        } else {
-            return null;
+        try {
+            if (success) {
+                return get(id);
+            } else {
+                return null;
+            }
+        } finally {
+            LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
         }
     }
 
@@ -795,6 +805,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
         return success;
     }
 
@@ -813,6 +824,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
+
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
         return success;
     }
 
