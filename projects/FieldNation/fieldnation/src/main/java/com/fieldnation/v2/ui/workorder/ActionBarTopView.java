@@ -283,7 +283,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setEnabled(true);
         }
 
-        if (App.get().getOfflineState() == App.OfflineState.SYNC || App.get().getOfflineState() == App.OfflineState.OFFLINE) {
+        if (App.get().getOfflineState() == App.OfflineState.SYNC
+                || App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setOnClickListener(_disable_onClick);
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
