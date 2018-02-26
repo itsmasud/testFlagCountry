@@ -134,6 +134,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private ActionBarTopView _topBar;
     private FailedUploadsView _failedUploads;
     private ProblemSummaryView _problemSummaryView;
+    private UnsyncedSummaryView _unsyncedSummaryView;
     private BuyerCustomFieldView _buyerCustomFieldView;
     private WorkSummaryView _sumView;
     private ScheduleSummaryView _scheduleView;
@@ -208,6 +209,9 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _problemSummaryView = findViewById(R.id.problemsummary_view);
         _renderers.add(_problemSummaryView);
+
+        _unsyncedSummaryView = findViewById(R.id.unsyncedSummary_view);
+        _renderers.add(_unsyncedSummaryView);
 
         _buyerCustomFieldView = findViewById(R.id.buyerCustomField_view);
         _renderers.add(_buyerCustomFieldView);
