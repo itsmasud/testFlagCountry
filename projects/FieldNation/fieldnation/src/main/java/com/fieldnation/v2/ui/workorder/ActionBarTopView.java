@@ -110,12 +110,13 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightGreenButton.setText(R.string.btn_on_hold);
                 _rightGreenButton.setEnabled(false);
-                _rightGreenButton.setBackgroundColor(R.drawable.btn_bg_gray);
+//                _rightGreenButton.setBackgroundColor(R.drawable.btn_bg_gray);
             } else {
                 _rightGreenButton.setText(R.string.btn_review_hold);
                 _rightGreenButton.setEnabled(true);
             }
             setVisibility(View.VISIBLE);
+            return;
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
@@ -283,9 +284,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
 
         if (App.get().getOfflineState() == App.OfflineState.SYNC || App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-            Log.e(TAG, "disabling action");
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setOnClickListener(_disable_onClick);
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_gray_normal));
         }
     }
