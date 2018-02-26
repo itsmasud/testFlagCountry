@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.Bundle;
@@ -109,12 +110,13 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightGreenButton.setText(R.string.btn_on_hold);
                 _rightGreenButton.setEnabled(false);
-                _rightGreenButton.setBackgroundColor(R.drawable.btn_bg_gray);
+//                _rightGreenButton.setBackgroundColor(R.drawable.btn_bg_gray);
             } else {
                 _rightGreenButton.setText(R.string.btn_review_hold);
                 _rightGreenButton.setEnabled(true);
             }
             setVisibility(View.VISIBLE);
+            return;
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
@@ -281,9 +283,12 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setEnabled(true);
         }
 
-        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.SYNC
+                || App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setOnClickListener(_disable_onClick);
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_gray_normal));
         }
     }
