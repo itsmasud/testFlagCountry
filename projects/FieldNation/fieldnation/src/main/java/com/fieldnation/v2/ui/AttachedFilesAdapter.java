@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -543,7 +544,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     } else if (wt.isWifiRequired() && !App.get().haveWifi()) {
                         view.set(t.name, "Waiting for wifi...");
                     }
-                    view.set(t.name, "Waiting for network...");
+                    if (App.get().getOfflineState() == App.OfflineState.NORMAL)
+                        view.set(t.name, App.get().getString(R.string.waiting_for_network));
+                    else
+                        view.set(t.name, App.get().getString(R.string.offline_mode_waiting_for_sync));
                 } else {
                     view.set(t.name, "Will retry in " + misc.convertMsToHuman(timeLeft, true));
                 }

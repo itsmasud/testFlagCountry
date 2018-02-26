@@ -612,6 +612,7 @@
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating">Overall rating: </string>
     <string name="offline">Offline</string>
+    <string name="offline_mode_waiting_for_sync">Offline Mode: Waiting for sync</string>
 
     <string name="pay">Pay</string>
     <string name="payment">Payment</string>
