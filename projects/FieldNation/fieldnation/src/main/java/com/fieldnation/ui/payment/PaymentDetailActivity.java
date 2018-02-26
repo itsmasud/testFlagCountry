@@ -68,7 +68,7 @@ public class PaymentDetailActivity extends AuthSimpleActivity {
 
     @Override
     public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
+        return 0;
     }
 
     @Override

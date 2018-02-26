@@ -49,6 +49,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <com.fieldnation.v2.ui.workorder.UnsyncedSummaryView
+                    android:id="@+id/unsyncedSummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <com.fieldnation.v2.ui.workorder.FailedUploadsView
                     android:id="@+id/failedUploads_view"
                     android:layout_width="match_parent"

@@ -40,6 +40,7 @@ import com.fieldnation.ui.settings.SettingsActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.ui.UnsyncedActivity;
 import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
@@ -54,7 +55,9 @@ import java.lang.ref.WeakReference;
 public class AdditionalOptionsScreen extends RelativeLayout {
     private static final String TAG = "AdditionalOptionsScreen";
 
-    private static final String DIALOG_DOWNLOAD_WARNING = "DIALOG_DOWNLOAD_WARNING";
+    private static final String DIALOG_DOWNLOAD_WARNING = TAG + ".DIALOG_DOWNLOAD_WARNING";
+    private static final String DIALOG_SYNC_WARNING = TAG + ".DIALOG_SYNC_WARNING";
+    private static final String DIALOG_UNSYNC_WARNING = TAG + ".DIALOG_UNSYNC_WARNING";
 
     // Ui
     private ProfilePicView _profilePicView;
@@ -64,6 +67,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     private View _offlineMenu;
     private Switch _offlineSwitch;
+    private View _unsyncedMenu;
+    private TextView _unsyncedCoungTextView;
     private View _profileMenu;
     private View _paymentMenu;
     private View _settingsMenu;
@@ -119,6 +124,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _offlineSwitch = findViewById(R.id.offline_switch);
         _offlineSwitch.setClickable(false);
+
+        _unsyncedMenu = findViewById(R.id.unsynced_menu);
+        _unsyncedMenu.setOnClickListener(_unsynced_onClick);
+
+        _unsyncedCoungTextView = findViewById(R.id.unsyncedCount_textview);
 
         _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -200,13 +210,21 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _appClient.subOfflineMode();
         WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
-        TwoButtonDialog.addOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
+        TwoButtonDialog.addOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_UNSYNC_WARNING, _unsync_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_UNSYNC_WARNING, _unsync_onSecondary);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onPrimary);
-        TwoButtonDialog.removeOnSecondaryListener(DIALOG_DOWNLOAD_WARNING, _downloadWarning_onSecondary);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _sync_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_WARNING, _sync_onSecondary);
+        TwoButtonDialog.removeOnCanceledListener(DIALOG_SYNC_WARNING, _sync_onCancel);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_UNSYNC_WARNING, _unsync_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_UNSYNC_WARNING, _unsync_onSecondary);
         _authClient.unsubRemoveCommand();
         _profilePhotoClient.unsub();
         _profileClient.unsubGet(false);
@@ -241,7 +259,16 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             _profileListView.setProfile(null);
         }
 
-        _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
+
+        int size = WebTransaction.getSyncing().size();
+        if (size == 0) {
+            _unsyncedMenu.setVisibility(GONE);
+        } else {
+            _unsyncedMenu.setVisibility(VISIBLE);
+            _unsyncedCoungTextView.setText(size + "");
+        }
+
+        _offlineSwitch.setChecked(App.get().getOfflineState() == App.OfflineState.OFFLINE);
 
         addProfilePhoto();
     }
@@ -272,9 +299,22 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                         "CONTINUE", "CANCEL", true, null);
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
+                        "Would you like to upload your unsynced activity list of "
+                                + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
+                                + " work orders including all attachments? Data rates may apply.",
+                        "SYNC ACTIVITY", "NOT NOW", false, null);
+            } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
+                AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);
             }
-            _offlineSwitch.setChecked(App.get().getOfflineState() != App.OfflineState.NORMAL && App.get().getOfflineState() != App.OfflineState.SYNC);
+            _offlineSwitch.setChecked(App.get().getOfflineState() == App.OfflineState.OFFLINE);
+        }
+    };
+
+    private final ApatheticOnClickListener _unsynced_onClick = new ApatheticOnClickListener() {
+        @Override
+        public void onSingleClick(View v) {
+            UnsyncedActivity.startNew(App.get());
         }
     };
 
@@ -285,10 +325,24 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final TwoButtonDialog.OnSecondaryListener _downloadWarning_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
+    private final TwoButtonDialog.OnPrimaryListener _sync_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
+        }
+    };
+
+    private final TwoButtonDialog.OnSecondaryListener _sync_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
         @Override
         public void onSecondary(Parcelable extraData) {
-            TwoButtonDialog.dismiss(App.get(), DIALOG_DOWNLOAD_WARNING);
+            AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
+        }
+    };
+
+    private final TwoButtonDialog.OnCanceledListener _sync_onCancel = new TwoButtonDialog.OnCanceledListener() {
+        @Override
+        public void onCanceled(Parcelable extraData) {
+            AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
         }
     };
 
@@ -388,12 +442,37 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _logout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (WebTransaction.getSyncing().size() == 0) {
+                App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
+                AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
+
+                App.logout();
+
+                AppMessagingClient.finishActivity();
+            } else {
+                TwoButtonDialog.show(App.get(), DIALOG_UNSYNC_WARNING, "Unsynced Activity",
+                        "Logging out will cause all your unsynced activity to be deleted.",
+                        "LOG OUT", "VIEW ACTIVITY", true, null);
+            }
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _unsync_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
             App.get().clearPrefKey(App.PREF_LAST_VISITED_WOL);
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
 
             App.logout();
 
             AppMessagingClient.finishActivity();
+        }
+    };
+
+    private final TwoButtonDialog.OnSecondaryListener _unsync_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
+        @Override
+        public void onSecondary(Parcelable extraData) {
+            UnsyncedActivity.startNew(App.get());
         }
     };
 

@@ -119,7 +119,7 @@ public class App extends Application {
     public static final SecureRandom secureRandom = new SecureRandom();
 
     public enum OfflineState {
-        NORMAL, DOWNLOADING, OFFLINE, SYNC
+        NORMAL, DOWNLOADING, OFFLINE, SYNC, UPLOADING
     }
 
     static {
@@ -255,7 +255,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        //new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
@@ -515,8 +515,9 @@ public class App extends Application {
             Log.v(TAG, "onOfflineMode");
             if (state == OfflineState.DOWNLOADING) {
                 startService(new Intent(App.get(), WebCrawlerService.class));
-            } else if (state == OfflineState.OFFLINE)
+            } else if (state == OfflineState.OFFLINE || state == OfflineState.NORMAL) {
                 stopService(new Intent(App.get(), WebCrawlerService.class));
+            }
         }
     };
 

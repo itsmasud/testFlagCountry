@@ -37,6 +37,7 @@ abstract class Server extends Pigeon implements Constants {
                     bundle.getBundle(PARAM_DIALOG_PARAMS));
 
         } else if (address.startsWith(ADDRESS_DISMISS_DIALOG)) {
+            PigeonRoost.clearAddressCache(ADDRESS_DISMISS_DIALOG);
             onDismissDialog(bundle.getString(PARAM_DIALOG_UID));
         }
     }

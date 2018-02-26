@@ -5,6 +5,7 @@ package com.fieldnation.service.transaction;
  */
 interface WebTransactionConstants {
     String PARAM_ID = "PARAM_ID";
+    String PARAM_CREATED_TIME = "CREATED_TIME";
     String PARAM_LISTENER_NAME = "PARAM_LISTENER_NAME";
     String PARAM_LISTENER_PARAMS = "PARAM_LISTENER_PARAMS";
     String PARAM_USE_AUTH = "PARAM_USE_AUTH";

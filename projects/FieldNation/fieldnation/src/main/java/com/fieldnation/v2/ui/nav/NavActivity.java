@@ -12,9 +12,9 @@ import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -174,6 +174,7 @@ public class NavActivity extends AuthSimpleActivity {
         if (!isLaunchingConfirm) {
             _permissionsListener.sub();
         }
+        _appClient.subOfflineMode();
 
         super.onStart();
         _recyclerView.onStart();
@@ -216,7 +217,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         _workOrdersApi.sub();
 
-        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
             _arrowTextView.setText(null);
             _toolbar.setOnClickListener(null);
             _searchesView.setEnabled(false);
@@ -250,6 +251,7 @@ public class NavActivity extends AuthSimpleActivity {
         Log.v(TAG, "onStop");
         _recyclerView.onStop();
         _permissionsListener.unsub();
+        _appClient.unsubOfflineMode();
         super.onStop();
     }
 
@@ -306,7 +308,7 @@ public class NavActivity extends AuthSimpleActivity {
             }
         });
 
-        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
             _inboxMenu.setEnabled(false);
             _searchMenu.setEnabled(false);
             _searchToolbarView.hide();
@@ -336,14 +338,14 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     private void setNavTitle(SavedList savedList) {
-        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
             setNavTitle(getString(R.string.offline));
         } else
             NavActivity.this.setTitle(misc.capitalize(savedList.getTitle()));
     }
 
     private void setNavTitle(String titleText) {
-        if (App.get().getOfflineState() != App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
             titleText = getString(R.string.offline);
         }
 
@@ -390,6 +392,13 @@ public class NavActivity extends AuthSimpleActivity {
             _recyclerView.startSearch(_savedList);
             setNavTitle(_savedList);
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
+        }
+    };
+
+    private final AppMessagingClient _appClient = new AppMessagingClient() {
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            setNavTitle(_savedList);
         }
     };
 

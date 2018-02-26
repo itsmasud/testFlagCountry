@@ -1,11 +1,13 @@
 package com.fieldnation.service.transaction;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.trackers.UUIDGroup;
@@ -16,11 +18,14 @@ import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Michael Carver on 3/3/2015.
@@ -28,7 +33,10 @@ import java.util.List;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
+    public static final String BROADCASE_ON_CHANGE = "WebTransaction.BROADCASE_ON_CHANGE";
+
     private long _id;
+    private long _createdTime;
     private String _listenerClassName;
     private byte[] _listenerParams;
     private boolean _useAuth;
@@ -74,6 +82,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************-*/
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
+        _createdTime = cursor.getLong(Column.CREATED_TIME.getIndex());
         _listenerClassName = cursor.getString(Column.LISTENER.getIndex());
         _listenerParams = cursor.getBlob(Column.LISTENER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
@@ -107,6 +116,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public WebTransaction(Bundle bundle) {
         _id = bundle.getLong(PARAM_ID, -1);
+        _createdTime = bundle.getLong(PARAM_CREATED_TIME);
         _listenerClassName = bundle.getString(PARAM_LISTENER_NAME);
         _listenerParams = bundle.getByteArray(PARAM_LISTENER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
@@ -139,6 +149,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_ID, _id);
+        bundle.putLong(PARAM_CREATED_TIME, _createdTime);
 
         if (_listenerClassName != null)
             bundle.putString(PARAM_LISTENER_NAME, _listenerClassName);
@@ -193,6 +204,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*************************************-*/
     public long getId() {
         return _id;
+    }
+
+    public long getCreatedTime() {
+        return _createdTime;
     }
 
     public String getListenerName() {
@@ -523,6 +538,22 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return zombies;
     }
 
+    public static int getWorkOrderCount(List<WebTransaction> list) {
+        Set<Integer> workorders = new HashSet<>();
+
+        for (WebTransaction wt : list) {
+            try {
+                TransactionParams tl = TransactionParams.fromJson(new JsonObject(wt.getListenerParams()));
+                int workOrderId = tl.getMethodParamInt("workOrderId");
+                workorders.add(workOrderId);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        return workorders.size();
+    }
+
     public static List<WebTransaction> getSyncing() {
         List<WebTransaction> syncing = new LinkedList<>();
         synchronized (TAG) {
@@ -690,11 +721,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
+
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
     }
 
     public static WebTransaction put(WebTransaction obj) {
 //        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
+        v.put(Column.CREATED_TIME.getName(), obj._createdTime);
         v.put(Column.LISTENER.getName(), obj._listenerClassName);
         v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
@@ -744,10 +778,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
-        if (success) {
-            return get(id);
-        } else {
-            return null;
+        try {
+            if (success) {
+                return get(id);
+            } else {
+                return null;
+            }
+        } finally {
+            LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
         }
     }
 
@@ -767,6 +805,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
         return success;
     }
 
@@ -785,6 +824,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
+
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
         return success;
     }
 
@@ -890,6 +931,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         private List<Parcelable> transforms = new LinkedList<>();
 
         public Builder() {
+            params.putLong(PARAM_CREATED_TIME, System.currentTimeMillis());
             params.putSerializable(PARAM_PRIORITY, Priority.NORMAL);
             params.putSerializable(PARAM_TYPE, Type.NORMAL);
             params.putBoolean(PARAM_WIFI_REQUIRED, false);
