@@ -25,6 +25,9 @@ import com.fieldnation.service.transaction.WebTransaction;
 public class SyncProgressDialog extends SimpleDialog {
     private static final String TAG = "SyncProgressDialog";
 
+    // Ui
+    private TextView _titleTextView;
+    private TextView _bodyTextView;
     private ProgressBar _progressBar;
     private TextView _progressTextView;
     private Button _cancelButton;
@@ -42,6 +45,9 @@ public class SyncProgressDialog extends SimpleDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_sync_progress, container, false);
+
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _bodyTextView = v.findViewById(R.id.body_textview);
 
         _progressBar = v.findViewById(R.id.progressbar_view);
         _progressTextView = v.findViewById(R.id.progress_textview);
@@ -95,14 +101,25 @@ public class SyncProgressDialog extends SimpleDialog {
         if (_progressBar == null)
             return;
 
+        _titleTextView.setText("Sync in Progress");
+        _bodyTextView.setText("Your unsynced activity is now being uploaded to Field Nation");
+        _cancelButton.setText("CANCEL");
+
         if (_total == -1 || _remain == -1) {
+            _progressBar.setVisibility(View.VISIBLE);
+            _progressTextView.setVisibility(View.VISIBLE);
             _progressBar.setIndeterminate(true);
             _progressTextView.setText("Starting up...");
         } else if (_remain == 0) {
-            // Done!
-            AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
-            dismiss(true);
+            _titleTextView.setText("Sync Complete");
+            _bodyTextView.setText("Your unsynced activity has been uploaded to Field Nation");
+            _progressBar.setVisibility(View.GONE);
+            _progressTextView.setVisibility(View.GONE);
+            _cancelButton.setText("CLOSE");
+
         } else {
+            _progressBar.setVisibility(View.VISIBLE);
+            _progressTextView.setVisibility(View.VISIBLE);
             _progressBar.setMax(_total);
             _progressBar.setProgress(_total - _remain);
             _progressBar.setIndeterminate(false);
@@ -131,8 +148,12 @@ public class SyncProgressDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
             Log.v(TAG, "_cancel_onClick");
+            if (_remain == 0) {
+                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+            } else {
+                AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
+            }
             dismiss(true);
         }
     };

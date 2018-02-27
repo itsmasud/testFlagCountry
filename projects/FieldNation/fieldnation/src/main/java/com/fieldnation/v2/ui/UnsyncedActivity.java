@@ -1,10 +1,12 @@
 package com.fieldnation.v2.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +20,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -40,9 +43,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
 
     // Data
     private UnsyncedAdapter _unsyncedAdapter = new UnsyncedAdapter();
-    private boolean _runTimmer = false;
-    private boolean _timerRunning = false;
-    private Handler _handler = new Handler();
 
 
     @Override
@@ -75,15 +75,20 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     public void onFinishCreate(Bundle savedInstanceState) {
     }
 
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            _unsyncedAdapter.refresh();
+        }
+    };
+
     @Override
     protected void onStart() {
         super.onStart();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
         _unsyncedAdapter.refresh();
-
+        _appMessagingClient.subOfflineMode();
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
-
-        _runTimmer = true;
-        queueTimer();
     }
 
     @Override
@@ -98,31 +103,11 @@ public class UnsyncedActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
+        _appMessagingClient.unsubOfflineMode();
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
-        _runTimmer = false;
         super.onStop();
     }
-
-    private void queueTimer() {
-        if (_runTimmer && !_timerRunning) {
-            _timerRunning = true;
-            _handler.postDelayed(_listUpdate, 500);
-        }
-    }
-
-    private final Runnable _listUpdate = new Runnable() {
-        @Override
-        public void run() {
-            if (_runTimmer) {
-                _unsyncedAdapter.refresh();
-                if (_unsyncedAdapter.getWorkOrderCount() == 0)
-                    finish();
-            }
-
-            _timerRunning = false;
-            queueTimer();
-        }
-    };
 
     @Override
     public int getToolbarId() {
@@ -174,6 +159,14 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     public void onProfile(Profile profile) {
 
     }
+
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            if (state == App.OfflineState.NORMAL)
+                finish();
+        }
+    };
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
