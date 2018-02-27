@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.Bundle;
@@ -289,7 +288,10 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setOnClickListener(_disable_onClick);
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
-            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_gray_normal));
+            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_white_normal));
+            _rightGreenButton.setAlpha(0.5f);
+        } else {
+            _rightGreenButton.setAlpha(1.0f);
         }
     }
 
