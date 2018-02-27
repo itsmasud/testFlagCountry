@@ -549,8 +549,7 @@ public class WorkOrderCard extends RelativeLayout {
             button.setText(R.string.btn_fees);
         }
 
-        if (App.get().getOfflineState() == App.OfflineState.SYNC
-                || App.get().getOfflineState() == App.OfflineState.OFFLINE
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE
                 || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
             button.setEnabled(true);
             button.setOnClickListener(_disable_onClick);
