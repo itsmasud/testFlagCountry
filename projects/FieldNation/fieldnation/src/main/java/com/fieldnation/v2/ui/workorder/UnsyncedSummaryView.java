@@ -30,6 +30,7 @@ public class UnsyncedSummaryView extends RelativeLayout implements WorkOrderRend
     private static final String TAG = "UnsyncedSummaryView";
 
     // Ui
+    private TextView _titleTextView;
     private TextView _countTextView;
 
     // Data
@@ -55,6 +56,9 @@ public class UnsyncedSummaryView extends RelativeLayout implements WorkOrderRend
 
         if (isInEditMode())
             return;
+
+        _titleTextView = findViewById(R.id.title_textview);
+        _titleTextView.setText("Unsynced Activity");
 
         _countTextView = findViewById(R.id.count_textview);
 

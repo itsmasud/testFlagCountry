@@ -61,6 +61,7 @@ import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 
 import java.text.SimpleDateFormat;
@@ -547,6 +548,18 @@ public class WorkOrderCard extends RelativeLayout {
             button.setOnClickListener(_viewPayment_onClick);
             button.setText(R.string.btn_fees);
         }
+
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+            button.setEnabled(true);
+            button.setOnClickListener(_disable_onClick);
+            button.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            button.setBackgroundDrawable(button.getResources().getDrawable(R.drawable.btn_bg_white_normal));
+            button.setAlpha(0.5f);
+        } else {
+            button.setAlpha(1.0f);
+        }
+
     }
 
     public void setOnActionListener(OnActionListener onActionListener) {
@@ -637,6 +650,15 @@ public class WorkOrderCard extends RelativeLayout {
             button = _secondaryButtons[buttonId];
         }
     }
+
+    private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TwoButtonDialog.show(App.get(), null, getResources().getString(R.string.not_available),
+                    getResources().getString(R.string.not_available_body_text),
+                    getResources().getString(R.string.btn_close), null, true, null);
+        }
+    };
 
     private final OnClickListener _viewPayment_onClick = new ApatheticOnClickListener() {
         @Override

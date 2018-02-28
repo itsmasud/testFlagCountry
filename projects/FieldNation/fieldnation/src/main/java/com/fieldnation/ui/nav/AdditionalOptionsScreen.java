@@ -328,7 +328,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final TwoButtonDialog.OnPrimaryListener _sync_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            AppMessagingClient.setOfflineMode(App.OfflineState.DOWNLOADING);
+            AppMessagingClient.setOfflineMode(App.OfflineState.UPLOADING);
         }
     };
 

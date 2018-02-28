@@ -217,17 +217,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         _workOrdersApi.sub();
 
-        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-            _arrowTextView.setText(null);
-            _toolbar.setOnClickListener(null);
-            _searchesView.setEnabled(false);
-            setNavTitle(getString(R.string.offline));
-        } else {
-            _arrowTextView.setText(getString(R.string.icon_arrow_down));
-            _toolbar.setOnClickListener(_toolbar_onClick);
-            _searchesView.setEnabled(true);
-            WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
-        }
+        populateUi();
 
         invalidateOptionsMenu();
     }
@@ -308,17 +298,7 @@ public class NavActivity extends AuthSimpleActivity {
             }
         });
 
-        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-            _inboxMenu.setEnabled(false);
-            _searchMenu.setEnabled(false);
-            _searchToolbarView.hide();
-            _searchToolbarView.setVisibility(View.GONE);
-        } else {
-            _inboxMenu.setEnabled(true);
-            _searchMenu.setEnabled(true);
-            _searchToolbarView.setVisibility(View.VISIBLE);
-
-        }
+        populateUi();
 
         return true;
     }
@@ -334,6 +314,34 @@ public class NavActivity extends AuthSimpleActivity {
         if (_searchesView.isShowing()) {
             _searchesView.hide();
             Log.v(TAG, "hideDrawer");
+        }
+    }
+
+    private void populateUi() {
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
+            _arrowTextView.setText(null);
+            _toolbar.setOnClickListener(null);
+            _searchesView.setEnabled(false);
+            setNavTitle(getString(R.string.offline));
+
+            if (_inboxMenu != null) {
+                _inboxMenu.setEnabled(false);
+                _searchMenu.setEnabled(false);
+                _searchToolbarView.hide();
+                _searchToolbarView.setVisibility(View.GONE);
+            }
+        } else {
+            _arrowTextView.setText(getString(R.string.icon_arrow_down));
+            _toolbar.setOnClickListener(_toolbar_onClick);
+            _searchesView.setEnabled(true);
+            WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
+            setNavTitle(_savedList);
+
+            if (_inboxMenu != null) {
+                _inboxMenu.setEnabled(true);
+                _searchMenu.setEnabled(true);
+                _searchToolbarView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -398,7 +406,7 @@ public class NavActivity extends AuthSimpleActivity {
     private final AppMessagingClient _appClient = new AppMessagingClient() {
         @Override
         public void onOfflineMode(App.OfflineState state) {
-            setNavTitle(_savedList);
+            populateUi();
         }
     };
 

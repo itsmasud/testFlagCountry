@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
@@ -12,11 +13,14 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by michaelcarver on 2/19/18.
@@ -32,6 +36,9 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
 
     private Hashtable<Integer, List<Tuple>> webTransactions = new Hashtable<>();
     private List<Tuple> transactions = new LinkedList<>();
+
+    private SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy @ h:mm a", Locale.getDefault());
+    private DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
 
 
     private static class Tuple {
@@ -53,6 +60,11 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
             this.type = type;
             this.workOrderId = workOrderId;
         }
+    }
+
+    public UnsyncedAdapter() {
+        symbols.setAmPmStrings(App.get().getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
+        sdf.setDateFormatSymbols(symbols);
     }
 
     private List<Tuple> getList(int workOrderId) {
@@ -107,7 +119,7 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
             }
             case UnsyncedViewHolder.TYPE_TRANSACTION: {
                 ListItemTwoVertView view = new ListItemTwoVertView(parent.getContext());
-                view.setAlertVisible(true);
+                view.setAlertVisible(false);
                 view.setActionVisible(false);
                 view.setProgressVisible(false);
                 holder = new UnsyncedViewHolder(view);
@@ -138,7 +150,11 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 Tuple t = transactions.get(position);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(t.timestamp);
-                view.set(t.apiFunction, DateUtils.formatDateLong(calendar));
+
+                view.set(t.apiFunction, sdf.format(calendar.getTime()) + DateUtils.getDeviceTimezone(calendar));
+                if (t.webTransaction.isZombie()) {
+                    view.setAlertVisible(true);
+                }
                 break;
             }
             case UnsyncedViewHolder.TYPE_VIEW_WO: {
