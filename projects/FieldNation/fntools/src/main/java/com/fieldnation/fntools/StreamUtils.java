@@ -40,7 +40,7 @@ public class StreamUtils {
                 // }
 
                 while (!error && !timedOut && !complete) {
-                    read = source.read(packet, 0, 1024);
+                    read = source.read(packet, 0, packet.length);
                     if (read > 0) {
                         pos += read;
 
@@ -121,7 +121,7 @@ public class StreamUtils {
 				 * break; }
 				 */
 
-                    read = in.read(packet, 0, 1024);
+                    read = in.read(packet, 0, packet.length);
 
                     if (read > 0) {
                         pos += read;
@@ -195,7 +195,7 @@ public class StreamUtils {
 				 * break; }
 				 */
 
-                    read = in.read(packet, 0, 1024);
+                    read = in.read(packet, 0, packet.length);
 
                     if (read > 0) {
                         pos += read;
@@ -272,7 +272,7 @@ public class StreamUtils {
 				 * break; }
 				 */
 
-                    read = in.read(packet, 0, 1024);
+                    read = in.read(packet, 0, packet.length);
 
                     if (read > 0) {
                         pos += read;
