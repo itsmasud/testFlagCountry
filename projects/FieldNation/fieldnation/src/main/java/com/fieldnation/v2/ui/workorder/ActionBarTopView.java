@@ -116,7 +116,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 _rightGreenButton.setEnabled(true);
             }
             setVisibility(View.VISIBLE);
-            return;
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
@@ -283,9 +282,15 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setEnabled(true);
         }
 
-        if (App.get().getOfflineState() == App.OfflineState.SYNC
-                || App.get().getOfflineState() == App.OfflineState.OFFLINE
+        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+            _rightGreenButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
+        } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE
                 || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+
+            if (_workOrder.getHolds().isOnHold() && _workOrder.getHolds().areHoldsAcknowledged())
+                return;
+
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setOnClickListener(_disable_onClick);
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
