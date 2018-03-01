@@ -558,6 +558,7 @@ public class WorkOrderCard extends RelativeLayout {
             button.setAlpha(0.5f);
         } else {
             button.setBackgroundDrawable(button.getResources().getDrawable(R.drawable.btn_bg_green_normal));
+            button.setTextColor(getResources().getColor(R.color.fn_white_text));
             button.setAlpha(1.0f);
         }
 
