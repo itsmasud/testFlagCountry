@@ -557,6 +557,7 @@ public class WorkOrderCard extends RelativeLayout {
             button.setBackgroundDrawable(button.getResources().getDrawable(R.drawable.btn_bg_white_normal));
             button.setAlpha(0.5f);
         } else {
+            button.setBackgroundDrawable(button.getResources().getDrawable(R.drawable.btn_bg_green_normal));
             button.setAlpha(1.0f);
         }
 
