@@ -290,6 +290,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_white_normal));
             _rightGreenButton.setAlpha(0.5f);
         } else {
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
+            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_green_normal));
             _rightGreenButton.setAlpha(1.0f);
         }
     }
