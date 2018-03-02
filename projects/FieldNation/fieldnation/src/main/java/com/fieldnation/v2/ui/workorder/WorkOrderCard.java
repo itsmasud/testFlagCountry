@@ -552,11 +552,23 @@ public class WorkOrderCard extends RelativeLayout {
         if (App.get().getOfflineState() == App.OfflineState.OFFLINE
                 || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
             button.setEnabled(true);
-            button.setOnClickListener(_disable_onClick);
             button.setTextColor(getResources().getColor(R.color.fn_dark_text));
             button.setBackgroundDrawable(button.getResources().getDrawable(R.drawable.btn_bg_white_normal));
             button.setAlpha(0.5f);
+
+            if (_workOrder.getHolds().isOnHold() && !_workOrder.getHolds().areHoldsAcknowledged()) {
+                button.setOnClickListener(_disable_onClick); // review hold
+            } else if (_workOrder.getHolds().isOnHold()){
+                // on hold but not acked
+            }
+            else if (!_workOrder.getHolds().isOnHold()){
+                button.setOnClickListener(_disable_onClick); // not on hold
+            }
+
+
         } else {
+            button.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
+            button.setTextColor(getResources().getColor(R.color.fn_white_text));
             button.setAlpha(1.0f);
         }
 

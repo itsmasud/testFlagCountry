@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -115,7 +116,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 _rightGreenButton.setEnabled(true);
             }
             setVisibility(View.VISIBLE);
-            return;
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
@@ -282,21 +282,27 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setEnabled(true);
         }
 
-        if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+            _rightGreenButton.setEnabled(true);
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            _rightGreenButton.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.btn_bg_white_normal));
+            _rightGreenButton.setAlpha(0.5f);
+
+
+            if (_workOrder.getHolds().isOnHold() && !_workOrder.getHolds().areHoldsAcknowledged()) {
+                _rightGreenButton.setOnClickListener(_disable_onClick); // review hold
+            } else if (_workOrder.getHolds().isOnHold()) {
+                // on hold but not acked
+            } else if (!_workOrder.getHolds().isOnHold()) {
+                _rightGreenButton.setOnClickListener(_disable_onClick); // not on hold
+            }
+
+        } else {
+            _rightGreenButton.setEnabled(true);
             _rightGreenButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
             _rightGreenButton.setAlpha(1.0f);
-        } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE
-                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
-
-            if (_workOrder.getHolds().isOnHold() && _workOrder.getHolds().areHoldsAcknowledged())
-                return;
-
-            _rightGreenButton.setEnabled(true);
-            _rightGreenButton.setOnClickListener(_disable_onClick);
-            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
-            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_gray_normal));
-            _rightGreenButton.setAlpha(0.5f);
         }
     }
 
