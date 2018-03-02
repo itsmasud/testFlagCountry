@@ -97,6 +97,12 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.stage"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
+        twotest {
+            applicationId "com.fieldnation.android.test2"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Test2"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.test2"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
     }
 }
 
