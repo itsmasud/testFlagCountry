@@ -2,7 +2,6 @@ package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -106,7 +105,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             inflate();
 
             _rightGreenButton.setVisibility(VISIBLE);
-            _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightGreenButton.setText(R.string.btn_on_hold);
                 _rightGreenButton.setEnabled(false);
@@ -114,6 +112,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             } else {
                 _rightGreenButton.setText(R.string.btn_review_hold);
                 _rightGreenButton.setEnabled(true);
+                _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             }
             setVisibility(View.VISIBLE);
 
@@ -294,12 +293,10 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 _rightGreenButton.setOnClickListener(_disable_onClick); // review hold
             } else if (_workOrder.getHolds().isOnHold()) {
                 // on hold but not acked
-            } else if (!_workOrder.getHolds().isOnHold()) {
+            } else
                 _rightGreenButton.setOnClickListener(_disable_onClick); // not on hold
-            }
 
-        } else {
-            _rightGreenButton.setEnabled(true);
+        } else if (!_workOrder.getHolds().isOnHold()) {
             _rightGreenButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
             _rightGreenButton.setAlpha(1.0f);
