@@ -105,7 +105,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             inflate();
 
             _rightGreenButton.setVisibility(VISIBLE);
-            _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightGreenButton.setText(R.string.btn_on_hold);
                 _rightGreenButton.setEnabled(false);
@@ -113,9 +112,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             } else {
                 _rightGreenButton.setText(R.string.btn_review_hold);
                 _rightGreenButton.setEnabled(true);
+                _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             }
             setVisibility(View.VISIBLE);
-            return;
 
         } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
@@ -285,13 +284,21 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         if (App.get().getOfflineState() == App.OfflineState.OFFLINE
                 || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
             _rightGreenButton.setEnabled(true);
-            _rightGreenButton.setOnClickListener(_disable_onClick);
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
-            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_white_normal));
+            _rightGreenButton.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.btn_bg_white_normal));
             _rightGreenButton.setAlpha(0.5f);
-        } else {
+
+
+            if (_workOrder.getHolds().isOnHold() && !_workOrder.getHolds().areHoldsAcknowledged()) {
+                _rightGreenButton.setOnClickListener(_disable_onClick); // review hold
+            } else if (_workOrder.getHolds().isOnHold()) {
+                // on hold but not acked
+            } else
+                _rightGreenButton.setOnClickListener(_disable_onClick); // not on hold
+
+        } else if (!_workOrder.getHolds().isOnHold()) {
+            _rightGreenButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
-            _rightGreenButton.setBackgroundDrawable(_rightGreenButton.getResources().getDrawable(R.drawable.btn_bg_green_normal));
             _rightGreenButton.setAlpha(1.0f);
         }
     }
