@@ -337,7 +337,7 @@ public class TaskRowView extends RelativeLayout {
 
             // offline mode
             if ((getType(_task).equals(TaskTypeEnum.CHECK_IN) || getType(_task).equals(TaskTypeEnum.CHECK_OUT)|| getType(_task).equals(TaskTypeEnum.SET_ETA))
-                    && (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.SYNC))
+                    && (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING))
                 _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
 
         } else {
