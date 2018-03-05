@@ -299,11 +299,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                         "CONTINUE", "CANCEL", true, null);
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-                TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
-                        "Would you like to upload your unsynced activity list of "
-                                + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
-                                + " work orders including all attachments? Data rates may apply.",
-                        "SYNC ACTIVITY", "NOT NOW", false, null);
+                if (WebTransaction.getWorkOrderCount(WebTransaction.getSyncing()) > 0) {
+                    TwoButtonDialog.show(App.get(), DIALOG_SYNC_WARNING, "Sync Activity",
+                            "Would you like to upload your unsynced activity list of "
+                                    + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
+                                    + " work orders including all attachments? Data rates may apply.",
+                            "SYNC ACTIVITY", "NOT NOW", false, null);
+                } else {
+                    AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+                }
             } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
                 AppMessagingClient.setOfflineMode(App.OfflineState.OFFLINE);
             }

@@ -1,11 +1,14 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -112,6 +115,9 @@ public class AttachedFilesDialog extends FullScreenDialog {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);
         PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoDialog_onUpload);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransReceiver, new IntentFilter(
+                WebTransaction.BROADCASE_ON_CHANGE));
     }
 
     @Override
@@ -123,6 +129,16 @@ public class AttachedFilesDialog extends FullScreenDialog {
         _appClient.subNetworkState();
         _documentClient.sub();
     }
+
+    private final BroadcastReceiver _webTransReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.v(TAG, "_webTransReceiver.onReceive");
+            if (adapter != null) {
+                populateUi();
+            }
+        }
+    };
 
     @Override
     public void show(Bundle payload, boolean animate) {
@@ -164,7 +180,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             Log.v(TAG, "cleanZombies time: " + sw.finishAndRestart());
             adapter.setFailedUploads(WebTransaction.getZombies());
             Log.v(TAG, "setFailedUploads time: " + sw.finishAndRestart());
-            adapter.setPausedUploads(WebTransaction.getPaused(WebTransaction.Type.NORMAL));
+            adapter.setPausedUploads(WebTransaction.getPaused());
             Log.v(TAG, "setPausedUploads time: " + sw.finishAndRestart());
         } finally {
             Log.v(TAG, "populateUi time: " + stopwatch.finish());
@@ -190,6 +206,8 @@ public class AttachedFilesDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         Log.v(TAG, "onPause");
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransReceiver);
+
         _documentClient.unsub();
         _workOrdersApi.unsub();
         _appClient.unsubNetworkState();
