@@ -1,6 +1,5 @@
 package com.fieldnation.v2.ui;
 
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +32,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private AttachmentFolders folders = null;
     private List<Tuple> objects = new LinkedList<>();
     private Listener _listener;
-    private Handler _handler = new Handler();
-    private boolean _isClockRunning = false;
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -404,11 +401,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 }
             }
         }
-
-        if (hasPaused && !_isClockRunning) {
-            _isClockRunning = true;
-            _handler.post(refreshClock);
-        }
     }
 
     @Override
@@ -557,25 +549,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             }
         }
     }
-
-    private final Runnable refreshClock = new Runnable() {
-        @Override
-        public void run() {
-            boolean hasPaused = false;
-            for (int i = 0; i < objects.size(); i++) {
-                Tuple t = objects.get(i);
-                if (t.object instanceof PausedUploadTuple) {
-                    notifyItemChanged(i);
-                    hasPaused = true;
-                }
-            }
-
-            if (hasPaused)
-                _handler.postDelayed(refreshClock, 1000);
-            else
-                _isClockRunning = false;
-        }
-    };
 
     private final View.OnClickListener _attachment_onClick = new ApatheticOnClickListener() {
         @Override

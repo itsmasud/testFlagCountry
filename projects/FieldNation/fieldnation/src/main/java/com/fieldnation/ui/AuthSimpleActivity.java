@@ -353,11 +353,16 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onPrimary(Parcelable extraData) {
             // yes please!
-            TwoButtonDialog.show(App.get(), DIALOG_SYNC_ASK, "Sync Activity",
-                    "Would you like to upload your unsynced activity list of "
-                            + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
-                            + " work orders including all attachments? Data rates may apply.",
-                    "SYNC ACTIVITY", "NOT NOW", false, null);
+
+            if (WebTransaction.getWorkOrderCount(WebTransaction.getSyncing()) > 0) {
+                TwoButtonDialog.show(App.get(), DIALOG_SYNC_ASK, "Sync Activity",
+                        "Would you like to upload your unsynced activity list of "
+                                + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
+                                + " work orders including all attachments? Data rates may apply.",
+                        "SYNC ACTIVITY", "NOT NOW", false, null);
+            } else {
+                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+            }
         }
     };
 
