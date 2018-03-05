@@ -389,7 +389,7 @@ public class TasksDialog extends FullScreenDialog {
             switch (getType(task)) {
 
                 case SET_ETA: // set eta
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.UPLOADING){
                         showAvailableDialog();
                         return;
                     }
@@ -404,7 +404,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_IN: // check in
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.UPLOADING){
                         showAvailableDialog();
                         return;
                     }
@@ -412,7 +412,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_OUT: // check out
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.SYNC){
+                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.UPLOADING){
                         showAvailableDialog();
                         return;
                     }

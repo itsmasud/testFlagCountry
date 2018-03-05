@@ -602,7 +602,7 @@
     <string name="num_mi_straight_line"> \u2022 %1$smi (straight line)</string>
     <string name="num_uploading">%1$d uploading</string>
     <string name="num_workorders_and_payments">%1$s %2$s</string>
-    <string name="not_available_body_text">This action is not currently available while in offline mode.</string>
+    <string name="not_available_body_text">This action is currently not available while in offline mode.</string>
 
     <string name="offer_expires">Offer expires</string>
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
