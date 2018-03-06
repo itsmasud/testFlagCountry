@@ -255,6 +255,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://www.fieldnation.com/signup-provider"));
+
+            if (intent.resolveActivity(getPackageManager()) == null) {
+                Toast.makeText(AuthActivity.this, "Could not open web browser", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             startActivity(intent);
         }
     };
@@ -399,6 +405,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/forgot_password.php"));
+
+            if (intent.resolveActivity(getPackageManager()) == null) {
+                Toast.makeText(AuthActivity.this, "Could not open web browser", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             startActivity(intent);
         }
     };
