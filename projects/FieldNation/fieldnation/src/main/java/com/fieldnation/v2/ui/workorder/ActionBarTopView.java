@@ -172,7 +172,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
             inflate();
             _rightGreenButton.setVisibility(VISIBLE);
-            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() >= 1) {
                 _rightGreenButton.setText(R.string.btn_check_in_again);
                 _rightGreenButton.setOnClickListener(_checkinAgain_onClick);
                 _rightGreenButton.setEnabled(true);
