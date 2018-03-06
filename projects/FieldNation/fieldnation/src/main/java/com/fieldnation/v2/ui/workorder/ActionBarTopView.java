@@ -283,6 +283,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
         if (App.get().getOfflineState() == App.OfflineState.OFFLINE
                 || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+            inflate();
             _rightGreenButton.setEnabled(true);
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _rightGreenButton.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.btn_bg_white_normal));
@@ -297,6 +298,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 _rightGreenButton.setOnClickListener(_disable_onClick); // not on hold
 
         } else if (!_workOrder.getHolds().isOnHold()) {
+            inflate();
             _rightGreenButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
             _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
             _rightGreenButton.setAlpha(1.0f);
