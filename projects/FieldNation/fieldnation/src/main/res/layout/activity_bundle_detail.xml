@@ -8,7 +8,7 @@
         android:id="@+id/items_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/button_toolbar" />
+        android:layout_below="@+id/offline_bar_textview" />
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"
@@ -63,7 +63,7 @@
         style="@style/Text_Subhead_Offline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/button_toolbar" />
+        android:layout_below="@+id/toolbar" />
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
