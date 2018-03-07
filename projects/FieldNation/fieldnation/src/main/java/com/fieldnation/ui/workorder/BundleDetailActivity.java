@@ -109,7 +109,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         _listview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         _listview.setAdapter(_adapter);
 
-        BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
+        BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, true, WebTransaction.Type.NORMAL);
     }
 
     @Override
@@ -436,7 +436,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void requestPage(int page, boolean allowCache) {
             Log.v(TAG, "requestPage");
             if (_bundleId != 0)
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, WebTransaction.Type.NORMAL);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, true, WebTransaction.Type.NORMAL);
         }
     };
 
