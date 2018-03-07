@@ -664,6 +664,34 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
     }
 
+    public static List<WebTransaction> findByKey(String query) {
+        List<WebTransaction> list = new LinkedList<>();
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            try {
+                Cursor cursor = null;
+                try {
+                    cursor = db.query(
+                            WebTransactionSqlHelper.TABLE_NAME,
+                            WebTransactionSqlHelper.getColumnNames(),
+                            Column.KEY + " LIKE ?",
+                            new String[]{query}, null, null, null, null);
+
+                    while (cursor.moveToNext()) {
+                        WebTransaction trans = new WebTransaction(cursor);
+                        list.add(trans);
+                    }
+                } finally {
+                    if (cursor != null) cursor.close();
+                }
+            } finally {
+                if (db != null) db.close();
+            }
+        }
+        return list;
+    }
+
     private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
     private static final String GET_NEXT_SORT = Column.PRIORITY + " DESC, " + Column.QUEUE_TIME + " ASC, " + Column.ID + " ASC";
 

@@ -614,6 +614,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -663,6 +664,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addExpenseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/expenses")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -715,6 +717,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addExpenseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/expenses")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -966,6 +969,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/increases")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addIncreaseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/increases")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1018,6 +1022,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/increases")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addIncreaseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/increases")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1067,6 +1072,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addMessageByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/messages")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1119,6 +1125,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addMessageByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/messages")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1268,6 +1275,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/problems")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addProblemByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/problems")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1320,6 +1328,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/problems")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addProblemByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/problems")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1418,6 +1427,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addShipmentByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/shipments")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1470,6 +1480,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addShipmentByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/shipments")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1519,6 +1530,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addSignatureByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/signatures")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1571,6 +1583,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addSignatureByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/signatures")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1775,6 +1788,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/time_logs")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2476,6 +2490,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2528,6 +2543,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2669,6 +2685,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2716,6 +2733,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2766,6 +2784,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3007,6 +3026,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteIncreaseByWorkOrderAndIncrease/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3057,6 +3077,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteIncreaseByWorkOrderAndIncrease/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3392,6 +3413,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3442,6 +3464,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3489,6 +3512,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3539,6 +3563,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3730,6 +3755,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3780,6 +3806,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -7774,6 +7801,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -7830,6 +7858,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -8823,6 +8852,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateProblemByWorkOrderAndProblem/api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -8879,6 +8909,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateProblemByWorkOrderAndProblem/api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -9401,6 +9432,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTaskByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -9459,6 +9491,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -9527,6 +9560,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -9583,6 +9617,60 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateWorkOrder", methodParams))
+                    .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: updateWorkOrderByWorkOrder
+     * Updates a work order's closing notes by its id
+     *
+     * @param workOrderId  ID of work order
+     * @param closingNotes the new cosing notes data
+     */
+    public static void updateClosingNotes(Context context, Integer workOrderId, String closingNotes, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateClosingNotesByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId);
+
+
+            if (closingNotes != null) {
+                WorkOrder workOrder = new WorkOrder();
+                workOrder.closingNotes(closingNotes);
+                builder.body(workOrder.getJson().toString());
+            }
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (closingNotes != null)
+                methodParams.put("closingNotes", closingNotes);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateClosingNotesByWorkOrder/api/rest/v2/workorders/" + workOrderId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

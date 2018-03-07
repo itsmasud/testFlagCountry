@@ -112,14 +112,11 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             try {
-                WorkOrder workOrder = new WorkOrder();
-                workOrder.closingNotes(_editText.getText().toString());
-
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Closing Notes Dialog";
 
                 AppMessagingClient.setLoading(true);
-                WorkordersWebApi.updateWorkOrder(App.get(), _workOrderId, workOrder, uiContext);
+                WorkordersWebApi.updateClosingNotes(App.get(), _workOrderId, _editText.getText().toString(), uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
