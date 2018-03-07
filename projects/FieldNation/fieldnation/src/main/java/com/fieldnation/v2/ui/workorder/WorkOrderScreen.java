@@ -337,10 +337,12 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     public void onResume() {
         _documentClient.sub();
+        _appMessagingClient.subOfflineMode();
     }
 
     public void onPause() {
         _documentClient.unsub();
+        _appMessagingClient.unsubOfflineMode();
     }
 
     public void onStop() {
@@ -537,6 +539,13 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                 Log.v(TAG, ex);
             }
             return true;
+        }
+    };
+
+    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            populateUi();
         }
     };
 
