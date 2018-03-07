@@ -354,6 +354,7 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addAttachmentByWorkOrderAndFolder/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
