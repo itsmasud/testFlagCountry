@@ -121,11 +121,13 @@ public class SearchResultScreen extends RelativeLayout {
         _adapter.refreshAll();
 
         _appMessagingClient.subUserSwitched();
+        _appMessagingClient.subOfflineMode();
     }
 
     public void onPause() {
         _workOrderApi.unsub();
         _appMessagingClient.unsubUserSwitched();
+        _appMessagingClient.unsubOfflineMode();
     }
 
     public void onStop() {
@@ -291,6 +293,11 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onUserSwitched(Profile profile) {
             _adapter.refreshAll();
+        }
+
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            _adapter.notifyDataSetChanged();
         }
     };
 
