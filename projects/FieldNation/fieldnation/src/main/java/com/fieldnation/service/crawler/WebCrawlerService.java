@@ -477,6 +477,12 @@ public class WebCrawlerService extends Service {
 
         @Override
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+            if (App.get().isDiskFull()) {
+                AppMessagingClient.lowDiskSpace();
+                App.get().setOffline(App.OfflineState.NORMAL);
+                stopSelf();
+            }
+
             try {
                 Log.v(TAG, "onComplete " + methodName);
                 if (successObject != null && methodName.equals("getWorkOrderLists")) {
@@ -717,11 +723,16 @@ public class WebCrawlerService extends Service {
         @Override
         public void onDownload(int documentId, File file, int state, boolean isSync) {
 
+            if (App.get().isDiskFull()) {
+                AppMessagingClient.lowDiskSpace();
+                App.get().setOffline(App.OfflineState.NORMAL);
+                stopSelf();
+            }
+
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 Log.v(TAG, "Downloading not finished.");
                 return;
             }
-
 
             if (documentId > 0) {
                 if (downloads != null && downloads.size() > 0) {
@@ -742,6 +753,4 @@ public class WebCrawlerService extends Service {
             }
         }
     };
-
-
 }

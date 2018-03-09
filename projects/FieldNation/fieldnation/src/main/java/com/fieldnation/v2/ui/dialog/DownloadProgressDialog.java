@@ -122,6 +122,8 @@ public class DownloadProgressDialog extends SimpleDialog {
             if (state == App.OfflineState.OFFLINE) {
                 Log.v(TAG, "onOfflineMode");
                 dismiss(true);
+            } else if (state == App.OfflineState.NORMAL) {
+                dismiss(true);
             }
         }
     };
