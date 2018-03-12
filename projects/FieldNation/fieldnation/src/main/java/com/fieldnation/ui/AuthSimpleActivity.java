@@ -153,6 +153,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subFinishActivity();
         _appMessagingClient.subOfflineMode();
+        _appMessagingClient.subLowDiskSpace();
         ProfileClient.get(App.get());
 
         _activityRequestHandler.sub();
@@ -175,6 +176,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
         _appMessagingClient.unsubOfflineMode();
+        _appMessagingClient.unsubLowDiskSpace();
 
         if (doAuthChecks())
             _authClient.unsubNeedUsernameAndPassword();
@@ -488,6 +490,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             } else if (state == App.OfflineState.UPLOADING) {
                 SyncProgressDialog.show(App.get());
             }
+        }
+
+        @Override
+        public void onLowDiskSpace() {
+            OneButtonDialog.show(App.get(), TAG, "Not Enough Storage",
+                    "We cannot download your assigned work orders because there is not enough storage available. Please free up storage and try again.",
+                    "OK", true);
         }
     };
 

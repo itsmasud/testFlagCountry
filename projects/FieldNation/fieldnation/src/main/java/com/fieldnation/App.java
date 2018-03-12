@@ -328,7 +328,7 @@ public class App extends Application {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(getDownloadsFolder() + "/filler.dat", true);
-            while (folder.getUsableSpace() > 35000000) {
+            while (folder.getUsableSpace() > 40000000) {
                 fos.write(packet);
                 fos.flush();
             }

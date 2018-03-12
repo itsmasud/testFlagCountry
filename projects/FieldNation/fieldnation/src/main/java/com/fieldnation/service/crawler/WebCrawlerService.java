@@ -479,7 +479,7 @@ public class WebCrawlerService extends Service {
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (App.get().isDiskFull()) {
                 AppMessagingClient.lowDiskSpace();
-                App.get().setOffline(App.OfflineState.NORMAL);
+                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
                 stopSelf();
             }
 
@@ -725,7 +725,7 @@ public class WebCrawlerService extends Service {
 
             if (App.get().isDiskFull()) {
                 AppMessagingClient.lowDiskSpace();
-                App.get().setOffline(App.OfflineState.NORMAL);
+                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
                 stopSelf();
             }
 
