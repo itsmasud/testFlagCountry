@@ -90,8 +90,10 @@ import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
 import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrders;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -100,19 +102,25 @@ import java.util.List;
 public abstract class WorkordersWebApi extends Pigeon {
     private static final String TAG = "WorkordersWebApi";
 
+    private Set<String> addresses = new HashSet<>();
+
     public void sub() {
+        addresses.add("ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.sub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     public void sub(boolean isSync) {
+        addresses.add(isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.sub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     public void unsub() {
+        addresses.remove("ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     public void unsub(boolean isSync) {
+        addresses.remove(isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.unsub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
@@ -9844,6 +9852,11 @@ public abstract class WorkordersWebApi extends Pigeon {
     public void onMessage(String address, Object message) {
         //Log.v(TAG, "Listener " + address);
 
+        if (!addresses.contains(address)) {
+            Log.v(TAG, "skipping, not subscribed");
+            return;
+        }
+
         Bundle bundle = (Bundle) message;
         String type = bundle.getString("type");
         TransactionParams transactionParams = bundle.getParcelable("params");
@@ -10403,6 +10416,10 @@ public abstract class WorkordersWebApi extends Pigeon {
 
         @Override
         public void run() {
+            if (!workordersWebApi.addresses.contains(transactionParams.topicId)) {
+                Log.v(TAG, "Unsubbed skipping");
+                return;
+            }
             if (!workordersWebApi.onComplete(uuid, transactionParams, transactionParams.apiFunction, successObject, success, failObject, isCached)) {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);

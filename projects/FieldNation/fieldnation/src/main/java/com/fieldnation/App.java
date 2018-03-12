@@ -328,7 +328,7 @@ public class App extends Application {
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(getDownloadsFolder() + "/filler.dat", true);
-            while (folder.getUsableSpace() > 40000000) {
+            while (folder.getUsableSpace() > 70000000) {
                 fos.write(packet);
                 fos.flush();
             }
@@ -345,7 +345,7 @@ public class App extends Application {
     }
 
     public boolean isDiskFull() {
-        return new File(App.get().getStoragePath()).getUsableSpace() <= 30000000;
+        return new File(App.get().getStoragePath()).getUsableSpace() <= 50000000;
     }
 
     private SharedPreferences _userPreferences = null;
