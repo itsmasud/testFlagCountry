@@ -118,8 +118,6 @@ public class PigeonRoost {
         List<Object> objectList = new LinkedList<>();
         List<String> addressList = new LinkedList<>();
 
-        if (address.equals("ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi"))
-            Log.v(TAG, "BREAK");
         synchronized (TAG) {
             String[] addressTree = address.split("/");
             // Fill stickies
