@@ -256,14 +256,14 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                fillDisk();
-                Log.v(TAG, "FillDisk done");
-            }
-        }).start();
+//        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                fillDisk();
+//                Log.v(TAG, "FillDisk done");
+//            }
+//        }).start();
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
