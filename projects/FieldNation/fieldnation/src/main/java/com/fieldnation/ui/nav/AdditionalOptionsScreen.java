@@ -294,9 +294,14 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onSingleClick(View v) {
             if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
-                TwoButtonDialog.show(App.get(), DIALOG_DOWNLOAD_WARNING, "Download Size",
-                        "You are about to download " + _listSize + " assigned work orders including all attachments. Data rates may apply.",
-                        "CONTINUE", "CANCEL", true, null);
+                if (_listSize <= 0) {
+                    TwoButtonDialog.show(App.get(), null, "No Assigned Work",
+                            "Offline mode can only be enabled when you have one or more assigned work orders.",
+                            getResources().getString(R.string.btn_close), null, true, null);
+                } else
+                    TwoButtonDialog.show(App.get(), DIALOG_DOWNLOAD_WARNING, "Download Size",
+                            "You are about to download " + _listSize + " assigned work orders including all attachments. Data rates may apply.",
+                            "CONTINUE", "CANCEL", true, null);
 
             } else if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
                 if (WebTransaction.getWorkOrderCount(WebTransaction.getSyncing()) > 0) {
