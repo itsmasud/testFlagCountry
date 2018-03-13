@@ -18,6 +18,8 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
 
+import java.util.List;
+
 /**
  * Created by michaelcarver on 2/13/18.
  */
@@ -34,6 +36,7 @@ public class SyncProgressDialog extends SimpleDialog {
 
     private int _total = -1;
     private int _remain = -1;
+    private int _zombie = -1;
     private boolean _running = false;
     private Handler _handler = new Handler();
     private boolean _scheduled = false;
@@ -101,6 +104,8 @@ public class SyncProgressDialog extends SimpleDialog {
         if (_progressBar == null)
             return;
 
+        Log.v(TAG, "t" + _total + " r" + _remain + " z" + _zombie);
+
         _titleTextView.setText("Sync in Progress");
         _bodyTextView.setText("Your unsynced activity is now being uploaded to Field Nation");
         _cancelButton.setText("CANCEL");
@@ -111,19 +116,27 @@ public class SyncProgressDialog extends SimpleDialog {
             _progressBar.setIndeterminate(true);
             _progressTextView.setText("Starting up...");
         } else if (_remain == 0) {
-            _titleTextView.setText("Sync Complete");
-            _bodyTextView.setText("Your unsynced activity has been uploaded to Field Nation");
-            _progressBar.setVisibility(View.GONE);
-            _progressTextView.setVisibility(View.GONE);
-            _cancelButton.setText("CLOSE");
+            if (_zombie > 0) {
+                _titleTextView.setText("Sync Failed");
+                _bodyTextView.setText("Please check your network connection and try again");
+                _progressBar.setVisibility(View.GONE);
+                _progressTextView.setVisibility(View.GONE);
+                _cancelButton.setText("CLOSE");
+            } else {
+                _titleTextView.setText("Sync Complete");
+                _bodyTextView.setText("Your unsynced activity has been uploaded to Field Nation");
+                _progressBar.setVisibility(View.GONE);
+                _progressTextView.setVisibility(View.GONE);
+                _cancelButton.setText("CLOSE");
+            }
 
         } else {
             _progressBar.setVisibility(View.VISIBLE);
             _progressTextView.setVisibility(View.VISIBLE);
             _progressBar.setMax(_total);
-            _progressBar.setProgress(_total - _remain);
+            _progressBar.setProgress(_total - (_remain));
             _progressBar.setIndeterminate(false);
-            _progressTextView.setText((_total - _remain) + " / " + _total);
+            _progressTextView.setText((_total - (_remain)) + " / " + _total);
         }
     }
 
@@ -137,9 +150,15 @@ public class SyncProgressDialog extends SimpleDialog {
     private final Runnable _checker = new Runnable() {
         @Override
         public void run() {
-            _remain = WebTransaction.getSyncing().size();
-            populateUi();
+            List<WebTransaction> list = WebTransaction.getSyncing();
+            _zombie = 0;
+            for (WebTransaction webTransaction : list) {
+                if (webTransaction.isZombie())
+                    _zombie++;
+            }
+            _remain = list.size() - _zombie;
 
+            populateUi();
             _scheduled = false;
             scheduleNext();
         }
@@ -150,7 +169,14 @@ public class SyncProgressDialog extends SimpleDialog {
         public void onClick(View view) {
             Log.v(TAG, "_cancel_onClick");
             if (_remain == 0) {
-                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
+                if (_zombie > 0) {
+                    List<WebTransaction> list = WebTransaction.getSyncing();
+                    for (WebTransaction webTransaction : list) {
+                        webTransaction.requeue(0);
+                    }
+                    AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
+                } else
+                    AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
             } else {
                 AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
             }
