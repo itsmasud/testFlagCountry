@@ -609,8 +609,25 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (json != null)
+            String activityName = null;
+            Double activityValue = null;
+
+            if (json != null) {
                 methodParams.put("json", json.getJson());
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.DISCOUNT,
+                        json.getDescription());
+
+                activityValue = json.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
@@ -660,6 +677,24 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (expense != null)
                 methodParams.put("expense", expense.getJson());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (expense != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.EXPENSE,
+                        expense.getDescription());
+
+                activityValue = expense.getAmount();
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
@@ -1062,10 +1097,21 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (json != null)
-                methodParams.put("json", json.getJson());
 
-            WebTransaction transaction = new WebTransaction.Builder()
+            String activityName = null;
+
+            if (json != null) {
+                methodParams.put("json", json.getJson());
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.MESSAGE,
+                        json.getFrom().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
+           WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
@@ -1266,6 +1312,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (problem != null)
                 methodParams.put("problem", problem.getJson());
 
+            String activityName = null;
+
+            if (problem != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.PROBLEM,
+                        problem.getType().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/problems")
                     .priority(Priority.HIGH)
@@ -1416,6 +1474,19 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (shipment != null)
                 methodParams.put("shipment", shipment.getJson());
 
+
+            String activityName = null;
+
+            if (shipment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.SHIPMENT,
+                        shipment.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
                     .priority(Priority.HIGH)
@@ -1516,6 +1587,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (signature != null)
                 methodParams.put("signature", signature.getJson());
+
+            String activityName = null;
+
+            if (signature != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.SIGNATURE,
+                        signature.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")

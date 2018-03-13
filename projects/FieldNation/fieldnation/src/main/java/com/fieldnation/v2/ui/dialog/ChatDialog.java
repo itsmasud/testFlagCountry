@@ -27,6 +27,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.MessageFrom;
 import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.ui.chat.ChatAdapter;
 import com.fieldnation.v2.ui.chat.ChatInputView;
@@ -167,6 +168,8 @@ public class ChatDialog extends FullScreenDialog {
             try {
                 Message msg = new Message();
                 msg.setMessage(_inputView.getInputText());
+                MessageFrom msgFrom = new MessageFrom();
+                msg.from(msgFrom.name(App.getProfile().getFirstname() + " " + App.getProfile().getLastname()));
                 WorkordersWebApi.addMessage(App.get(), _workOrderId, msg, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);

@@ -77,6 +77,44 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         ANY, NORMAL, CRAWLER, SYNC
     }
 
+
+    public enum ActivityType {
+        ACTIVITY_NAME,
+        ACTIVITY_VALUE;
+    }
+
+    public enum ActivityName {
+        DISCOUNT("Discount: "),
+        EXPENSE("Expense: "),
+        PAY_REQUEST("Pay Request: "),
+        MESSAGE("Message: "),
+        PROBLEM("Problem: "),
+        SHIPMENT("Shipment: "),
+        SIGNATURE("Signature: "),
+        TIME_LOG("Time Log: "),
+        CLOSING_NOTES("Closing Notes: ");
+
+        private String value;
+
+        ActivityName(String activityName) {
+            this.value = activityName;
+        }
+
+        public static String getActivityTitleByType(ActivityName activityType, String tailingString) {
+            return activityType.value + tailingString;
+        }
+
+        public static ActivityName fromString(String value) {
+            ActivityName[] values = values();
+            for (ActivityName v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+    }
+
+
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
