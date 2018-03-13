@@ -104,7 +104,7 @@ public abstract class WebTransactionListener {
                         ToastClient.toast(context, "Invalid User, Cannot login", Toast.LENGTH_LONG);
                         return Result.DELETE;
                     } else {
-                        return Result.DELETE;
+                        return transaction.getType() == WebTransaction.Type.SYNC ? Result.ZOMBIE : Result.DELETE;
                     }
                 } else {
                     Log.v(TAG, "1");
@@ -122,12 +122,12 @@ public abstract class WebTransactionListener {
                     return Result.RETRY;
 
                 } else {
-                    return Result.DELETE;
+                    return transaction.getType() == WebTransaction.Type.SYNC ? Result.ZOMBIE : Result.DELETE;
                 }
 
             } else if (httpResult.getResponseCode() == 404) {
                 // not found?... error
-                return Result.DELETE;
+                return transaction.getType() == WebTransaction.Type.SYNC ? Result.ZOMBIE : Result.DELETE;
 
             } else if (httpResult.getResponseCode() == 413) {
                 ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
@@ -140,7 +140,7 @@ public abstract class WebTransactionListener {
 
             } else if (httpResult.getResponseCode() / 100 != 2) {
                 Log.v(TAG, "3");
-                return Result.DELETE;
+                return transaction.getType() == WebTransaction.Type.SYNC ? Result.ZOMBIE : Result.DELETE;
             }
         }
 
@@ -156,7 +156,7 @@ public abstract class WebTransactionListener {
                 return Result.RETRY;
 
             } else if (throwable instanceof SecurityException) {
-                return Result.DELETE;
+                return transaction.getType() == WebTransaction.Type.SYNC ? Result.ZOMBIE : Result.DELETE;
 
             } else if (throwable instanceof SSLProtocolException
                     || throwable instanceof ConnectException
@@ -191,7 +191,7 @@ public abstract class WebTransactionListener {
                     // no freaking clue
                     Log.logException(throwable);
                     Log.v(TAG, throwable);
-                    return Result.DELETE;
+                    return transaction.getType() == WebTransaction.Type.SYNC ? Result.ZOMBIE : Result.DELETE;
                 }
             }
         }

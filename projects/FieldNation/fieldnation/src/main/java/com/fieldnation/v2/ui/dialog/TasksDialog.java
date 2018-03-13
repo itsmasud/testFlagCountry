@@ -276,7 +276,7 @@ public class TasksDialog extends FullScreenDialog {
         }
     }
 
-    private void showAvailableDialog(){
+    private void showAvailableDialog() {
         TwoButtonDialog.show(App.get(), null, getContext().getString(R.string.not_available),
                 getContext().getString(R.string.not_available_body_text),
                 getContext().getString(R.string.btn_close), null, true, null);
@@ -289,7 +289,7 @@ public class TasksDialog extends FullScreenDialog {
         @Override
         public void onFile(List<GetFileDialog.UriIntent> fileResult) {
             Log.v(TAG, "onFile");
-            if (fileResult.size() == 0)
+            if (fileResult == null || fileResult.size() == 0)
                 return;
 
             if (fileResult.size() == 1) {
@@ -389,7 +389,7 @@ public class TasksDialog extends FullScreenDialog {
             switch (getType(task)) {
 
                 case SET_ETA: // set eta
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.UPLOADING){
+                    if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showAvailableDialog();
                         return;
                     }
@@ -404,7 +404,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_IN: // check in
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.UPLOADING){
+                    if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showAvailableDialog();
                         return;
                     }
@@ -412,7 +412,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_OUT: // check out
-                    if (App.get().getOfflineState()== App.OfflineState.OFFLINE || App.get().getOfflineState()== App.OfflineState.UPLOADING){
+                    if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showAvailableDialog();
                         return;
                     }
