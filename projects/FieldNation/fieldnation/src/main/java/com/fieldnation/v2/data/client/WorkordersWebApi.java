@@ -352,6 +352,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("timestamp", System.currentTimeMillis());
             methodParams.put("fileHash", storedObject.getHashHex());
 
+            String activityName = null;
+
+            if (attachment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.ATTACHMENT,
+                        attachment.getNotes());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addAttachmentByWorkOrderAndFolder/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
@@ -1319,18 +1331,6 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (problem != null)
                 methodParams.put("problem", problem.getJson());
-
-            String activityName = null;
-
-            if (problem != null) {
-                activityName = WebTransaction.ActivityName.getActivityTitleByType(
-                        WebTransaction.ActivityName.PROBLEM,
-                        problem.getType().getName());
-            }
-
-            if (!misc.isEmptyOrNull(activityName)) {
-                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
-            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/problems")
@@ -9751,6 +9751,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (closingNotes != null)
                 methodParams.put("closingNotes", closingNotes);
+
+            String activityName = null;
+
+            if (!misc.isEmptyOrNull(closingNotes)) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.CLOSING_NOTES,
+                        closingNotes);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")

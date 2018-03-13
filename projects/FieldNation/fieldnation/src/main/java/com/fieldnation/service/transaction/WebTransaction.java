@@ -86,13 +86,11 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public enum ActivityName {
         DISCOUNT("Discount: "),
         EXPENSE("Expense: "),
-        PAY_REQUEST("Pay Request: "),
         MESSAGE("Message: "),
-        PROBLEM("Problem: "),
         SHIPMENT("Shipment: "),
         SIGNATURE("Signature: "),
-        TIME_LOG("Time Log: "),
-        CLOSING_NOTES("Closing Notes: ");
+        CLOSING_NOTES("Closing Notes: "),
+        ATTACHMENT("Attachment: ");
 
         private String value;
 
