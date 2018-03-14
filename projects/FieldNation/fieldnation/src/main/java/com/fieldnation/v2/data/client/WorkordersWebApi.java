@@ -89,6 +89,7 @@ import com.fieldnation.v2.data.model.WorkOrderOverview;
 import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
 import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.TaskTypeEnum;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -9579,10 +9580,10 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Updates a work order's task
      *
      * @param workOrderId Work order id
-     * @param taskId      Task id
+     * @param task        Payload of the Task
      * @param json        JSON Model
      */
-    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json, EventContext uiContext) {
+    public static void updateTask(Context context, Integer workOrderId, Task task, Task json, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("updateTaskByWorkOrder")
                 .label(workOrderId + "")
@@ -9590,7 +9591,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("task_id")
-                .value(taskId)
+                .value(task.getId())
                 .build()
         );
 
@@ -9598,20 +9599,31 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + task.getId());
 
             if (json != null)
                 builder.body(json.getJson().toString());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("taskId", taskId);
+            methodParams.put("taskId", task.getId());
             if (json != null)
                 methodParams.put("json", json.getJson());
 
+
+            String activityName = null;
+
+            if (task != null) {
+                activityName = TaskTypeEnum.getActivityName(task);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTaskByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTaskByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/tasks/" + task.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
