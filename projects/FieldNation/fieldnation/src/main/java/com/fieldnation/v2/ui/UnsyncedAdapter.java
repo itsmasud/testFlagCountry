@@ -124,18 +124,8 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 break;
             }
             case UnsyncedViewHolder.TYPE_TRANSACTION: {
-                // TODO remove the commented part when you are sure to remove
-//                ListItemTwoVertView view = new ListItemTwoVertView(parent.getContext());
-//                view.setAlertVisible(false);
-//                view.setActionVisible(false);
-//                view.setProgressVisible(false);
-//                holder = new UnsyncedViewHolder(view);
-//                holder.type = viewType;
-
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
-//                view.setAlertVisible(false);
-//                view.setActionVisible(false);
-//                view.setProgressVisible(false);
+                view.setAlertVisible(false);
                 holder = new UnsyncedViewHolder(view);
                 holder.type = viewType;
 
@@ -161,16 +151,6 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 break;
             }
             case UnsyncedViewHolder.TYPE_TRANSACTION: {
-//                ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
-//                Tuple t = transactions.get(position);
-//                Calendar calendar = Calendar.getInstance();
-//                calendar.setTimeInMillis(t.timestamp);
-//
-//                view.set(t.activityName, sdf.format(calendar.getTime()) + DateUtils.getDeviceTimezone(calendar));
-//                if (t.webTransaction.isZombie()) {
-//                    view.setAlertVisible(true);
-//                }
-
                 ListItemTwoHorizTwoVertView view = (ListItemTwoHorizTwoVertView) holder.itemView;
                 Tuple t = transactions.get(position);
                 Calendar calendar = Calendar.getInstance();
@@ -180,10 +160,9 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                         sdf.format(calendar.getTime()) + DateUtils.getDeviceTimezone(calendar),
                         t.activityValue == null ? null : misc.toCurrency(t.activityValue),
                         null);
-                // TODO showing alert will be handled in https://fieldnation.atlassian.net/browse/MAR-1515
-//                if (t.webTransaction.isZombie()) {
-//                    view.setAlertVisible(true);
-//                }
+                if (t.webTransaction.isZombie()) {
+                    view.setAlertVisible(true);
+                }
 
                 break;
             }

@@ -21,12 +21,14 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
     private TextView _valueTitleTextView;
     private TextView _keyDescriptionTextView;
     private TextView _valueDescriptionTextView;
+    private TextView _alertTextView;
 
     // Data
     private String _keyTitle;
     private String _keyDescription;
     private String _valueTitle;
     private String _valueDescription;
+    private boolean _alertVisible = false;
 
     public ListItemTwoHorizTwoVertView(Context context) {
         super(context);
@@ -53,6 +55,7 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
         _valueTitleTextView = findViewById(R.id.valueTitle_textview);
         _keyDescriptionTextView = findViewById(R.id.keyDescription_textview);
         _valueDescriptionTextView = findViewById(R.id.valueDescription_textview);
+        _alertTextView = findViewById(R.id.alert);
 
         populateUi();
     }
@@ -77,6 +80,12 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
 
     public void set(String keyTitle, String valueTitle) {
         set(keyTitle, null, valueTitle, null);
+
+        populateUi();
+    }
+
+    public void setAlertVisible(boolean visible) {
+        _alertVisible = visible;
 
         populateUi();
     }
@@ -108,6 +117,13 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
             _valueDescriptionTextView.setVisibility(VISIBLE);
             _valueDescriptionTextView.setText(_valueDescription);
         }
+
+        if (_alertVisible) {
+            _alertTextView.setVisibility(VISIBLE);
+        } else {
+            _alertTextView.setVisibility(GONE);
+        }
+
 
     }
 }
