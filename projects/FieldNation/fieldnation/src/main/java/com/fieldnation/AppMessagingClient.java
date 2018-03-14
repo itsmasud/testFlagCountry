@@ -64,6 +64,10 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sub(this, ADDRESS_OFFLINE_MODE);
     }
 
+    public void subLowDiskSpace() {
+        PigeonRoost.sub(this, ADDRESS_LOW_DISK_SPACE);
+    }
+
     public void unsubGcm() {
         PigeonRoost.unsub(this, ADDRESS_GCM_MESSAGE);
     }
@@ -106,6 +110,10 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
 
     public void unsubOfflineMode() {
         PigeonRoost.unsub(this, ADDRESS_OFFLINE_MODE);
+    }
+
+    public void unsubLowDiskSpace() {
+        PigeonRoost.unsub(this, ADDRESS_LOW_DISK_SPACE);
     }
 
     public static void updateApp() {
@@ -173,6 +181,10 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sendMessage(ADDRESS_OFFLINE_MODE, bundle, Sticky.FOREVER);
     }
 
+    public static void lowDiskSpace() {
+        PigeonRoost.sendMessage(ADDRESS_LOW_DISK_SPACE, null, Sticky.NONE);
+    }
+
     @Override
     public void onMessage(String address, Object message) {
         switch (address) {
@@ -217,7 +229,13 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
             case ADDRESS_OFFLINE_MODE:
                 onOfflineMode(App.OfflineState.valueOf(((Bundle) message).getString("offline")));
                 break;
+            case ADDRESS_LOW_DISK_SPACE:
+                onLowDiskSpace();
+                break;
         }
+    }
+
+    public void onLowDiskSpace() {
     }
 
     public void onOfflineMode(App.OfflineState state) {

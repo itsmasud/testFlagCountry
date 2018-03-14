@@ -15,6 +15,7 @@ public interface AppMessagingConstants {
     String ADDRESS_USER_SWITCHED = "AppMessagingConstants:ADDRESS_USER_SWITCHED";
     String ADDRESS_SHOW_LOADING = "AppMessagingConstants:ADDRESS_SHOW_LOADING";
     String ADDRESS_OFFLINE_MODE = "AppMessagingConstants:ADDRESS_OFFLINE_MODE";
+    String ADDRESS_LOW_DISK_SPACE = "AppMessagingConstants:ADDRESS_LOW_DISK_SPACE";
 
     String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
     String PARAM_PROFILE = "PARAM_PROFILE";

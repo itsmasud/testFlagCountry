@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -51,6 +52,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
     private static final String DIALOG_OFFLINE_ASK = TAG_BASE + ".offlienAskDialog";
     private static final String DIALOG_SYNC_ASK = TAG_BASE + ".syncAskDialog";
+    private static final String DIALOG_NO_SPACE = TAG_BASE + ".noSpaceDialog";
 
     // Data
     private boolean _profileBounceProtect = false;
@@ -119,6 +121,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_OFFLINE_ASK, _offlineAsk_onPrimary);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_ASK, _syncAsk_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_ASK, _syncAsk_onSecondary);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_NO_SPACE, _noSpace_onPrimary);
 
         if (doPermissionsChecks()) {
             _permissionsListener.sub();
@@ -153,6 +156,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subFinishActivity();
         _appMessagingClient.subOfflineMode();
+        _appMessagingClient.subLowDiskSpace();
         ProfileClient.get(App.get());
 
         _activityRequestHandler.sub();
@@ -175,6 +179,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _appMessagingClient.unsubProfileInvalid();
         _appMessagingClient.unsubFinishActivity();
         _appMessagingClient.unsubOfflineMode();
+        _appMessagingClient.unsubLowDiskSpace();
 
         if (doAuthChecks())
             _authClient.unsubNeedUsernameAndPassword();
@@ -204,6 +209,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_OFFLINE_ASK, _offlineAsk_onPrimary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_ASK, _syncAsk_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_ASK, _syncAsk_onSecondary);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_NO_SPACE, _noSpace_onPrimary);
 
         if (doPermissionsChecks()) {
             _permissionsListener.unsub();
@@ -488,6 +494,28 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             } else if (state == App.OfflineState.UPLOADING) {
                 SyncProgressDialog.show(App.get());
             }
+        }
+
+        @Override
+        public void onLowDiskSpace() {
+            Intent intent = new Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS);
+            if (intent.resolveActivity(getPackageManager()) == null) {
+                OneButtonDialog.show(App.get(), DIALOG_NO_SPACE, "Not Enough Storage",
+                        "We cannot download your assigned work orders because there is not enough storage available. Please free up storage and try again.",
+                        "CLOSE", true);
+            } else {
+                TwoButtonDialog.show(App.get(), DIALOG_NO_SPACE, "Not Enough Storage",
+                        "We cannot download your assigned work orders because there is not enough storage available. Please free up storage and try again.",
+                        "SETTINGS", "CLOSE", true, null);
+            }
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _noSpace_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            Intent intent = new Intent(Settings.ACTION_INTERNAL_STORAGE_SETTINGS);
+            startActivity(intent);
         }
     };
 

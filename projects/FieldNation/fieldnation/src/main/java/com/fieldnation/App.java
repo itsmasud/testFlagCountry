@@ -61,6 +61,7 @@ import com.fieldnation.v2.data.model.SavedList;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -255,7 +256,14 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+//        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                fillDisk();
+//                Log.v(TAG, "FillDisk done");
+//            }
+//        }).start();
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
@@ -300,6 +308,10 @@ public class App extends Application {
             while (true) {
                 Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
                 Log.v(TAG, "OFFLINE: " + getOfflineState().name());
+                File f = new File(getStoragePath());
+                Log.v(TAG, "Size T:" + misc.humanReadableBytes(f.getTotalSpace())
+                        + " F:" + misc.humanReadableBytes(f.getFreeSpace())
+                        + " U:" + misc.humanReadableBytes(f.getUsableSpace()));
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
@@ -308,6 +320,33 @@ public class App extends Application {
             }
         }
     };
+
+    private void fillDisk() {
+        byte[] packet = new byte[1024 * 1024];
+
+        File folder = new File(getStoragePath());
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(getDownloadsFolder() + "/filler.dat", true);
+            while (folder.getUsableSpace() > 70000000) {
+                fos.write(packet);
+                fos.flush();
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (Exception ex1) {
+                    Log.v(TAG, ex1);
+                }
+        }
+    }
+
+    public boolean isDiskFull() {
+        return new File(App.get().getStoragePath()).getUsableSpace() <= 50000000;
+    }
 
     private SharedPreferences _userPreferences = null;
 
