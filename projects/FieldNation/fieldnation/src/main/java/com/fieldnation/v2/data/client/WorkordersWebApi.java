@@ -2751,9 +2751,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Allows an assigned provider to removes a discount they previously applied from a work order, increasing the amount they will be paid.
      *
      * @param workOrderId ID of work order
-     * @param discountId  ID of the discount
+     * @param discount    Payload of the discount
      */
-    public static void deleteDiscount(Context context, Integer workOrderId, Integer discountId, EventContext uiContext) {
+    public static void deleteDiscount(Context context, Integer workOrderId, PayModifier discount, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteDiscountByWorkOrder")
                 .label(workOrderId + "")
@@ -2761,23 +2761,45 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("discount_id")
-                .value(discountId)
+                .value(discount.getId())
                 .build()
         );
+
+        Log.e(TAG, "discount: " + discount.getJson());
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discount.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("discountId", discountId);
+            methodParams.put("discountId", discount.getId());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (discount != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        discount.getName());
+
+                activityValue = discount.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
+
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discount.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

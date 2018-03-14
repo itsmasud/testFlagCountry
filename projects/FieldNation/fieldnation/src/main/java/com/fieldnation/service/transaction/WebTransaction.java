@@ -91,7 +91,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         SHIPMENT("Shipment: "),
         SIGNATURE("Signature: "),
         CLOSING_NOTES("Closing Notes: "),
-        ATTACHMENT("Attachment: ");
+        ATTACHMENT("Attachment: "),
+        REMOVE("Remove: ");
 
         private String value;
 
