@@ -119,7 +119,7 @@ public class DownloadProgressDialog extends SimpleDialog {
     private final AppMessagingClient _appClient = new AppMessagingClient() {
         @Override
         public void onOfflineMode(App.OfflineState state) {
-            if (state == App.OfflineState.OFFLINE) {
+            if (state != App.OfflineState.DOWNLOADING) {
                 Log.v(TAG, "onOfflineMode");
                 dismiss(true);
             }
