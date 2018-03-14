@@ -126,6 +126,7 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
             case UnsyncedViewHolder.TYPE_TRANSACTION: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
                 view.setAlertVisible(false);
+                view.setTitleEllipse(true);
                 holder = new UnsyncedViewHolder(view);
                 holder.type = viewType;
 

@@ -1,6 +1,7 @@
 package com.fieldnation.v2.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -67,6 +68,16 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
         _valueTitleTextView.setEnabled(enabled);
         _keyDescriptionTextView.setEnabled(enabled);
         _valueDescriptionTextView.setEnabled(enabled);
+    }
+
+    public void setTitleEllipse(boolean isEllipsized){
+        if (isEllipsized) {
+            _keyTitleTextView.setEllipsize(TextUtils.TruncateAt.END);
+            _keyTitleTextView.setMaxLines(2);
+        } else {
+            _keyTitleTextView.setEllipsize(null);
+            _keyTitleTextView.setMaxLines(Integer.MAX_VALUE);
+        }
     }
 
     public void set(String keyTitle, String keyDescription, String valueTitle, String valueDescription) {
