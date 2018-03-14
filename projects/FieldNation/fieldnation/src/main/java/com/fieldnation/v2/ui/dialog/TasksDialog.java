@@ -357,7 +357,7 @@ public class TasksDialog extends FullScreenDialog {
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Task Shipment Add Dialog";
-            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
+            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment, uiContext);
         }
     };
 

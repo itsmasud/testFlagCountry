@@ -881,7 +881,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         @Override
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
+            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData), App.get().getSpUiContext());
         }
     };
 

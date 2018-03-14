@@ -257,6 +257,23 @@ public class AttachedFilesDialog extends FullScreenDialog {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
+    private Attachment findAttachmentById(int attachmentId) {
+        AttachmentFolder[] attachmentFolders = folders.getResults();
+        for (AttachmentFolder attachmentFolder : attachmentFolders) {
+            if (attachmentFolder.getResults().length > 0
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
+
+                Attachment[] attachments = attachmentFolder.getResults();
+                for (Attachment attachment : attachments) {
+                    if (attachment.getId() == attachmentId) return attachment;
+                }
+            }
+        }
+        return null;
+    }
+
     // Ui listeners
     private final AttachedFilesAdapter.Listener _attachmentFolder_listener = new AttachedFilesAdapter.Listener() {
         @Override
@@ -372,8 +389,9 @@ public class AttachedFilesDialog extends FullScreenDialog {
         @Override
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setLoading(true);
+            Attachment attachment = findAttachmentById(_selectedAttachmentId);
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _selectedAttachmentFolderId,
-                    _selectedAttachmentId, App.get().getSpUiContext());
+                    attachment, App.get().getSpUiContext());
         }
     };
 

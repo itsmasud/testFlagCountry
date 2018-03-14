@@ -2553,9 +2553,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      *
      * @param workOrderId  Work order id
      * @param folderId     Folder id
-     * @param attachmentId File id
+     * @param attachment   Payload of the attachment
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, EventContext uiContext) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, EventContext uiContext) {
         if (uiContext != null) {
             Tracker.event(context, new SimpleEvent.Builder()
                     .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
@@ -2573,16 +2573,28 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachment.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             methodParams.put("folderId", folderId);
-            methodParams.put("attachmentId", attachmentId);
+            methodParams.put("attachmentId", attachment.getId());
+
+            String activityName = null;
+
+            if (attachment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        attachment.getFile().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachment.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3519,9 +3531,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Deletes a shipment from a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId  Shipment id
+     * @param shipment    Payload of the shipment
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, EventContext uiContext) {
+    public static void deleteShipment(Context context, Integer workOrderId, Shipment shipment, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteShipmentByWorkOrderAndShipment")
                 .label(workOrderId + "")
@@ -3529,7 +3541,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("shipment_id")
-                .value(shipmentId)
+                .value(shipment.getId())
                 .build()
         );
 
@@ -3537,15 +3549,27 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipment.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("shipmentId", shipmentId);
+            methodParams.put("shipmentId", shipment.getId());
+
+            String activityName = null;
+
+            if (shipment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        shipment.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipment.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3618,9 +3642,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Delete signature by work order and signature
      *
      * @param workOrderId ID of work order
-     * @param signatureId ID of signature
+     * @param signature   Payload of the signature
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, EventContext uiContext) {
+    public static void deleteSignature(Context context, Integer workOrderId, Signature signature, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteSignatureByWorkOrderAndSignature")
                 .label(workOrderId + "")
@@ -3628,7 +3652,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("signature_id")
-                .value(signatureId)
+                .value(signature.getId())
                 .build()
         );
 
@@ -3636,15 +3660,27 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signature.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("signatureId", signatureId);
+            methodParams.put("signatureId", signature.getId());
+
+            String activityName = null;
+
+            if (signature != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        signature.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signature.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
