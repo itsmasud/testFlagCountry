@@ -2765,8 +2765,6 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .build()
         );
 
-        Log.e(TAG, "discount: " + discount.getJson());
-
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
