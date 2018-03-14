@@ -357,7 +357,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (attachment != null) {
                 activityName = WebTransaction.ActivityName.getActivityTitleByType(
                         WebTransaction.ActivityName.ATTACHMENT,
-                        attachment.getNotes());
+                        filename);
             }
 
             if (!misc.isEmptyOrNull(activityName)) {

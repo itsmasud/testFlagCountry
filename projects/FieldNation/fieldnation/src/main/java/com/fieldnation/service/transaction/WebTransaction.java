@@ -15,6 +15,7 @@ import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
@@ -99,7 +100,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
 
         public static String getActivityTitleByType(ActivityName activityType, String tailingString) {
-            return activityType.value + tailingString;
+            return activityType.value + (misc.isEmptyOrNull(tailingString) ? "" : tailingString);
         }
 
         public static ActivityName fromString(String value) {
