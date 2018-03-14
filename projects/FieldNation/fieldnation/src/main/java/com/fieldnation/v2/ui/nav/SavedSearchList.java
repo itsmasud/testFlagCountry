@@ -70,18 +70,12 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
-
-        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _workOrdersApi.unsub();
-        _appMessagingClient.unsubUserSwitched();
-
         super.onDetachedFromWindow();
     }
 
@@ -211,13 +205,6 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
                 populateUi();
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
-        }
-    };
-
-    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
-        @Override
-        public void onUserSwitched(Profile profile) {
-            WorkordersWebApi.getWorkOrderLists(App.get(), false, WebTransaction.Type.NORMAL);
         }
     };
 

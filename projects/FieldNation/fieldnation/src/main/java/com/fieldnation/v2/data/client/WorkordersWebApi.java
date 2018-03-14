@@ -6024,7 +6024,48 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/workorders/lists");
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?sticky=count");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/lists")
+                    .key(key)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params(topicId, WorkordersWebApi.class,
+                                    "getWorkOrderLists", methodParams))
+                    .useAuth(true)
+                    .setType(type)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key, topicId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getWorkOrderLists
+     * Pre-filters results by a certain category or type, settings by list are persisted with 'sticky' by user.
+     *
+     * @param type indicates that this call is low priority
+     */
+    public static void getWorkOrderLists(Context context, String list, boolean allowCacheResponse, WebTransaction.Type type) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/lists?sticky=count&list=" + list);
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?sticky=count&list=" + list);
 
             JsonObject methodParams = new JsonObject();
 
@@ -6110,7 +6151,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders")
-                    .urlParams("" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+                    .urlParams("?sticky=1" + (getWorkOrdersOptions.getList() != null ? "&list=" + getWorkOrdersOptions.getList() : "")
                             + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                             + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                             + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")

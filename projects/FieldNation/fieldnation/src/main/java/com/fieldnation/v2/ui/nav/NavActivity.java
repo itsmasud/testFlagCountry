@@ -175,6 +175,7 @@ public class NavActivity extends AuthSimpleActivity {
             _permissionsListener.sub();
         }
         _appClient.subOfflineMode();
+        _appClient.subUserSwitched();
 
         super.onStart();
         _recyclerView.onStart();
@@ -242,6 +243,7 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView.onStop();
         _permissionsListener.unsub();
         _appClient.unsubOfflineMode();
+        _appClient.unsubUserSwitched();
         super.onStop();
     }
 
@@ -334,7 +336,7 @@ public class NavActivity extends AuthSimpleActivity {
             _arrowTextView.setText(getString(R.string.icon_arrow_down));
             _toolbar.setOnClickListener(_toolbar_onClick);
             _searchesView.setEnabled(true);
-            WorkordersWebApi.getWorkOrderLists(App.get(), true, WebTransaction.Type.NORMAL);
+            WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), true, WebTransaction.Type.NORMAL);
             setNavTitle(_savedList);
 
             if (_inboxMenu != null) {
@@ -407,6 +409,11 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void onOfflineMode(App.OfflineState state) {
             populateUi();
+        }
+
+        @Override
+        public void onUserSwitched(Profile profile) {
+            WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), false, WebTransaction.Type.NORMAL);
         }
     };
 
