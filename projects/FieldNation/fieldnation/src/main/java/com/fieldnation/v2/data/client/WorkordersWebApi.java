@@ -1137,7 +1137,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
             }
 
-           WebTransaction transaction = new WebTransaction.Builder()
+            WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
                     .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addMessageByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/messages")
                     .priority(Priority.HIGH)
@@ -2551,9 +2551,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: deleteAttachmentByWorkOrderAndFolderAndAttachment
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
-     * @param attachment   Payload of the attachment
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param attachment  Payload of the attachment
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, EventContext uiContext) {
         if (uiContext != null) {
@@ -2832,7 +2832,6 @@ public abstract class WorkordersWebApi extends Pigeon {
      *
      * @param workOrderId ID of work order
      * @param expense     Payload of the expense
-
      */
     public static void deleteExpense(Context context, Integer workOrderId, Expense expense, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -7966,6 +7965,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("customFieldId", customFieldId);
             if (customField != null)
                 methodParams.put("customField", customField.getJson());
+
+            String activityName = null;
+
+            if (customField != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.CUSTOM_FIELD,
+                        customField.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
