@@ -2819,9 +2819,10 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId   ID of expense
+     * @param expense     Payload of the expense
+
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, EventContext uiContext) {
+    public static void deleteExpense(Context context, Integer workOrderId, Expense expense, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteExpenseByWorkOrderAndExpense")
                 .label(workOrderId + "")
@@ -2829,7 +2830,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("expense_id")
-                .value(expenseId)
+                .value(expense.getId())
                 .build()
         );
 
@@ -2837,15 +2838,34 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expense.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("expenseId", expenseId);
+            methodParams.put("expenseId", expense.getId());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (expense != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        expense.getDescription());
+
+                activityValue = expense.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expense.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
