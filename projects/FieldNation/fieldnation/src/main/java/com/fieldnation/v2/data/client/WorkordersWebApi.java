@@ -1131,7 +1131,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 methodParams.put("json", json.getJson());
                 activityName = WebTransaction.ActivityName.getActivityTitleByType(
                         WebTransaction.ActivityName.MESSAGE,
-                        json.getFrom().getName());
+                        json.getTo().getName());
             }
 
             if (!misc.isEmptyOrNull(activityName)) {

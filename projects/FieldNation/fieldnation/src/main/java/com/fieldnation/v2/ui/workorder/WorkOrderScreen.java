@@ -562,7 +562,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final View.OnClickListener _messagesMenuButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            ChatDialog.show(App.get(), _workOrderId);
+            ChatDialog.show(App.get(), _workOrderId, _workOrder.getCompany().getName());
         }
     };
 

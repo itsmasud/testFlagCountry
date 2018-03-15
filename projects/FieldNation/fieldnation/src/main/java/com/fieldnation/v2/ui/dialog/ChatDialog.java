@@ -27,7 +27,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
-import com.fieldnation.v2.data.model.MessageFrom;
+import com.fieldnation.v2.data.model.MessageTo;
 import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.ui.chat.ChatAdapter;
 import com.fieldnation.v2.ui.chat.ChatInputView;
@@ -52,6 +52,7 @@ public class ChatDialog extends FullScreenDialog {
 
     // Data
     private int _workOrderId;
+    private String _companyName;
     private boolean _isMarkedRead = false;
     private final ChatAdapter _adapter = new ChatAdapter();
 
@@ -98,6 +99,8 @@ public class ChatDialog extends FullScreenDialog {
 
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
         _workOrderId = params.getInt("workOrderId");
+        _companyName = params.getString("companyName");
+
         _refreshView.startRefreshing();
         WorkordersWebApi.getMessages(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         ProfileClient.get(App.get(), false);
@@ -168,8 +171,8 @@ public class ChatDialog extends FullScreenDialog {
             try {
                 Message msg = new Message();
                 msg.setMessage(_inputView.getInputText());
-                MessageFrom msgFrom = new MessageFrom();
-                msg.from(msgFrom.name(App.getProfile().getFirstname() + " " + App.getProfile().getLastname()));
+                MessageTo msgTo = new MessageTo();
+                msg.to(msgTo.name(_companyName));
                 WorkordersWebApi.addMessage(App.get(), _workOrderId, msg, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -281,9 +284,10 @@ public class ChatDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, int workOrderId) {
+    public static void show(Context context, int workOrderId, String companyName) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
+        params.putString("companyName", companyName);
         Controller.show(context, null, ChatDialog.class, params);
     }
 }
