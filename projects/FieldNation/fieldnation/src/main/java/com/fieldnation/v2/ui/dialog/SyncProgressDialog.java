@@ -40,6 +40,7 @@ public class SyncProgressDialog extends SimpleDialog {
     private boolean _running = false;
     private Handler _handler = new Handler();
     private boolean _scheduled = false;
+    private boolean _netWorkDown = false;
 
     public SyncProgressDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -78,6 +79,7 @@ public class SyncProgressDialog extends SimpleDialog {
             _total = WebTransaction.getSyncing().size();
 
         _cancelButton.setOnClickListener(_cancel_onClick);
+        _appClient.subNetworkState();
     }
 
     @Override
@@ -91,6 +93,13 @@ public class SyncProgressDialog extends SimpleDialog {
     public void onPause() {
         _running = false;
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        _appClient.unsubNetworkState();
+
+        super.onStop();
     }
 
     @Override
@@ -115,6 +124,12 @@ public class SyncProgressDialog extends SimpleDialog {
             _progressTextView.setVisibility(View.VISIBLE);
             _progressBar.setIndeterminate(true);
             _progressTextView.setText("Starting up...");
+        } else if (_netWorkDown) {
+            _titleTextView.setText("Sync Failed");
+            _bodyTextView.setText("Please check your network connection and try again");
+            _progressBar.setVisibility(View.GONE);
+            _progressTextView.setVisibility(View.GONE);
+            _cancelButton.setText("CLOSE");
         } else if (_remain == 0) {
             if (_zombie > 0) {
                 _titleTextView.setText("Sync Failed");
@@ -161,6 +176,20 @@ public class SyncProgressDialog extends SimpleDialog {
             populateUi();
             _scheduled = false;
             scheduleNext();
+        }
+    };
+
+    private final AppMessagingClient _appClient = new AppMessagingClient() {
+        @Override
+        public void onNetworkDisconnected() {
+            _netWorkDown = true;
+            populateUi();
+        }
+
+        @Override
+        public void onNetworkConnected() {
+            _netWorkDown = false;
+            populateUi();
         }
     };
 
