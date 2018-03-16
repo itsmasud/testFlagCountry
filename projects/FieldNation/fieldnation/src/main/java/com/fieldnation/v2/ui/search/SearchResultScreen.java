@@ -179,6 +179,10 @@ public class SearchResultScreen extends RelativeLayout {
         if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
             _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
 
+            if (page <= 1) {
+                WorkordersWebApi.getWorkOrderLists(App.get(), _workOrdersOptions.getList(), false, WebTransaction.Type.NORMAL);
+            }
+
             WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, WebTransaction.Type.NORMAL);
 
             if (_refreshView != null)
@@ -255,6 +259,8 @@ public class SearchResultScreen extends RelativeLayout {
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()) || isFlightBoard)
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
+                WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), false, WebTransaction.Type.NORMAL);
+
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
@@ -275,7 +281,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
-                WorkordersWebApi.getWorkOrderLists(App.get(), false, WebTransaction.Type.NORMAL);
+                WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), false, WebTransaction.Type.NORMAL);
 
                 _adapter.refreshAll();
                 post(new Runnable() {

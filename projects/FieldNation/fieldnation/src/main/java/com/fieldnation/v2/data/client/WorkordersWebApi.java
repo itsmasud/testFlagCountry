@@ -6183,7 +6183,48 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/workorders/lists");
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?sticky=count");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/lists")
+                    .key(key)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params(topicId, WorkordersWebApi.class,
+                                    "getWorkOrderLists", methodParams))
+                    .useAuth(true)
+                    .setType(type)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key, topicId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getWorkOrderLists
+     * Pre-filters results by a certain category or type, settings by list are persisted with 'sticky' by user.
+     *
+     * @param type indicates that this call is low priority
+     */
+    public static void getWorkOrderLists(Context context, String list, boolean allowCacheResponse, WebTransaction.Type type) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/lists?sticky=count&list=" + list);
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?sticky=count&list=" + list);
 
             JsonObject methodParams = new JsonObject();
 
@@ -6269,18 +6310,17 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders")
-                    .urlParams("" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+                    .urlParams("?sticky=1" + (getWorkOrdersOptions.getList() != null ? "&list=" + getWorkOrdersOptions.getList() : "")
                             + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                             + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                             + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
                             + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
-                            + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
                             + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
                             + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
                             + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
                             + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                             + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
-                            + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
+                            + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "&f_flightboard_tomorrow=")
                             + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                             + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                             + (getWorkOrdersOptions.getFWorkOrderId() != null ? "&f_work_order_id=" + getWorkOrdersOptions.getFWorkOrderId() : "")
@@ -6320,10 +6360,10 @@ public abstract class WorkordersWebApi extends Pigeon {
                             + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                             + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                             + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                            + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
+                            + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "&f_remote_work=")
                             + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
-                            + (getWorkOrdersOptions.getFLocationRadius() != null ? ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
-                            + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
+                            + (getWorkOrdersOptions.getFLocationRadius() != null ?
+                            ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0] + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "&f_location_radius[]=&f_location_radius[]=")
                     );
 
             JsonObject methodParams = new JsonObject();
