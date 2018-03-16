@@ -357,7 +357,7 @@ public class TasksDialog extends FullScreenDialog {
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Task Shipment Add Dialog";
-            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
+            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment, uiContext);
         }
     };
 
@@ -448,7 +448,7 @@ public class TasksDialog extends FullScreenDialog {
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
                     try {
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -460,7 +460,7 @@ public class TasksDialog extends FullScreenDialog {
 
                     try {
                         AppMessagingClient.setLoading(true);
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -492,7 +492,7 @@ public class TasksDialog extends FullScreenDialog {
                         Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                             try {
-                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                             } catch (Exception ex) {
                                 Log.v(TAG, ex);
                             }
@@ -518,7 +518,7 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         try {
-            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _currentTask.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _currentTask, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

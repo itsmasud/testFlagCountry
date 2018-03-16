@@ -248,7 +248,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                             _attachmentsShown = true;
                         }
                         if (_showMessages && !_messagesShown) {
-                            ChatDialog.show(App.get(), _workOrderId);
+                            ChatDialog.show(App.get(), _workOrderId, workOrder.getCompany().getName());
                             _showMessages = false;
                             _messagesShown = true;
                         }

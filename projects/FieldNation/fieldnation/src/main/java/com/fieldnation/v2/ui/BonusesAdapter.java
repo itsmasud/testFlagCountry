@@ -64,6 +64,8 @@ public class BonusesAdapter extends RecyclerView.Adapter<BonusViewHolder> {
             }
             case TYPE_BONUS: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new BonusViewHolder(view);
             }
         }

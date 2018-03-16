@@ -145,7 +145,7 @@ public class ShipmentListDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setLoading(true);
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, ((Shipment) extraData).getId(), App.get().getSpUiContext());
+            WorkordersWebApi.deleteShipment(App.get(), _workOrderId, ((Shipment) extraData), App.get().getSpUiContext());
         }
     };
 

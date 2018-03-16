@@ -144,14 +144,20 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
             }
             case TYPE_BONUS: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new EarnedPayViewHolder(view);
             }
             case TYPE_PENALTY: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new EarnedPayViewHolder(view);
             }
             case TYPE_EXPENSE: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new EarnedPayViewHolder(view);
             }
         }

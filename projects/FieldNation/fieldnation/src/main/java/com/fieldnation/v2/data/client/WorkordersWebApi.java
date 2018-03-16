@@ -89,6 +89,7 @@ import com.fieldnation.v2.data.model.WorkOrderOverview;
 import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
 import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.TaskTypeEnum;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -360,6 +361,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("timestamp", System.currentTimeMillis());
             methodParams.put("fileHash", storedObject.getHashHex());
 
+            String activityName = null;
+
+            if (attachment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.ATTACHMENT,
+                        filename);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addAttachmentByWorkOrderAndFolder/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
@@ -618,8 +631,25 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (json != null)
+            String activityName = null;
+            Double activityValue = null;
+
+            if (json != null) {
                 methodParams.put("json", json.getJson());
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.DISCOUNT,
+                        json.getDescription());
+
+                activityValue = json.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
@@ -670,6 +700,24 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (expense != null)
                 methodParams.put("expense", expense.getJson());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (expense != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.EXPENSE,
+                        expense.getDescription());
+
+                activityValue = expense.getAmount();
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
@@ -1076,8 +1124,19 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (json != null)
+
+            String activityName = null;
+
+            if (json != null) {
                 methodParams.put("json", json.getJson());
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.MESSAGE,
+                        json.getTo().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
@@ -1434,6 +1493,19 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (shipment != null)
                 methodParams.put("shipment", shipment.getJson());
 
+
+            String activityName = null;
+
+            if (shipment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.SHIPMENT,
+                        shipment.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
                     .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addShipmentByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/shipments")
@@ -1536,6 +1608,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (signature != null)
                 methodParams.put("signature", signature.getJson());
+
+            String activityName = null;
+
+            if (signature != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.SIGNATURE,
+                        signature.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
@@ -2468,11 +2552,11 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: deleteAttachmentByWorkOrderAndFolderAndAttachment
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
-     * @param attachmentId File id
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param attachment  Payload of the attachment
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, EventContext uiContext) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, EventContext uiContext) {
         if (uiContext != null) {
             Tracker.event(context, new SimpleEvent.Builder()
                     .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
@@ -2490,16 +2574,28 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachment.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             methodParams.put("folderId", folderId);
-            methodParams.put("attachmentId", attachmentId);
+            methodParams.put("attachmentId", attachment.getId());
+
+            String activityName = null;
+
+            if (attachment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        attachment.getFile().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachment.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2668,9 +2764,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Allows an assigned provider to removes a discount they previously applied from a work order, increasing the amount they will be paid.
      *
      * @param workOrderId ID of work order
-     * @param discountId  ID of the discount
+     * @param discount    Payload of the discount
      */
-    public static void deleteDiscount(Context context, Integer workOrderId, Integer discountId, EventContext uiContext) {
+    public static void deleteDiscount(Context context, Integer workOrderId, PayModifier discount, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteDiscountByWorkOrder")
                 .label(workOrderId + "")
@@ -2678,7 +2774,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("discount_id")
-                .value(discountId)
+                .value(discount.getId())
                 .build()
         );
 
@@ -2686,15 +2782,35 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discount.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("discountId", discountId);
+            methodParams.put("discountId", discount.getId());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (discount != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        discount.getName());
+
+                activityValue = discount.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
+
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discount.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2716,9 +2832,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId   ID of expense
+     * @param expense     Payload of the expense
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, EventContext uiContext) {
+    public static void deleteExpense(Context context, Integer workOrderId, Expense expense, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteExpenseByWorkOrderAndExpense")
                 .label(workOrderId + "")
@@ -2726,7 +2842,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("expense_id")
-                .value(expenseId)
+                .value(expense.getId())
                 .build()
         );
 
@@ -2734,15 +2850,34 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expense.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("expenseId", expenseId);
+            methodParams.put("expenseId", expense.getId());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (expense != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        expense.getDescription());
+
+                activityValue = expense.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expense.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3396,9 +3531,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Deletes a shipment from a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId  Shipment id
+     * @param shipment    Payload of the shipment
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, EventContext uiContext) {
+    public static void deleteShipment(Context context, Integer workOrderId, Shipment shipment, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteShipmentByWorkOrderAndShipment")
                 .label(workOrderId + "")
@@ -3406,7 +3541,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("shipment_id")
-                .value(shipmentId)
+                .value(shipment.getId())
                 .build()
         );
 
@@ -3414,15 +3549,27 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipment.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("shipmentId", shipmentId);
+            methodParams.put("shipmentId", shipment.getId());
+
+            String activityName = null;
+
+            if (shipment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        shipment.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipment.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3495,9 +3642,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Delete signature by work order and signature
      *
      * @param workOrderId ID of work order
-     * @param signatureId ID of signature
+     * @param signature   Payload of the signature
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, EventContext uiContext) {
+    public static void deleteSignature(Context context, Integer workOrderId, Signature signature, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteSignatureByWorkOrderAndSignature")
                 .label(workOrderId + "")
@@ -3505,7 +3652,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("signature_id")
-                .value(signatureId)
+                .value(signature.getId())
                 .build()
         );
 
@@ -3513,15 +3660,27 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signature.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("signatureId", signatureId);
+            methodParams.put("signatureId", signature.getId());
+
+            String activityName = null;
+
+            if (signature != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        signature.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signature.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -7848,6 +8007,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (customField != null)
                 methodParams.put("customField", customField.getJson());
 
+            String activityName = null;
+
+            if (customField != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.CUSTOM_FIELD,
+                        customField.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
@@ -9449,10 +9620,10 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Updates a work order's task
      *
      * @param workOrderId Work order id
-     * @param taskId      Task id
+     * @param task        Payload of the Task
      * @param json        JSON Model
      */
-    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json, EventContext uiContext) {
+    public static void updateTask(Context context, Integer workOrderId, Task task, Task json, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("updateTaskByWorkOrder")
                 .label(workOrderId + "")
@@ -9460,7 +9631,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("task_id")
-                .value(taskId)
+                .value(task.getId())
                 .build()
         );
 
@@ -9468,20 +9639,31 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + task.getId());
 
             if (json != null)
                 builder.body(json.getJson().toString());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("taskId", taskId);
+            methodParams.put("taskId", task.getId());
             if (json != null)
                 methodParams.put("json", json.getJson());
 
+
+            String activityName = null;
+
+            if (task != null) {
+                activityName = TaskTypeEnum.getActivityName(task);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
-                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTaskByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId)
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTaskByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/tasks/" + task.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -9716,6 +9898,18 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("workOrderId", workOrderId);
             if (closingNotes != null)
                 methodParams.put("closingNotes", closingNotes);
+
+            String activityName = null;
+
+            if (!misc.isEmptyOrNull(closingNotes)) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.CLOSING_NOTES,
+                        closingNotes);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")

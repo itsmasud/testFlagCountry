@@ -161,7 +161,7 @@ public class SignatureListDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setLoading(true);
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
+            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData), App.get().getSpUiContext());
         }
     };
 

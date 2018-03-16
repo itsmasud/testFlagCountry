@@ -125,6 +125,8 @@
     <string name="btn_withdraw">WITHDRAW</string>
     <string name="btn_yes">YES</string>
 
+    <string name="complete_tasks">Complete tasks</string>
+
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
     <string name="complete">Complete</string>
