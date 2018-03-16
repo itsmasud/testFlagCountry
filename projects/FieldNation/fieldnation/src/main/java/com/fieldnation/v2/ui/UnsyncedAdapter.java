@@ -161,7 +161,7 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                         sdf.format(calendar.getTime()) + DateUtils.getDeviceTimezone(calendar),
                         t.activityValue == null ? null : misc.toCurrency(t.activityValue),
                         null);
-                if (t.webTransaction.isZombie()) {
+                if (t.webTransaction.isZombie() || t.webTransaction.getTryCount() > 0) {
                     view.setAlertVisible(true);
                 }
 
