@@ -15,6 +15,7 @@ import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
@@ -76,6 +77,44 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public enum Type {
         ANY, NORMAL, CRAWLER, SYNC
     }
+
+
+    public enum ActivityType {
+        ACTIVITY_NAME,
+        ACTIVITY_VALUE;
+    }
+
+    public enum ActivityName {
+        DISCOUNT("Discount: "),
+        EXPENSE("Expense: "),
+        MESSAGE("Message: "),
+        SHIPMENT("Shipment: "),
+        SIGNATURE("Signature: "),
+        CLOSING_NOTES("Closing Notes: "),
+        ATTACHMENT("Attachment: "),
+        CUSTOM_FIELD("Custom Field: "),
+        REMOVE("Removed: ");
+
+        private String value;
+
+        ActivityName(String activityName) {
+            this.value = activityName;
+        }
+
+        public static String getActivityTitleByType(ActivityName activityType, String tailingString) {
+            return activityType.value + (misc.isEmptyOrNull(tailingString) ? "" : tailingString);
+        }
+
+        public static ActivityName fromString(String value) {
+            ActivityName[] values = values();
+            for (ActivityName v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+    }
+
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/

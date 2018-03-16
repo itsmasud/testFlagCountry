@@ -148,7 +148,7 @@ public class DiscountListDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setLoading(true);
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData).getId(), App.get().getSpUiContext());
+            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData), App.get().getSpUiContext());
         }
     };
 

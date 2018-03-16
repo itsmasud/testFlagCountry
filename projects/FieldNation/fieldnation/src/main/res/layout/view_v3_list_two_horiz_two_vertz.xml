@@ -38,12 +38,11 @@
                 android:visibility="visible" />
         </LinearLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/rightside_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:gravity="right"
             android:orientation="vertical">
 
             <TextView
@@ -52,6 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Value title"
+                android:layout_alignRight="@+id/valueDescription_textview"
                 android:textColor="@color/fn_light_text_statefull" />
 
             <TextView
@@ -60,10 +60,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:layout_below="@+id/valueTitle_textview"
                 android:text="value description"
                 android:textColor="@color/fn_light_text_statefull"
                 android:visibility="visible" />
-        </LinearLayout>
+
+            <com.fieldnation.ui.IconFontTextView
+                android:id="@+id/alert"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingBottom="16dp"
+                android:paddingRight="16dp"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/valueTitle_textview"
+                android:text="@string/icon_notifications"
+                android:textColor="@color/fn_red"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+
+
     </RelativeLayout>
 
     <View style="@style/DividerFull" />

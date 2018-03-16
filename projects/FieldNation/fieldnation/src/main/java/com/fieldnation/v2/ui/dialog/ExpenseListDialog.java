@@ -153,7 +153,7 @@ public class ExpenseListDialog extends FullScreenDialog {
         public void onPrimary(Parcelable extraData) {
             AppMessagingClient.setLoading(true);
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            WorkordersWebApi.deleteExpense(App.get(), _workOrderId, ((Expense) extraData).getId(), App.get().getSpUiContext());
+            WorkordersWebApi.deleteExpense(App.get(), _workOrderId, ((Expense) extraData), App.get().getSpUiContext());
         }
     };
 

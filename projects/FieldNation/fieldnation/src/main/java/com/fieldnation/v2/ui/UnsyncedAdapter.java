@@ -9,6 +9,7 @@ import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.ui.workorder.WorkOrderActivity;
@@ -46,14 +47,16 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
         public WebTransaction webTransaction;
         public int workOrderId;
         public long timestamp;
-        public String apiFunction;
+        public String activityName;
+        public Double activityValue;
 
-        public Tuple(int type, WebTransaction webTransaction, int workOrderId, long timestamp, String apiFunction) {
+        public Tuple(int type, WebTransaction webTransaction, int workOrderId, long timestamp, String activityName, Double activityValue) {
             this.type = type;
             this.webTransaction = webTransaction;
             this.workOrderId = workOrderId;
             this.timestamp = timestamp;
-            this.apiFunction = apiFunction;
+            this.activityName = activityName;
+            this.activityValue = activityValue;
         }
 
         public Tuple(int type, int workOrderId) {
@@ -86,8 +89,11 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
             try {
                 TransactionParams tl = TransactionParams.fromJson(new JsonObject(wt.getListenerParams()));
                 int workOrderId = tl.getMethodParamInt("workOrderId");
+                String activityName = tl.getMethodParamString(WebTransaction.ActivityType.ACTIVITY_NAME.name());
+                Double activityValue = tl.getMethodParamDouble(WebTransaction.ActivityType.ACTIVITY_VALUE.name());
+
                 getList(workOrderId).add(new Tuple(UnsyncedViewHolder.TYPE_TRANSACTION, wt,
-                        workOrderId, wt.getCreatedTime(), tl.apiFunction));
+                        workOrderId, wt.getCreatedTime(), activityName, activityValue));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -118,12 +124,12 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 break;
             }
             case UnsyncedViewHolder.TYPE_TRANSACTION: {
-                ListItemTwoVertView view = new ListItemTwoVertView(parent.getContext());
+                ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
                 view.setAlertVisible(false);
-                view.setActionVisible(false);
-                view.setProgressVisible(false);
+                view.setTitleEllipse(true);
                 holder = new UnsyncedViewHolder(view);
                 holder.type = viewType;
+
                 break;
             }
             case UnsyncedViewHolder.TYPE_VIEW_WO: {
@@ -146,15 +152,19 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 break;
             }
             case UnsyncedViewHolder.TYPE_TRANSACTION: {
-                ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
+                ListItemTwoHorizTwoVertView view = (ListItemTwoHorizTwoVertView) holder.itemView;
                 Tuple t = transactions.get(position);
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(t.timestamp);
 
-                view.set(t.apiFunction, sdf.format(calendar.getTime()) + DateUtils.getDeviceTimezone(calendar));
+                view.set(t.activityName,
+                        sdf.format(calendar.getTime()) + DateUtils.getDeviceTimezone(calendar),
+                        t.activityValue == null ? null : misc.toCurrency(t.activityValue),
+                        null);
                 if (t.webTransaction.isZombie()) {
                     view.setAlertVisible(true);
                 }
+
                 break;
             }
             case UnsyncedViewHolder.TYPE_VIEW_WO: {

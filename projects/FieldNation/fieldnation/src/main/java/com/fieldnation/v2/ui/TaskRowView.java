@@ -272,7 +272,7 @@ public class TaskRowView extends RelativeLayout {
                     break;
 
                 case UNIQUE_TASK: // unique task
-                    _keyTextView.setText("Complete tasks");
+                    _keyTextView.setText(getResources().getString(R.string.complete_tasks));
                     _rightValueTextView.setVisibility(GONE);
                     if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);

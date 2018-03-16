@@ -349,6 +349,7 @@ public class CustomFieldDialog extends SimpleDialog {
 
                 CustomField cf = new CustomField();
                 cf.setValue(value);
+                cf.setName(_customField.getName());
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Custom Field Dialog";

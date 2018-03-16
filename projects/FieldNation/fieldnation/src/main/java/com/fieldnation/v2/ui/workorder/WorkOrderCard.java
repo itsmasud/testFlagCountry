@@ -936,7 +936,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getId());
-            ChatDialog.show(App.get(), _workOrder.getId());
+            ChatDialog.show(App.get(), _workOrder.getId(), _workOrder.getCompany().getName());
         }
     };
 
