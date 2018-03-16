@@ -93,7 +93,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         CLOSING_NOTES("Closing Notes: "),
         ATTACHMENT("Attachment: "),
         CUSTOM_FIELD("Custom Field: "),
-        REMOVE("Remove: ");
+        REMOVE("Removed: ");
 
         private String value;
 
