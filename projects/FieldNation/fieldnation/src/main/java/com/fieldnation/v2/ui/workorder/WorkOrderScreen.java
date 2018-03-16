@@ -562,7 +562,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final View.OnClickListener _messagesMenuButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View view) {
-            ChatDialog.show(App.get(), _workOrderId);
+            ChatDialog.show(App.get(), _workOrderId, _workOrder.getCompany().getName());
         }
     };
 
@@ -881,7 +881,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         @Override
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData).getId(), App.get().getSpUiContext());
+            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData), App.get().getSpUiContext());
         }
     };
 

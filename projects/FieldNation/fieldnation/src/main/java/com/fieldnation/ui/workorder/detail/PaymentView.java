@@ -48,6 +48,8 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
             return;
 
         _payView = findViewById(R.id.pay_summary_view);
+        _payView.setAlertVisible(false);
+        _payView.setTitleEllipse(false);
         _renderers.add((WorkOrderRenderer) findViewById(R.id.penalty_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.bonus_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.insurance_summary_view));
