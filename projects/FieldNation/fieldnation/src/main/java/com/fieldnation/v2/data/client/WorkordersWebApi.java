@@ -6317,10 +6317,10 @@ public abstract class WorkordersWebApi extends Pigeon {
                             + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
                             + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
                             + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
-                            + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                            + "&f_="
                             + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                             + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
-                            + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "&f_flightboard_tomorrow=")
+                            + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
                             + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                             + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                             + (getWorkOrdersOptions.getFWorkOrderId() != null ? "&f_work_order_id=" + getWorkOrdersOptions.getFWorkOrderId() : "")
@@ -6360,10 +6360,10 @@ public abstract class WorkordersWebApi extends Pigeon {
                             + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                             + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                             + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                            + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "&f_remote_work=")
+                            + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                             + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
                             + (getWorkOrdersOptions.getFLocationRadius() != null ?
-                            ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0] + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "&f_location_radius[]=&f_location_radius[]=")
+                            ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0] + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
                     );
 
             JsonObject methodParams = new JsonObject();
