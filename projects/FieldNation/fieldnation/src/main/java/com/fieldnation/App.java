@@ -306,12 +306,14 @@ public class App extends Application {
         @Override
         public void run() {
             while (true) {
-                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
-                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
-                File f = new File(getStoragePath());
-                Log.v(TAG, "Size T:" + misc.humanReadableBytes(f.getTotalSpace())
-                        + " F:" + misc.humanReadableBytes(f.getFreeSpace())
-                        + " U:" + misc.humanReadableBytes(f.getUsableSpace()));
+//                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+//                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
+//                File f = new File(getStoragePath());
+//                Log.v(TAG, "Size T:" + misc.humanReadableBytes(f.getTotalSpace())
+//                        + " F:" + misc.humanReadableBytes(f.getFreeSpace())
+//                        + " U:" + misc.humanReadableBytes(f.getUsableSpace()));
+
+                Log.v(TAG, "LOOPER QUEUE  " + Looper.getMainLooper().getQueue().);
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {

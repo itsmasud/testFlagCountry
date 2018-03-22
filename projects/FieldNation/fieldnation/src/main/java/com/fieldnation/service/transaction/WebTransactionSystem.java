@@ -62,9 +62,9 @@ public class WebTransactionSystem implements WebTransactionConstants {
 
         int threadCount = 4;
         if (App.get().isLowMemDevice()) {
-            threadCount = 4;
+            threadCount = 2;
         } else {
-            threadCount = 8;
+            threadCount = 4;
         }
 
         _authClient.subAuthStateChange();
