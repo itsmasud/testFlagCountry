@@ -255,8 +255,8 @@ public class App extends Application {
         // set the app's install date
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
-        // new Thread(_anrReport).start();
-//        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        new Thread(_anrReport).start();
+        //new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
 //        new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -306,14 +306,12 @@ public class App extends Application {
         @Override
         public void run() {
             while (true) {
-//                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
-//                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
-//                File f = new File(getStoragePath());
-//                Log.v(TAG, "Size T:" + misc.humanReadableBytes(f.getTotalSpace())
-//                        + " F:" + misc.humanReadableBytes(f.getFreeSpace())
-//                        + " U:" + misc.humanReadableBytes(f.getUsableSpace()));
-
-                Log.v(TAG, "LOOPER QUEUE  " + Looper.getMainLooper().getQueue().);
+                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
+                File f = new File(getStoragePath());
+                Log.v(TAG, "Size T:" + misc.humanReadableBytes(f.getTotalSpace())
+                        + " F:" + misc.humanReadableBytes(f.getFreeSpace())
+                        + " U:" + misc.humanReadableBytes(f.getUsableSpace()));
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {

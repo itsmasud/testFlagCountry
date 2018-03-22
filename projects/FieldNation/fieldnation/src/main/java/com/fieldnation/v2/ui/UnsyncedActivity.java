@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -44,6 +45,9 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     // Data
     private UnsyncedAdapter _unsyncedAdapter = new UnsyncedAdapter();
 
+    private boolean _runTimer = false;
+    private boolean _isRunning = false;
+    private Handler _handler = new Handler();
 
     @Override
     public int getLayoutResource() {
@@ -69,6 +73,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         _recyclerView.setAdapter(_unsyncedAdapter);
 
         setTitle("Unsynced Activity");
+        _runTimer = true;
     }
 
     @Override
@@ -78,21 +83,24 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            _unsyncedAdapter.refresh();
+            startTimer();
         }
     };
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.v(TAG, "onStart");
         LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
         _unsyncedAdapter.refresh();
         _appMessagingClient.subOfflineMode();
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
+        startTimer();
     }
 
     @Override
     protected void onResume() {
+        startTimer();
         super.onResume();
     }
 
@@ -106,8 +114,28 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
         _appMessagingClient.unsubOfflineMode();
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
+        _runTimer = false;
         super.onStop();
     }
+
+    private void startTimer() {
+        if (_runTimer && !_isRunning) {
+            _isRunning = true;
+            _handler.postDelayed(_timer, 500);
+        }
+    }
+
+    private final Runnable _timer = new Runnable() {
+        @Override
+        public void run() {
+            if (!_runTimer)
+                return;
+
+            _unsyncedAdapter.refresh();
+
+            _isRunning = false;
+        }
+    };
 
     @Override
     public int getToolbarId() {
