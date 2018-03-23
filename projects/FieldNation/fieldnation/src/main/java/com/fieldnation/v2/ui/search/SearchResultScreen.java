@@ -259,7 +259,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()) || isFlightBoard)
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
-                WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), false, WebTransaction.Type.NORMAL);
+                WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getId(), false, WebTransaction.Type.NORMAL);
 
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
@@ -281,7 +281,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                     return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
 
-                WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), false, WebTransaction.Type.NORMAL);
+                WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getId(), false, WebTransaction.Type.NORMAL);
 
                 _adapter.refreshAll();
                 post(new Runnable() {
@@ -407,6 +407,8 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onOk(FilterParams filterParams) {
             _filterParams = filterParams;
+            _envelope = null;
+            _adapter.clear();
             _adapter.refreshAll();
         }
     };

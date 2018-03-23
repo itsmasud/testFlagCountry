@@ -413,7 +413,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         @Override
         public void onUserSwitched(Profile profile) {
-            WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), false, WebTransaction.Type.NORMAL);
+            WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getId(), false, WebTransaction.Type.NORMAL);
         }
     };
 
