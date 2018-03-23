@@ -18,6 +18,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.User;
 
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -51,6 +52,10 @@ public class OAuth implements Parcelable {
     private String _error;
     @Json(name = "error_description")
     private String _errorDescription;
+    @Json(name = "user")
+    private User _user;
+
+
 
     public OAuth() {
     }
@@ -104,6 +109,15 @@ public class OAuth implements Parcelable {
     public String getErrorDescription() {
         try {
             return _errorDescription;
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
+    public User getUser() {
+        try {
+            return _user;
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -238,6 +252,9 @@ public class OAuth implements Parcelable {
         token.put("host", host);
         OAuth auth = OAuth.fromJson(token);
         auth.save();
+
+        Log.e(TAG, "user: " + auth.getUser().getJson());
+
         return auth;
     }
 
