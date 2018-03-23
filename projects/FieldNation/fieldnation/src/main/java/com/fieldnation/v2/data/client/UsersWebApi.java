@@ -391,20 +391,20 @@ public abstract class UsersWebApi extends Pigeon {
      * Swagger operationId: getUser
      * Returns summary details about a user profile.
      *
-     * @param user User ID
+     * @param userId User ID
      * @param type indicates that this call is low priority
      */
-    public static void getUser(Context context, String user, boolean allowCacheResponse, WebTransaction.Type type) {
+    public static void getUser(Context context, Long userId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + user);
+            String key = misc.md5("GET//api/rest/v2/users/" + userId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/users/" + user);
+                    .path("/api/rest/v2/users/" + userId);
 
             JsonObject methodParams = new JsonObject();
-            methodParams.put("user", user);
+            methodParams.put("user", userId);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user}")

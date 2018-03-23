@@ -56,6 +56,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
+import com.fieldnation.v2.data.client.UsersWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CheckInOut;
@@ -299,6 +300,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     public void onStart() {
         Log.v(TAG, "onStart");
 
+        UsersWebApi.getUser(App.get(),  App.getProfileId(), false, WebTransaction.Type.NORMAL);
+
         _toolbar.getMenu().clear();
         _toolbar.inflateMenu(R.menu.wod);
         _toolbar.setTitle("WO LOADING...");
@@ -315,6 +318,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
+        _usersWebApi.sub();
 
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
@@ -359,6 +363,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
         _workOrderApi.unsub();
+        _usersWebApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
         if (_activityResultListener != null) _activityResultListener.unsub();
     }
@@ -1171,6 +1176,23 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                 setLoading(false);
             }
             return false;
+        }
+    };
+
+    private final UsersWebApi _usersWebApi = new UsersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getUser");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            Log.e(TAG, "onComplete");
+
+            if (methodName.contains("getUser") && success) {
+                Log.e(TAG, "getUser success");
+//                setLoading(false);
+            }
         }
     };
 }
