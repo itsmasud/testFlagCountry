@@ -130,6 +130,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (getOfflineBarId() != 0)
             findViewById(getOfflineBarId()).setOnClickListener(_offline_onClick);
+
+        if (App.get().getOfflineState() == App.OfflineState.DOWNLOADING) {
+            DownloadProgressDialog.show(App.get());
+        } else if (App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+            SyncProgressDialog.show(App.get());
+        }
     }
 
     @Override

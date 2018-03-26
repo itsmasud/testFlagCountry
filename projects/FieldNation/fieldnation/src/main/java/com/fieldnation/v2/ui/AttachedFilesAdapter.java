@@ -9,6 +9,8 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -102,20 +104,49 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private List<PausedUploadTuple> pausedUploads = new LinkedList<>();
 
     public void setPausedUploads(List<WebTransaction> webTransactions) {
-        pausedUploads.clear();
+        new PausedUploadsTask(this).executeEx(webTransactions);
+    }
 
-        for (WebTransaction webTransaction : webTransactions) {
-            try {
-                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+    private static class PausedUploadsTask extends AsyncTaskEx<Object, Object, Object> {
+        private AttachedFilesAdapter adapter;
 
-                if (params != null && params.apiFunction != null && "addAttachment".equals(params.apiFunction))
-                    pausedUploads.add(new PausedUploadTuple(webTransaction));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+        public PausedUploadsTask(AttachedFilesAdapter adapter) {
+            this.adapter = adapter;
         }
-        rebuild();
-        notifyDataSetChanged();
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+            List<WebTransaction> webTransactions = (List<WebTransaction>) objects[0];
+
+            Stopwatch stopwatch = new Stopwatch(true);
+            List<PausedUploadTuple> list = new LinkedList<>();
+            list.clear();
+            Log.v(TAG, "setPausedUploads 1 " + stopwatch.finishAndRestart());
+
+            for (WebTransaction webTransaction : webTransactions) {
+                try {
+                    TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+                    if (params != null && params.apiFunction != null && "addAttachment".equals(params.apiFunction))
+                        list.add(new PausedUploadTuple(webTransaction));
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+                Log.v(TAG, "setPausedUploads 2 " + stopwatch.finishAndRestart());
+            }
+
+            return list;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            adapter.pausedUploads.clear();
+            adapter.pausedUploads.addAll((List<PausedUploadTuple>) o);
+            adapter.rebuild();
+            adapter.notifyDataSetChanged();
+
+            super.onPostExecute(o);
+        }
     }
 
     /*-*********+***********************-*/

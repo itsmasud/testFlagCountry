@@ -9,6 +9,7 @@ import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -83,8 +84,11 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
     }
 
     public void refresh() {
+        Stopwatch stopwatch = new Stopwatch(true);
         webTransactions.clear();
         List<WebTransaction> list = WebTransaction.getSyncing();
+
+
         for (WebTransaction wt : list) {
             try {
                 TransactionParams tl = TransactionParams.fromJson(new JsonObject(wt.getListenerParams()));
@@ -107,6 +111,8 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
             transactions.addAll(webTransactions.get(key));
             transactions.add(new Tuple(UnsyncedViewHolder.TYPE_VIEW_WO, key));
         }
+
+        Log.v(TAG, "refresh time " + stopwatch.finish());
 
         notifyDataSetChanged();
     }

@@ -180,7 +180,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
             Log.v(TAG, "cleanZombies time: " + sw.finishAndRestart());
             adapter.setFailedUploads(WebTransaction.getZombies());
             Log.v(TAG, "setFailedUploads time: " + sw.finishAndRestart());
-            adapter.setPausedUploads(WebTransaction.getPaused());
+            adapter.setPausedUploads(WebTransaction.getPaused("%addAttachmentByWorkOrderAndFolder%/workorders/" + _workOrderId + "/attachments/%"));
             Log.v(TAG, "setPausedUploads time: " + sw.finishAndRestart());
         } finally {
             Log.v(TAG, "populateUi time: " + stopwatch.finish());
