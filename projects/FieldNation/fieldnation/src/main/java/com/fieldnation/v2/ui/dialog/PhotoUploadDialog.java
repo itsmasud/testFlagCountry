@@ -86,8 +86,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private ProgressBar _progressBar;
     private RelativeLayout _noPreviewLayout;
     private TextView _iconTextView;
-    private RelativeLayout _compressLayout;
-    private Switch _compressSwitch;
+    private RelativeLayout _fullrezLayout;
+    private Switch _fullrezSwitch;
 
     // Data user entered
     private String _newFileName;
@@ -245,8 +245,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _noPreviewLayout = v.findViewById(R.id.previewUnavailable_view);
         _iconTextView = v.findViewById(R.id.icon_textview);
 
-        _compressLayout = v.findViewById(R.id.switch_layout);
-        _compressSwitch = v.findViewById(R.id.compress_switch);
+        _fullrezLayout = v.findViewById(R.id.switch_layout);
+        _fullrezSwitch = v.findViewById(R.id.fullrez_switch);
 
         return v;
     }
@@ -265,9 +265,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _noPreviewLayout.setOnClickListener(_preview_onClick);
         _progressBar.setOnClickListener(_preview_onClick);
 
-        _compressLayout.setOnClickListener(_compress_onClick);
-        _compressSwitch.setClickable(false);
-        _compressSwitch.setChecked(true);
+        _fullrezLayout.setOnClickListener(_fullrez_onClick);
+        _fullrezSwitch.setClickable(false);
+        _fullrezSwitch.setChecked(false);
     }
 
     @Override
@@ -372,7 +372,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _cacheSize = savedState.getLong(STATE_CACHED_SIZE);
 
             if (savedState.containsKey(STATE_COMPRESS_CHECKED))
-                _compressSwitch.setChecked(savedState.getBoolean(STATE_COMPRESS_CHECKED));
+                _fullrezSwitch.setChecked(savedState.getBoolean(STATE_COMPRESS_CHECKED));
         }
     }
 
@@ -399,7 +399,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
         if (_cacheSize > 0)
             outState.putLong(STATE_CACHED_SIZE, _cacheSize);
 
-        outState.putBoolean(STATE_COMPRESS_CHECKED, _compressSwitch.isChecked());
+        outState.putBoolean(STATE_COMPRESS_CHECKED, _fullrezSwitch.isChecked());
     }
 
     @Override
@@ -437,15 +437,18 @@ public class PhotoUploadDialog extends FullScreenDialog {
             _imageView.setVisibility(View.VISIBLE);
             _imageView.setImageBitmap(_bitmap);
             _noPreviewLayout.setVisibility(View.GONE);
+            _fullrezLayout.setVisibility(View.VISIBLE);
         } else if (_hideImageView) {
             _progressBar.setVisibility(View.GONE);
             _imageView.setVisibility(View.INVISIBLE);
             _noPreviewLayout.setVisibility(View.VISIBLE);
             _iconTextView.setText(getIcon(_extension));
+            _fullrezLayout.setVisibility(View.GONE);
         } else {
             _progressBar.setVisibility(View.VISIBLE);
             _imageView.setVisibility(View.INVISIBLE);
             _noPreviewLayout.setVisibility(View.GONE);
+            _fullrezLayout.setVisibility(View.GONE);
         }
 
         _descriptionEditText.setText(misc.isEmptyOrNull(_description) ? "" : _description);
@@ -467,10 +470,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _compress_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _fullrez_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            _compressSwitch.setChecked(!_compressSwitch.isChecked());
+            _fullrezSwitch.setChecked(!_fullrezSwitch.isChecked());
         }
     };
 
@@ -590,7 +593,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     attachment.notes(_description);
                     attachment.file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri, _compressSwitch.isChecked());
+                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri, !_fullrezSwitch.isChecked());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }

@@ -122,7 +122,8 @@
                 android:layout_below="@+id/description_textInputLayout"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@color/fn_menu_bg">
+                android:background="@color/fn_menu_bg"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/switchLabel_textview"
@@ -131,10 +132,10 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
-                    android:text="Compress Image" />
+                    android:text="Upload Full Resolution" />
 
                 <Switch
-                    android:id="@+id/compress_switch"
+                    android:id="@+id/fullrez_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
