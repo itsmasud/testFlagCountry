@@ -505,7 +505,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                         .file(new com.fieldnation.v2.data.model.File().name(_scannedFile.getFileName()));
 
                 AttachmentHelper.addAttachment(App.get(), _scannedFile.getUUID(), _workOrderId,
-                        attachment, _scannedFile.getFileName(), _scannedFile.getUri());
+                        attachment, _scannedFile.getFileName(), _scannedFile.getUri(), true);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

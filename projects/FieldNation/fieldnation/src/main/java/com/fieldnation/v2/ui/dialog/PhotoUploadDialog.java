@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +70,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private static final String STATE_CACHED_URI = "STATE_CACHED_URI";
     private static final String STATE_CACHED_SIZE = "STATE_CACHED_SIZE";
     private static final String STATE_SOURCE_URI = "STATE_SOURCE_URI";
+    private static final String STATE_COMPRESS_CHECKED = "STATE_COMPRESS_CHECKED";
 
     // Mode
     private static final int MODE_NORMAL = 0;
@@ -84,6 +86,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private ProgressBar _progressBar;
     private RelativeLayout _noPreviewLayout;
     private TextView _iconTextView;
+    private RelativeLayout _compressLayout;
+    private Switch _compressSwitch;
 
     // Data user entered
     private String _newFileName;
@@ -241,6 +245,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _noPreviewLayout = v.findViewById(R.id.previewUnavailable_view);
         _iconTextView = v.findViewById(R.id.icon_textview);
 
+        _compressLayout = v.findViewById(R.id.switch_layout);
+        _compressSwitch = v.findViewById(R.id.compress_switch);
+
         return v;
     }
 
@@ -257,6 +264,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _descriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
         _noPreviewLayout.setOnClickListener(_preview_onClick);
         _progressBar.setOnClickListener(_preview_onClick);
+
+        _compressLayout.setOnClickListener(_compress_onClick);
+        _compressSwitch.setClickable(false);
+        _compressSwitch.setChecked(true);
     }
 
     @Override
@@ -359,6 +370,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             if (savedState.containsKey(STATE_CACHED_SIZE))
                 _cacheSize = savedState.getLong(STATE_CACHED_SIZE);
+
+            if (savedState.containsKey(STATE_COMPRESS_CHECKED))
+                _compressSwitch.setChecked(savedState.getBoolean(STATE_COMPRESS_CHECKED));
         }
     }
 
@@ -384,6 +398,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         if (_cacheSize > 0)
             outState.putLong(STATE_CACHED_SIZE, _cacheSize);
+
+        outState.putBoolean(STATE_COMPRESS_CHECKED, _compressSwitch.isChecked());
     }
 
     @Override
@@ -451,6 +467,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _compress_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _compressSwitch.setChecked(!_compressSwitch.isChecked());
+        }
+    };
+
     private final TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -567,7 +590,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     attachment.notes(_description);
                     attachment.file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri, _compressSwitch.isChecked());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
