@@ -605,15 +605,20 @@ public class WebCrawlerService extends Service {
                     incrementPendingRequestCounter(-1);
                     // get attachments
                     AttachmentFolders folders = (AttachmentFolders) successObject;
+                    // int workOrderId = transactionParams.getMethodParamInt("workOrderId"); // Used for debugging purposes
                     if (folders.getResults().length > 0) {
                         for (AttachmentFolder folder : folders.getResults()) {
                             Attachment[] attachments = folder.getResults();
                             if (attachments.length > 0) {
                                 for (Attachment attachment : attachments) {
                                     if (isDownloadable(attachment)) {
+//                                        if (workOrderId == 2105) { // Used for debugging purposes, deletes all the attachments on a work order
+//                                            WorkordersWebApi.deleteAttachment(WebCrawlerService.this, workOrderId, attachment.getFolderId(), attachment, null);
+//                                        } else {
                                         incRequestCounter(1);
                                         DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);
                                         downloadable++;
+//                                        }
                                     }
                                 }
                             }

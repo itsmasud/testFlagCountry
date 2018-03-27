@@ -165,6 +165,7 @@ public class SyncProgressDialog extends SimpleDialog {
     private final Runnable _checker = new Runnable() {
         @Override
         public void run() {
+            Log.v(TAG, "Checker run");
             List<WebTransaction> list = WebTransaction.getSyncing();
             _zombie = 0;
             for (WebTransaction webTransaction : list) {
