@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -9,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
@@ -219,8 +221,11 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             _addRequestNewPayButton.setVisibility(VISIBLE);
         else _addRequestNewPayButton.setVisibility(GONE);
 
-        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD))
+        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)
+        && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             _addTimeLogButton.setVisibility(VISIBLE);
+        }
         else _addTimeLogButton.setVisibility(GONE);
 
         if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD))

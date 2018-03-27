@@ -132,6 +132,12 @@ public class TimeLogListDialog extends FullScreenDialog {
         if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);
         }
+
+        if ((App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING))
+            _finishMenu.setEnabled(false);
+        else
+            _finishMenu.setEnabled(true);
+
     }
 
     @Override
