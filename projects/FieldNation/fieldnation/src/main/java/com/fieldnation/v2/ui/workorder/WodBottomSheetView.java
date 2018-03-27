@@ -224,7 +224,6 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)
         && (App.get().getOfflineState() != App.OfflineState.OFFLINE
                 && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
-            Log.e(TAG, "offline status: " + App.get().getOfflineState().name());
             _addTimeLogButton.setVisibility(VISIBLE);
         }
         else _addTimeLogButton.setVisibility(GONE);
