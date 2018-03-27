@@ -55,8 +55,6 @@ public class OAuth implements Parcelable {
     @Json(name = "user")
     private User _user;
 
-
-
     public OAuth() {
     }
 
