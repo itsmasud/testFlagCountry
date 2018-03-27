@@ -7,6 +7,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.v2.data.model.User;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -34,6 +35,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
 
     public void subProfileInvalid() {
         PigeonRoost.sub(this, ADDRESS_PROFILE_INVALID);
+    }
+
+    public void subGotUser() {
+        PigeonRoost.sub(this, ADDRESS_GOT_USER);
+    }
+
+    public void subUserInvalid() {
+        PigeonRoost.sub(this, ADDRESS_GOT_USER_INVALID);
     }
 
     public void subShutdownUI() {
@@ -84,6 +93,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.unsub(this, ADDRESS_PROFILE_INVALID);
     }
 
+    public void unsubGotUser() {
+        PigeonRoost.unsub(this, ADDRESS_GOT_USER);
+    }
+
+    public void unsubUserInvalid() {
+        PigeonRoost.unsub(this, ADDRESS_GOT_USER_INVALID);
+    }
+
     public void unsubShutdownUI() {
         PigeonRoost.unsub(this, ADDRESS_SHUTDOWN_UI);
     }
@@ -126,6 +143,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
 
     public static void profileInvalid() {
         PigeonRoost.sendMessage(ADDRESS_PROFILE_INVALID, null, Sticky.NONE);
+    }
+
+    public static void gotUser(User user) {
+        PigeonRoost.sendMessage(ADDRESS_GOT_USER, user, Sticky.NONE);
+    }
+
+    public static void userInvalid() {
+        PigeonRoost.sendMessage(ADDRESS_GOT_USER_INVALID, null, Sticky.NONE);
     }
 
     public static void appShutdown() {
@@ -197,6 +222,12 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
             case ADDRESS_PROFILE_INVALID:
                 onProfileInvalid();
                 break;
+            case ADDRESS_GOT_USER:
+                onGotUser((User) message);
+                break;
+            case ADDRESS_GOT_USER_INVALID:
+                onUserInvalid();
+                break;
             case ADDRESS_SHUTDOWN_UI:
                 onShutdownUI();
                 break;
@@ -251,6 +282,12 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
     }
 
     public void onProfileInvalid() {
+    }
+
+    public void onGotUser(User user) {
+    }
+
+    public void onUserInvalid() {
     }
 
     public void onShutdownUI() {

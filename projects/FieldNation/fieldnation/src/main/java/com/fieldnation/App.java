@@ -58,6 +58,7 @@ import com.fieldnation.service.profileimage.ProfilePhotoConstants;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.User;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
@@ -108,6 +109,7 @@ public class App extends Application {
     public String deviceToken = null;
     private boolean _isConnected = false;
     private OAuth _auth = null;
+    private User _user = null;
     private boolean _hasInteracted = false;
 
     // UI context hack
@@ -414,6 +416,22 @@ public class App extends Application {
     private void setAuth(OAuth auth) {
         synchronized (STAG) {
             _auth = auth;
+            if (auth == null)
+                setUser(null);
+            else setUser(auth.getUser());
+        }
+    }
+
+    /*-**********************-*/
+    /*-     User context     -*/
+    /*-**********************-*/
+    public static User getUser() {
+        return get()._user;
+    }
+
+    private void setUser(User user) {
+        synchronized (STAG) {
+            _user = user;
         }
     }
 
