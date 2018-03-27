@@ -5,9 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.R;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
 /**
  * Created by Shoaib on 10/20/17.
@@ -45,8 +47,10 @@ public class TimeLogsAdapter extends RecyclerView.Adapter<TimeLogViewHolder> {
         v.setTag(timeLog);
         v.setData(_workOrder, timeLog);
 
-        if ((App.get().getOfflineState() != App.OfflineState.OFFLINE && App.get().getOfflineState() != App.OfflineState.UPLOADING))
-            v.setOnClickListener(_timelog_onClick);
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING)
+            v.setOnClickListener(_disable_onClick);
+        else v.setOnClickListener(_timelog_onClick);
+
 
         v.setOnLongClickListener(_timelog_onLongClick);
 // TODO       v.setEnabled(timeLog.getActionsSet().contains(TimeLog.ActionsEnum.EDIT));
@@ -80,6 +84,15 @@ public class TimeLogsAdapter extends RecyclerView.Adapter<TimeLogViewHolder> {
                     && timelog.getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
                 _listener.onClick(view, timelog);
             }
+        }
+    };
+
+    private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TwoButtonDialog.show(App.get(), null, v.getContext().getResources().getString(R.string.not_available),
+                    v.getContext().getResources().getString(R.string.not_available_body_text),
+                    v.getContext().getResources().getString(R.string.btn_close), null, true, null);
         }
     };
 
