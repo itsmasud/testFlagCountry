@@ -91,6 +91,12 @@ public class AttachmentHelper {
                     // TODO, if image... check size and compress if option is on
 
                     if (allowCompression) {
+                        Tracker.event(App.get(), new CustomEvent.Builder()
+                                .addContext(new SpTracingContext(uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Compression enabled"))
+                                .addContext(new SpFileContext.Builder().name(filename).build())
+                                .build());
                         try {
                             final BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inJustDecodeBounds = true;
@@ -100,22 +106,43 @@ public class AttachmentHelper {
                             int w = options.outWidth;
 
                             if (h * w > 5000000L) {
-                                Tracker.event(App.get(), new CustomEvent.Builder()
-                                        .addContext(new SpTracingContext(uuid))
-                                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Compressing Image"))
-                                        .addContext(new SpFileContext.Builder().name(filename).build())
-                                        .build());
-
                                 Bitmap bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
                                 bitmap = MemUtils.rotateImageIfRequired(context, bitmap, cache.getUri());
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 95, context.getContentResolver().openOutputStream(cache.getUri()));
                                 bitmap.recycle();
                                 Log.v(TAG, "File Compressed");
+                                Tracker.event(App.get(), new CustomEvent.Builder()
+                                        .addContext(new SpTracingContext(uuid))
+                                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Image Compressed"))
+                                        .addContext(new SpFileContext.Builder().name(filename).build())
+                                        .build());
+
+                            } else {
+                                Tracker.event(App.get(), new CustomEvent.Builder()
+                                        .addContext(new SpTracingContext(uuid))
+                                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Not compressing file. Already small or not an image."))
+                                        .addContext(new SpFileContext.Builder().name(filename).build())
+                                        .build());
                             }
                         } catch (Exception ex) {
                             Log.v(TAG, ex);
+                            Tracker.event(App.get(), new CustomEvent.Builder()
+                                    .addContext(new SpTracingContext(uuid))
+                                    .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                    .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Not an image, or compression failed."))
+                                    .addContext(new SpFileContext.Builder().name(filename).build())
+                                    .build());
                         }
+                    } else {
+                        Tracker.event(App.get(), new CustomEvent.Builder()
+                                .addContext(new SpTracingContext(uuid))
+                                .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Not compressing file"))
+                                .addContext(new SpFileContext.Builder().name(filename).build())
+                                .build());
+
                     }
 
                     WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
