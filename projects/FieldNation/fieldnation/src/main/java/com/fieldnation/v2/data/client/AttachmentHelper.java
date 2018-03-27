@@ -22,6 +22,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.ImageUtils;
+import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.v2.data.model.Attachment;
 
 /**
@@ -100,6 +101,7 @@ public class AttachmentHelper {
 
                             if (h * w > 5000000L) {
                                 Bitmap bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
+                                bitmap = MemUtils.rotateImageIfRequired(context, bitmap, cache.getUri());
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 95, context.getContentResolver().openOutputStream(cache.getUri()));
                                 bitmap.recycle();
                                 Log.v(TAG, "File Compressed");

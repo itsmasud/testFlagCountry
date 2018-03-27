@@ -132,7 +132,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="16dp"
-                    android:text="Upload Full Resolution" />
+                    android:text="Upload full resolution" />
 
                 <Switch
                     android:id="@+id/fullrez_switch"
