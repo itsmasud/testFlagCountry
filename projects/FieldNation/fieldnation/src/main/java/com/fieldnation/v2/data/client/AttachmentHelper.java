@@ -100,6 +100,13 @@ public class AttachmentHelper {
                             int w = options.outWidth;
 
                             if (h * w > 5000000L) {
+                                Tracker.event(App.get(), new CustomEvent.Builder()
+                                        .addContext(new SpTracingContext(uuid))
+                                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Compressing Image"))
+                                        .addContext(new SpFileContext.Builder().name(filename).build())
+                                        .build());
+
                                 Bitmap bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
                                 bitmap = MemUtils.rotateImageIfRequired(context, bitmap, cache.getUri());
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 95, context.getContentResolver().openOutputStream(cache.getUri()));
