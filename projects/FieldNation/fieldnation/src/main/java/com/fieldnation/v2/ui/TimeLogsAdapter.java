@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -43,7 +44,10 @@ public class TimeLogsAdapter extends RecyclerView.Adapter<TimeLogViewHolder> {
         TimeLog timeLog = _workOrder.getTimeLogs().getResults()[position];
         v.setTag(timeLog);
         v.setData(_workOrder, timeLog);
-        v.setOnClickListener(_timelog_onClick);
+
+        if ((App.get().getOfflineState() != App.OfflineState.OFFLINE && App.get().getOfflineState() != App.OfflineState.UPLOADING))
+            v.setOnClickListener(_timelog_onClick);
+
         v.setOnLongClickListener(_timelog_onLongClick);
 // TODO       v.setEnabled(timeLog.getActionsSet().contains(TimeLog.ActionsEnum.EDIT));
     }

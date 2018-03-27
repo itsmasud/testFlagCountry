@@ -129,7 +129,8 @@ public class TimeLogListDialog extends FullScreenDialog {
         if (!misc.isEmptyOrNull(_dialogTitle))
             _toolbar.setTitle(_dialogTitle);
 
-        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
+        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             _finishMenu.setVisibility(View.VISIBLE);
         }
     }
