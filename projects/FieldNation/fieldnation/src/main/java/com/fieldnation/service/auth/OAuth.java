@@ -251,8 +251,6 @@ public class OAuth implements Parcelable {
         OAuth auth = OAuth.fromJson(token);
         auth.save();
 
-        Log.e(TAG, "user: " + auth.getUser().getJson());
-
         return auth;
     }
 
