@@ -605,7 +605,7 @@ public class WebCrawlerService extends Service {
                     incrementPendingRequestCounter(-1);
                     // get attachments
                     AttachmentFolders folders = (AttachmentFolders) successObject;
-                    // int workOrderId = transactionParams.getMethodParamInt("workOrderId"); // Used for debugging purposes
+//                    int workOrderId = transactionParams.getMethodParamInt("workOrderId"); // Used for debugging purposes
                     if (folders.getResults().length > 0) {
                         for (AttachmentFolder folder : folders.getResults()) {
                             Attachment[] attachments = folder.getResults();

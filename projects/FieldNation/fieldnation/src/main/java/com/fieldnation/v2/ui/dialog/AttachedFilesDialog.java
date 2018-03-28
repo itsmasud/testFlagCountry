@@ -376,7 +376,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_selectedFolderId);
-                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

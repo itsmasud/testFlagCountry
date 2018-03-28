@@ -220,7 +220,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentFolderId);
-                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
