@@ -116,7 +116,7 @@ public class MemUtils {
      * @param uri     Image URI
      * @return The resulted Bitmap after manipulation
      */
-    private static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri uri) {
+    public static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri uri) {
         InputStream in = null;
         File tempFile = null;
         try {

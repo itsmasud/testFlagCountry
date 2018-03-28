@@ -323,7 +323,7 @@ public class TasksDialog extends FullScreenDialog {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

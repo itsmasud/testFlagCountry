@@ -3,9 +3,16 @@ package com.fieldnation.fntools;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.RectF;
+import android.net.Uri;
 import android.util.DisplayMetrics;
+
+import com.fieldnation.fnlog.Log;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Created by Michael on 3/10/2016.
@@ -16,6 +23,54 @@ public class ImageUtils {
         Matrix m = new Matrix();
         m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
+    }
+
+    public static Bitmap getScalledBitmap(Context context, Uri sourceUri, long megapixels) {
+        InputStream in = null;
+        try {
+            // Decode image size
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(sourceUri), null, options);
+
+            int scale = 1;
+            while ((options.outWidth * options.outHeight) * (1 / Math.pow(scale, 2)) > megapixels) {
+                scale++;
+            }
+            Log.d("ImageUtils", "scale = " + scale + ", orig-width: " + options.outWidth + ", orig - height:" + options.outHeight);
+
+            Bitmap resultBitmap = null;
+            in = context.getContentResolver().openInputStream(sourceUri);
+            if (scale > 1) {
+                scale--;
+                // scale to max possible inSampleSize that still yields an image
+                // larger than target
+                options = new BitmapFactory.Options();
+                options.inSampleSize = scale;
+                resultBitmap = BitmapFactory.decodeStream(in, null, options);
+
+                // resize to desired dimensions
+                int height = resultBitmap.getHeight();
+                int width = resultBitmap.getWidth();
+                Log.d("ImageUtils", "1th scale operation dimenions - width: " + width + ", height:" + height);
+
+                double y = Math.sqrt(megapixels / (((double) width) / height));
+                double x = (y / height) * width;
+
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(resultBitmap, (int) x, (int) y, true);
+                resultBitmap.recycle();
+                resultBitmap = scaledBitmap;
+            } else {
+                resultBitmap = BitmapFactory.decodeStream(in);
+            }
+            in.close();
+
+            Log.d("ImageUtils", "bitmap size - width: " + resultBitmap.getWidth() + ", height: " + resultBitmap.getHeight());
+            return resultBitmap;
+        } catch (IOException e) {
+            Log.e("ImageUtils", e.getMessage(), e);
+            return null;
+        }
     }
 
     public static int dpToPx(Context context, int dp) {
