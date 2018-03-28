@@ -25,6 +25,8 @@ import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.v2.data.model.Attachment;
 
+import java.io.InputStream;
+
 /**
  * Created by mc on 4/19/17.
  */
@@ -100,13 +102,24 @@ public class AttachmentHelper {
                         try {
                             final BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inJustDecodeBounds = true;
-                            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(cache.getUri()), null, options);
+                            InputStream is = context.getContentResolver().openInputStream(cache.getUri());
+                            int size = is.available();
+                            BitmapFactory.decodeStream(is, null, options);
+                            is.close();
 
                             int h = options.outHeight;
                             int w = options.outWidth;
 
-                            if (h * w > 5000000L) {
-                                Bitmap bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
+                            if (h * w > 5000000L || size > 2000000) {
+                                if (filename.contains("."))
+                                    filename = filename.substring(0, filename.lastIndexOf(".")) + ".jpg";
+
+                                Bitmap bitmap = null;
+                                if (h * w > 5000000L)
+                                    bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
+                                else
+                                    bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(cache.getUri()));
+
                                 bitmap = MemUtils.rotateImageIfRequired(context, bitmap, cache.getUri());
                                 bitmap.compress(Bitmap.CompressFormat.JPEG, 95, context.getContentResolver().openOutputStream(cache.getUri()));
                                 bitmap.recycle();
@@ -117,7 +130,6 @@ public class AttachmentHelper {
                                         .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Image Compressed"))
                                         .addContext(new SpFileContext.Builder().name(filename).build())
                                         .build());
-
                             } else {
                                 Tracker.event(App.get(), new CustomEvent.Builder()
                                         .addContext(new SpTracingContext(uuid))
@@ -144,7 +156,7 @@ public class AttachmentHelper {
                                 .build());
 
                     }
-
+                    attachment.getFile().name(filename);
                     WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
 
                     Tracker.event(App.get(), new CustomEvent.Builder()
