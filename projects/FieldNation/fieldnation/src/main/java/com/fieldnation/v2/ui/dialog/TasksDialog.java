@@ -390,42 +390,51 @@ public class TasksDialog extends FullScreenDialog {
 
                 case SET_ETA: // set eta
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+                        // TODO
                         showAvailableDialog();
                         return;
                     }
 
                     App.get().analActionTitle = null;
+                    // TODO
                     EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                             _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
                     break;
 
                 case CLOSING_NOTES: // closing notes
+                    // TODO
                     showClosingNotesDialog();
                     break;
 
                 case CHECK_IN: // check in
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+                        // TODO
                         showAvailableDialog();
                         return;
                     }
+                    // TODO
                     doCheckin();
                     break;
 
                 case CHECK_OUT: // check out
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+                        // TODO
                         showAvailableDialog();
                         return;
                     }
+                    // TODO
                     doCheckOut();
                     break;
 
                 case UPLOAD_FILE: // upload file
                     _currentTask = task;
+                    // TODO
                     startAppPickerDialog();
                     break;
 
                 case UPLOAD_PICTURE: // upload picture
                     _currentTask = task;
+                    // TODO
                     startAppPickerDialog();
                     break;
 
@@ -433,11 +442,13 @@ public class TasksDialog extends FullScreenDialog {
                     if (task.getCustomField().getId() == null) {
                         break;
                     }
+                    // TODO
                     CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
                     break;
 
                 case PHONE: // phone
                     _currentTask = task;
+                    // TODO
                     doCallTask();
                     break;
 
@@ -448,6 +459,7 @@ public class TasksDialog extends FullScreenDialog {
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
                     try {
+                        // TODO
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -459,7 +471,13 @@ public class TasksDialog extends FullScreenDialog {
                         return;
 
                     try {
+                        // Testing on wo2151
                         AppMessagingClient.setLoading(true);
+                        List<WebTransaction> list = WebTransaction.findByKey("%/updateTaskByWorkOrder/%/workorders/" + _workOrder.getId() + "/tasks/" + task.getId());
+                        if (list != null && list.size() > 0) {
+                            Log.v(TAG, "deleting old task " + task.getId());
+                            WebTransaction.delete(list.get(0).getId());
+                        }
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -467,6 +485,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case SIGNATURE: // signature
+                    // TODO
                     SignOffActivity.startSignOff(App.get(), _workOrder.getId(), task.getId());
                     break;
 
@@ -478,9 +497,11 @@ public class TasksDialog extends FullScreenDialog {
                     }
 
                     if (shipments.size() == 0) {
+                        // TODO
                         ShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
                                 _workOrder.getAttachments(), App.get().getString(R.string.dialog_task_shipment_title), null, task);
                     } else {
+                        // TODO
                         TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder.getId(),
                                 _workOrder.getShipments(), App.get().getString(R.string.dialog_task_shipment_title), task);
                     }
@@ -492,6 +513,7 @@ public class TasksDialog extends FullScreenDialog {
                         Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                             try {
+                                // TODO
                                 WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                             } catch (Exception ex) {
                                 Log.v(TAG, ex);
@@ -499,6 +521,7 @@ public class TasksDialog extends FullScreenDialog {
                         }
                         _adapter.downloadStart(attachment.getId());
 
+                        // TODO
                         DocumentClient.downloadDocument(App.get(), attachment.getId(),
                                 attachment.getFile().getLink(), attachment.getFile().getName(), false);
                     }

@@ -10,6 +10,7 @@ import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.Tasks;
@@ -87,9 +88,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             if (!_groupId.equals(task.getGroup().getId()))
                 continue;
 
-            if (task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+            if (task.getStatus().equals(Task.StatusEnum.COMPLETE) || WebTransaction.findByKey("%/updateTaskByWorkOrder/%/workorders/" + task. + "/tasks/" + task.getId())) {
                 completeTasks.add(task);
-            } else incompleteTasks.add(task);
+            } else {
+                incompleteTasks.add(task)
+            } ;
         }
 
         // populating incomplete list
