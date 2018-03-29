@@ -169,7 +169,6 @@ public class ClosingNotesDialog extends SimpleDialog {
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
         public void onFoundWebTransaction(WebTransaction webTransaction) {
-            Log.e(TAG, "onFoundWebTransaction");
             _webTransaction = webTransaction;
             populateUi();
         }

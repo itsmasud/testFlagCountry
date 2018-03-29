@@ -25,6 +25,7 @@ public class WebTransactionUtils {
     // Data
     private Listener _listener;
 
+    // TODO more key type will be added
     public enum KeyType {
         CLOSING_NOTES
     }
@@ -34,6 +35,7 @@ public class WebTransactionUtils {
         return _webTransUtils;
     }
 
+    // TODO more cases will be added while implementing more offline feature
     private static String getWebTransKeyByType(KeyType keyType, int workOrderId){
         switch (keyType){
             case CLOSING_NOTES: return WEB_TRANS_KEY_PREFIX_CLOSING_NOTES + workOrderId + "%";
@@ -41,6 +43,7 @@ public class WebTransactionUtils {
         return null;
     }
 
+    // TODO more cases will be added while implementing more offline feature
     private static String getParamKeyByType(KeyType keyType){
         switch (keyType){
             case CLOSING_NOTES: return PARAM_CLOSING_NOTES_KEY;
