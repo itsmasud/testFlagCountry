@@ -10,7 +10,12 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 
@@ -22,8 +27,9 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
 
     // Data
     private WorkOrder _workOrder;
+    private WebTransaction _webTransaction = null;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
@@ -47,6 +53,7 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, workOrder.getId());
         populateUi();
     }
 
@@ -56,8 +63,12 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
             return;
         }
 
-        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
+        String offlineNotes = getOfflineClosingNotes();
+        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes()) && misc.isEmptyOrNull(offlineNotes)) {
             _notesTextView.setText(_workOrder.getClosingNotes());
+            _notesTextView.setVisibility(VISIBLE);
+        } else if (!misc.isEmptyOrNull(offlineNotes)) {
+            _notesTextView.setText(offlineNotes);
             _notesTextView.setVisibility(VISIBLE);
         } else {
             _notesTextView.setVisibility(GONE);
@@ -71,6 +82,21 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         }
     }
 
+    private String getOfflineClosingNotes() {
+        if (_webTransaction == null) return null;
+
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
+
+            if (params != null && params.methodParams != null && params.methodParams.contains(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY)) {
+                return params.getMethodParamString(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY);
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -82,5 +108,14 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
                 ClosingNotesDialog.show(App.get(), _workOrder.getId(), _workOrder.getClosingNotes());
         }
     };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransaction webTransaction) {
+            _webTransaction = webTransaction;
+            populateUi();
+        }
+    };
+
 
 }

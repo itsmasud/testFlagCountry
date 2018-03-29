@@ -108,17 +108,26 @@ public class ClosingNotesDialog extends SimpleDialog {
     }
 
     private void populateUi() {
-        if (_webTransaction == null) return;
+        String offlineNotes = getOfflineClosingNotes();
+
+        if (!misc.isEmptyOrNull(offlineNotes))
+            _editText.setText(offlineNotes);
+
+    }
+
+    private String getOfflineClosingNotes() {
+        if (_webTransaction == null) return null;
 
         try {
             TransactionParams params = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
 
             if (params != null && params.methodParams != null && params.methodParams.contains(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY)) {
-                _editText.setText(params.getMethodParamString(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY));
+                return params.getMethodParamString(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+        return null;
     }
 
 
@@ -164,7 +173,6 @@ public class ClosingNotesDialog extends SimpleDialog {
             dismiss(true);
         }
     };
-
 
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
