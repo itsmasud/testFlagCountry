@@ -34,6 +34,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private final int TYPE_TASK_DOWNLOAD = 4;
 
     // data
+    private int _workOrderId;
     private Tasks _tasks = null;
     private String _groupId;
     private Listener _listener;
@@ -64,10 +65,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     }
 
-    public void setData(Tasks tasks, String groupId) {
+    public void setData(int workOrderId, Tasks tasks, String groupId) {
         _tasks = tasks;
         _groupId = groupId;
         dataHolders.clear();
+        _workOrderId = workOrderId;
 
         rebuild();
         notifyDataSetChanged();
@@ -88,11 +90,12 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             if (!_groupId.equals(task.getGroup().getId()))
                 continue;
 
-            if (task.getStatus().equals(Task.StatusEnum.COMPLETE) || WebTransaction.findByKey("%/updateTaskByWorkOrder/%/workorders/" + task. + "/tasks/" + task.getId())) {
+            if (task.getStatus().equals(Task.StatusEnum.COMPLETE)
+                    || WebTransaction.getPaused("%/updateTaskByWorkOrder/%/workorders/" + _workOrderId + "/tasks/" + task.getId()).size() > 0) {
                 completeTasks.add(task);
             } else {
-                incompleteTasks.add(task)
-            } ;
+                incompleteTasks.add(task);
+            }
         }
 
         // populating incomplete list
