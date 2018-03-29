@@ -86,9 +86,8 @@ public class ClosingNotesDialog extends SimpleDialog {
         if (!misc.isEmptyOrNull(_notes))
             _editText.setText(_notes);
 
-        new FindKeyTask(_webTransaction).executeEx(WebTransactionUtils.getWebTransKeyForClosingNotes(_workOrderId));
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrderId);
 
-        WebTransactionUtils.test(_webTransListener, _webTransaction);
     }
 
     @Override
@@ -119,41 +118,6 @@ public class ClosingNotesDialog extends SimpleDialog {
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-        }
-    }
-
-
-    private class FindKeyTask extends AsyncTaskEx<Object, Object, Object> {
-
-        public FindKeyTask(WebTransaction webTransaction) {
-        }
-
-        @Override
-        protected Object doInBackground(Object... objects) {
-            List<WebTransaction> webTransactions = WebTransaction.findByKey((String) objects[0]);
-
-            // TODO maybe you need to use this stopwatch
-            Stopwatch stopwatch = new Stopwatch(true);
-            for (WebTransaction webTransaction : webTransactions) {
-                try {
-                    TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
-
-                    if (params != null && params.methodParams != null && params.methodParams.contains(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY)) {
-                        return webTransaction;
-                    }
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            _webTransaction = (WebTransaction) o;
-            populateUi();
-            super.onPostExecute(o);
         }
     }
 
@@ -205,6 +169,8 @@ public class ClosingNotesDialog extends SimpleDialog {
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
         public void onFoundWebTransaction(WebTransaction webTransaction) {
+            Log.e(TAG, "onFoundWebTransaction");
+            _webTransaction = webTransaction;
             populateUi();
         }
     };
