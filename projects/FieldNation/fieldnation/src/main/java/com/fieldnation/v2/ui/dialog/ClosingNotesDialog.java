@@ -18,10 +18,17 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.listener.TransactionParams;
+
+import java.util.List;
 
 public class ClosingNotesDialog extends SimpleDialog {
     private static final String TAG = "ClosingNotesDialog";
@@ -37,6 +44,9 @@ public class ClosingNotesDialog extends SimpleDialog {
     // Data
     private String _notes;
     private int _workOrderId;
+
+    private WebTransaction _webTransaction = null;
+
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -62,6 +72,8 @@ public class ClosingNotesDialog extends SimpleDialog {
         _editText.setOnEditorActionListener(_onEditor_listener);
         _okButton.setOnClickListener(_ok_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
+
+
     }
 
     @Override
@@ -73,6 +85,10 @@ public class ClosingNotesDialog extends SimpleDialog {
 
         if (!misc.isEmptyOrNull(_notes))
             _editText.setText(_notes);
+
+        new FindKeyTask(_webTransaction).executeEx(WebTransactionUtils.getWebTransKeyForClosingNotes(_workOrderId));
+
+        WebTransactionUtils.test(_webTransListener, _webTransaction);
     }
 
     @Override
@@ -91,6 +107,56 @@ public class ClosingNotesDialog extends SimpleDialog {
             outState.putString(STATE_NOTES, _notes);
         }
     }
+
+    private void populateUi() {
+        if (_webTransaction == null) return;
+
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
+
+            if (params != null && params.methodParams != null && params.methodParams.contains(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY)) {
+                _editText.setText(params.getMethodParamString(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY));
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+
+    private class FindKeyTask extends AsyncTaskEx<Object, Object, Object> {
+
+        public FindKeyTask(WebTransaction webTransaction) {
+        }
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+            List<WebTransaction> webTransactions = WebTransaction.findByKey((String) objects[0]);
+
+            // TODO maybe you need to use this stopwatch
+            Stopwatch stopwatch = new Stopwatch(true);
+            for (WebTransaction webTransaction : webTransactions) {
+                try {
+                    TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+                    if (params != null && params.methodParams != null && params.methodParams.contains(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY)) {
+                        return webTransaction;
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            _webTransaction = (WebTransaction) o;
+            populateUi();
+            super.onPostExecute(o);
+        }
+    }
+
 
     /*-*************************-*/
     /*-			Events			-*/
@@ -132,6 +198,14 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+        }
+    };
+
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransaction webTransaction) {
+            populateUi();
         }
     };
 
