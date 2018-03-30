@@ -210,6 +210,7 @@
     <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
     <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
     <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
+    <string name="fieldnation_workers_comp_insurance_percentage">Workers Comp Insurance Fee (%1$s%%)</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
 

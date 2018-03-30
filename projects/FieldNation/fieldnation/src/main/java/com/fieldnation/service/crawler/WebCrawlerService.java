@@ -400,8 +400,7 @@ public class WebCrawlerService extends Service {
 
     private boolean isDownloadable(Attachment attachment) {
         // We cannot download the link, printable badge. So ignoring.
-        return attachment.getActionsSet().contains(Attachment.ActionsEnum.EDIT)
-                || attachment.getActionsSet().contains(Attachment.ActionsEnum.DELETE);
+        return attachment.getFile() != null && attachment.getFile().getType() == com.fieldnation.v2.data.model.File.TypeEnum.FILE;
     }
 
     private Stopwatch _crawlerWatch = new Stopwatch();
@@ -633,7 +632,6 @@ public class WebCrawlerService extends Service {
                                 updateDownloadProgress();
                             }
                         }
-
                     }
                 }
             } catch (Exception ex) {
