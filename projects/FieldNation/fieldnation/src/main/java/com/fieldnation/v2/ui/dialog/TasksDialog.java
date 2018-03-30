@@ -48,6 +48,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -96,6 +97,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
+    private WebTransaction _webTransaction = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -179,14 +181,14 @@ public class TasksDialog extends FullScreenDialog {
         _groupId = params.getString(PARAM_GROUP_ID);
         _uiUUID = params.getString("uiUUID");
 
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrderId);
+
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Tasks Dialog"))
                 .build());
-
-        populateUi();
 
         AppMessagingClient.setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
@@ -200,7 +202,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrder.getTasks(), _groupId);
+        _adapter.setData(_workOrder.getTasks(), _groupId, _webTransaction);
     }
 
     @Override
@@ -724,6 +726,13 @@ public class TasksDialog extends FullScreenDialog {
                 return;
             }
             _adapter.downloadComplete((int) documentId);
+        }
+    };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransaction webTransaction) {
+            _webTransaction = webTransaction;
         }
     };
 
