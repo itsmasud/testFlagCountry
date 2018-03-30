@@ -47,9 +47,9 @@ public class WebTransactionUtils {
         new FindWebTransactionTask(listener).executeEx(getWebTransKeyByType(keyType, workOrderId), getParamKeyByType(keyType));
     }
 
-
     private static class FindWebTransactionTask extends AsyncTaskEx<Object, Object, Object> {
         private Listener listener;
+        private WebTransaction webTransaction;
 
         public FindWebTransactionTask(Listener listener) {
             this.listener = listener;
@@ -57,24 +57,29 @@ public class WebTransactionUtils {
 
         @Override
         protected Object doInBackground(Object... objects) {
+            Stopwatch stopwatch = new Stopwatch(true);
+
             List<WebTransaction> webTransactions = WebTransaction.findByKey((String) objects[0]);
+            Log.v(TAG, "Searching time in DB " + stopwatch.finishAndRestart());
+
             String paramKey = (String) objects[1];
 
-            // TODO maybe you need to use this stopwatch
-            Stopwatch stopwatch = new Stopwatch(true);
+
             for (WebTransaction webTransaction : webTransactions) {
                 try {
                     TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
 
                     if (params != null && params.methodParams != null && params.methodParams.contains(paramKey)) {
-                        return webTransaction;
+                        this.webTransaction = webTransaction;
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
             }
 
-            return null;
+            Log.v(TAG, "Traversing time " + stopwatch.finish());
+
+            return this.webTransaction;
         }
 
         @Override
@@ -84,6 +89,9 @@ public class WebTransactionUtils {
         }
     }
 
+    /*-*********************************-*/
+    /*-			Offline getters			-*/
+    /*-*********************************-*/
     public static String getOfflineClosingNotes(WebTransaction webTransaction) {
         if (webTransaction == null) return null;
 
