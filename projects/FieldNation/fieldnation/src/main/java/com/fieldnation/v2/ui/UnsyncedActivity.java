@@ -91,7 +91,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     protected void onStart() {
         super.onStart();
         Log.v(TAG, "onStart");
-        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
         _unsyncedAdapter.refresh();
         _appMessagingClient.subOfflineMode();
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
@@ -111,7 +111,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
         _appMessagingClient.unsubOfflineMode();
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
         _runTimer = false;

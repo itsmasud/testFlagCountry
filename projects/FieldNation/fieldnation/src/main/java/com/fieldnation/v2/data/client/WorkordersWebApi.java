@@ -34,6 +34,7 @@ import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -9897,7 +9898,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             if (closingNotes != null)
-                methodParams.put("closingNotes", closingNotes);
+                methodParams.put(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY, closingNotes);
 
             String activityName = null;
 

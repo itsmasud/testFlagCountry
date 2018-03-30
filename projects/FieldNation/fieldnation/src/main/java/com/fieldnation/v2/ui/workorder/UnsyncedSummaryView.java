@@ -77,7 +77,7 @@ public class UnsyncedSummaryView extends RelativeLayout implements WorkOrderRend
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCASE_ON_CHANGE));
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
     }
 
     @Override
