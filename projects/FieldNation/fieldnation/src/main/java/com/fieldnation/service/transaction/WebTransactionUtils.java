@@ -84,6 +84,21 @@ public class WebTransactionUtils {
         }
     }
 
+    public static String getOfflineClosingNotes(WebTransaction webTransaction) {
+        if (webTransaction == null) return null;
+
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+            if (params != null && params.methodParams != null && params.methodParams.contains(PARAM_CLOSING_NOTES_KEY)) {
+                return params.getMethodParamString(PARAM_CLOSING_NOTES_KEY);
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
 
     public interface Listener {
         void onFoundWebTransaction(WebTransaction webTransaction);

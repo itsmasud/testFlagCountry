@@ -184,7 +184,7 @@ public class TaskRowView extends RelativeLayout {
                 case CLOSING_NOTES: // closing notes
                     _keyTextView.setText(_task.getLabel());
 
-                    String offlineNotes = getOfflineClosingNotes();
+                    final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
                     if (!misc.isEmptyOrNull(_task.getClosingNotes()) && misc.isEmptyOrNull(offlineNotes)) {
                         _valueTextView.setText(_task.getClosingNotes());
                         _valueTextView.setVisibility(VISIBLE);
@@ -356,24 +356,6 @@ public class TaskRowView extends RelativeLayout {
             _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
             setEnabled(false);
         }
-    }
-
-    /*-*****************************-*/
-    /*-		      Offline			-*/
-    /*-*****************************-*/
-    private String getOfflineClosingNotes() {
-        if (_webTransaction == null) return null;
-
-        try {
-            TransactionParams params = TransactionParams.fromJson(new JsonObject(_webTransaction.getListenerParams()));
-
-            if (params != null && params.methodParams != null && params.methodParams.contains(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY)) {
-                return params.getMethodParamString(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY);
-            }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-        return null;
     }
 
 }
