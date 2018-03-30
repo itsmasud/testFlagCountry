@@ -117,7 +117,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
         PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoDialog_onUpload);
 
         LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransReceiver, new IntentFilter(
-                WebTransaction.BROADCASE_ON_CHANGE));
+                WebTransaction.BROADCAST_ON_CHANGE));
     }
 
     @Override

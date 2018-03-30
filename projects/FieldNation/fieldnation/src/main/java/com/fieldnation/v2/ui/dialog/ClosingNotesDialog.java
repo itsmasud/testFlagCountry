@@ -20,15 +20,11 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-
-import java.util.List;
 
 public class ClosingNotesDialog extends SimpleDialog {
     private static final String TAG = "ClosingNotesDialog";
@@ -150,6 +146,9 @@ public class ClosingNotesDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_webTransaction != null)
+                WebTransaction.delete(_webTransaction.getId());
+
             try {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Closing Notes Dialog";
