@@ -18,13 +18,11 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.listener.TransactionParams;
 
 public class ClosingNotesDialog extends SimpleDialog {
     private static final String TAG = "ClosingNotesDialog";
@@ -40,6 +38,7 @@ public class ClosingNotesDialog extends SimpleDialog {
     // Data
     private String _notes;
     private int _workOrderId;
+    private boolean isRotated = false;
 
     private WebTransaction _webTransaction = null;
 
@@ -68,13 +67,13 @@ public class ClosingNotesDialog extends SimpleDialog {
         _editText.setOnEditorActionListener(_onEditor_listener);
         _okButton.setOnClickListener(_ok_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
-
-
     }
 
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
+
+        isRotated = false;
 
         _notes = payload.getString("notes");
         _workOrderId = payload.getInt("workOrderId");
@@ -93,6 +92,7 @@ public class ClosingNotesDialog extends SimpleDialog {
             _notes = savedState.getString(STATE_NOTES);
             _editText.setText(_notes);
         }
+        isRotated = true;
     }
 
     @Override
@@ -162,7 +162,7 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onFoundWebTransaction(WebTransaction webTransaction) {
             _webTransaction = webTransaction;
-            populateUi();
+            if (!isRotated) populateUi();
         }
     };
 
