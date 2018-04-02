@@ -409,10 +409,14 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         Menu menu = _morePopup.getMenu();
         menu.clear();
 
-        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
+        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)
+        && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             menu.add(0, 0, 300, "Running Late");
         }
-        if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
+        if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             menu.add(0, 1, 300, "Report A Problem");
         }
         if (!(_workOrder.getBundle().getId() > 0) && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)

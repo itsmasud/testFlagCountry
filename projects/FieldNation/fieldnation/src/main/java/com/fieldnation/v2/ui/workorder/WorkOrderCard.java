@@ -605,7 +605,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // running late
-        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
+        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_time_issue_solid);
             button.setOnClickListener(_runningLate_onClick);
@@ -615,7 +617,9 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // report a problem
-        if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
+        if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_problem_solid);
             button.setOnClickListener(_reportProblem_onClick);
