@@ -219,18 +219,8 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteUnsynced = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-
             if (extraData == null) return;
-            boolean isSuccessful = WebTransaction.delete(((WebTransaction) extraData).getId());
-
-            // TODO need to delete the if block
-
-            if (isSuccessful) {
-                Log.e(TAG, "deleted");
-            } else {
-                Log.e(TAG, "not deleted");
-
-            }
+            WebTransaction.delete(((WebTransaction) extraData).getId());
         }
     };
 
