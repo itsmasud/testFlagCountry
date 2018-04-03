@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -36,6 +37,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
 
     // Dialogs
     private static final String DIALOG_SYNC_WARNING = TAG + ".DIALOG_SYNC_WARNING";
+    private static final String DIALOG_DELETE_UNSYNCED = TAG + ".DIALOG_DELETE_UNSYNCED";
 
     // UI
     private Toolbar _toolbar;
@@ -93,8 +95,11 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         Log.v(TAG, "onStart");
         LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
         _unsyncedAdapter.refresh();
+        _unsyncedAdapter.setListener(_unsynced_onLongClick);
         _appMessagingClient.subOfflineMode();
         TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_UNSYNCED, _twoButtonDialog_deleteUnsynced);
+
         startTimer();
     }
 
@@ -114,6 +119,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
         _appMessagingClient.unsubOfflineMode();
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_WARNING, _syncWarning_onPrimary);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_UNSYNCED, _twoButtonDialog_deleteUnsynced);
         _runTimer = false;
         super.onStop();
     }
@@ -195,6 +201,39 @@ public class UnsyncedActivity extends AuthSimpleActivity {
                 finish();
         }
     };
+
+    private final UnsyncedAdapter.Listener _unsynced_onLongClick = new UnsyncedAdapter.Listener() {
+        @Override
+        public void onLongClick(View v) {
+            String activityName = (String) v.getTag(R.string.const_activity_name);
+            WebTransaction webTransaction = (WebTransaction) v.getTag(R.string.const_web_transaction);
+            if (misc.isEmptyOrNull(activityName) || webTransaction == null) return;
+
+            TwoButtonDialog.show(App.get(), DIALOG_DELETE_UNSYNCED,
+                    getString(R.string.dialog_delete_unsynced_title),
+                    getString(R.string.dialog_delete_unsynced_body, activityName),
+                    getString(R.string.btn_delete), getString(R.string.btn_cancel), true, webTransaction);
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteUnsynced = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+
+            if (extraData == null) return;
+            boolean isSuccessful = WebTransaction.delete(((WebTransaction) extraData).getId());
+
+            // TODO need to delete the if block
+
+            if (isSuccessful) {
+                Log.e(TAG, "deleted");
+            } else {
+                Log.e(TAG, "not deleted");
+
+            }
+        }
+    };
+
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
