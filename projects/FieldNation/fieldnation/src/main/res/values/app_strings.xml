@@ -348,7 +348,7 @@
     <string name="dialog_scan_barcode_title">Scan a barcode</string>
     <string name="dialog_delete_unsynced_title">Delete Activity</string>
     <string name="dialog_delete_unsynced_body">Are you sure you want to delete %1$s?</string>
-    <string name="const_activity_name">ACTOVOTY_NAME</string>
+    <string name="const_activity_name">ACTIVITY_NAME</string>
     <string name="const_web_transaction">WEB_TRANSACTION</string>
 
 
