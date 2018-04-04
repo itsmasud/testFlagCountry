@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.DiscountListDialog;
@@ -76,7 +78,10 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
         }
 
         setVisibility(VISIBLE);
-        _countTextView.setText(_workOrder.getPay().getDiscounts().getResults().length + "");
+        _countTextView.setText((
+                _workOrder.getPay().getDiscounts().getResults().length
+                        + WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT + _workOrder.getId() + "/%").size()
+                        + WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT + _workOrder.getId() + "/%").size()) + "");
         setOnClickListener(_this_onClick);
     }
 

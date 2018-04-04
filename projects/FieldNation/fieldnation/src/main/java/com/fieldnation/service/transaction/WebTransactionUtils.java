@@ -6,6 +6,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.v2.data.listener.TransactionParams;
 
+import java.security.Key;
 import java.util.List;
 
 /**
@@ -19,10 +20,14 @@ public class WebTransactionUtils {
 
     // WebTransaction Key
     public static final String WEB_TRANS_KEY_PREFIX_CLOSING_NOTES = "%/updateClosingNotesByWorkOrder/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT = "%/addDiscountByWorkOrder/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT = "%/deleteDiscountByWorkOrder/api/rest/v2/workorders/";
 
     // TODO more key type will be added
     public enum KeyType {
-        CLOSING_NOTES
+        CLOSING_NOTES,
+        ADD_DISCOUNT,
+        DELETE_DISCOUNT
     }
 
     // TODO more cases will be added while implementing more offline features
@@ -30,8 +35,13 @@ public class WebTransactionUtils {
         switch (keyType) {
             case CLOSING_NOTES:
                 return WEB_TRANS_KEY_PREFIX_CLOSING_NOTES + workOrderId + "%";
+            case ADD_DISCOUNT:
+                return WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT + workOrderId + "%";
+            case DELETE_DISCOUNT:
+                return WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT + workOrderId + "%";
+            default:
+                return null;
         }
-        return null;
     }
 
     // TODO more cases will be added while implementing more offline features
@@ -39,17 +49,17 @@ public class WebTransactionUtils {
         switch (keyType) {
             case CLOSING_NOTES:
                 return PARAM_CLOSING_NOTES_KEY;
+            default:
+                return null;
         }
-        return null;
     }
 
     public static void setData(Listener listener, KeyType keyType, int workOrderId) {
-        new FindWebTransactionTask(listener).executeEx(getWebTransKeyByType(keyType, workOrderId), getParamKeyByType(keyType));
+        new FindWebTransactionTask(listener).executeEx(keyType, workOrderId);
     }
 
     private static class FindWebTransactionTask extends AsyncTaskEx<Object, Object, Object> {
         private Listener listener;
-        private WebTransaction webTransaction;
 
         public FindWebTransactionTask(Listener listener) {
             this.listener = listener;
@@ -58,19 +68,21 @@ public class WebTransactionUtils {
         @Override
         protected Object doInBackground(Object... objects) {
             Stopwatch stopwatch = new Stopwatch(true);
+            KeyType keyType = (KeyType) objects[0];
+            int workOrderId = (Integer) objects[1];
 
-            List<WebTransaction> webTransactions = WebTransaction.findByKey((String) objects[0]);
+            List<WebTransaction> webTransactions = WebTransaction.findByKey(getWebTransKeyByType(keyType, workOrderId));
             Log.v(TAG, "Searching time in DB " + stopwatch.finishAndRestart());
 
-            String paramKey = (String) objects[1];
-
+            String paramKey = getParamKeyByType(keyType);
 
             for (WebTransaction webTransaction : webTransactions) {
                 try {
                     TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
 
-                    if (params != null && params.methodParams != null && params.methodParams.contains(paramKey)) {
-                        this.webTransaction = webTransaction;
+                    if (params != null && params.methodParams != null
+                            && (paramKey == null || params.methodParams.contains(paramKey))) {
+                        publishProgress(keyType, workOrderId, webTransaction);
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -79,13 +91,13 @@ public class WebTransactionUtils {
 
             Log.v(TAG, "Traversing time " + stopwatch.finish());
 
-            return this.webTransaction;
+            return null;
         }
 
         @Override
-        protected void onPostExecute(Object o) {
-            this.listener.onFoundWebTransaction((WebTransaction) o);
-            super.onPostExecute(o);
+        protected void onProgressUpdate(Object... values) {
+            this.listener.onFoundWebTransaction((KeyType) values[0], (Integer) values[1], (WebTransaction) values[2]);
+            super.onProgressUpdate(values);
         }
     }
 
@@ -107,8 +119,7 @@ public class WebTransactionUtils {
         return null;
     }
 
-
     public interface Listener {
-        void onFoundWebTransaction(WebTransaction webTransaction);
+        void onFoundWebTransaction(KeyType keyType, int workOrderId, WebTransaction webTransaction);
     }
 }
