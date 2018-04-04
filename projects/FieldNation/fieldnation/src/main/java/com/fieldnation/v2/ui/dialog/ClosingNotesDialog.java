@@ -160,7 +160,7 @@ public class ClosingNotesDialog extends SimpleDialog {
 
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
             _webTransaction = webTransaction;
             if (!isRotated) populateUi();
         }

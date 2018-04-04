@@ -13,8 +13,10 @@ import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.PayModifier;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mc on 10/10/17.
@@ -23,9 +25,10 @@ import java.util.List;
 public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     private static final String TAG = "DiscountsAdapter";
 
-    private PayModifier[] discounts;
+    private List<PayModifier> objects = new LinkedList<>();
+    private PayModifier[] _discounts;
     private List<PayModifier> addedDiscounts = new LinkedList<>();
-    private List<PayModifier> deletedDiscounts = new LinkedList<>();
+    private Set<Integer> deletedDiscounts = new HashSet<>();
     private Listener _listener;
 
 
@@ -34,13 +37,28 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     }
 
     public void setDiscounts(int workOrderId, PayModifier[] discounts) {
-        this.discounts = discounts;
+        this._discounts = discounts;
+        addedDiscounts.clear();
+        deletedDiscounts.clear();
         WebTransactionUtils.setData(_addDiscounts, WebTransactionUtils.KeyType.ADD_DISCOUNT, workOrderId);
         WebTransactionUtils.setData(_deleteDiscounts, WebTransactionUtils.KeyType.DELETE_DISCOUNT, workOrderId);
         rebuild();
     }
 
     private void rebuild() {
+        objects.clear();
+
+        for (PayModifier discount : addedDiscounts) {
+            objects.add(discount);
+        }
+
+        for (PayModifier discount : _discounts) {
+            if (deletedDiscounts.contains(discount.getId()))
+                continue;
+
+            objects.add(discount);
+        }
+
         notifyDataSetChanged();
     }
 
@@ -53,9 +71,9 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     @Override
     public void onBindViewHolder(DiscountViewHolder holder, int position) {
         ListItemTwoHorizView v = (ListItemTwoHorizView) holder.itemView;
-        v.setTag(discounts[position]);
+        v.setTag(objects.get(position));
         v.setOnLongClickListener(_discount_onLongClick);
-        v.set(discounts[position].getName(), misc.toCurrency(discounts[position].getAmount()));
+        v.set(objects.get(position).getName(), misc.toCurrency(objects.get(position).getAmount()));
     }
 
     private final View.OnLongClickListener _discount_onLongClick = new View.OnLongClickListener() {
@@ -75,24 +93,34 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
-            }catch (Exception ex){
+                PayModifier discount = PayModifier.fromJson(new JsonObject(tp.methodParams).getJsonObject("json"));
+                addedDiscounts.add(discount);
+            } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            rebuild();
         }
     };
 
     private final WebTransactionUtils.Listener _deleteDiscounts = new WebTransactionUtils.Listener() {
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
-
+            try {
+                TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+                int id = new JsonObject(tp.methodParams).getInt("json");
+                deletedDiscounts.add(id);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            rebuild();
         }
     };
 
     @Override
     public int getItemCount() {
-        if (discounts == null)
+        if (objects == null)
             return 0;
-        return discounts.length;
+        return objects.size();
     }
 
     public interface Listener {

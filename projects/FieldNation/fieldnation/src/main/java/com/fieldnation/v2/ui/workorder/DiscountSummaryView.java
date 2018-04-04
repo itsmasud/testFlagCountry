@@ -1,6 +1,10 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +62,25 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            populateUi();
+        }
+    };
+
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
@@ -69,19 +92,21 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
 
         _titleTextView.setText("Discounts");
 
-        if (_workOrder.getPay() == null
+        int addSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT + _workOrder.getId() + "/%").size();
+        int delSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT + _workOrder.getId() + "/%").size();
+
+        if ((_workOrder.getPay() == null
                 || _workOrder.getPay().getDiscounts() == null
                 || _workOrder.getPay().getDiscounts().getResults() == null
-                || _workOrder.getPay().getDiscounts().getResults().length == 0) {
+                || _workOrder.getPay().getDiscounts().getResults().length == 0)
+                && addSize == 0 && delSize == 0) {
             setVisibility(GONE);
             return;
         }
 
         setVisibility(VISIBLE);
         _countTextView.setText((
-                _workOrder.getPay().getDiscounts().getResults().length
-                        + WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT + _workOrder.getId() + "/%").size()
-                        + WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT + _workOrder.getId() + "/%").size()) + "");
+                _workOrder.getPay().getDiscounts().getResults().length + addSize - delSize) + "");
         setOnClickListener(_this_onClick);
     }
 

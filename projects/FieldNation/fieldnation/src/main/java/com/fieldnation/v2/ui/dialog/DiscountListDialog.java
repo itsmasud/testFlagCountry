@@ -1,8 +1,12 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -86,6 +90,8 @@ public class DiscountListDialog extends FullScreenDialog {
         _workOrdersApi.sub();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
     }
 
     @Override
@@ -106,13 +112,14 @@ public class DiscountListDialog extends FullScreenDialog {
         } else {
             _finishMenu.setVisibility(View.GONE);
         }
-        _adapter.setDiscounts(_discounts.getResults());
+        _adapter.setDiscounts(_workOrderId, _discounts.getResults());
     }
 
     @Override
     public void onStop() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
         _workOrdersApi.unsub();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
         super.onStop();
     }
 
@@ -149,6 +156,14 @@ public class DiscountListDialog extends FullScreenDialog {
             AppMessagingClient.setLoading(true);
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
             WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData), App.get().getSpUiContext());
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (_discounts != null)
+                _adapter.setDiscounts(_workOrderId, _discounts.getResults());
         }
     };
 
