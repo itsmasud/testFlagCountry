@@ -105,8 +105,7 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
         }
 
         setVisibility(VISIBLE);
-        _countTextView.setText((
-                _workOrder.getPay().getDiscounts().getResults().length + addSize - delSize) + "");
+        _countTextView.setText((_workOrder.getPay().getDiscounts().getResults().length + addSize - delSize) + "");
         setOnClickListener(_this_onClick);
     }
 
