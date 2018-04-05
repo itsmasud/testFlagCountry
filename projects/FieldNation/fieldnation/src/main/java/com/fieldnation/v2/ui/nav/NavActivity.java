@@ -139,6 +139,7 @@ public class NavActivity extends AuthSimpleActivity {
         _searchToolbarView = (SearchToolbarView) findViewById(R.id.searchToolbarView);
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
+        _arrowTextView.setVisibility(View.VISIBLE);
 
         _searchesView = (SavedSearchList) findViewById(R.id.searchesView);
         _searchesView.setOnHideListener(_onHideListener);
@@ -263,13 +264,8 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getToolbarId() {
-        return R.id.toolbar;
-    }
-
-    @Override
-    public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
+    public int getFnToolbarViewId() {
+        return R.id.fnToolbar;
     }
 
     @Override

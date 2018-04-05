@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
@@ -69,8 +68,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        if (getToolbarId() != 0) {
-            Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
+        if (getFnToolbarViewId() != 0) {
+            FnToolBarView fnToolBarView = (FnToolBarView) findViewById(getFnToolbarViewId());
+            Toolbar toolbar = fnToolBarView.getToolbar();
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(R.drawable.back_arrow);
             toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
@@ -95,9 +95,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     public abstract void onFinishCreate(Bundle savedInstanceState);
 
-    public abstract int getToolbarId();
-
-    public abstract int getOfflineBarId();
+    public abstract int getFnToolbarViewId();
 
     public abstract DialogManager getDialogManager();
 
@@ -128,9 +126,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
         }
 
-        if (getOfflineBarId() != 0)
-            findViewById(getOfflineBarId()).setOnClickListener(_offline_onClick);
-
         if (App.get().getOfflineState() == App.OfflineState.DOWNLOADING) {
             DownloadProgressDialog.show(App.get());
         } else if (App.get().getOfflineState() == App.OfflineState.UPLOADING) {
@@ -142,12 +137,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-
-        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-            setVisibilityOfflineBar(true);
-        } else
-            setVisibilityOfflineBar(false);
-
+        refreshToolbar();
         _toastClient.subSnackbar();
         _toastClient.subToast();
 
@@ -243,10 +233,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
 
-    private void setVisibilityOfflineBar(boolean isVisible) {
-        if (getOfflineBarId() != 0) {
-            TextView offlineBar = (TextView) findViewById(getOfflineBarId());
-            offlineBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    private void refreshToolbar() {
+        if (getFnToolbarViewId() != 0) {
+            FnToolBarView fnToolBar= (FnToolBarView) findViewById(getFnToolbarViewId());
+            fnToolBar.refresh();
         }
     }
 
@@ -489,12 +479,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onOfflineMode(App.OfflineState state) {
             Log.v(TAG, "onOfflineMode");
-            if (state == App.OfflineState.OFFLINE) {
-                setVisibilityOfflineBar(true);
-            } else {
-                setVisibilityOfflineBar(false);
-            }
-
+            refreshToolbar();
             if (state == App.OfflineState.DOWNLOADING) {
                 DownloadProgressDialog.show(App.get());
             } else if (state == App.OfflineState.UPLOADING) {

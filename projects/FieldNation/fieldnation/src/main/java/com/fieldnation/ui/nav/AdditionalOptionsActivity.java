@@ -47,13 +47,8 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getToolbarId() {
-        return R.id.toolbar;
-    }
-
-    @Override
-    public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
+    public int getFnToolbarViewId() {
+        return R.id.fnToolbar;
     }
 
     @Override

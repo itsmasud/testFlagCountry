@@ -13,27 +13,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <android.support.design.widget.AppBarLayout
-                android:id="@+id/appbar"
+            <com.fieldnation.ui.FnToolBarView
+                android:id="@+id/fnToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fitsSystemWindows="true"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    style="?attr/fnToolbarStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:theme="@style/FieldNation.Material.ToolBar" />
-            </android.support.design.widget.AppBarLayout>
-
-            <TextView
-                android:id="@+id/offline_bar_textview"
-                style="@style/Text_Subhead_Offline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/appbar" />
+                android:visibility="visible"/>
 
             <com.fieldnation.ui.nav.AdditionalOptionsScreen
                 android:id="@+id/screen"

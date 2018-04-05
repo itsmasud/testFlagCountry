@@ -63,13 +63,8 @@ public class PaymentListActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getToolbarId() {
+    public int getFnToolbarViewId() {
         return R.id.toolbar;
-    }
-
-    @Override
-    public int getOfflineBarId() {
-        return 0;
     }
 
     @Override

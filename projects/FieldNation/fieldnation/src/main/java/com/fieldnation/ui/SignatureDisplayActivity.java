@@ -50,13 +50,8 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getToolbarId() {
+    public int getFnToolbarViewId() {
         return R.id.toolbar;
-    }
-
-    @Override
-    public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
     }
 
     @Override
