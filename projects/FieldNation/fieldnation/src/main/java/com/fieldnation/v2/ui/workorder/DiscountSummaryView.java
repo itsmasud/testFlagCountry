@@ -76,7 +76,14 @@ public class DiscountSummaryView extends RelativeLayout implements WorkOrderRend
     private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            populateUi();
+            String op = intent.getStringExtra("op");
+            if (intent.hasExtra("key")) {
+                String key = intent.getStringExtra("key");
+                if (key == null || key.contains("addDiscountByWorkOrder") || key.contains("deleteDiscountByWorkOrder"))
+                    populateUi();
+            } else if (op.equals("delete") || op.equals("deleteAll")) {
+                populateUi();
+            }
         }
     };
 

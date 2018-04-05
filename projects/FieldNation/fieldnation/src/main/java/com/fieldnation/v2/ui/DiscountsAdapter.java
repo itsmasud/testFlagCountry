@@ -11,9 +11,11 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifier;
 
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -25,11 +27,21 @@ import java.util.Set;
 public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     private static final String TAG = "DiscountsAdapter";
 
-    private List<PayModifier> objects = new LinkedList<>();
+    private List<Object> objects = new LinkedList<>();
     private PayModifier[] _discounts;
-    private List<PayModifier> addedDiscounts = new LinkedList<>();
-    private Set<Integer> deletedDiscounts = new HashSet<>();
+    private List<Tuple> addedDiscounts = new LinkedList<>();
+    private Hashtable<Integer, WebTransaction> deletedDiscounts = new Hashtable<>();
     private Listener _listener;
+
+    private static class Tuple {
+        public WebTransaction webTransaction;
+        public PayModifier payModifier;
+
+        public Tuple(WebTransaction webTransaction, PayModifier payModifier) {
+            this.webTransaction = webTransaction;
+            this.payModifier = payModifier;
+        }
+    }
 
 
     public void setListener(Listener listener) {
@@ -48,12 +60,12 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     private void rebuild() {
         objects.clear();
 
-        for (PayModifier discount : addedDiscounts) {
+        for (Tuple discount : addedDiscounts) {
             objects.add(discount);
         }
 
         for (PayModifier discount : _discounts) {
-            if (deletedDiscounts.contains(discount.getId()))
+            if (deletedDiscounts.containsKey(discount.getId()))
                 continue;
 
             objects.add(discount);
@@ -73,15 +85,30 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
         ListItemTwoHorizView v = (ListItemTwoHorizView) holder.itemView;
         v.setTag(objects.get(position));
         v.setOnLongClickListener(_discount_onLongClick);
-        v.set(objects.get(position).getName(), misc.toCurrency(objects.get(position).getAmount()));
+        Object object = objects.get(position);
+        if (object instanceof Tuple) {
+            Tuple tuple = (Tuple) object;
+            v.set(tuple.payModifier.getName(), misc.toCurrency(tuple.payModifier.getAmount()));
+        } else if (object instanceof PayModifier) {
+            PayModifier payModifier = (PayModifier) object;
+            v.set(payModifier.getName(), misc.toCurrency(payModifier.getAmount()));
+        }
     }
 
     private final View.OnLongClickListener _discount_onLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            PayModifier payModifier = (PayModifier) v.getTag();
-            if (payModifier.getActionsSet().contains(PayModifier.ActionsEnum.DELETE)) {
-                _listener.onLongClick(v, payModifier);
+            Object object = v.getTag();
+            WebTransaction webTransaction = null;
+            PayModifier payModifier = null;
+            if (object instanceof Tuple) {
+                payModifier = ((Tuple) object).payModifier;
+                webTransaction = ((Tuple) object).webTransaction;
+            } else if (object instanceof PayModifier) {
+                payModifier = (PayModifier) object;
+            }
+            if (payModifier.getActionsSet().contains(PayModifier.ActionsEnum.DELETE) || webTransaction != null) {
+                _listener.onLongClick(v, payModifier, webTransaction);
                 return true;
             }
             return false;
@@ -94,7 +121,7 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 PayModifier discount = PayModifier.fromJson(new JsonObject(tp.methodParams).getJsonObject("json"));
-                addedDiscounts.add(discount);
+                addedDiscounts.add(new Tuple(webTransaction, discount));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -107,8 +134,8 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
-                int id = new JsonObject(tp.methodParams).getInt("json");
-                deletedDiscounts.add(id);
+                int id = new JsonObject(tp.methodParams).getInt("discountId");
+                deletedDiscounts.put(id, webTransaction);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -124,6 +151,6 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     }
 
     public interface Listener {
-        void onLongClick(View v, PayModifier discount);
+        void onLongClick(View v, PayModifier discount, WebTransaction webTransaction);
     }
 }

@@ -45,7 +45,6 @@ public class DiscountListDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
-    private RefreshView _refreshView;
     private OverScrollRecyclerView _list;
 
     // Data
@@ -68,8 +67,6 @@ public class DiscountListDialog extends FullScreenDialog {
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
-
-        _refreshView = v.findViewById(R.id.refresh_view);
 
         _list = v.findViewById(R.id.list);
 
@@ -142,20 +139,31 @@ public class DiscountListDialog extends FullScreenDialog {
 
     private final DiscountsAdapter.Listener _discounts_listener = new DiscountsAdapter.Listener() {
         @Override
-        public void onLongClick(View v, PayModifier discount) {
+        public void onLongClick(View v, PayModifier discount, WebTransaction webTransaction) {
+            Bundle bundle = new Bundle();
+            if (webTransaction != null)
+                bundle.putParcelable("wt", webTransaction);
+
+            bundle.putParcelable("pm", discount);
+
             TwoButtonDialog.show(App.get(), DIALOG_DELETE_DISCOUNT,
                     R.string.dialog_delete_discount_title,
                     R.string.dialog_delete_discount_body,
-                    R.string.btn_yes, R.string.btn_no, true, discount);
+                    R.string.btn_yes, R.string.btn_no, true, bundle);
         }
     };
 
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteDiscount = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            AppMessagingClient.setLoading(true);
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData), App.get().getSpUiContext());
+            if (((Bundle) extraData).containsKey("wt")) {
+                WebTransaction webTransaction = ((Bundle) extraData).getParcelable("wt");
+                WebTransaction.delete(webTransaction.getId());
+                populateUi();
+            } else {
+                WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+                WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, (PayModifier) ((Bundle) extraData).getParcelable("pm"), App.get().getSpUiContext());
+            }
         }
     };
 
@@ -182,7 +190,6 @@ public class DiscountListDialog extends FullScreenDialog {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers discounts = (PayModifiers) successObject;
                 _discounts = discounts;
-                AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
                 WorkordersWebApi.getDiscounts(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
