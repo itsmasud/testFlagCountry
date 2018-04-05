@@ -22,6 +22,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
@@ -29,6 +30,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.ui.DiscountsAdapter;
@@ -101,6 +103,7 @@ public class DiscountListDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
+        Log.v(TAG, "populateUi");
         if (_list == null) return;
         if (_discounts == null) return;
 
@@ -170,8 +173,14 @@ public class DiscountListDialog extends FullScreenDialog {
     private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (_discounts != null)
-                _adapter.setDiscounts(_workOrderId, _discounts.getResults());
+            if (_discounts != null) {
+                String op = intent.getStringExtra("op");
+                if (intent.hasExtra("key")) {
+                    String key = intent.getStringExtra("key");
+                    if (key != null && (key.contains("addDiscountByWorkOrder") || key.contains("deleteDiscountByWorkOrder")))
+                        populateUi();
+                }
+            }
         }
     };
 
@@ -189,8 +198,23 @@ public class DiscountListDialog extends FullScreenDialog {
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers discounts = (PayModifiers) successObject;
-                _discounts = discounts;
-                populateUi();
+                if (_discounts != null) {
+                    if (_discounts.getResults().length != discounts.getResults().length) {
+                        _discounts = discounts;
+                        populateUi();
+                    } else {
+                        for (int i = 0; i < _discounts.getResults().length; i++) {
+                            if (_discounts.getResults()[i].getId() != discounts.getResults()[i].getId().intValue()) {
+                                _discounts = discounts;
+                                populateUi();
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    _discounts = discounts;
+                    populateUi();
+                }
             } else {
                 WorkordersWebApi.getDiscounts(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
             }

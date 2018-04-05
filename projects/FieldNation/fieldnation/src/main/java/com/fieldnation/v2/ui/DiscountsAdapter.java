@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
@@ -32,6 +33,9 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     private List<Tuple> addedDiscounts = new LinkedList<>();
     private Hashtable<Integer, WebTransaction> deletedDiscounts = new Hashtable<>();
     private Listener _listener;
+    private int _workOrderId;
+    private int _running = 0;
+    private boolean _runAgain = false;
 
     private static class Tuple {
         public WebTransaction webTransaction;
@@ -49,25 +53,37 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
     }
 
     public void setDiscounts(int workOrderId, PayModifier[] discounts) {
-        this._discounts = discounts;
-        addedDiscounts.clear();
-        deletedDiscounts.clear();
-        WebTransactionUtils.setData(_addDiscounts, WebTransactionUtils.KeyType.ADD_DISCOUNT, workOrderId);
-        WebTransactionUtils.setData(_deleteDiscounts, WebTransactionUtils.KeyType.DELETE_DISCOUNT, workOrderId);
-        rebuild();
+        Log.v(TAG, "setDiscounts");
+        if (_running == 0) {
+            _running = 2;
+            this._discounts = discounts;
+            this._workOrderId = workOrderId;
+            addedDiscounts.clear();
+            deletedDiscounts.clear();
+            WebTransactionUtils.setData(_addDiscounts, WebTransactionUtils.KeyType.ADD_DISCOUNT, workOrderId);
+            WebTransactionUtils.setData(_deleteDiscounts, WebTransactionUtils.KeyType.DELETE_DISCOUNT, workOrderId);
+        } else {
+            _runAgain = true;
+        }
     }
 
     private void rebuild() {
-        objects.clear();
-
-        for (Tuple discount : addedDiscounts) {
-            objects.add(discount);
+        if (_runAgain) {
+            _runAgain = false;
+            setDiscounts(_workOrderId, _discounts);
+            return;
         }
+
+        objects.clear();
 
         for (PayModifier discount : _discounts) {
             if (deletedDiscounts.containsKey(discount.getId()))
                 continue;
 
+            objects.add(discount);
+        }
+
+        for (Tuple discount : addedDiscounts) {
             objects.add(discount);
         }
 
@@ -87,9 +103,11 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
         v.setOnLongClickListener(_discount_onLongClick);
         Object object = objects.get(position);
         if (object instanceof Tuple) {
+            v.setAlert(true);
             Tuple tuple = (Tuple) object;
             v.set(tuple.payModifier.getName(), misc.toCurrency(tuple.payModifier.getAmount()));
         } else if (object instanceof PayModifier) {
+            v.setAlert(false);
             PayModifier payModifier = (PayModifier) object;
             v.set(payModifier.getName(), misc.toCurrency(payModifier.getAmount()));
         }
@@ -125,7 +143,12 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            rebuild();
+        }
+
+        @Override
+        public void onComplete() {
+            _running--;
+            if (_running == 0) rebuild();
         }
     };
 
@@ -139,7 +162,12 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            rebuild();
+        }
+
+        @Override
+        public void onComplete() {
+            _running--;
+            if (_running == 0) rebuild();
         }
     };
 

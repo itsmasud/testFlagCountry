@@ -99,6 +99,11 @@ public class WebTransactionUtils {
             this.listener.onFoundWebTransaction((KeyType) values[0], (Integer) values[1], (WebTransaction) values[2]);
             super.onProgressUpdate(values);
         }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            this.listener.onComplete();
+        }
     }
 
     /*-*********************************-*/
@@ -119,7 +124,10 @@ public class WebTransactionUtils {
         return null;
     }
 
-    public interface Listener {
-        void onFoundWebTransaction(KeyType keyType, int workOrderId, WebTransaction webTransaction);
+    public abstract static class Listener {
+        public abstract void onFoundWebTransaction(KeyType keyType, int workOrderId, WebTransaction webTransaction);
+
+        public void onComplete() {
+        }
     }
 }

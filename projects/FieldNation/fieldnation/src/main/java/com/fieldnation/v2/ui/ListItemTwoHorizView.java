@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,10 +20,12 @@ public class ListItemTwoHorizView extends RelativeLayout {
     // Ui
     private TextView _keyTextView;
     private TextView _valueTextView;
+    private View _alertView;
 
     // Data
     private String _key;
     private String _value;
+    private boolean _alert = false;
 
     public ListItemTwoHorizView(Context context) {
         super(context);
@@ -47,6 +50,7 @@ public class ListItemTwoHorizView extends RelativeLayout {
 
         _keyTextView = findViewById(R.id.key);
         _valueTextView = findViewById(R.id.value);
+        _alertView = findViewById(R.id.alert);
 
         populateUi();
     }
@@ -54,6 +58,12 @@ public class ListItemTwoHorizView extends RelativeLayout {
     public void set(String key, String value) {
         _key = key;
         _value = value;
+
+        populateUi();
+    }
+
+    public void setAlert(boolean enabled) {
+        _alert = enabled;
 
         populateUi();
     }
@@ -86,5 +96,7 @@ public class ListItemTwoHorizView extends RelativeLayout {
             _valueTextView.setText("");
         else
             _valueTextView.setText(_value);
+
+        _alertView.setVisibility(_alert ? VISIBLE : GONE);
     }
 }
