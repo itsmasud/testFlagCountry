@@ -14,22 +14,40 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@+id/cost_textview"
+        android:layout_toLeftOf="@+id/cost_container"
         android:text="Key"
         android:textColor="@color/fn_dark_text" />
 
-    <TextView
-        android:id="@+id/cost_textview"
-        style="@style/Text_Body_1"
+    <LinearLayout
+        android:id="@+id/cost_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="16dp"
-        android:gravity="right"
-        android:text="Value"
-        android:textColor="@color/fn_light_text" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingRight="16dp">
+
+        <TextView
+            android:id="@+id/cost_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="right"
+            android:text="Value"
+            android:textColor="@color/fn_light_text" />
+
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/alert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:text="@string/icon_cloud_off"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/category_textview"
@@ -41,7 +59,7 @@
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/cost_textview"
+        android:layout_toLeftOf="@+id/cost_container"
         android:gravity="left"
         android:text="Value"
         android:textColor="@color/fn_light_text" />

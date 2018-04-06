@@ -135,7 +135,6 @@ public class DiscountListDialog extends FullScreenDialog {
         public boolean onSingleMenuItemClick(MenuItem item) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
             DiscountDialog.show(App.get(), null, _workOrderId, getContext().getString(R.string.dialog_add_discount_title));
-
             return false;
         }
     };
