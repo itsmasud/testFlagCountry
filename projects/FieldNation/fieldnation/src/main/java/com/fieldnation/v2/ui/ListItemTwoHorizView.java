@@ -10,6 +10,8 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 
+import org.w3c.dom.Text;
+
 /**
  * Created by mc on 6/29/17.
  */
@@ -20,12 +22,13 @@ public class ListItemTwoHorizView extends RelativeLayout {
     // Ui
     private TextView _keyTextView;
     private TextView _valueTextView;
-    private View _alertView;
+    private TextView _alertView;
 
     // Data
     private String _key;
     private String _value;
     private boolean _alert = false;
+    private String _alertText = null;
 
     public ListItemTwoHorizView(Context context) {
         super(context);
@@ -68,6 +71,12 @@ public class ListItemTwoHorizView extends RelativeLayout {
         populateUi();
     }
 
+    public void setAlertIcon(String alert) {
+        _alertText = alert;
+
+        populateUi();
+    }
+
     public String getValue() {
         return _value;
     }
@@ -96,6 +105,9 @@ public class ListItemTwoHorizView extends RelativeLayout {
             _valueTextView.setText("");
         else
             _valueTextView.setText(_value);
+
+        if (_alertText != null)
+            _alertView.setText(_alertText);
 
         _alertView.setVisibility(_alert ? VISIBLE : GONE);
     }

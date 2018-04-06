@@ -199,6 +199,7 @@ public class DiscountListDialog extends FullScreenDialog {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers discounts = (PayModifiers) successObject;
                 if (_discounts != null) {
+
                     if (_discounts.getResults().length != discounts.getResults().length) {
                         _discounts = discounts;
                         populateUi();

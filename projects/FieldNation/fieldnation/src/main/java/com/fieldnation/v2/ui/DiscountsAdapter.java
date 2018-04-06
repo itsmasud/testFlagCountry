@@ -47,17 +47,16 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
         }
     }
 
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
     public void setDiscounts(int workOrderId, PayModifier[] discounts) {
         Log.v(TAG, "setDiscounts");
+        this._discounts = discounts;
+        this._workOrderId = workOrderId;
         if (_running == 0) {
             _running = 2;
-            this._discounts = discounts;
-            this._workOrderId = workOrderId;
             addedDiscounts.clear();
             deletedDiscounts.clear();
             WebTransactionUtils.setData(_addDiscounts, WebTransactionUtils.KeyType.ADD_DISCOUNT, workOrderId);
