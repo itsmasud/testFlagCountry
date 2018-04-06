@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -15,7 +16,8 @@ public class FnToolBarView extends RelativeLayout {
     private static final String TAG = "FnToolBar";
 
     // Ui
-    private Toolbar toolbar;
+    private AppBarLayout _appBarLayout;
+    private Toolbar _toolbar;
     private IconFontTextView _arrowTextView;
     private TextView _orangeBarTextView;
 
@@ -39,15 +41,34 @@ public class FnToolBarView extends RelativeLayout {
 
         if (isInEditMode())
             return;
-        toolbar = findViewById(R.id.toolbar);
-        _arrowTextView =  findViewById(R.id.arrow_textview);
+        _appBarLayout = findViewById(R.id.appbar);
+        _toolbar = findViewById(R.id.toolbar);
+        setScrollFlag(0); // resetting scroll flag
+        _arrowTextView = findViewById(R.id.arrow_textview);
+        _arrowTextView.setVisibility(GONE);
         _orangeBarTextView = findViewById(R.id.offline_bar_textview);
         populateUi();
     }
 
     public Toolbar getToolbar() {
-        return toolbar;
+        return _toolbar;
     }
+
+    public Toolbar setScrollFlag(int scrollFlag) {
+        if (_toolbar == null) return null;
+
+        // TODO necessary for confirm activity toolbar. I am not sure what to do
+        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) _toolbar.getLayoutParams();
+//        for (int flag: scrollFlag) {
+            params.setScrollFlags(scrollFlag);
+//        }
+        return _toolbar;
+    }
+
+//    public void setElevation(){
+    // TODO you cant use that because using that you need min api level 21
+//        _appBarLayout.setElevation(0.0f);
+//    }
 
     public IconFontTextView getArrowView() {
         return _arrowTextView;

@@ -27,6 +27,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.menu.InboxMenuButton;
 import com.fieldnation.ui.menu.SearchMenuButton;
@@ -57,7 +58,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     // Ui
     private SearchResultScreen _recyclerView;
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private SavedSearchList _searchesView;
     private IconFontTextView _arrowTextView;
     private CoordinatorLayout _layout;
@@ -132,13 +133,14 @@ public class NavActivity extends AuthSimpleActivity {
 
         _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
-        _toolbar = (Toolbar) findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(null);
-        _toolbar.setOnClickListener(_toolbar_onClick);
+        _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(null);
+        _fnToolbarView.getToolbar().setOnClickListener(_toolbar_onClick);
+        _fnToolbarView.setScrollFlag(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS| AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
 
         _searchToolbarView = (SearchToolbarView) findViewById(R.id.searchToolbarView);
 
-        _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
+        _arrowTextView = _fnToolbarView.getArrowView();
         _arrowTextView.setVisibility(View.VISIBLE);
 
         _searchesView = (SavedSearchList) findViewById(R.id.searchesView);
@@ -318,7 +320,7 @@ public class NavActivity extends AuthSimpleActivity {
     private void populateUi() {
         if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
             _arrowTextView.setText(null);
-            _toolbar.setOnClickListener(null);
+            _fnToolbarView.getToolbar().setOnClickListener(null);
             _searchesView.setEnabled(false);
             setNavTitle(getString(R.string.offline));
 
@@ -330,7 +332,7 @@ public class NavActivity extends AuthSimpleActivity {
             }
         } else {
             _arrowTextView.setText(getString(R.string.icon_arrow_down));
-            _toolbar.setOnClickListener(_toolbar_onClick);
+            _fnToolbarView.getToolbar().setOnClickListener(_toolbar_onClick);
             _searchesView.setEnabled(true);
             WorkordersWebApi.getWorkOrderLists(App.get(), _savedList.getLabel(), true, WebTransaction.Type.NORMAL);
             setNavTitle(_savedList);
