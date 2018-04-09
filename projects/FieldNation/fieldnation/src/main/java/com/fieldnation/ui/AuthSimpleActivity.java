@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -71,9 +72,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (getFnToolbarViewId() != 0) {
             FnToolBarView fnToolBarView = (FnToolBarView) findViewById(getFnToolbarViewId());
             Toolbar toolbar = fnToolBarView.getToolbar();
+            fnToolBarView.setScrollFlag(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(R.drawable.back_arrow);
             toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+
         }
 
         if (savedInstanceState != null) {

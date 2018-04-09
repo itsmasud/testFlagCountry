@@ -9,6 +9,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <com.fieldnation.ui.FnToolBarView
+            android:id="@+id/fnToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- remove start -->
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             style="?attr/fnToolbarStyle"
@@ -17,6 +23,7 @@
             android:layout_alignParentTop="true"
             app:layout_scrollFlags="scroll|enterAlways"
             android:theme="@style/FieldNation.Material.ToolBar" />
+        <!-- remove end -->
 
         <!--<LinearLayout-->
         <!--android:layout_width="match_parent"-->

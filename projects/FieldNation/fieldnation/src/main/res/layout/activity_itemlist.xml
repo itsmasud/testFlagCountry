@@ -29,14 +29,19 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
+    <com.fieldnation.ui.FnToolBarView
+        android:id="@+id/fnToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:layout_height="wrap_content"/>
+
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--style="?attr/fnToolbarStyle"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--android:layout_alignParentTop="true"-->
+        <!--app:layout_scrollFlags="scroll|enterAlways"-->
+        <!--android:theme="@style/FieldNation.Material.ToolBar" />-->
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
