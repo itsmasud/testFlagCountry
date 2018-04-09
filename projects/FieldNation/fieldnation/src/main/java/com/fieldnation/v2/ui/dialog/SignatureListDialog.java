@@ -96,7 +96,7 @@ public class SignatureListDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getSignatures(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
+        WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
