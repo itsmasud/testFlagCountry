@@ -315,12 +315,14 @@ public class WebCrawlerService extends Service {
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
+            _monitorRunning = false;
+
             if (!_isRunning) {
                 Log.v(TAG, "_activityMonitor_runnable not running");
                 return;
             }
 
-            _monitorRunning = false;// check timer
+            // check timer
             if (System.currentTimeMillis() - _lastRequestTime > 10000
                     && WebTransaction.getPaused(WebTransaction.Type.CRAWLER).size() == 0) {
 

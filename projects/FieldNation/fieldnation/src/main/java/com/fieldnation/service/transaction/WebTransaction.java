@@ -818,7 +818,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
 
-        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCAST_ON_CHANGE));
+        Intent intent = new Intent(BROADCAST_ON_CHANGE);
+        intent.putExtra("op", "saveOrphans");
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
     }
 
     public static WebTransaction put(WebTransaction obj) {
@@ -881,7 +883,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 return null;
             }
         } finally {
-            LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCAST_ON_CHANGE));
+            Intent intent = new Intent(BROADCAST_ON_CHANGE);
+            intent.putExtra("op", "put");
+            intent.putExtra("id", obj._id);
+            intent.putExtra("key", obj._key);
+            intent.putExtra("obj", obj);
+            LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
         }
     }
 
@@ -901,7 +908,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
-        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCAST_ON_CHANGE));
+        Intent intent = new Intent(BROADCAST_ON_CHANGE);
+        intent.putExtra("op", "delete");
+        intent.putExtra("id", id);
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
         return success;
     }
 
@@ -921,7 +931,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
 
-        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCAST_ON_CHANGE));
+        Intent intent = new Intent(BROADCAST_ON_CHANGE);
+        intent.putExtra("op", "deleteAll");
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
         return success;
     }
 
