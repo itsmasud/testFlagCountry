@@ -18,9 +18,12 @@ public class ExpenseView extends LinearLayout {
     private TextView _descriptionTextView;
     private TextView _categoryTextView;
     private TextView _costTextView;
+    private TextView _alertView;
 
     // Data
     private Expense _expense = null;
+    private boolean _alert = false;
+    private String _alertText = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -44,6 +47,9 @@ public class ExpenseView extends LinearLayout {
         _descriptionTextView = findViewById(R.id.description_textview);
         _categoryTextView = findViewById(R.id.category_textview);
         _costTextView = findViewById(R.id.cost_textview);
+        _alertView = findViewById(R.id.alert);
+
+        populateUi();
     }
 
     /*-*************************************-*/
@@ -51,14 +57,26 @@ public class ExpenseView extends LinearLayout {
     /*-*************************************-*/
     public void setData(Expense expense) {
         _expense = expense;
-        refresh();
+        populateUi();
     }
 
     public Expense getExpense() {
         return _expense;
     }
 
-    private void refresh() {
+    public void setAlert(boolean enabled) {
+        _alert = enabled;
+
+        populateUi();
+    }
+
+    public void setAlertIcon(String alert) {
+        _alertText = alert;
+
+        populateUi();
+    }
+
+    private void populateUi() {
         if (_expense == null)
             return;
 
@@ -76,5 +94,10 @@ public class ExpenseView extends LinearLayout {
             _costTextView.setText(misc.toCurrency(_expense.getAmount()));
         else
             _costTextView.setText(misc.toCurrency(0));
+
+        if (_alertText != null)
+            _alertView.setText(_alertText);
+
+        _alertView.setVisibility(_alert ? VISIBLE : GONE);
     }
 }

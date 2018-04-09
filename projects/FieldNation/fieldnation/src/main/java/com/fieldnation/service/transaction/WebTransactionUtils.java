@@ -22,12 +22,16 @@ public class WebTransactionUtils {
     public static final String WEB_TRANS_KEY_PREFIX_CLOSING_NOTES = "%/updateClosingNotesByWorkOrder/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT = "%/addDiscountByWorkOrder/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT = "%/deleteDiscountByWorkOrder/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_ADD_EXPENSE = "%/addExpenseByWorkOrder/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_DELETE_EXPENSE = "%/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/";
 
     // TODO more key type will be added
     public enum KeyType {
         CLOSING_NOTES,
         ADD_DISCOUNT,
-        DELETE_DISCOUNT
+        DELETE_DISCOUNT,
+        ADD_EXPENSE,
+        DELETE_EXPENSE
     }
 
     // TODO more cases will be added while implementing more offline features
@@ -39,6 +43,10 @@ public class WebTransactionUtils {
                 return WEB_TRANS_KEY_PREFIX_ADD_DISCOUNT + workOrderId + "%";
             case DELETE_DISCOUNT:
                 return WEB_TRANS_KEY_PREFIX_DELETE_DISCOUNT + workOrderId + "%";
+            case ADD_EXPENSE:
+                return WEB_TRANS_KEY_PREFIX_ADD_EXPENSE + workOrderId + "%";
+            case DELETE_EXPENSE:
+                return WEB_TRANS_KEY_PREFIX_DELETE_EXPENSE + workOrderId + "%";
             default:
                 return null;
         }
