@@ -92,7 +92,7 @@ public class DiscountDialog extends SimpleDialog {
         }
     }
 
-	/*-*********************************-*/
+    /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
 
@@ -130,6 +130,7 @@ public class DiscountDialog extends SimpleDialog {
                 PayModifier discount = new PayModifier();
                 discount.setAmount(getAmount());
                 discount.setDescription(getDescription());
+                discount.setName(getDescription());
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Discount Dialog";

@@ -46,7 +46,7 @@ public class ProfileSystem implements ProfileConstants {
                         || obj == null
                         || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
                     // send request (we always ask for an update)
-                    ProfileTransactionBuilder.get(context, profileId, false);
+                    ProfileTransactionBuilder.get(context, profileId, isSync);
                 }
                 return null;
             }

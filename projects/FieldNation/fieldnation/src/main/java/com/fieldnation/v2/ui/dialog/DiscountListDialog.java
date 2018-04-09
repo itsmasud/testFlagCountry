@@ -1,8 +1,12 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +22,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
@@ -25,6 +30,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.ui.DiscountsAdapter;
@@ -41,7 +47,6 @@ public class DiscountListDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
-    private RefreshView _refreshView;
     private OverScrollRecyclerView _list;
 
     // Data
@@ -65,8 +70,6 @@ public class DiscountListDialog extends FullScreenDialog {
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
 
-        _refreshView = v.findViewById(R.id.refresh_view);
-
         _list = v.findViewById(R.id.list);
 
         return v;
@@ -86,6 +89,8 @@ public class DiscountListDialog extends FullScreenDialog {
         _workOrdersApi.sub();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
     }
 
     @Override
@@ -98,6 +103,7 @@ public class DiscountListDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
+        Log.v(TAG, "populateUi");
         if (_list == null) return;
         if (_discounts == null) return;
 
@@ -106,13 +112,14 @@ public class DiscountListDialog extends FullScreenDialog {
         } else {
             _finishMenu.setVisibility(View.GONE);
         }
-        _adapter.setDiscounts(_discounts.getResults());
+        _adapter.setDiscounts(_workOrderId, _discounts.getResults());
     }
 
     @Override
     public void onStop() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
         _workOrdersApi.unsub();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
         super.onStop();
     }
 
@@ -135,20 +142,45 @@ public class DiscountListDialog extends FullScreenDialog {
 
     private final DiscountsAdapter.Listener _discounts_listener = new DiscountsAdapter.Listener() {
         @Override
-        public void onLongClick(View v, PayModifier discount) {
+        public void onLongClick(View v, PayModifier discount, WebTransaction webTransaction) {
+            Bundle bundle = new Bundle();
+            if (webTransaction != null)
+                bundle.putParcelable("wt", webTransaction);
+
+            bundle.putParcelable("pm", discount);
+
             TwoButtonDialog.show(App.get(), DIALOG_DELETE_DISCOUNT,
                     R.string.dialog_delete_discount_title,
                     R.string.dialog_delete_discount_body,
-                    R.string.btn_yes, R.string.btn_no, true, discount);
+                    R.string.btn_yes, R.string.btn_no, true, bundle);
         }
     };
 
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteDiscount = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            AppMessagingClient.setLoading(true);
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, ((PayModifier) extraData), App.get().getSpUiContext());
+            if (((Bundle) extraData).containsKey("wt")) {
+                WebTransaction webTransaction = ((Bundle) extraData).getParcelable("wt");
+                WebTransaction.delete(webTransaction.getId());
+                populateUi();
+            } else {
+                WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+                WorkordersWebApi.deleteDiscount(App.get(), _workOrderId, (PayModifier) ((Bundle) extraData).getParcelable("pm"), App.get().getSpUiContext());
+            }
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (_discounts != null) {
+                String op = intent.getStringExtra("op");
+                if (intent.hasExtra("key")) {
+                    String key = intent.getStringExtra("key");
+                    if (key != null && (key.contains("addDiscountByWorkOrder") || key.contains("deleteDiscountByWorkOrder")))
+                        populateUi();
+                }
+            }
         }
     };
 
@@ -166,9 +198,24 @@ public class DiscountListDialog extends FullScreenDialog {
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof PayModifiers) {
                 PayModifiers discounts = (PayModifiers) successObject;
-                _discounts = discounts;
-                AppMessagingClient.setLoading(false);
-                populateUi();
+                if (_discounts != null) {
+
+                    if (_discounts.getResults().length != discounts.getResults().length) {
+                        _discounts = discounts;
+                        populateUi();
+                    } else {
+                        for (int i = 0; i < _discounts.getResults().length; i++) {
+                            if (_discounts.getResults()[i].getId() != discounts.getResults()[i].getId().intValue()) {
+                                _discounts = discounts;
+                                populateUi();
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    _discounts = discounts;
+                    populateUi();
+                }
             } else {
                 WorkordersWebApi.getDiscounts(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
             }

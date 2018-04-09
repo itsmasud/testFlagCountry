@@ -12,16 +12,9 @@ import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpigeon.PigeonRoost;
-import com.fieldnation.fnstore.StoredObject;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FutureWaitAsyncTask;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.profile.ProfileConstants;
-import com.fieldnation.service.profileimage.ProfilePhotoConstants;
-import com.fieldnation.service.transaction.WebTransaction;
 
 import java.util.List;
 
@@ -98,7 +91,7 @@ public class AuthSystem implements AuthTopicConstants {
         @Override
         public void onCommandInvalidate() {
             Log.v(TAG, "onCommandInvalidate");
-            if (_authToken != null && _authToken.getAccessToken() != null)
+            if (_authToken != null)
                 invalidateToken(_authToken.getAccessToken());
         }
 
@@ -145,7 +138,7 @@ public class AuthSystem implements AuthTopicConstants {
             Log.v(TAG, "requestToken do nothing");
             // TODO, what do we do?
         } else {
-            if (_authToken != null) {
+            if (_authToken != null && _authToken.getAccessToken() != null) {
                 Log.v(TAG, "requestToken have auth");
                 setState(AuthState.AUTHENTICATED);
             } else if (_account != null) {
