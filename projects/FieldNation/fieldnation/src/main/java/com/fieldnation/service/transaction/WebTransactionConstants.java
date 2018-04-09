@@ -24,6 +24,7 @@ interface WebTransactionConstants {
     String PARAM_TIMING_KEY = "timingKey";
     String PARAM_ZOMBIE = "wasZombie";
     String PARAM_UUID = "uuid";
+    String PARAM_SEQUENTIAL = "sequential";
 
     String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";
     String PARAM_NOTIFICATION_START = "PARAM_NOTIFICATION_START";

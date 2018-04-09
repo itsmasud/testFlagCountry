@@ -16,7 +16,7 @@ import java.util.List;
 public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 10; // last update: 2-19-2018 MAR-1392, added created time
+    private static final int TABLE_VER = 11; // last update: 4-09-2018 MAR-1573, added sequential flag
     public static final String TABLE_NAME = "transactions";
 
     private static WebTransactionSqlHelper _instance = null;
@@ -41,11 +41,12 @@ public class WebTransactionSqlHelper extends SQLiteOpenHelper {
         TIMING_KEY(16, "timing_key", "text"),
         WAS_ZOMBIE(17, "was_zombie", "integer not null", true),
         UUID(18, "uuid", "text"),
-        NOTIF_ID(19, "notif_id", "integer"),
-        NOTIF_START(20, "notif_start", "integer"),
-        NOTIF_SUCCESS(21, "notif_success", "integer"),
-        NOTIF_FAILED(22, "notif_failed", "integer"),
-        NOTIF_RETRY(23, "notif_retry", "integer"),;
+        SEQUENTIAL(19, "sequential", "integer not null", true),
+        NOTIF_ID(20, "notif_id", "integer"),
+        NOTIF_START(21, "notif_start", "integer"),
+        NOTIF_SUCCESS(22, "notif_success", "integer"),
+        NOTIF_FAILED(23, "notif_failed", "integer"),
+        NOTIF_RETRY(24, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;

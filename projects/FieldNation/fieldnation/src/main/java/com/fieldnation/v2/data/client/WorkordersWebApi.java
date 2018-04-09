@@ -1149,6 +1149,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                     WorkordersWebApi.class, "addMessage", methodParams))
                     .useAuth(true)
                     .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .sequential(true)
                     .request(builder)
                     .build();
 
