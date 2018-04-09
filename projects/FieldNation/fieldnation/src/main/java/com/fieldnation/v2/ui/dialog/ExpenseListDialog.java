@@ -151,7 +151,7 @@ public class ExpenseListDialog extends FullScreenDialog {
             TwoButtonDialog.show(App.get(), DIALOG_DELETE_EXPENSE,
                     R.string.dialog_delete_expense_title,
                     R.string.dialog_delete_expense_body,
-                    R.string.btn_yes, R.string.btn_no, true, expense);
+                    R.string.btn_yes, R.string.btn_no, true, bundle);
         }
     };
 
