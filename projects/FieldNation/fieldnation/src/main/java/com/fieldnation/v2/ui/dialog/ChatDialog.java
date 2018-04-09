@@ -1,7 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -27,13 +31,16 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.MessageFrom;
 import com.fieldnation.v2.data.model.MessageTo;
 import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.ui.chat.ChatAdapter;
 import com.fieldnation.v2.ui.chat.ChatInputView;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -48,7 +55,6 @@ public class ChatDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private OverScrollRecyclerView _chatList;
     private ChatInputView _inputView;
-    private RefreshView _refreshView;
 
     // Data
     private int _workOrderId;
@@ -70,7 +76,6 @@ public class ChatDialog extends FullScreenDialog {
 
         _chatList = v.findViewById(R.id.chat_listview);
         _inputView = v.findViewById(R.id.input_view);
-        _refreshView = v.findViewById(R.id.refresh_view);
         return v;
     }
 
@@ -83,6 +88,8 @@ public class ChatDialog extends FullScreenDialog {
         _chatList.setAdapter(_adapter);
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
     }
 
     @Override
@@ -101,7 +108,6 @@ public class ChatDialog extends FullScreenDialog {
         _workOrderId = params.getInt("workOrderId");
         _companyName = params.getString("companyName");
 
-        _refreshView.startRefreshing();
         WorkordersWebApi.getMessages(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         ProfileClient.get(App.get(), false);
 
@@ -117,6 +123,7 @@ public class ChatDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
         super.onStop();
     }
 
@@ -131,11 +138,12 @@ public class ChatDialog extends FullScreenDialog {
 
             ProfileClient.get(App.get());
         }
+
+        _adapter.refresh();
     }
 
     private void rebuildList() {
         _chatList.scrollToPosition(_adapter.getItemCount() - 1);
-        _refreshView.refreshComplete();
     }
 
 
@@ -163,7 +171,6 @@ public class ChatDialog extends FullScreenDialog {
                 return;
             }
 
-            _refreshView.startRefreshing();
             Log.v(TAG, "_send_onClick");
 
             //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.getProfile().toJson()), _inputView.getInputText()));``
@@ -171,8 +178,14 @@ public class ChatDialog extends FullScreenDialog {
             try {
                 Message msg = new Message();
                 msg.setMessage(_inputView.getInputText());
+                msg.setCreated(new com.fieldnation.v2.data.model.Date(Calendar.getInstance()));
+
                 MessageTo msgTo = new MessageTo();
                 msg.to(msgTo.name(_companyName));
+
+                MessageFrom msgFrom = new MessageFrom();
+                msg.from(msgFrom.id((int) App.getProfileId()));
+
                 WorkordersWebApi.addMessage(App.get(), _workOrderId, msg, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -180,6 +193,19 @@ public class ChatDialog extends FullScreenDialog {
 
             _inputView.clearText();
             misc.hideKeyboard(_inputView);
+            _adapter.refresh();
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String op = intent.getStringExtra("op");
+            if (intent.hasExtra("key")) {
+                String key = intent.getStringExtra("key");
+                if (key != null && (key.contains("addMessageByWorkOrder")))
+                    populateUi();
+            }
         }
     };
 
@@ -216,7 +242,6 @@ public class ChatDialog extends FullScreenDialog {
                     }
 
                     if (messages == null || messages.getResults() == null) {
-                        _refreshView.refreshComplete();
                         return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
                     }
 
@@ -236,8 +261,7 @@ public class ChatDialog extends FullScreenDialog {
                         flatList.add(message);
 
                         // get the replies and add them to the stack
-                        if (message.getReplies() != null
-                                && message.getReplies().length > 0) {
+                        if (message.getReplies() != null && message.getReplies().length > 0) {
                             Message[] replies = message.getReplies();
                             for (int i = replies.length - 1; i >= 0; i--) {
                                 stack.add(replies[i]);
@@ -266,7 +290,7 @@ public class ChatDialog extends FullScreenDialog {
                         }
                     });
 
-                    _adapter.setMessages(flatList);
+                    _adapter.setMessages(_workOrderId, flatList);
                     if (flatList.size() == 0) {
                         _toolbar.setTitle("New Message");
                     } else {
