@@ -27,7 +27,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
@@ -41,7 +40,6 @@ import com.fieldnation.v2.ui.chat.ChatInputView;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -171,8 +169,6 @@ public class ChatDialog extends FullScreenDialog {
             }
 
             Log.v(TAG, "_send_onClick");
-
-            //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.getProfile().toJson()), _inputView.getInputText()));``
 
             try {
                 Message msg = new Message();
