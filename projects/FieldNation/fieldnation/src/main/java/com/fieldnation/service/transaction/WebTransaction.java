@@ -1079,6 +1079,11 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             return this;
         }
 
+        public Builder queueTime(long queueTime) {
+            params.putLong(PARAM_QUEUE_TIME, queueTime);
+            return this;
+        }
+
         public Builder priority(Priority priority) {
             params.putSerializable(PARAM_PRIORITY, priority);
             return this;
