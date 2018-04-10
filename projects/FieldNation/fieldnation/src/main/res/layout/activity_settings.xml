@@ -5,20 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
+    <com.fieldnation.ui.FnToolBarView
+        android:id="@+id/fnToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/offline_bar_textview"
-        style="@style/Text_Subhead_Offline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar" />
+    <!--<android.support.v7.widget.Toolbar-->
+        <!--android:id="@+id/toolbar"-->
+        <!--style="?attr/fnToolbarStyle"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="?attr/actionBarSize"-->
+        <!--app:layout_scrollFlags="scroll|enterAlways"-->
+        <!--android:theme="@style/FieldNation.Material.ToolBar" />-->
+
+    <!--<TextView-->
+        <!--android:id="@+id/offline_bar_textview"-->
+        <!--style="@style/Text_Subhead_Offline"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/toolbar" />-->
 
     <FrameLayout
         android:id="@+id/content"
