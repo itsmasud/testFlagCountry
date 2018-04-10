@@ -369,10 +369,12 @@ public class AuthSystem implements AuthTopicConstants {
                 Log.v(TAG, "have token");
                 _authToken = OAuth.lookup(bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
 
-                if (_authToken == null) {
+                if (_authToken == null || _authToken.getAccessToken() == null) {
                     _account = null;
                     _accountManager.invalidateAuthToken(getAccountType(), bundle.getString(AccountManager.KEY_AUTHTOKEN));
                     setState(AuthState.NOT_AUTHENTICATED);
+                    _authToken.delete();
+                    _authToken = null;
                     return;
                 }
 
