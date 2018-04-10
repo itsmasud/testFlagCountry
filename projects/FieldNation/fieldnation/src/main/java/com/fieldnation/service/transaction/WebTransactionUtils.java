@@ -6,7 +6,6 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.v2.data.listener.TransactionParams;
 
-import java.security.Key;
 import java.util.List;
 
 /**

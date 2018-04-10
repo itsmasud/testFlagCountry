@@ -3,14 +3,11 @@ package com.fieldnation.v2.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by mc on 6/29/17.
