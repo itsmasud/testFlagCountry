@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -76,6 +77,7 @@ public class ChatDialog extends FullScreenDialog {
 
         _chatList = v.findViewById(R.id.chat_listview);
         _inputView = v.findViewById(R.id.input_view);
+
         return v;
     }
 
@@ -86,6 +88,7 @@ public class ChatDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _chatList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _chatList.setAdapter(_adapter);
+        _adapter.registerAdapterDataObserver(_adapterObserver);
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
 
@@ -95,7 +98,6 @@ public class ChatDialog extends FullScreenDialog {
     @Override
     public void onResume() {
         super.onResume();
-
         _workOrderApi.sub();
         populateUi();
     }
@@ -103,26 +105,24 @@ public class ChatDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
-
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
         _workOrderId = params.getInt("workOrderId");
         _companyName = params.getString("companyName");
 
         WorkordersWebApi.getMessages(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         ProfileClient.get(App.get(), false);
-
     }
 
     @Override
     public void onPause() {
         _workOrderApi.unsub();
-
         misc.hideKeyboard(_inputView);
         super.onPause();
     }
 
     @Override
     public void onStop() {
+        _adapter.unregisterAdapterDataObserver(_adapterObserver);
         LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
         super.onStop();
     }
@@ -145,7 +145,6 @@ public class ChatDialog extends FullScreenDialog {
     private void rebuildList() {
         _chatList.scrollToPosition(_adapter.getItemCount() - 1);
     }
-
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -209,6 +208,13 @@ public class ChatDialog extends FullScreenDialog {
         }
     };
 
+    private final RecyclerView.AdapterDataObserver _adapterObserver = new RecyclerView.AdapterDataObserver() {
+        @Override
+        public void onChanged() {
+            rebuildList();
+        }
+    };
+
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
@@ -249,9 +255,7 @@ public class ChatDialog extends FullScreenDialog {
                     // first create a stack to store nodes that need to be searched
                     // push the messages into the stack
                     List<Message> stack = new LinkedList<>();
-                    for (Message message : messages.getResults()) {
-                        stack.add(message);
-                    }
+                    Collections.addAll(stack, messages.getResults());
 
                     List<Message> flatList = new LinkedList<>();
                     while (stack.size() > 0) {
@@ -296,10 +300,6 @@ public class ChatDialog extends FullScreenDialog {
                     } else {
                         _toolbar.setTitle("Messages");
                     }
-
-                    rebuildList();
-                } else if (successObject instanceof Message) {
-                    rebuildList();
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);

@@ -29,6 +29,7 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
     private static final String TAG = "ChatAdapter";
     private static final int MAX_MESSAGE_SIZE = 2048;
+    private static final SimpleDateFormat HEADER_FORMAT = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
     private List<Tuple> _objects = new LinkedList<>();
 
@@ -66,11 +67,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
         _objects.clear();
 
         if ((_messages == null || _messages.size() == 0) && _addedMessages.size() == 0) {
-/*
-            Tuple tuple = new Tuple();
-            tuple.type = ChatViewHolder.TYPE_EMPTY;
-            _objects.add(tuple);
-*/
             return;
         }
 
@@ -99,7 +95,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
                 newList.add(new MessageHolder(message, null));
             }
         }
-
 
         for (MessageHolder messageHolder : _addedMessages) {
             if (messageHolder.message.getMessage().length() > MAX_MESSAGE_SIZE) {
@@ -214,7 +209,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
                 }
             }
         }
-
         notifyDataSetChanged();
     }
 
@@ -225,24 +219,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
             Log.v(TAG, ex);
         }
         return null;
-    }
-
-    private static class MessageHolder {
-        public Message message;
-        public WebTransaction webTransaction;
-
-        public MessageHolder(Message message, WebTransaction webTransaction) {
-            this.message = message;
-            this.webTransaction = webTransaction;
-        }
-    }
-
-    private static class Tuple {
-        public int type;
-        public Object object;
-
-        public Tuple() {
-        }
     }
 
     @Override
@@ -271,8 +247,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
 
         return new ChatViewHolder(view, viewType);
     }
-
-    private static final SimpleDateFormat HEADER_FORMAT = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
     @Override
     public void onBindViewHolder(ChatViewHolder holder, int position) {
@@ -315,6 +289,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
     @Override
     public int getItemViewType(int position) {
         return _objects.get(position).type;
+    }
+
+    private static class MessageHolder {
+        public Message message;
+        public WebTransaction webTransaction;
+
+        public MessageHolder(Message message, WebTransaction webTransaction) {
+            this.message = message;
+            this.webTransaction = webTransaction;
+        }
+    }
+
+    private static class Tuple {
+        public int type;
+        public Object object;
+
+        public Tuple() {
+        }
     }
 
     private final WebTransactionUtils.Listener _addMessage = new WebTransactionUtils.Listener() {
