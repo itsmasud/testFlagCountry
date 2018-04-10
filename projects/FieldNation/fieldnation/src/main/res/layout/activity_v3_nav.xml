@@ -11,16 +11,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true">
 
-        <com.fieldnation.v2.ui.nav.SavedSearchList
-            android:id="@+id/searchesView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.fieldnation.ui.nav.SearchToolbarView
-        android:id="@+id/searchToolbarView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -74,6 +64,16 @@
         <!--android:layout_below="@+id/appbar" />-->
 
         <!--</android.support.design.widget.AppBarLayout>-->
+
+        <com.fieldnation.v2.ui.nav.SavedSearchList
+            android:id="@+id/searchesView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <com.fieldnation.ui.nav.SearchToolbarView
+            android:id="@+id/searchToolbarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 
         <com.fieldnation.fndialog.DialogManager
