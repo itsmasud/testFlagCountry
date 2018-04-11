@@ -10,14 +10,12 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionUtils;
-import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 
 import java.text.DateFormatSymbols;

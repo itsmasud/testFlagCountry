@@ -10,7 +10,6 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.ui.workorder.ExpenseView;
 
 import java.util.Hashtable;

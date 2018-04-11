@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
-import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
@@ -26,12 +25,10 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.OverScrollRecyclerView;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.ui.ExpensesAdapter;
 
 /**

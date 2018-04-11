@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
-import com.fieldnation.fntools.DebugUtils;
 
 import java.util.LinkedList;
 import java.util.List;

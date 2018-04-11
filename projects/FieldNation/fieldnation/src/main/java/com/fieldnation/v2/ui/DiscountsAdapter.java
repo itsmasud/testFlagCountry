@@ -6,20 +6,15 @@ import android.view.ViewGroup;
 
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifier;
 
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by mc on 10/10/17.
