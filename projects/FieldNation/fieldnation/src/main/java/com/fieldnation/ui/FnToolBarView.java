@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.v2.ui.workorder.ActionBarTopView;
 
 public class FnToolBarView extends RelativeLayout {
     private static final String TAG = "FnToolBar";
@@ -19,6 +20,7 @@ public class FnToolBarView extends RelativeLayout {
     private AppBarLayout _appBarLayout;
     private Toolbar _toolbar;
     private IconFontTextView _arrowTextView;
+    private ActionBarTopView _topBar;
     private TextView _orangeBarTextView;
 
     public FnToolBarView(Context context) {
@@ -46,6 +48,7 @@ public class FnToolBarView extends RelativeLayout {
         setScrollFlag(0); // resetting scroll flag
         _arrowTextView = findViewById(R.id.arrow_textview);
         _arrowTextView.setVisibility(GONE);
+        _topBar = findViewById(R.id.actiontop_view);
         _orangeBarTextView = findViewById(R.id.offline_bar_textview);
         populateUi();
     }
@@ -65,10 +68,10 @@ public class FnToolBarView extends RelativeLayout {
         return _toolbar;
     }
 
-//    public void setElevation(){
-    // TODO you cant use that because using that you need min api level 21
-//        _appBarLayout.setElevation(0.0f);
-//    }
+    public ActionBarTopView getTopBar() {
+        return _topBar;
+    }
+
 
     public IconFontTextView getArrowView() {
         return _arrowTextView;

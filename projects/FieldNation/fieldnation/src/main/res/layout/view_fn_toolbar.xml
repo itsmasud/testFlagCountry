@@ -30,24 +30,30 @@
                 android:visibility="gone"/>
         </android.support.v7.widget.Toolbar>
 
+        <com.fieldnation.v2.ui.workorder.ActionBarTopView
+            android:id="@+id/actiontop_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways" />
+
         <TextView
             android:id="@+id/offline_bar_textview"
             style="@style/Text_Subhead_Offline"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/appbar"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
     </android.support.design.widget.AppBarLayout>
 
 
     <!--<TextView-->
-        <!--android:id="@+id/offline_bar_textview"-->
-        <!--style="@style/Text_Subhead_Offline"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:visibility="visible"-->
-        <!--android:text="offline mode"-->
-        <!--android:layout_below="@+id/appbar" />-->
+    <!--android:id="@+id/offline_bar_textview"-->
+    <!--style="@style/Text_Subhead_Offline"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:visibility="visible"-->
+    <!--android:text="offline mode"-->
+    <!--android:layout_below="@+id/appbar" />-->
 
 </RelativeLayout>

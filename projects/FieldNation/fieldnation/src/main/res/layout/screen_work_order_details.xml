@@ -150,16 +150,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:elevation="0dp">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="?attr/fnToolbarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:theme="@style/FieldNation.Material.ToolBar"
-            app:layout_scrollFlags="scroll|enterAlways" />
-
-        <com.fieldnation.v2.ui.workorder.ActionBarTopView
-            android:id="@+id/actiontop_view"
+        <com.fieldnation.ui.FnToolBarView
+            android:id="@+id/fnToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways" />

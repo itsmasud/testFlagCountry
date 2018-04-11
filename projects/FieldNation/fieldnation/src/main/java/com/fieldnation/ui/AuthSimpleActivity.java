@@ -238,8 +238,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     private void refreshToolbar() {
         if (getFnToolbarViewId() != 0) {
-            FnToolBarView fnToolBar= (FnToolBarView) findViewById(getFnToolbarViewId());
-            fnToolBar.refresh();
+            FnToolBarView fnToolBarView= (FnToolBarView) findViewById(getFnToolbarViewId());
+            fnToolBarView.refresh();
         }
     }
 
