@@ -259,7 +259,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
             }
         } else if (holder.type != ChatViewHolder.TYPE_EMPTY) {
             ChatRenderer cr = (ChatRenderer) holder.itemView;
-            cr.setMessage(((MessageHolder) _objects.get(position).object).message);
+            cr.setMessage(((MessageHolder) _objects.get(position).object).message, ((MessageHolder) _objects.get(position).object).webTransaction != null);
             switch (holder.type) {
                 case ChatViewHolder.TYPE_RIGHT_TOP:
                 case ChatViewHolder.TYPE_LEFT_TOP:

@@ -3,11 +3,13 @@ package com.fieldnation.v2.ui.chat;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,10 +35,13 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
     // Ui
     private TextView _messageTextView;
     private TextView _timeTextView;
+    private TextView _alertTextView;
+    private LinearLayout _statusLayout;
 
     // Data
     private Message _message = null;
     private Position _position = null;
+    private boolean _offline = false;
 
     public ChatRightView(Context context) {
         super(context);
@@ -61,12 +66,15 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
         _messageTextView = findViewById(R.id.message_textview);
         _messageTextView.setOnLongClickListener(_message_onLongClick);
 
+        _statusLayout = findViewById(R.id.status_layout);
         _timeTextView = findViewById(R.id.time_textview);
+        _alertTextView = findViewById(R.id.alert_textview);
     }
 
     @Override
-    public void setMessage(Message message) {
+    public void setMessage(Message message, boolean offline) {
         _message = message;
+        _offline = offline;
         populateUi();
     }
 
@@ -91,29 +99,42 @@ public class ChatRightView extends RelativeLayout implements ChatRenderer {
             _messageTextView.setText(_message.getMessage());
         }
 
+        _statusLayout.setVisibility(GONE);
+        _alertTextView.setVisibility(GONE);
+
         if (_position == Position.FULL || _position == Position.BOTTOM) {
+            _statusLayout.setVisibility(VISIBLE);
             _timeTextView.setVisibility(VISIBLE);
             try {
-                _timeTextView.setText(TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone(_message.getCreated().getCalendar()));
+                _timeTextView.setText(
+                        TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase()
+                                + DateUtils.getDeviceTimezone(_message.getCreated().getCalendar()));
+                if (_offline)
+                    _alertTextView.setVisibility(VISIBLE);
+                else
+                    _alertTextView.setVisibility(GONE);
             } catch (Exception ex) {
+                _statusLayout.setVisibility(GONE);
                 _timeTextView.setVisibility(GONE);
             }
         } else {
+            _statusLayout.setVisibility(GONE);
             _timeTextView.setVisibility(GONE);
         }
 
+        _messageTextView.setTextColor(getResources().getColor(_offline ? R.color.fn_dark_text : R.color.fn_white_text));
         switch (_position) {
             case FULL:
-                _messageTextView.setBackgroundResource(R.drawable.chat_right_full);
+                _messageTextView.setBackgroundResource(_offline ? R.drawable.chat_right_full_offline : R.drawable.chat_right_full);
                 break;
             case TOP:
-                _messageTextView.setBackgroundResource(R.drawable.chat_right_top);
+                _messageTextView.setBackgroundResource(_offline ? R.drawable.chat_right_top_offline : R.drawable.chat_right_top);
                 break;
             case CENTER:
-                _messageTextView.setBackgroundResource(R.drawable.chat_right_center);
+                _messageTextView.setBackgroundResource(_offline ? R.drawable.chat_right_center_offline : R.drawable.chat_right_center);
                 break;
             case BOTTOM:
-                _messageTextView.setBackgroundResource(R.drawable.chat_right_bottom);
+                _messageTextView.setBackgroundResource(_offline ? R.drawable.chat_right_bottom_offline : R.drawable.chat_right_bottom);
                 break;
         }
     }

@@ -81,7 +81,7 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
     }
 
     @Override
-    public void setMessage(Message message) {
+    public void setMessage(Message message, boolean offline) {
         _message = message;
         populateUi();
     }
