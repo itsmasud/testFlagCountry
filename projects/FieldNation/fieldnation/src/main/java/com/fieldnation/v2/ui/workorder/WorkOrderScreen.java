@@ -410,7 +410,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         menu.clear();
 
         if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)
-        && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
                 && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
             menu.add(0, 0, 300, "Running Late");
         }
