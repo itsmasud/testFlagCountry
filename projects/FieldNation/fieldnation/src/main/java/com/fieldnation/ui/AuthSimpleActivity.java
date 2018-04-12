@@ -72,7 +72,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (getFnToolbarViewId() != 0) {
             FnToolBarView fnToolBarView = (FnToolBarView) findViewById(getFnToolbarViewId());
             Toolbar toolbar = fnToolBarView.getToolbar();
-            fnToolBarView.setScrollFlag(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+
+            if (fnToolBarView.getLayoutParams() instanceof AppBarLayout.LayoutParams)
+                fnToolBarView.setScrollFlag((AppBarLayout.LayoutParams) fnToolBarView.getLayoutParams(), (AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS));
+
             setSupportActionBar(toolbar);
             toolbar.setNavigationIcon(R.drawable.back_arrow);
             toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
@@ -238,7 +241,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     private void refreshToolbar() {
         if (getFnToolbarViewId() != 0) {
-            FnToolBarView fnToolBarView= (FnToolBarView) findViewById(getFnToolbarViewId());
+            FnToolBarView fnToolBarView = (FnToolBarView) findViewById(getFnToolbarViewId());
             fnToolBarView.refresh();
         }
     }

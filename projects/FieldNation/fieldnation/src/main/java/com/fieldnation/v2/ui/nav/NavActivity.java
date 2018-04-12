@@ -136,7 +136,8 @@ public class NavActivity extends AuthSimpleActivity {
         _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
         _fnToolbarView.getToolbar().setNavigationIcon(null);
         _fnToolbarView.getToolbar().setOnClickListener(_toolbar_onClick);
-        _fnToolbarView.setScrollFlag(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS| AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
+        _fnToolbarView.setScrollFlag((AppBarLayout.LayoutParams)_fnToolbarView.getLayoutParams(),
+                AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS| AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED);
 
         _searchToolbarView = (SearchToolbarView) findViewById(R.id.searchToolbarView);
 

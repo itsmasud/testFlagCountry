@@ -45,7 +45,6 @@ public class FnToolBarView extends RelativeLayout {
             return;
         _appBarLayout = findViewById(R.id.appbar);
         _toolbar = findViewById(R.id.toolbar);
-        setScrollFlag(0); // resetting scroll flag
         _arrowTextView = findViewById(R.id.arrow_textview);
         _arrowTextView.setVisibility(GONE);
         _topBar = findViewById(R.id.actiontop_view);
@@ -57,16 +56,25 @@ public class FnToolBarView extends RelativeLayout {
         return _toolbar;
     }
 
-    public Toolbar setScrollFlag(int scrollFlag) {
+    // testing
+    public Toolbar setScrollFlag(AppBarLayout.LayoutParams params, int scrollFlag) {
         if (_toolbar == null) return null;
 
-        // TODO necessary for confirm activity toolbar. I am not sure what to do
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) _toolbar.getLayoutParams();
-//        for (int flag: scrollFlag) {
-            params.setScrollFlags(scrollFlag);
-//        }
+        params.setScrollFlags(scrollFlag);
+        _toolbar.setLayoutParams(params);
+
         return _toolbar;
     }
+
+    // TODO need to try make this orange bar always visible but that is not working
+    public void setScrollFlagForOrangeBar(AppBarLayout.LayoutParams params, int scrollFlag) {
+        if (_orangeBarTextView == null) return;
+
+        params.setScrollFlags(scrollFlag);
+        _orangeBarTextView.setLayoutParams(params);
+
+    }
+
 
     public ActionBarTopView getTopBar() {
         return _topBar;

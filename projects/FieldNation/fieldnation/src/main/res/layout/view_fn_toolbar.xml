@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="wrap_content">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -27,7 +27,7 @@
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp"
                 android:text="@string/icon_arrow_down"
-                android:visibility="gone"/>
+                android:visibility="gone" />
         </android.support.v7.widget.Toolbar>
 
         <com.fieldnation.v2.ui.workorder.ActionBarTopView
@@ -36,24 +36,24 @@
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways" />
 
-        <TextView
-            android:id="@+id/offline_bar_textview"
-            style="@style/Text_Subhead_Offline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/appbar"
-            android:visibility="visible"/>
+        <!--<TextView-->
+        <!--android:id="@+id/offline_bar_textview"-->
+        <!--style="@style/Text_Subhead_Offline"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/appbar"-->
+        <!--android:visibility="visible"/>-->
 
     </android.support.design.widget.AppBarLayout>
 
 
-    <!--<TextView-->
-    <!--android:id="@+id/offline_bar_textview"-->
-    <!--style="@style/Text_Subhead_Offline"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:visibility="visible"-->
-    <!--android:text="offline mode"-->
-    <!--android:layout_below="@+id/appbar" />-->
+    <TextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/appbar"
+        android:text="offline mode"
+        android:visibility="visible" />
 
 </RelativeLayout>

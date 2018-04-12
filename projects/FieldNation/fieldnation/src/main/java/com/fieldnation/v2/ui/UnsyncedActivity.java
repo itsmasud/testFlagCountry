@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,6 +26,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
@@ -40,7 +42,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     private static final String DIALOG_DELETE_UNSYNCED = TAG + ".DIALOG_DELETE_UNSYNCED";
 
     // UI
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private OverScrollRecyclerView _recyclerView;
     private ActionMenuItemView _finishMenu;
 
@@ -59,14 +61,14 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _toolbar = (Toolbar) findViewById(R.id.toolbar);
-        _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setTitle("Unsynced Activity");
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+        _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setTitle("Unsynced Activity");
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbarNavication_listener);
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
         _finishMenu.setText("SYNC ALL");
 
         _recyclerView = (OverScrollRecyclerView) findViewById(R.id.recyclerView);
@@ -145,7 +147,7 @@ public class UnsyncedActivity extends AuthSimpleActivity {
 
     @Override
     public int getFnToolbarViewId() {
-        return 0;
+        return R.id.fnToolbar;
     }
 
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
