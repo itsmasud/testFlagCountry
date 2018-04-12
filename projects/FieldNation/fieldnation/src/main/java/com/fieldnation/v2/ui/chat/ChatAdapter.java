@@ -28,7 +28,7 @@ import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
     private static final String TAG = "ChatAdapter";
-    private static final int MAX_MESSAGE_SIZE = 2048;
+    private static final int MAX_MESSAGE_SIZE = 2000;
     private static final SimpleDateFormat HEADER_FORMAT = new SimpleDateFormat("EEEE, MMMM dd, yyyy");
 
     private List<Tuple> _objects = new LinkedList<>();
