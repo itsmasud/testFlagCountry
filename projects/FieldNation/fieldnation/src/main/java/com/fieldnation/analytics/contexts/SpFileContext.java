@@ -10,6 +10,7 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
 
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class SpFileContext implements EventContext, SpContext {
             dataMap.put("created_at", createdAt);
 
 
-        dataMap.put("name", name);
+        dataMap.put("name", misc.isEmptyOrNull(name) ? "Unknown" : name);
         dataMap.put("size", size);
 
         return new SelfDescribingJson(context.getString(R.string.sp_file_context_schema_uri), dataMap);
