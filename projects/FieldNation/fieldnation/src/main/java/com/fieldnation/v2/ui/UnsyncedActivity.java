@@ -47,7 +47,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     // UI
     private FnToolBarView _fnToolbarView;
     private OverScrollRecyclerView _recyclerView;
-    private ActionMenuItemView _finishMenu;
 
     // Data
     private UnsyncedAdapter _unsyncedAdapter = new UnsyncedAdapter();
@@ -64,15 +63,11 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
-//        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+        _fnToolbarView = (FnToolBarView) findViewById(getFnToolbarViewId());
         _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
         _fnToolbarView.getToolbar().setTitle("Unsynced Activity");
         _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
         _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbarNavication_listener);
-
-        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
-//        _finishMenu.setText("SYNC ALL");
 
         _recyclerView = (OverScrollRecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setItemAnimator(new DefaultItemAnimator());

@@ -55,7 +55,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
 
-        _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
+        _fnToolbarView = (FnToolBarView) findViewById(getFnToolbarViewId());
         _fnToolbarView.getToolbar().setNavigationIcon(null);
 
         _recyclerView = (ConfirmResultScreen) findViewById(R.id.recyclerView);

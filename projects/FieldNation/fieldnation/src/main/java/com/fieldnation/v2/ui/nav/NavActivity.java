@@ -61,8 +61,6 @@ public class NavActivity extends AuthSimpleActivity {
     private FnToolBarView _fnToolbarView;
     private SavedSearchList _searchesView;
     private IconFontTextView _arrowTextView;
-    private CoordinatorLayout _layout;
-    private AppBarLayout _appBarLayout;
     private SearchToolbarView _searchToolbarView;
     private InboxMenuButton _inboxMenu;
     private SearchMenuButton _searchMenu;
@@ -129,11 +127,7 @@ public class NavActivity extends AuthSimpleActivity {
             }
         }
 
-        _layout = (CoordinatorLayout) findViewById(R.id.main_content);
-
-        _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-
-        _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
+        _fnToolbarView = (FnToolBarView) findViewById(getFnToolbarViewId());
         _fnToolbarView.getToolbar().setNavigationIcon(null);
         _fnToolbarView.getToolbar().setOnClickListener(_toolbar_onClick);
         _fnToolbarView.setScrollFlag((AppBarLayout.LayoutParams)_fnToolbarView.getLayoutParams(),
