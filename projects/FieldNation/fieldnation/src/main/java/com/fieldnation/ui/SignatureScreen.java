@@ -19,6 +19,7 @@ public class SignatureScreen extends RelativeLayout {
     private static final String TAG = "SignatureScreen";
 
     // Ui
+    private FnToolBarView _fnToolbarView;
     private EditText _nameEditText;
     private SignatureView _signatureView;
     private Button _clearButton;
@@ -50,6 +51,10 @@ public class SignatureScreen extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.screen_signature, this);
 
         if (isInEditMode()) return;
+
+        _fnToolbarView = findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(null);
+        _fnToolbarView.getToolbar().setVisibility(GONE);
 
         _nameEditText = findViewById(R.id.name_edittext);
         _signatureView = findViewById(R.id.signature_view);

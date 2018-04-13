@@ -3,14 +3,23 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
+
+    <com.fieldnation.ui.FnToolBarView
+        android:id="@+id/fnToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:id="@+id/top_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_below="@+id/fnToolbar"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp">
+
 
         <TextView
             style="@style/Text_Body_2"
@@ -82,7 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="@dimen/tileContentPadding"
-        android:background="@null">
+        android:background="@null"
+        android:paddingBottom="16dp">
 
         <Button
             android:id="@+id/back_button"
