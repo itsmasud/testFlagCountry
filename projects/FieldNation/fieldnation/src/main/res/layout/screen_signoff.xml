@@ -9,11 +9,13 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/title_layout"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:background="@color/fn_dark_text"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:paddingRight="16dp"
+            android:visibility="visible">
 
             <TextView
                 style="@style/Text_Headline"
@@ -119,13 +121,10 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/offline_bar_textview"
-            style="@style/Text_Subhead_Offline"
+        <com.fieldnation.ui.FnToolBarView
+            android:id="@+id/fnToolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
-            android:layout_below="@+id/appbar" />
+            android:layout_height="wrap_content" />
 
         <ScrollView
             android:layout_width="match_parent"

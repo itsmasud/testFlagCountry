@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.fieldnation.R;
 import com.fieldnation.fndialog.DialogManager;
@@ -32,6 +33,7 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
         _viewPager = (ViewPager) findViewById(R.id.pager);
         _viewPager.setOffscreenPageLimit(getFragmentCount());
         _tabListView = (PagerTabListView) findViewById(R.id.tablist_view);
+        _tabListView.setVisibility(View.VISIBLE);
 
         _viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         _viewPager.setOnPageChangeListener(_pageChangeListener);
@@ -46,7 +48,7 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
 
     @Override
     public int getFnToolbarViewId() {
-        return R.id.toolbar;
+        return R.id.fnToolbar;
     }
 
     @Override

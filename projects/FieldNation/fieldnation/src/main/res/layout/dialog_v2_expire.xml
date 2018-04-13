@@ -5,17 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/fn_primary_bg">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
+    <com.fieldnation.ui.FnToolBarView
+        android:id="@+id/fnToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|enterAlways"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/fnToolbar" />
 </RelativeLayout>

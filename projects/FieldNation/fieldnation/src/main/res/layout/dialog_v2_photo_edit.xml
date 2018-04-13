@@ -7,13 +7,11 @@
     android:background="#FF000000"
     android:clickable="true">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
+    <com.fieldnation.ui.FnToolBarView
+        android:id="@+id/fnToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/FieldNation.Material.ToolBar"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|enterAlways"/>
 
     <com.yalantis.ucrop.view.UCropView
         android:id="@+id/ucrop"
@@ -22,14 +20,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/fnToolbar" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/fnToolbar"
         android:layout_marginTop="40dp"
         android:indeterminate="true"
         android:visibility="visible" />
