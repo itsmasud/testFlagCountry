@@ -11,7 +11,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/fnToolbar"
+        android:layout_below="@+id/toolbar"
         android:elevation="0dp"
         android:paddingBottom="@dimen/dialogActionBarPadding">
 
@@ -114,14 +114,17 @@
         android:id="@+id/refresh_view"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
-        android:layout_below="@+id/fnToolbar"
+        android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp"
         android:elevation="0dp" />
 
-    <com.fieldnation.ui.FnToolBarView
-        android:id="@+id/fnToolbar"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|enterAlways"/>
+        android:layout_height="?attr/actionBarSize"
+        android:elevation="0dp"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:theme="@style/FieldNation.Material.ToolBar" />
 </RelativeLayout>

@@ -47,7 +47,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
@@ -84,7 +83,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private final static int INVALID_NUMBER = -1;
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
 
     private RefreshView _refreshView;
@@ -130,11 +129,11 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_check_in_out, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
 
-        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
 
         _refreshView = v.findViewById(R.id.refresh_view);
 
@@ -169,8 +168,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                 _startCalendar.get(Calendar.MONTH),
                 _startCalendar.get(Calendar.DAY_OF_MONTH));
 
-        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
@@ -285,13 +284,13 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     private void setLoading(boolean loading) {
         if (loading) {
-            _fnToolbarView.getToolbar().setEnabled(false);
+            _toolbar.setEnabled(false);
             _refreshView.startRefreshing();
             _startDateButton.setEnabled(false);
             _startTimeButton.setEnabled(false);
             _spinner.setEnabled(false);
         } else {
-            _fnToolbarView.getToolbar().setEnabled(true);
+            _toolbar.setEnabled(true);
             _refreshView.refreshComplete();
             _startDateButton.setEnabled(true);
             _startTimeButton.setEnabled(true);
@@ -325,10 +324,10 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
-            _fnToolbarView.getToolbar().setTitle(getView().getResources().getString(R.string.title_check_in));
+            _toolbar.setTitle(getView().getResources().getString(R.string.title_check_in));
             _startTimeTextView.setText(getView().getResources().getString(R.string.start_time));
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
-            _fnToolbarView.getToolbar().setTitle(getView().getResources().getString(R.string.title_check_out));
+            _toolbar.setTitle(getView().getResources().getString(R.string.title_check_out));
             _startTimeTextView.setText(getView().getResources().getString(R.string.end_time));
         }
         _finishMenu.setText(App.get().getString(R.string.btn_submit));

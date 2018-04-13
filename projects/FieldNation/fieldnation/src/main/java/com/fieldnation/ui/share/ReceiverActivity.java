@@ -102,7 +102,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getFnToolbarViewId() {
+    public int getToolbarId() {
         return 0;
     }
 

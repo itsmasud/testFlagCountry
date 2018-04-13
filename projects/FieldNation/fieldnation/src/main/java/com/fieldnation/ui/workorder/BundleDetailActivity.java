@@ -113,8 +113,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getFnToolbarViewId() {
-        return R.id.fnToolbar;
+    public int getToolbarId() {
+        return R.id.toolbar;
     }
 
     @Override

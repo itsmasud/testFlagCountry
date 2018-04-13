@@ -47,7 +47,6 @@ import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.NestedScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -128,10 +127,11 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     // UI
     private WorkOrderHeaderView _headerView;
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private Button _toolbarActionButton;
     private Button _testButton;
     private NestedScrollView _scrollView;
+    private ActionBarTopView _topBar;
     private FailedUploadsView _failedUploads;
     private ProblemSummaryView _problemSummaryView;
     private UnsyncedSummaryView _unsyncedSummaryView;
@@ -188,8 +188,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _renderers.clear();
 
-        _fnToolbarView = findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
+        _toolbar = findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
 
         _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
@@ -197,8 +197,9 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         _headerView = findViewById(R.id.header_view);
         _renderers.add(_headerView);
 
-        _fnToolbarView.getTopBar().setListener(_actionbartop_listener);
-        _renderers.add(_fnToolbarView.getTopBar());
+        _topBar = findViewById(R.id.actiontop_view);
+        _topBar.setListener(_actionbartop_listener);
+        _renderers.add(_topBar);
 
         _sumView = findViewById(R.id.summary_view);
         _renderers.add(_sumView);
@@ -298,15 +299,15 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     public void onStart() {
         Log.v(TAG, "onStart");
 
-        _fnToolbarView.getToolbar().getMenu().clear();
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.wod);
-        _fnToolbarView.getToolbar().setTitle("WO LOADING...");
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbarNavigation_listener);
+        _toolbar.getMenu().clear();
+        _toolbar.inflateMenu(R.menu.wod);
+        _toolbar.setTitle("WO LOADING...");
+        _toolbar.setNavigationOnClickListener(_toolbarNavigation_listener);
 
-        _messagesMenuButton = _fnToolbarView.getToolbar().findViewById(R.id.messages_menu);
+        _messagesMenuButton = _toolbar.findViewById(R.id.messages_menu);
         _messagesMenuButton.setOnClickListener(_messagesMenuButton_onClick);
 
-        _moreMenuButton = _fnToolbarView.getToolbar().findViewById(R.id.more_menu);
+        _moreMenuButton = _toolbar.findViewById(R.id.more_menu);
         _moreMenuButton.setOnClickListener(_moreMenuButton_onClick);
 
         _morePopup = new PopupMenu(getContext(), _moreMenuButton);
@@ -393,7 +394,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         if (_morePopup == null)
             return;
 
-        _fnToolbarView.getToolbar().setTitle("WO " + _workOrderId);
+        _toolbar.setTitle("WO " + _workOrderId);
 
         _activityResultListener.sub();
 

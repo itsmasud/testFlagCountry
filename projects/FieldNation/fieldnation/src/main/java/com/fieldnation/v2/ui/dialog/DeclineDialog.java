@@ -27,7 +27,6 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -59,7 +58,7 @@ public class DeclineDialog extends FullScreenDialog {
 
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
     private TextView _bodyTextView;
     private HintSpinner _declineSpinner;
@@ -87,12 +86,12 @@ public class DeclineDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_decline, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
-        _fnToolbarView.getToolbar().setTitle(App.get().getString(R.string.not_interested));
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle(App.get().getString(R.string.not_interested));
 
-        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_submit);
 
         _bodyTextView = v.findViewById(R.id.body_textview);
@@ -113,8 +112,8 @@ public class DeclineDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _declineSpinner.setOnItemSelectedListener(_declineSpinner_selected);
         _blockCheckBox.setOnCheckedChangeListener(_blockCheckBox_onChecked);

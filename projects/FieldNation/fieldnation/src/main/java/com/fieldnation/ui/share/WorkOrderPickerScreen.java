@@ -1,13 +1,13 @@
 package com.fieldnation.ui.share;
 
 import android.content.Context;
+import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -30,7 +30,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
     }
 
     // UI
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private PickerResultScreen _workOrderScreen;
 
     // Data
@@ -57,10 +57,10 @@ public class WorkOrderPickerScreen extends FrameLayout {
         if (isInEditMode())
             return;
 
-        _fnToolbarView = findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
-        _fnToolbarView.getToolbar().setOnClickListener(_toolbar_onClick);
-        _fnToolbarView.getToolbar().setTitle(R.string.select_a_work_order);
+        _toolbar = findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setTitle(R.string.select_a_work_order);
 
         _workOrderScreen = findViewById(R.id.recyclerView);
         _workOrderScreen.setOnChildClickListener(_searchResultScreen_listener);

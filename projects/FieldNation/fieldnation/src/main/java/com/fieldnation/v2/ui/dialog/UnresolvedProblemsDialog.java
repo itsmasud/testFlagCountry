@@ -14,7 +14,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -33,7 +32,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     private static final String TAG = "UnresolvedProblemsDialog";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private OverScrollRecyclerView _recyclerView;
 
     // Data
@@ -49,9 +48,9 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_unresolved_problems, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setTitle("Unresolved Problems");
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setTitle("Unresolved Problems");
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _recyclerView = v.findViewById(R.id.recyclerView);
 
@@ -62,7 +61,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _recyclerView.setAdapter(_adapter);

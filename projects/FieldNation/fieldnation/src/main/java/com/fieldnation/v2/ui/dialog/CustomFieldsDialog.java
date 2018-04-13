@@ -17,7 +17,6 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -33,7 +32,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
     private static final String TAG = "CustomFieldsDialog";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
 
     // Data
@@ -52,9 +51,9 @@ public class CustomFieldsDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_toolbar_recycle, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
-        _fnToolbarView.getToolbar().setTitle(getContext().getString(R.string.fields_to_enter));
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setTitle(getContext().getString(R.string.fields_to_enter));
 
         _list = v.findViewById(R.id.list);
         _list.setItemAnimator(new DefaultItemAnimator());
@@ -67,7 +66,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
     }
 

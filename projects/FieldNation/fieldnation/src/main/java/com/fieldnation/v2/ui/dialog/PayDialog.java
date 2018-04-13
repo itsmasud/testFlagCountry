@@ -24,7 +24,6 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.v2.data.model.Pay;
@@ -59,7 +58,7 @@ public class PayDialog extends FullScreenDialog {
     private static final int MODE_BLENDED = 3;
 
     // UI
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
     private HintSpinner _typeSpinner;
 
@@ -99,11 +98,11 @@ public class PayDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_pay, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.inflateMenu(R.menu.dialog);
 
-        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         //_finishMenu.setTitle(App.get().getString(R.string.btn_submit));
         _finishMenu.setText(R.string.btn_ok);
 
@@ -139,8 +138,8 @@ public class PayDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _typeSpinner.setOnItemSelectedListener(_type_selected);
     }
@@ -149,7 +148,7 @@ public class PayDialog extends FullScreenDialog {
     public void show(Bundle payload, boolean animate) {
         _pay = payload.getParcelable("pay");
         _showExplanation = payload.getBoolean("showExplanation");
-        _fnToolbarView.getToolbar().setTitle(payload.getInt("title"));
+        _toolbar.setTitle(payload.getInt("title"));
         _finishMenu.setText(payload.getInt("buttonText"));
 
         super.show(payload, animate);

@@ -150,7 +150,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
                 wtype = WebTransaction.Type.NORMAL;
             }
-            trans = WebTransaction.getNext(wtype, _service.isAuthenticated(), Priority.LOW);
+            trans = WebTransaction.getNext(wtype, _service.isAuthenticated(), Priority.LOW, _isFirstThread);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(ContextProvider.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;

@@ -17,7 +17,6 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.FnToolBarView;
 
 /**
  * Created by mc on 8/11/17.
@@ -27,7 +26,7 @@ public class WebViewDialog extends FullScreenDialog {
     private static final String TAG = "WebViewDialog";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private WebView _webView;
 
     public WebViewDialog(Context context, ViewGroup container) {
@@ -38,8 +37,8 @@ public class WebViewDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_web_view, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _webView = v.findViewById(R.id.webview);
 
@@ -50,7 +49,7 @@ public class WebViewDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         getView().addOnAttachStateChangeListener(_onAttachState);
 
         final int fontSize = getContext().getResources().getInteger(R.integer.textSizeReleaseNote);
@@ -65,7 +64,7 @@ public class WebViewDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
-        _fnToolbarView.getToolbar().setTitle(params.getString("title"));
+        _toolbar.setTitle(params.getString("title"));
 
         String html = params.getString("html");
         if (!params.getBoolean("skipFormatting")) {

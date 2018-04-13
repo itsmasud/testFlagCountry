@@ -32,7 +32,6 @@ public class SignOffScreen extends RelativeLayout {
     private static final String TAG = "SignOffScreen";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
     private LinearLayout _container;
     private ImageView _companyImageView;
     private TextView _titleTextView;
@@ -86,8 +85,6 @@ public class SignOffScreen extends RelativeLayout {
 
         if (isInEditMode()) return;
 
-        _fnToolbarView = findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setVisibility(GONE);
         _container = findViewById(R.id.container);
         _companyImageView = findViewById(R.id.company_imageview);
         _titleTextView = findViewById(R.id.title_textview);

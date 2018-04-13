@@ -139,7 +139,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getFnToolbarViewId() {
+    public int getToolbarId() {
         return 0;
     }
 

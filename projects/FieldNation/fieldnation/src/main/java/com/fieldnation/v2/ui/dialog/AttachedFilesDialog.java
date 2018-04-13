@@ -43,7 +43,6 @@ import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -71,7 +70,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     private static final String DIALOG_YES_NO_FAILED = TAG + ".yesNoDialogFailed";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
 
     // Data
@@ -96,9 +95,9 @@ public class AttachedFilesDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_toolbar_recycle, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
-        _fnToolbarView.getToolbar().setTitle("Attached Files");
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setTitle("Attached Files");
 
         _list = v.findViewById(R.id.list);
         _list.setItemAnimator(new DefaultItemAnimator());
@@ -111,7 +110,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     public void onStart() {
         Log.v(TAG, "onStart");
         super.onStart();
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO_FAILED, _yesNoDialog_onPrimaryFailed);

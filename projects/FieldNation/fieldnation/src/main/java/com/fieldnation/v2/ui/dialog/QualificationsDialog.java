@@ -17,7 +17,6 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -34,7 +33,7 @@ public class QualificationsDialog extends FullScreenDialog {
 
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
     private OverScrollRecyclerView _list;
@@ -52,12 +51,12 @@ public class QualificationsDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_qualification_list, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
-        _fnToolbarView.getToolbar().setTitle(v.getResources().getString(R.string.qualifications));
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle(v.getResources().getString(R.string.qualifications));
 
-        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setVisibility(View.GONE);
 
         _refreshView = v.findViewById(R.id.refresh_view);
@@ -70,7 +69,7 @@ public class QualificationsDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _list.setAdapter(_adapter);

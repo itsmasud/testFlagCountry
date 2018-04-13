@@ -20,7 +20,6 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.menu.DoneMenuButton;
 import com.fieldnation.ui.menu.RemindMeMenuButton;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
@@ -36,7 +35,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     // Ui
     private ConfirmResultScreen _recyclerView;
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private Button _doneButton;
     private Button _remindMeButton;
 
@@ -55,8 +54,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
 
-        _fnToolbarView = (FnToolBarView) findViewById(getFnToolbarViewId());
-        _fnToolbarView.getToolbar().setNavigationIcon(null);
+        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(null);
 
         _recyclerView = (ConfirmResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
@@ -117,8 +116,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getFnToolbarViewId() {
-        return R.id.fnToolbar;
+    public int getToolbarId() {
+        return R.id.toolbar;
     }
 
     @Override

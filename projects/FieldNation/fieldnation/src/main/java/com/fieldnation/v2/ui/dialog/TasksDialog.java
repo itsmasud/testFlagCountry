@@ -52,7 +52,6 @@ import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionUtils;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -90,7 +89,7 @@ public class TasksDialog extends FullScreenDialog {
     private static final String PARAM_GROUP_ID = "groupId";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private OverScrollRecyclerView _list;
 
     // Data
@@ -115,8 +114,8 @@ public class TasksDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_toolbar_recycle, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _list = v.findViewById(R.id.list);
         _list.setItemAnimator(new DefaultItemAnimator());
@@ -151,7 +150,7 @@ public class TasksDialog extends FullScreenDialog {
 
         LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
 
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
         _adapter.setListener(_taskClick_listener);
     }
@@ -207,7 +206,7 @@ public class TasksDialog extends FullScreenDialog {
 
         if (_workOrder == null) return;
 
-        _fnToolbarView.getToolbar().setTitle(_dialogTitle);
+        _toolbar.setTitle(_dialogTitle);
 
         _adapter.setData(_workOrder.getTasks(), _groupId, _webTransaction);
     }

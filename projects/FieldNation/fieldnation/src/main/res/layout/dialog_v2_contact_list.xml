@@ -8,7 +8,7 @@
         style="@style/Dialog.v3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/fnToolbar">
+        android:layout_below="@+id/offline_bar_textview">
 
         <LinearLayout
             android:id="@+id/contact_list"
@@ -17,9 +17,17 @@
             android:orientation="vertical" />
     </com.fieldnation.ui.OverScrollView>
 
-    <com.fieldnation.ui.FnToolBarView
-        android:id="@+id/fnToolbar"
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
+        android:layout_below="@+id/toolbar" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|enterAlways"/>
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
+
 </RelativeLayout>

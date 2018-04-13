@@ -14,7 +14,6 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.ApatheticOnClickListener;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 
 /**
@@ -25,7 +24,7 @@ public class ExpireDialog extends FullScreenDialog {
     private static final String TAG = "ExpireDialog";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private RecyclerView _listView;
 
     // Data
@@ -40,9 +39,9 @@ public class ExpireDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_expire, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
-        _fnToolbarView.getToolbar().setTitle("Select Expiration Time");
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setTitle("Select Expiration Time");
 
         _listView = v.findViewById(R.id.list);
         _listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
@@ -57,7 +56,7 @@ public class ExpireDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _listView.setAdapter(adapter);
     }
 

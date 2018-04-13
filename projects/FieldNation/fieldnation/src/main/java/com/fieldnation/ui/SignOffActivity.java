@@ -93,7 +93,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getFnToolbarViewId() {
+    public int getToolbarId() {
         return 0;
     }
 

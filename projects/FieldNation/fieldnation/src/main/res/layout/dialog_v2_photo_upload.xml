@@ -6,11 +6,17 @@
     android:background="@color/fn_primary_bg"
     android:orientation="vertical">
 
-    <com.fieldnation.ui.FnToolBarView
-        android:id="@+id/fnToolbar"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|enterAlways"/>
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
+
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline" />
 
     <ScrollView
         android:layout_width="match_parent"

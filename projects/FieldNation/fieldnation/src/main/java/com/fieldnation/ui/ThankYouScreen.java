@@ -16,7 +16,6 @@ public class ThankYouScreen extends RelativeLayout {
     private static final String TAG = "ThankYouScreen";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
     private Button _doneButton;
 
     // Data
@@ -50,10 +49,6 @@ public class ThankYouScreen extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.screen_thank_you, this);
 
         if (isInEditMode()) return;
-
-        _fnToolbarView = findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(null);
-        _fnToolbarView.getToolbar().setVisibility(GONE);
 
         _doneButton = findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);

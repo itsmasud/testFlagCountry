@@ -33,7 +33,6 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
         _viewPager = (ViewPager) findViewById(R.id.pager);
         _viewPager.setOffscreenPageLimit(getFragmentCount());
         _tabListView = (PagerTabListView) findViewById(R.id.tablist_view);
-        _tabListView.setVisibility(View.VISIBLE);
 
         _viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         _viewPager.setOnPageChangeListener(_pageChangeListener);
@@ -47,8 +46,8 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getFnToolbarViewId() {
-        return R.id.fnToolbar;
+    public int getToolbarId() {
+        return R.id.toolbar;
     }
 
     @Override

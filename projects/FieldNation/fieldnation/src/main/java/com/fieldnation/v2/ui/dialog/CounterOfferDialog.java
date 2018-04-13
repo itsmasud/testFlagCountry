@@ -43,7 +43,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
-import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -77,7 +76,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private static final String DIALOG_UID_EXPIRE = TAG + ".expireDailog";
 
     // Ui
-    private FnToolBarView _fnToolbarView;
+    private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
     private View _emptyView;
@@ -162,12 +161,12 @@ public class CounterOfferDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
 
-        _fnToolbarView = v.findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
-        _fnToolbarView.getToolbar().setTitle(App.get().getString(R.string.counter_offer));
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle(App.get().getString(R.string.counter_offer));
 
-        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_submit);
 
         _emptyView = v.findViewById(R.id.empty_view);
@@ -222,8 +221,8 @@ public class CounterOfferDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
-        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
         SpannableString spanned = new SpannableString("By countering this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");

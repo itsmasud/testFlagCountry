@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fieldnation.ui.FnToolBarView
-        android:id="@+id/fnToolbar"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
+
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
+        android:layout_below="@+id/toolbar" />
 
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/fnToolbar" />
+        android:layout_below="@+id/offline_bar_textview" />
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
