@@ -81,7 +81,7 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
     }
 
     @Override
-    public void setMessage(Message message) {
+    public void setMessage(Message message, boolean offline) {
         _message = message;
         populateUi();
     }
@@ -124,9 +124,9 @@ public class ChatLeftView extends RelativeLayout implements ChatRenderer {
 
             _timeTextView.setVisibility(VISIBLE);
             try {
-                _timeTextView.setText(
-                        _message.getFrom().getName() + " \u2022 " +
-                                TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase() + DateUtils.getDeviceTimezone(_message.getCreated().getCalendar()));
+                _timeTextView.setText(_message.getFrom().getName() + " \u2022 "
+                        + TIME_FORMAT.format(_message.getCreated().getCalendar().getTime()).toUpperCase()
+                        + DateUtils.getDeviceTimezone(_message.getCreated().getCalendar()));
             } catch (Exception ex) {
                 _timeTextView.setVisibility(GONE);
             }
