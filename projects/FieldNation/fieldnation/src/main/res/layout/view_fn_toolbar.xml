@@ -42,15 +42,6 @@
             android:layout_height="wrap_content"
             android:visibility="gone"/>
 
-
-        <!--<TextView-->
-        <!--android:id="@+id/offline_bar_textview"-->
-        <!--style="@style/Text_Subhead_Offline"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@+id/appbar"-->
-        <!--android:visibility="visible"/>-->
-
     </android.support.design.widget.AppBarLayout>
 
 
@@ -60,7 +51,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/appbar"
-        android:text="offline mode"
+        android:text="Offline mode"
         android:visibility="visible" />
 
 </RelativeLayout>
