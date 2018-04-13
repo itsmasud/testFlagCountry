@@ -63,6 +63,7 @@
     <string name="btn_counter_disabled">COUNTER DISABLED</string>
     <string name="btn_counter_offer">COUNTER OFFER</string>
     <string name="btn_done">DONE</string>
+    <string name="btn_sync_all">SYNC ALL</string>
     <string name="btn_edit_eta">EDIT ETA</string>
     <string name="btn_edit_profile">EDIT PROFILE</string>
     <string name="btn_email">EMAIL US</string>

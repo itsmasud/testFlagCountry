@@ -13,6 +13,7 @@ import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -28,6 +29,8 @@ import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
+import com.fieldnation.ui.menu.DoneMenuButton;
+import com.fieldnation.ui.menu.RemindMeMenuButton;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
 /**
@@ -62,14 +65,14 @@ public class UnsyncedActivity extends AuthSimpleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         _fnToolbarView = (FnToolBarView) findViewById(R.id.fnToolbar);
-        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+//        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
         _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
         _fnToolbarView.getToolbar().setTitle("Unsynced Activity");
         _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
         _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbarNavication_listener);
 
         _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
-        _finishMenu.setText("SYNC ALL");
+//        _finishMenu.setText("SYNC ALL");
 
         _recyclerView = (OverScrollRecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -150,6 +153,11 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         return R.id.fnToolbar;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.unsynced, menu);
+        return true;
+    }
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
         public boolean onSingleMenuItemClick(MenuItem item) {
