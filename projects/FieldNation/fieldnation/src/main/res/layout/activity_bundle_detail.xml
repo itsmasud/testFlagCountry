@@ -8,7 +8,7 @@
         android:id="@+id/items_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/offline_bar_textview" />
+        android:layout_below="@+id/button_toolbar" />
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"
@@ -18,19 +18,17 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
+    <com.fieldnation.ui.FnToolBarView
+        android:id="@+id/fnToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:theme="@style/FieldNation.Material.ToolBar"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|enterAlways"/>
 
     <LinearLayout
         android:id="@+id/button_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/fnToolbar"
         android:background="@color/fn_primary"
         android:orientation="horizontal"
         android:paddingLeft="8dp"
@@ -57,13 +55,6 @@
             android:textColor="@color/fn_white_text"
             android:visibility="visible" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/offline_bar_textview"
-        style="@style/Text_Subhead_Offline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar" />
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
