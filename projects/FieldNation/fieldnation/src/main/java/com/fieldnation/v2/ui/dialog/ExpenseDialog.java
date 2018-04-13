@@ -53,7 +53,6 @@ public class ExpenseDialog extends FullScreenDialog {
     private LinearLayout _categoryLayout;
 
     // Data
-    private ExpenseCategory[] _categories;
     private HintArrayAdapter _adapter;
     private InputMethodManager _imm;
     private boolean _showCategories = true;
@@ -152,7 +151,6 @@ public class ExpenseDialog extends FullScreenDialog {
 
     private void setCategories(ExpenseCategory[] categories) {
         try {
-            _categories = categories;
             _adapter = HintArrayAdapter.createFromArray(getView().getContext(), categories,
                     R.layout.view_spinner_item);
 
