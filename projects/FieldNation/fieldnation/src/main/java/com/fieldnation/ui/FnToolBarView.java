@@ -21,7 +21,6 @@ public class FnToolBarView extends RelativeLayout {
     private static final String TAG = "FnToolBar";
 
     // Ui
-    private AppBarLayout _appBarLayout;
     private Toolbar _toolbar;
     private IconFontTextView _arrowTextView;
     private ActionBarTopView _topBar;
@@ -47,20 +46,18 @@ public class FnToolBarView extends RelativeLayout {
 
         if (isInEditMode())
             return;
-        _appBarLayout = findViewById(R.id.appbar);
         _toolbar = findViewById(R.id.toolbar);
         _arrowTextView = findViewById(R.id.arrow_textview);
         _arrowTextView.setVisibility(GONE);
         _topBar = findViewById(R.id.actiontop_view);
         _orangeBarTextView = findViewById(R.id.offline_bar_textview);
-        populateUi();
+        refresh();
     }
 
     public Toolbar getToolbar() {
         return _toolbar;
     }
 
-    // testing
     public Toolbar setScrollFlag(AppBarLayout.LayoutParams params, int scrollFlag) {
         if (_toolbar == null) return null;
 
@@ -69,16 +66,6 @@ public class FnToolBarView extends RelativeLayout {
 
         return _toolbar;
     }
-
-    // TODO need to try make this orange bar always visible but that is not working
-    public void setScrollFlagForOrangeBar(AppBarLayout.LayoutParams params, int scrollFlag) {
-        if (_orangeBarTextView == null) return;
-
-        params.setScrollFlags(scrollFlag);
-        _orangeBarTextView.setLayoutParams(params);
-
-    }
-
 
     public ActionBarTopView getTopBar() {
         return _topBar;
@@ -92,7 +79,6 @@ public class FnToolBarView extends RelativeLayout {
     public void refresh() {
         populateUi();
     }
-
 
     private void populateUi() {
         if (_orangeBarTextView == null) return;
