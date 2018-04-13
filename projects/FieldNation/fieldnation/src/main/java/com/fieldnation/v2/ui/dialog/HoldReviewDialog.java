@@ -20,6 +20,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.workorder.detail.HoldReasonCard;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Acknowledgment;
@@ -39,7 +40,7 @@ public class HoldReviewDialog extends FullScreenDialog {
     private static final String UID_DIALOG_ETA = TAG + ".etaDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
 
     private LinearLayout _holdLayout;
@@ -61,11 +62,11 @@ public class HoldReviewDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_hold_review, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.inflateMenu(R.menu.dialog);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
 
         _holdLayout = v.findViewById(R.id.holdReasons_list);
         _explanationTextView = v.findViewById(R.id.explanation_textview);
@@ -76,16 +77,16 @@ public class HoldReviewDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
     }
 
@@ -120,7 +121,7 @@ public class HoldReviewDialog extends FullScreenDialog {
             return;
 
         Log.v(TAG, "populateUi");
-        _toolbar.setTitle(_toolbar.getContext().getString(R.string.dialog_review_hold_title));
+        _fnToolbarView.getToolbar().setTitle(_fnToolbarView.getToolbar().getContext().getString(R.string.dialog_review_hold_title));
         _finishMenu.setText(App.get().getString(R.string.btn_acknowledge));
 
         _holdLayout.removeAllViews();

@@ -30,6 +30,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.profileimage.ProfilePhotoClient;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.lang.ref.WeakReference;
@@ -47,7 +48,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private static final String DIALOG_EDIT_PHOTO = TAG + ".editPhotoDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private View _root;
     private ProfilePicView _picView;
     private TextView _profileIdTextView;
@@ -77,9 +78,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
 
-        _toolbar = _root.findViewById(R.id.toolbar);
-        _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView = _root.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
 
         _picView = _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
@@ -109,7 +110,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
         _picView.setOnClickListener(_pic_onClick);
 

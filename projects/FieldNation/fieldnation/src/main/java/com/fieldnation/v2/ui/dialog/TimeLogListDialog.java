@@ -29,6 +29,7 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -54,7 +55,7 @@ public class TimeLogListDialog extends FullScreenDialog {
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
     private OverScrollRecyclerView _list;
 
@@ -73,11 +74,11 @@ public class TimeLogListDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_timelog_list, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.inflateMenu(R.menu.dialog);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
 
         _list = v.findViewById(R.id.list);
@@ -88,8 +89,8 @@ public class TimeLogListDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _list.setAdapter(_adapter);
@@ -127,7 +128,7 @@ public class TimeLogListDialog extends FullScreenDialog {
         if (_workOrder == null) return;
 
         if (!misc.isEmptyOrNull(_dialogTitle))
-            _toolbar.setTitle(_dialogTitle);
+            _fnToolbarView.getToolbar().setTitle(_dialogTitle);
 
         if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);

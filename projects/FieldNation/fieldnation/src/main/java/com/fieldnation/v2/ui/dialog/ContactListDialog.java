@@ -14,6 +14,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Contacts;
 import com.fieldnation.v2.ui.workorder.ContactTileView;
@@ -30,7 +31,7 @@ public class ContactListDialog extends FullScreenDialog {
 
     // Ui
     private LinearLayout _contactList;
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
 
     // Data
     private ForLoopRunnable _contactsRunnable = null;
@@ -44,9 +45,9 @@ public class ContactListDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_contact_list, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setTitle("Contacts");
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setTitle("Contacts");
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
 
         _contactList = v.findViewById(R.id.contact_list);
 
@@ -57,7 +58,7 @@ public class ContactListDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _toolbar.setNavigationOnClickListener(_back_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_back_onClick);
     }
 
     @Override

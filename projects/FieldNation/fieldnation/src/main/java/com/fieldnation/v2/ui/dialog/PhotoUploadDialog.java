@@ -50,6 +50,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
@@ -77,7 +78,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private static final int MODE_RETRY = 1;
 
     // UI
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
 
     private ImageView _imageView;
@@ -231,11 +232,11 @@ public class PhotoUploadDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_photo_upload, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.inflateMenu(R.menu.dialog);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_submit);
 
         _imageView = v.findViewById(R.id.photo_imageview);
@@ -254,8 +255,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
         _imageView.setOnClickListener(_preview_onClick);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
@@ -453,7 +454,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         _descriptionEditText.setText(misc.isEmptyOrNull(_description) ? "" : _description);
         _fileNameEditText.setText(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
-        _toolbar.setTitle(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
+        _fnToolbarView.getToolbar().setTitle(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
 
         if (_mode == MODE_NORMAL)
             _finishMenu.setText("SUBMIT");

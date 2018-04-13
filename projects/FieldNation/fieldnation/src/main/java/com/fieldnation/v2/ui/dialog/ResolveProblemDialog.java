@@ -18,6 +18,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.menu.ResolveMenuButton;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -33,7 +34,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
     private static final String TAG = "ResolveProblemDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private TextView _titleTextView;
     private TextView _commentsTextView;
     private Button _resolveButton;
@@ -51,9 +52,9 @@ public class ResolveProblemDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_resolve_problem, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setTitle("Problem");
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setTitle("Problem");
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
 
         _titleTextView = v.findViewById(R.id.title_textview);
 
@@ -68,10 +69,10 @@ public class ResolveProblemDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _toolbar.inflateMenu(R.menu.resolve_problem);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.resolve_problem);
 
-        _resolveButton = ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton();
+        _resolveButton = ((ResolveMenuButton) _fnToolbarView.getToolbar().getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton();
         _resolveButton.setOnClickListener(_resolve_onClick);
     }
 

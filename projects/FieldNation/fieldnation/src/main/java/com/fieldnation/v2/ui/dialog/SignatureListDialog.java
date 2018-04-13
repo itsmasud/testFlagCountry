@@ -19,6 +19,7 @@ import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -39,7 +40,7 @@ public class SignatureListDialog extends FullScreenDialog {
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
     private OverScrollRecyclerView _list;
@@ -57,12 +58,12 @@ public class SignatureListDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_expenses_list, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setTitle("Signatures");
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+        _fnToolbarView.getToolbar().setTitle("Signatures");
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
         _finishMenu.setVisibility(View.GONE);
 
@@ -77,8 +78,8 @@ public class SignatureListDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
         AppMessagingClient.setLoading(true);
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
         _finishMenu.setVisibility(View.GONE);
 
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));

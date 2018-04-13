@@ -21,6 +21,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -45,7 +46,7 @@ public class ChatDialog extends FullScreenDialog {
     private static final String TAG = "ChatDialog";
 
     // UI
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private OverScrollRecyclerView _chatList;
     private ChatInputView _inputView;
     private RefreshView _refreshView;
@@ -64,9 +65,9 @@ public class ChatDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_chat, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setTitle("LOADING...");
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _fnToolbarView.getToolbar().setTitle("LOADING...");
 
         _chatList = v.findViewById(R.id.chat_listview);
         _inputView = v.findViewById(R.id.input_view);
@@ -78,7 +79,7 @@ public class ChatDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
 
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
         _chatList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _chatList.setAdapter(_adapter);
         _inputView.setOnSendButtonClick(_send_onClick);
@@ -268,9 +269,9 @@ public class ChatDialog extends FullScreenDialog {
 
                     _adapter.setMessages(flatList);
                     if (flatList.size() == 0) {
-                        _toolbar.setTitle("New Message");
+                        _fnToolbarView.getToolbar().setTitle("New Message");
                     } else {
-                        _toolbar.setTitle("Messages");
+                        _fnToolbarView.getToolbar().setTitle("Messages");
                     }
 
                     rebuildList();

@@ -21,6 +21,7 @@ import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -48,7 +49,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     private static final String UID_DIALOG_ETA = TAG + ".etaDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
 
     private RelativeLayout _incompleteLayout;
@@ -74,11 +75,11 @@ public class BundleEtaDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_bundle_eta, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.inflateMenu(R.menu.dialog);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
         _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
 
         _incompleteLayout = v.findViewById(R.id.incompleteEta_layout);
@@ -95,8 +96,8 @@ public class BundleEtaDialog extends FullScreenDialog {
         super.onStart();
         EtaDialog.addOnBundleEtaListener(UID_DIALOG_ETA, _etaDialog_onBundleEta);
 
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
         _bundlesApi.sub();
     }
@@ -105,8 +106,8 @@ public class BundleEtaDialog extends FullScreenDialog {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
     }
 
     @Override
@@ -174,7 +175,7 @@ public class BundleEtaDialog extends FullScreenDialog {
             return;
         }
 
-        _toolbar.setTitle("Set ETAs");
+        _fnToolbarView.getToolbar().setTitle("Set ETAs");
         _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
 

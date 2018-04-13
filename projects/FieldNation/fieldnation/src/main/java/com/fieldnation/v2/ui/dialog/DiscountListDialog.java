@@ -25,6 +25,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -42,7 +43,7 @@ public class DiscountListDialog extends FullScreenDialog {
     private static final String DIALOG_DELETE_DISCOUNT = TAG + ".deleteDiscountDialog";
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
     private OverScrollRecyclerView _list;
 
@@ -59,12 +60,12 @@ public class DiscountListDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_discount_list, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setTitle("Discounts");
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.back_arrow);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
+        _fnToolbarView.getToolbar().setTitle("Discounts");
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_add);
 
         _list = v.findViewById(R.id.list);
@@ -75,8 +76,8 @@ public class DiscountListDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _list.setAdapter(_adapter);

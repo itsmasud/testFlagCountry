@@ -40,6 +40,7 @@ import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
+import com.fieldnation.ui.FnToolBarView;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
@@ -85,7 +86,7 @@ public class EtaDialog extends FullScreenDialog {
     private final int ONE_DAY = 86400000;
 
     // Ui
-    private Toolbar _toolbar;
+    private FnToolBarView _fnToolbarView;
     private ActionMenuItemView _finishMenu;
 
     private TextView _termsWarningTextView;
@@ -142,11 +143,11 @@ public class EtaDialog extends FullScreenDialog {
 
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 
-        _toolbar = v.findViewById(R.id.toolbar);
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.inflateMenu(R.menu.dialog);
+        _fnToolbarView = v.findViewById(R.id.fnToolbar);
+        _fnToolbarView.getToolbar().setNavigationIcon(R.drawable.ic_signature_x);
+        _fnToolbarView.getToolbar().inflateMenu(R.menu.dialog);
 
-        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _fnToolbarView.getToolbar().findViewById(R.id.primary_menu);
 
         _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
 
@@ -191,8 +192,8 @@ public class EtaDialog extends FullScreenDialog {
                 _etaStart.get(Calendar.MONTH),
                 _etaStart.get(Calendar.DAY_OF_MONTH));
 
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _fnToolbarView.getToolbar().setOnMenuItemClickListener(_menu_onClick);
+        _fnToolbarView.getToolbar().setNavigationOnClickListener(_toolbar_onClick);
 
         _expireSpinner.setOnItemSelectedListener(_expireSpinner_selected);
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(_expirationLayout.getContext(), R.array.request_expire_duration_titles, R.layout.view_request_expiry_spinner_item);
@@ -315,7 +316,7 @@ public class EtaDialog extends FullScreenDialog {
 
         // Wod request work, Woc Request work
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-            _toolbar.setTitle("Request " + _workOrderId);
+            _fnToolbarView.getToolbar().setTitle("Request " + _workOrderId);
             _finishMenu.setText(App.get().getString(R.string.btn_request));
 
             _expirationLayout.setVisibility(View.VISIBLE);
@@ -334,7 +335,7 @@ public class EtaDialog extends FullScreenDialog {
             // Woc accept route, Wod Accept route (onSetEta)
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)
                 || _dialogType.equals(PARAM_DIALOG_TYPE_MASS_ACCEPT)) {
-            _toolbar.setTitle("Accept " + _workOrderId);
+            _fnToolbarView.getToolbar().setTitle("Accept " + _workOrderId);
             _finishMenu.setText(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -355,7 +356,7 @@ public class EtaDialog extends FullScreenDialog {
 /*
             // old confirm, work order start, confirm task
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-            _toolbar.setTitle("Confirm " + _workOrderId);
+            _fnToolbarView.getToolbar().setTitle("Confirm " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -368,7 +369,7 @@ public class EtaDialog extends FullScreenDialog {
 
             // Add eta from WoC
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ADD)) {
-            _toolbar.setTitle("Set ETA " + _workOrderId);
+            _fnToolbarView.getToolbar().setTitle("Set ETA " + _workOrderId);
             _finishMenu.setText(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -383,7 +384,7 @@ public class EtaDialog extends FullScreenDialog {
 
             // from WoD. change the eta
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
-            _toolbar.setTitle(R.string.dialog_eta_title);
+            _fnToolbarView.getToolbar().setTitle(R.string.dialog_eta_title);
             _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
             _expirationLayout.setVisibility(View.GONE);
