@@ -2137,6 +2137,106 @@ public abstract class WorkordersWebApi extends Pigeon {
     }
 
     /**
+     * Swagger operationId: cancelAssignmentByWorkOrder
+     * Cancel assignment of a work order and moves it to draft status
+     *
+     * @param workOrderId ID of work order
+     * @param reason Cancellation Reason
+     */
+    public static void cancelAssignment(Context context, Integer workOrderId, String reason, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("cancelAssignmentByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment");
+
+            if (reason != null)
+                builder.body(reason);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (reason != null)
+                methodParams.put("reason", reason);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/cancel-assignment")
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "cancelAssignment", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: cancelAssignmentByWorkOrder
+     * Cancel assignment of a work order and moves it to draft status
+     *
+     * @param workOrderId ID of work order
+     * @param reason Cancellation Reason
+     * @param async Async (Optional)
+     */
+    public static void cancelAssignment(Context context, Integer workOrderId, String reason, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("cancelAssignmentByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment")
+                    .urlParams("?async=" + async);
+
+            if (reason != null)
+                builder.body(reason);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("async", async);
+            if (reason != null)
+                methodParams.put("reason", reason);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/cancel-assignment")
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "cancelAssignment", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+
+    /**
      * Swagger operationId: cancelSwapRequest
      * Cancel work order swap request.
      */
