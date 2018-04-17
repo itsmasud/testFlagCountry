@@ -16,7 +16,7 @@
             style="@style/Text_Subhead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
+            android:layout_below="@+id/offline_bar_textview"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -35,9 +35,14 @@
             android:id="@+id/refresh_view"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
-            android:layout_below="@+id/toolbar"
+            android:layout_below="@+id/offline_bar_textview"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-50dp" />
+
+        <com.fieldnation.v2.ui.OfflineTextView
+            android:id="@+id/offline_bar_textview"
+            style="@style/Text_Subhead_Offline"
+            android:layout_below="@+id/toolbar" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"

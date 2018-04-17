@@ -119,12 +119,9 @@
             </RelativeLayout>
         </RelativeLayout>
 
-        <TextView
+        <com.fieldnation.v2.ui.OfflineTextView
             android:id="@+id/offline_bar_textview"
             style="@style/Text_Subhead_Offline"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="visible"
             android:layout_below="@+id/appbar" />
 
         <ScrollView

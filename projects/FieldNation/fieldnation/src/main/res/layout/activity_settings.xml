@@ -10,21 +10,19 @@
         style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
-    <TextView
+    <com.fieldnation.v2.ui.OfflineTextView
         android:id="@+id/offline_bar_textview"
         style="@style/Text_Subhead_Offline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar" />
 
     <FrameLayout
         android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/offline_bar_textview" />
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"

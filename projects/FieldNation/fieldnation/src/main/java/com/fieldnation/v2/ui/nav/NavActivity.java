@@ -268,11 +268,6 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
-    }
-
-    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         Log.v(TAG, "onRequestPermissionsResult");
         PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
