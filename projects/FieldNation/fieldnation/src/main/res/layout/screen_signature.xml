@@ -5,16 +5,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.fieldnation.ui.FnToolBarView
-        android:id="@+id/fnToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"/>
+
 
     <LinearLayout
         android:id="@+id/top_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/fnToolbar"
+        android:layout_below="@+id/offline_bar_textview"
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingTop="16dp"

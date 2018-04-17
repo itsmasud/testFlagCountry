@@ -90,7 +90,7 @@ public class OfflineTextView extends android.support.v7.widget.AppCompatTextView
         @Override
         public void onClick(View view) {
             TwoButtonDialog.show(App.get(), DIALOG_OFFLINE_ASK, "Offline Mode",
-                    "You are current only viewing your offline content. Would you like to go online?",
+                    "You are currently only viewing your offline content. Would you like to go online?",
                     "GO ONLINE", "CANCEL", false, null);
             Log.v(TAG, "_offline_onClick");
         }
