@@ -43,7 +43,7 @@ public class ShipmentRowView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_summary, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_row, this);
 
         if (isInEditMode())
             return;
