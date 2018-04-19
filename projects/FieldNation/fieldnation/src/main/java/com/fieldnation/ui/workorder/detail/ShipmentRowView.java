@@ -19,10 +19,14 @@ public class ShipmentRowView extends RelativeLayout {
     private TextView _carrierTextView;
     private TextView _descTextView;
     private TextView _directionTextView;
+    private TextView _alertView;
 
     // Data
     private Shipment _shipment;
     private boolean _taskMode = false;
+    private boolean _alert = false;
+    private String _alertText = null;
+
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -52,6 +56,7 @@ public class ShipmentRowView extends RelativeLayout {
         _carrierTextView = findViewById(R.id.carrier_textview);
         _descTextView = findViewById(R.id.description_textview);
         _directionTextView = findViewById(R.id.direction_textview);
+        _alertView = findViewById(R.id.alert);
 
     }
 
@@ -62,6 +67,18 @@ public class ShipmentRowView extends RelativeLayout {
 
     public void setData(Shipment shipment) {
         _shipment = shipment;
+        populateUi();
+    }
+
+    public void setAlert(boolean enabled) {
+        _alert = enabled;
+
+        populateUi();
+    }
+
+    public void setAlertIcon(String alert) {
+        _alertText = alert;
+
         populateUi();
     }
 
@@ -103,5 +120,11 @@ public class ShipmentRowView extends RelativeLayout {
         } else {
             _directionTextView.setText("From Site");
         }
+
+        if (_alertText != null)
+            _alertView.setText(_alertText);
+
+        _alertView.setVisibility(_alert ? VISIBLE : GONE);
+
     }
 }
