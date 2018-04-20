@@ -49,6 +49,7 @@
         android:id="@+id/carrier_textview"
         style="@style/Text_Body_1"
         android:layout_toLeftOf="@+id/alert"
+        android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/carrier_name" />
@@ -63,6 +64,6 @@
         android:text="@string/icon_cloud_off"
         android:textColor="@color/fn_dark_text_50"
         android:textSize="16sp"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
 </RelativeLayout>

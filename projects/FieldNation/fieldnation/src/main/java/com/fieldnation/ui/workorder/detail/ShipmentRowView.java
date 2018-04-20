@@ -15,6 +15,7 @@ public class ShipmentRowView extends RelativeLayout {
     private static final String TAG = "ShipmentRowView";
 
     // UI
+    private TextView _iconView;
     private TextView _trackingIdTextView;
     private TextView _carrierTextView;
     private TextView _descTextView;
@@ -24,7 +25,7 @@ public class ShipmentRowView extends RelativeLayout {
     // Data
     private Shipment _shipment;
     private boolean _taskMode = false;
-    private boolean _alert = false;
+    private boolean _isOffline = false;
     private String _alertText = null;
 
 
@@ -52,6 +53,7 @@ public class ShipmentRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _iconView = findViewById(R.id.icon_view);
         _trackingIdTextView = findViewById(R.id.trackingid_textview);
         _carrierTextView = findViewById(R.id.carrier_textview);
         _descTextView = findViewById(R.id.description_textview);
@@ -70,9 +72,8 @@ public class ShipmentRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setAlert(boolean enabled) {
-        _alert = enabled;
-
+    public void setOffline(boolean isOffline) {
+        _isOffline = isOffline;
         populateUi();
     }
 
@@ -124,7 +125,10 @@ public class ShipmentRowView extends RelativeLayout {
         if (_alertText != null)
             _alertView.setText(_alertText);
 
-        _alertView.setVisibility(_alert ? VISIBLE : GONE);
+        _alertView.setVisibility(_isOffline ? VISIBLE : GONE);
+        _iconView.setTextColor(_isOffline ? getResources().getColor(R.color.fn_dark_text_50)
+                : getResources().getColor(R.color.fn_accent_color));
+
 
     }
 }
