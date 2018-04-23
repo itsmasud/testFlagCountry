@@ -33,10 +33,12 @@ public class ListItemTwoVertView extends RelativeLayout {
     private String _value;
     private String _action;
     private String _iconText = null;
+    private String _alertText = null;
     private int _iconTextColor = -1;
     private boolean _actionVisible = false;
     private boolean _alertVisible = false;
     private boolean _progressVisible = false;
+    private boolean _isOffline = false;
     private int _progress = -1;
 
     // Listener
@@ -89,6 +91,10 @@ public class ListItemTwoVertView extends RelativeLayout {
         _alertVisible = visible;
 
         populateUi();
+    }
+
+    public void setOffline(boolean isOffline) {
+        _isOffline = isOffline;
     }
 
     public void setIcon(String iconText, int iconTextColor) {
@@ -179,13 +185,6 @@ public class ListItemTwoVertView extends RelativeLayout {
             _progressBar.setVisibility(GONE);
         }
 
-        if (_alertVisible) {
-            _alertTextView.setVisibility(VISIBLE);
-        } else {
-            _alertTextView.setVisibility(GONE);
-        }
-
-
         if (misc.isEmptyOrNull(_iconText))
             _keyIconView.setVisibility(GONE);
         else {
@@ -196,6 +195,22 @@ public class ListItemTwoVertView extends RelativeLayout {
 
         if (_iconTextColor != -1)
             _keyIconView.setTextColor(_iconTextColor);
+
+        if (_isOffline) {
+            _alertVisible = _isOffline;
+            _alertText = _alertTextView.getResources().getString(R.string.icon_cloud_off);
+        }
+
+        _keyTextView.setTextColor(_isOffline ? getResources().getColor(R.color.fn_dark_text_50)
+                : getResources().getColor(R.color.fn_accent_color));
+
+        if (_alertVisible) {
+            _alertTextView.setVisibility(VISIBLE);
+        } else {
+            _alertTextView.setVisibility(GONE);
+        }
+
+
     }
 
     private final OnClickListener _action_onClick = new ApatheticOnClickListener() {
