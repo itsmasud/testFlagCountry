@@ -95,7 +95,6 @@ public class ShipmentListDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
         _workOrderId = params.getInt("workOrderId");
-        AppMessagingClient.setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
     }
 
@@ -218,9 +217,7 @@ public class ShipmentListDialog extends FullScreenDialog {
                     _shipments = shipments;
                     populateUi();
                 }
-                AppMessagingClient.setLoading(false);
             } else {
-                AppMessagingClient.setLoading(true);
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
