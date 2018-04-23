@@ -67,15 +67,15 @@ public class SignatureSummaryView extends RelativeLayout implements WorkOrderRen
 
         _titleTextView.setText("Signatures");
 
-        final Signature[] list = _workOrder.getSignatures().getResults();
-
-        if (list == null || list.length == 0) {
+        if (_workOrder.getSignatures() == null
+                || _workOrder.getSignatures().getResults() == null
+                || _workOrder.getSignatures().getResults().length == 0) {
             setVisibility(GONE);
             return;
         }
 
         setVisibility(VISIBLE);
-        _countTextView.setText(String.valueOf(list.length));
+        _countTextView.setText(_workOrder.getSignatures().getResults().length + "");
         setOnClickListener(_this_onClick);
     }
 
