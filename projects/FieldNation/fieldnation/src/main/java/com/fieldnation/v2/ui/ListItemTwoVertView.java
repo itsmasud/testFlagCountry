@@ -192,19 +192,20 @@ public class ListItemTwoVertView extends RelativeLayout {
             _keyIconView.setText(_iconText);
         }
 
-
         if (_iconTextColor != -1)
             _keyIconView.setTextColor(_iconTextColor);
 
+        // offline logic
         if (_isOffline) {
-            _alertVisible = _isOffline;
             _alertText = _alertTextView.getResources().getString(R.string.icon_cloud_off);
+            _keyIconView.setTextColor(getResources().getColor(R.color.fn_dark_text_50));
+            _alertTextView.setTextColor(getResources().getColor(R.color.fn_dark_text_50));
         }
 
-        _keyTextView.setTextColor(_isOffline ? getResources().getColor(R.color.fn_dark_text_50)
-                : getResources().getColor(R.color.fn_accent_color));
+        if (!misc.isEmptyOrNull(_alertText))
+            _alertTextView.setText(_alertText);
 
-        if (_alertVisible) {
+        if (_alertVisible || _isOffline) {
             _alertTextView.setVisibility(VISIBLE);
         } else {
             _alertTextView.setVisibility(GONE);
