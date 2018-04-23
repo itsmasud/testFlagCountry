@@ -9,6 +9,11 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/offline_bar_textview" />
+
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
         android:layout_below="@+id/toolbar" />
 
     <android.support.v7.widget.Toolbar

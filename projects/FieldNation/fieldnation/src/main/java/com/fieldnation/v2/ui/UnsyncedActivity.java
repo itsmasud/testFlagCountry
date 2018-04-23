@@ -148,11 +148,6 @@ public class UnsyncedActivity extends AuthSimpleActivity {
         return 0;
     }
 
-    @Override
-    public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
-    }
-
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new ApatheticOnMenuItemClickListener() {
         @Override
         public boolean onSingleMenuItemClick(MenuItem item) {

@@ -28,12 +28,9 @@
                     android:theme="@style/FieldNation.Material.ToolBar" />
             </android.support.design.widget.AppBarLayout>
 
-            <TextView
+            <com.fieldnation.v2.ui.OfflineTextView
                 android:id="@+id/offline_bar_textview"
-                style="@style/Text_Subhead_Offline"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/appbar" />
+                style="@style/Text_Subhead_Offline" />
 
             <com.fieldnation.ui.nav.AdditionalOptionsScreen
                 android:id="@+id/screen"

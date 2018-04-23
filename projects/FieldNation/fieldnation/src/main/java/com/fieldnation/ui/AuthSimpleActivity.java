@@ -7,11 +7,11 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AppMessagingClient;
@@ -50,8 +50,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_WHATS_NEW_DIALOG = TAG_BASE + ".whatsNewDialog";
     private static final String DIALOG_NOT_PROVIDER = TAG_BASE + ".notProviderDialog";
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
-    private static final String DIALOG_OFFLINE_ASK = TAG_BASE + ".offlienAskDialog";
-    private static final String DIALOG_SYNC_ASK = TAG_BASE + ".syncAskDialog";
     private static final String DIALOG_NO_SPACE = TAG_BASE + ".noSpaceDialog";
 
     // Data
@@ -97,8 +95,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     public abstract int getToolbarId();
 
-    public abstract int getOfflineBarId();
-
     public abstract DialogManager getDialogManager();
 
     public boolean doPermissionsChecks() {
@@ -118,18 +114,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         OneButtonDialog.addOnCanceledListener(DIALOG_NOT_PROVIDER, _notProvider_onCancel);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_COI, _coiDialog_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_COI, _coiDialog_onSecondary);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_OFFLINE_ASK, _offlineAsk_onPrimary);
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_SYNC_ASK, _syncAsk_onPrimary);
-        TwoButtonDialog.addOnSecondaryListener(DIALOG_SYNC_ASK, _syncAsk_onSecondary);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_NO_SPACE, _noSpace_onPrimary);
 
         if (doPermissionsChecks()) {
             _permissionsListener.sub();
             PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
         }
-
-        if (getOfflineBarId() != 0)
-            findViewById(getOfflineBarId()).setOnClickListener(_offline_onClick);
 
         if (App.get().getOfflineState() == App.OfflineState.DOWNLOADING) {
             DownloadProgressDialog.show(App.get());
@@ -142,12 +132,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-
-        if (App.get().getOfflineState() == App.OfflineState.OFFLINE) {
-            setVisibilityOfflineBar(true);
-        } else
-            setVisibilityOfflineBar(false);
-
         _toastClient.subSnackbar();
         _toastClient.subToast();
 
@@ -212,9 +196,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         OneButtonDialog.removeOnCanceledListener(DIALOG_NOT_PROVIDER, _notProvider_onCancel);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_COI, _coiDialog_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_COI, _coiDialog_onSecondary);
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_OFFLINE_ASK, _offlineAsk_onPrimary);
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_SYNC_ASK, _syncAsk_onPrimary);
-        TwoButtonDialog.removeOnSecondaryListener(DIALOG_SYNC_ASK, _syncAsk_onSecondary);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_NO_SPACE, _noSpace_onPrimary);
 
         if (doPermissionsChecks()) {
@@ -241,13 +222,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
-    }
-
-    private void setVisibilityOfflineBar(boolean isVisible) {
-        if (getOfflineBarId() != 0) {
-            TextView offlineBar = (TextView) findViewById(getOfflineBarId());
-            offlineBar.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        }
     }
 
     private void gotProfile() {
@@ -351,47 +325,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final View.OnClickListener _offline_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            TwoButtonDialog.show(App.get(), DIALOG_OFFLINE_ASK, "Offline Mode",
-                    "You are current only viewing your offline content. Would you like to go online?",
-                    "GO ONLINE", "CANCEL", false, null);
-            Log.v(TAG, "_offline_onClick");
-        }
-    };
-
-    private final TwoButtonDialog.OnPrimaryListener _offlineAsk_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary(Parcelable extraData) {
-            // yes please!
-
-            if (WebTransaction.getWorkOrderCount(WebTransaction.getSyncing()) > 0) {
-                TwoButtonDialog.show(App.get(), DIALOG_SYNC_ASK, "Sync Activity",
-                        "Would you like to upload your unsynced activity list of "
-                                + WebTransaction.getWorkOrderCount(WebTransaction.getSyncing())
-                                + " work orders including all attachments? Data rates may apply.",
-                        "SYNC ACTIVITY", "NOT NOW", false, null);
-            } else {
-                AppMessagingClient.setOfflineMode(App.OfflineState.NORMAL);
-            }
-        }
-    };
-
-    private final TwoButtonDialog.OnPrimaryListener _syncAsk_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary(Parcelable extraData) {
-            AppMessagingClient.setOfflineMode(App.OfflineState.UPLOADING);
-        }
-    };
-
-    private final TwoButtonDialog.OnSecondaryListener _syncAsk_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
-        @Override
-        public void onSecondary(Parcelable extraData) {
-            AppMessagingClient.setOfflineMode(App.OfflineState.SYNC);
-        }
-    };
-
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -489,12 +422,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onOfflineMode(App.OfflineState state) {
             Log.v(TAG, "onOfflineMode");
-            if (state == App.OfflineState.OFFLINE) {
-                setVisibilityOfflineBar(true);
-            } else {
-                setVisibilityOfflineBar(false);
-            }
-
             if (state == App.OfflineState.DOWNLOADING) {
                 DownloadProgressDialog.show(App.get());
             } else if (state == App.OfflineState.UPLOADING) {

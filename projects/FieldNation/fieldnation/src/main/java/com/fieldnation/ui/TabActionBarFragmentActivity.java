@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.View;
 
 import com.fieldnation.R;
 import com.fieldnation.fndialog.DialogManager;
@@ -47,11 +48,6 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
-    }
-
-    @Override
-    public int getOfflineBarId() {
-        return 0;
     }
 
     @Override

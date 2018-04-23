@@ -1,63 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/dialogContainerStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dialogBg_Material">
 
-    <TextView
-        android:id="@+id/title_textview"
-        style="?attr/dialogTitleStyle"
-        android:layout_centerHorizontal="true"
-        android:text="@string/contact_us" />
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline" />
 
-    <TextView
-        android:id="@+id/introduction_textview"
+    <RelativeLayout
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title_textview"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:text="@string/dialog_introduction_text" />
+        android:layout_below="@+id/offline_bar_textview">
 
-    <com.fieldnation.ui.HintSpinner
-        android:id="@+id/reason_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/introduction_textview"
-        android:focusable="true"
-        android:hint="@string/dialog_reason_spinner_default" />
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
+            android:layout_centerHorizontal="true"
+            android:text="@string/contact_us" />
 
-    <EditText
-        android:id="@+id/explanation_edittext"
-        style="@style/EditText"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/reason_spinner"
-        android:hint="@string/dialog_explanation_default"
-        android:imeOptions="actionNext" />
+        <TextView
+            android:id="@+id/introduction_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_textview"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:text="@string/dialog_introduction_text" />
 
-    <TextView
-        android:id="@+id/additionalHelp_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/explanation_edittext"
-        android:autoLink="all"
-        android:text="@string/dialog_additional_help_text"
-        android:visibility="gone" />
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/reason_spinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/introduction_textview"
+            android:focusable="true"
+            android:hint="@string/dialog_reason_spinner_default" />
 
-    <Button
-        android:id="@+id/cancel_button"
-        style="?attr/dialogCancelButtonStyle"
-        android:layout_below="@+id/additionalHelp_textview"
-        android:layout_toLeftOf="@+id/send_button"
-        android:text="@string/btn_cancel" />
+        <EditText
+            android:id="@+id/explanation_edittext"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_below="@+id/reason_spinner"
+            android:hint="@string/dialog_explanation_default"
+            android:imeOptions="actionNext" />
 
-    <Button
-        android:id="@+id/send_button"
-        style="?attr/dialogOkButtonStyle"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/additionalHelp_textview"
-        android:enabled="false"
-        android:text="@string/btn_send" />
+        <TextView
+            android:id="@+id/additionalHelp_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/explanation_edittext"
+            android:autoLink="all"
+            android:text="@string/dialog_additional_help_text"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="?attr/dialogCancelButtonStyle"
+            android:layout_below="@+id/additionalHelp_textview"
+            android:layout_toLeftOf="@+id/send_button"
+            android:text="@string/btn_cancel" />
+
+        <Button
+            android:id="@+id/send_button"
+            style="?attr/dialogOkButtonStyle"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/additionalHelp_textview"
+            android:enabled="false"
+            android:text="@string/btn_send" />
+
+    </RelativeLayout>
 </RelativeLayout>
