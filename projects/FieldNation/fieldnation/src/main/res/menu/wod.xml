@@ -19,6 +19,4 @@
         android:title="MORE"
         app:actionViewClass="com.fieldnation.ui.menu.MoreMenuButton"
         app:showAsAction="always" />
-
-
 </menu>

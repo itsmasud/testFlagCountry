@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.R;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpFileContext;
@@ -39,6 +40,7 @@ import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.AssignmentCancelReason;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
@@ -2141,7 +2143,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Cancel assignment of a work order and moves it to draft status
      *
      * @param workOrderId ID of work order
-     * @param reason Cancellation Reason
+     * @param reason      Cancellation Reason
      */
     public static void cancelAssignment(Context context, Integer workOrderId, String reason, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -2189,8 +2191,8 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Cancel assignment of a work order and moves it to draft status
      *
      * @param workOrderId ID of work order
-     * @param reason Cancellation Reason
-     * @param async Async (Optional)
+     * @param reason      Cancellation Reason
+     * @param async       Async (Optional)
      */
     public static void cancelAssignment(Context context, Integer workOrderId, String reason, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -4190,6 +4192,42 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getAssignmentCancelReasons
+     * Get assignee of a work order
+     */
+    public static void getAssignmentCancelReasons(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
+        try {
+            String key = misc.md5("GET//workorder/assignment-cancel-reasons");
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .host(context.getString(R.string.web_fn_hostname))
+                    .path("/workorder/assignment-cancel-reasons");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//workorder/assignment-cancel-reasons")
+                    .key(key)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params(topicId,
+                                    WorkordersWebApi.class, "getAssignmentCancelReasons", new JsonObject()))
+                    .useAuth(false)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key, topicId);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -10407,6 +10445,9 @@ public abstract class WorkordersWebApi extends Pigeon {
                             case "getOverview":
                                 successObject = WorkOrderOverview.fromJson(new JsonObject(data));
                                 break;
+                            case "getAssignmentCancelReasons":
+                                successObject = AssignmentCancelReason.fromJsonArray(new JsonArray(data));
+                                break;
                             case "getAssignee":
                                 successObject = Assignee.fromJson(new JsonObject(data));
                                 break;
@@ -10621,6 +10662,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             case "deleteTask":
                             case "deleteTimeLog":
                             case "deleteWorkOrder":
+                            case "getAssignmentCancelReasons":
                             case "getAssignee":
                             case "getAttachments":
                             case "getBonus":
