@@ -15,14 +15,19 @@ public class ShipmentRowView extends RelativeLayout {
     private static final String TAG = "ShipmentRowView";
 
     // UI
+    private TextView _iconView;
     private TextView _trackingIdTextView;
     private TextView _carrierTextView;
     private TextView _descTextView;
     private TextView _directionTextView;
+    private TextView _alertView;
 
     // Data
     private Shipment _shipment;
     private boolean _taskMode = false;
+    private boolean _isOffline = false;
+    private String _alertText = null;
+
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -43,15 +48,17 @@ public class ShipmentRowView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_summary, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_shipment_row, this);
 
         if (isInEditMode())
             return;
 
+        _iconView = findViewById(R.id.icon_view);
         _trackingIdTextView = findViewById(R.id.trackingid_textview);
         _carrierTextView = findViewById(R.id.carrier_textview);
         _descTextView = findViewById(R.id.description_textview);
         _directionTextView = findViewById(R.id.direction_textview);
+        _alertView = findViewById(R.id.alert);
 
     }
 
@@ -62,6 +69,17 @@ public class ShipmentRowView extends RelativeLayout {
 
     public void setData(Shipment shipment) {
         _shipment = shipment;
+        populateUi();
+    }
+
+    public void setOffline(boolean isOffline) {
+        _isOffline = isOffline;
+        populateUi();
+    }
+
+    public void setAlertIcon(String alert) {
+        _alertText = alert;
+
         populateUi();
     }
 
@@ -103,5 +121,14 @@ public class ShipmentRowView extends RelativeLayout {
         } else {
             _directionTextView.setText("From Site");
         }
+
+        if (_alertText != null)
+            _alertView.setText(_alertText);
+
+        _alertView.setVisibility(_isOffline ? VISIBLE : GONE);
+        _iconView.setTextColor(_isOffline ? getResources().getColor(R.color.fn_dark_text_50)
+                : getResources().getColor(R.color.fn_accent_color));
+
+
     }
 }
