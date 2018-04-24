@@ -1,6 +1,10 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,8 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ShipmentListDialog;
 
@@ -56,6 +62,33 @@ public class ShipmentSummaryView extends RelativeLayout implements WorkOrderRend
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String op = intent.getStringExtra("op");
+            if (intent.hasExtra("key")) {
+                String key = intent.getStringExtra("key");
+                if (key == null || key.contains("addShipmentByWorkOrder") || key.contains("deleteShipmentByWorkOrderAndShipment"))
+                    populateUi();
+            } else if (op.equals("delete") || op.equals("deleteAll")) {
+                populateUi();
+            }
+        }
+    };
+
+
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
@@ -67,15 +100,19 @@ public class ShipmentSummaryView extends RelativeLayout implements WorkOrderRend
 
         _titleTextView.setText("Shipments");
 
-        if (_workOrder.getShipments() == null
+        int addSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_SHIPMENT + _workOrder.getId() + "/%").size();
+        int delSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_SHIPMENT + _workOrder.getId() + "/%").size();
+
+        if ((_workOrder.getShipments() == null
                 || _workOrder.getShipments().getResults() == null
-                || _workOrder.getShipments().getResults().length == 0) {
+                || _workOrder.getShipments().getResults().length == 0)
+                && addSize == 0 && delSize == 0) {
             setVisibility(GONE);
             return;
         }
 
         setVisibility(VISIBLE);
-        _countTextView.setText(_workOrder.getShipments().getResults().length + "");
+        _countTextView.setText((_workOrder.getShipments().getResults().length  + addSize - delSize) + "");
         setOnClickListener(_this_onClick);
     }
 
