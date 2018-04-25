@@ -125,6 +125,11 @@ public class AssignmentCancelReason implements Parcelable {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return getReasonTextProvider();
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

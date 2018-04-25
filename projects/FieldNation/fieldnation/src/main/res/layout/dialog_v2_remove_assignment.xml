@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:text="Removing youself from this work order may result in bad ratings or suspension" />
+                android:text="Removing yourself from this work order may result in bad ratings or suspension" />
 
             <View
                 android:id="@+id/divider"
@@ -43,17 +43,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/divider"
-                    android:padding="16dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp"
                     android:text="Reason" />
 
                 <com.fieldnation.ui.HintSpinner
-                    android:id="@+id/expire_duration_spinner"
-                    style="@style/Widget.AppCompat.Spinner"
+                    android:id="@+id/reason_spinner"
+                    style="@style/Widget.AppCompat.Spinner.DropDown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:background="@android:color/white"
-                    android:hint="30 mins" />
+                    android:hint="Please Select"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp" />
+
+                <View
+                    android:id="@+id/spinner_divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@color/fn_dark_text" />
 
                 <EditText
                     android:id="@+id/details_edittext"

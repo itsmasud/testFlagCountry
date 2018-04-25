@@ -2145,7 +2145,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param workOrderId ID of work order
      * @param reason      Cancellation Reason
      */
-    public static void cancelAssignment(Context context, Integer workOrderId, String reason, EventContext uiContext) {
+    public static void cancelAssignment(Context context, Integer workOrderId, int cancelReasonId, String cancelReason, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("cancelAssignmentByWorkOrder")
                 .label(workOrderId + "")
@@ -2159,15 +2159,14 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment");
-
-            if (reason != null)
-                builder.body(reason);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment")
+                    .urlParams("?cancel_reason_id=" + cancelReasonId + "&cancel_reason=" + cancelReason);
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (reason != null)
-                methodParams.put("reason", reason);
+            methodParams.put("cancel_reason_id", cancelReasonId);
+            if (cancelReason != null)
+                methodParams.put("cancel_reason", cancelReason);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/cancel-assignment")
@@ -2194,7 +2193,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param reason      Cancellation Reason
      * @param async       Async (Optional)
      */
-    public static void cancelAssignment(Context context, Integer workOrderId, String reason, Boolean async, EventContext uiContext) {
+    public static void cancelAssignment(Context context, Integer workOrderId, int cancelReasonId, String cancelReason, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("cancelAssignmentByWorkOrder")
                 .label(workOrderId + "")
@@ -2209,16 +2208,14 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment")
-                    .urlParams("?async=" + async);
-
-            if (reason != null)
-                builder.body(reason);
+                    .urlParams("?async=" + async + "&cancel_reason_id=" + cancelReasonId + "&cancel_reason=" + cancelReason);
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             methodParams.put("async", async);
-            if (reason != null)
-                methodParams.put("reason", reason);
+            methodParams.put("cancel_reason_id", cancelReasonId);
+            if (cancelReason != null)
+                methodParams.put("cancel_reason", cancelReason);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/cancel-assignment")
@@ -10609,6 +10606,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                 successObject = Request.fromJson(new JsonObject(data));
                                 break;
                             default:
+                                successObject = data;
                                 Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                                 break;
                         }
@@ -10637,6 +10635,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             case "addWorkOrder":
                             case "approveWorkOrder":
                             case "assignUser":
+                            case "cancelAssignment":
                             case "cancelSwapRequest":
                             case "completeWorkOrder":
                             case "decline":
@@ -10752,6 +10751,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                 failObject = Error.fromJson(new JsonObject(data));
                                 break;
                             default:
+                                failObject = data;
                                 Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                                 break;
                         }
