@@ -79,7 +79,7 @@ public class RemoveAssignmentDialog extends FullScreenDialog {
         _toolbar.setTitle("Remove Assignment");
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-
+        _finishMenu.setText("SUBMIT");
         _hintSpinner.setOnItemSelectedListener(_expireSpinner_selected);
 
         _detailsEditText.addTextChangedListener(watcher);

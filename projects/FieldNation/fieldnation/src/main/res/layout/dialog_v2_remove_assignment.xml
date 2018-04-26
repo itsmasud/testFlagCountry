@@ -51,23 +51,12 @@
 
                 <com.fieldnation.ui.HintSpinner
                     android:id="@+id/reason_spinner"
-                    style="@style/Widget.AppCompat.Spinner.DropDown"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
                     android:layout_marginRight="8dp"
-                    android:background="@android:color/white"
-                    android:hint="Please Select"
-                    android:paddingLeft="12dp"
-                    android:paddingRight="12dp" />
-
-                <View
-                    android:id="@+id/spinner_divider"
-                    style="@style/DividerSpinnerFull"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_marginRight="12dp"
-                    android:background="@color/fn_dark_text" />
+                    android:hint="Please Select" />
 
                 <EditText
                     android:id="@+id/details_edittext"
