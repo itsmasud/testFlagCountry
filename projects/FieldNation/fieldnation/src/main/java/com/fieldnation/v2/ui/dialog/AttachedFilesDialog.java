@@ -383,14 +383,18 @@ public class AttachedFilesDialog extends FullScreenDialog {
         @Override
         public void onDownload(int documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
-            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
-                if (state == DocumentConstants.PARAM_STATE_FINISH)
-                    ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
-                return;
+            switch (state) {
+                case DocumentConstants.PARAM_STATE_START:
+                    if (adapter != null)
+                        adapter.downloadStart(documentId);
+                    break;
+                case DocumentConstants.PARAM_STATE_FINISH:
+                    if (file == null)
+                        ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
+                    else
+                        adapter.downloadComplete(documentId);
+                    break;
             }
-
-            if (adapter != null)
-                adapter.downloadComplete((int) documentId);
         }
     };
 

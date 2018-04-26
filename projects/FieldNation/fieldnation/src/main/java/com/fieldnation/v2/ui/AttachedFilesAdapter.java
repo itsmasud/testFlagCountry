@@ -21,6 +21,7 @@ import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,6 +34,12 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
     private AttachmentFolders existingFolders = null;
     private List<Tuple> displayObjects = new LinkedList<>();
+    private Hashtable<Integer, Tuple> attachmentLookup = new Hashtable<>();
+    private Hashtable<Integer, Tuple> transactionLookup = new Hashtable<>();
+
+    private List<WebTransaction> _deletedList = new LinkedList<>();
+
+
     private Listener _listener;
     private int _workOrderId;
 
@@ -48,6 +55,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     /*-         Downloads           -*/
     /*-*****************************-*/
     /*- Can only apply to existing folders/files -*/
+    // modifies existing folders/files
     public void downloadStart(int attachmentId) {
         for (int i = 0; i < displayObjects.size(); i++) {
             Tuple tuple = displayObjects.get(i);
@@ -83,6 +91,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     /*-         Deleted         -*/
     /*-*************************-*/
     /*- Can only apply to existing folders/files -*/
+    // Removes a real entry, cancels a download?
 
     public void setDeleted(List<WebTransaction> webTransactions) {
 
@@ -91,6 +100,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     /*-*********************************-*/
     /*-         Paused Uploads          -*/
     /*-*********************************-*/
+    // Manages a fake entry
     private static class PausedUploadTuple {
         long timestamp;
         int folderId;
@@ -167,6 +177,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     /*-*********+***********************-*/
     /*-         Failed Uploads          -*/
     /*-*********************************-*/
+    // Manages a fake entry
     private static class FailedUploadTuple {
         long timestamp;
         int folderId;
@@ -227,6 +238,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     /*-*********+****************-*/
     /*-         Uploads          -*/
     /*-**************************-*/
+    // Manages a fake entry
 
     private static class UploadTuple {
         long timestamp;
