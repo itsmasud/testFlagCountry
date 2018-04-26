@@ -31,9 +31,14 @@ import java.util.List;
 public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesViewHolder> {
     private static final String TAG = "AttachedFilesAdapter";
 
-    private AttachmentFolders folders = null;
-    private List<Tuple> objects = new LinkedList<>();
+    private AttachmentFolders existingFolders = null;
+    private List<Tuple> displayObjects = new LinkedList<>();
     private Listener _listener;
+    private int _workOrderId;
+
+    public void setWorkOrderId(int workOrderId) {
+        _workOrderId = workOrderId;
+    }
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -42,9 +47,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     /*-*****************************-*/
     /*-         Downloads           -*/
     /*-*****************************-*/
+    /*- Can only apply to existing folders/files -*/
     public void downloadStart(int attachmentId) {
-        for (int i = 0; i < objects.size(); i++) {
-            Tuple tuple = objects.get(i);
+        for (int i = 0; i < displayObjects.size(); i++) {
+            Tuple tuple = displayObjects.get(i);
             if (tuple.type == AttachedFilesViewHolder.TYPE_ATTACHMENT) {
                 Attachment attachment = (Attachment) tuple.object;
                 if (attachment.getId() == attachmentId) {
@@ -60,8 +66,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     }
 
     public void downloadComplete(int attachmentId) {
-        for (int i = 0; i < objects.size(); i++) {
-            Tuple tuple = objects.get(i);
+        for (int i = 0; i < displayObjects.size(); i++) {
+            Tuple tuple = displayObjects.get(i);
             if (tuple.type == AttachedFilesViewHolder.TYPE_ATTACHMENT) {
                 Attachment attachment = (Attachment) tuple.object;
                 if (attachment.getId() == attachmentId) {
@@ -71,6 +77,15 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 }
             }
         }
+    }
+
+    /*-*************************-*/
+    /*-         Deleted         -*/
+    /*-*************************-*/
+    /*- Can only apply to existing folders/files -*/
+
+    public void setDeleted(List<WebTransaction> webTransactions) {
+
     }
 
     /*-*********************************-*/
@@ -308,7 +323,11 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     }
 
     public void setAttachments(AttachmentFolders folders) {
-        this.folders = folders;
+        this.existingFolders = folders;
+
+        List<WebTransaction> webTransactions = WebTransaction.findByKey("%Attachment%/workorders/" + _workOrderId);
+
+
         rebuild();
         notifyDataSetChanged();
     }
@@ -331,16 +350,16 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         return false;
     }
 
-    private void rebuild() {
-        objects.clear();
+    public void rebuild() {
+        displayObjects.clear();
 
-        if (folders == null || folders.getResults() == null) {
+        if (existingFolders == null || existingFolders.getResults() == null) {
             return;
         }
 
         boolean hasPaused = false;
         Tuple t;
-        AttachmentFolder[] attachmentFolders = folders.getResults();
+        AttachmentFolder[] attachmentFolders = existingFolders.getResults();
         for (AttachmentFolder attachmentFolder : attachmentFolders) {
             if (attachmentFolder.getResults().length > 0
                     || hasFt(attachmentFolder.getId())
@@ -351,7 +370,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 t = new Tuple();
                 t.type = AttachedFilesViewHolder.TYPE_HEADER;
                 t.object = attachmentFolder;
-                objects.add(t);
+                displayObjects.add(t);
 
                 List<Tuple> group = new LinkedList<>();
                 // Add all paused
@@ -422,13 +441,13 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     }
                 });
 
-                objects.addAll(group);
+                displayObjects.addAll(group);
 
                 if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
                     t = new Tuple();
                     t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
                     t.object = attachmentFolder;
-                    objects.add(t);
+                    displayObjects.add(t);
                 }
             }
         }
@@ -498,13 +517,13 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         switch (holder.type) {
             case AttachedFilesViewHolder.TYPE_HEADER: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
-                AttachmentFolder af = (AttachmentFolder) objects.get(position).object;
+                AttachmentFolder af = (AttachmentFolder) displayObjects.get(position).object;
                 view.setTitle(af.getName());
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ATTACHMENT: {
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
-                Attachment a = (Attachment) objects.get(position).object;
+                Attachment a = (Attachment) displayObjects.get(position).object;
                 view.setTag(a);
                 if (a.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
                     view.setEnabled(true);
@@ -512,7 +531,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     view.setEnabled(false);
                 }
 
-                if (objects.get(position).downloading) {
+                if (displayObjects.get(position).downloading) {
                     view.set(a.getFile().getName(), null);
                     view.setProgressVisible(true);
                 } else {
@@ -522,21 +541,21 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ADD_VIEW: {
-                AttachmentFolder af = (AttachmentFolder) objects.get(position).object;
+                AttachmentFolder af = (AttachmentFolder) displayObjects.get(position).object;
                 ListItemLinkView view = (ListItemLinkView) holder.itemView;
                 view.setTitle("Add New...");
                 view.setTag(af);
                 break;
             }
             case AttachedFilesViewHolder.TYPE_UPLOAD: {
-                UploadTuple ut = (UploadTuple) objects.get(position).object;
+                UploadTuple ut = (UploadTuple) displayObjects.get(position).object;
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 view.set(ut.name, "");
                 view.setProgress(ut.progress);
                 break;
             }
             case AttachedFilesViewHolder.TYPE_FAILED: {
-                FailedUploadTuple ft = (FailedUploadTuple) objects.get(position).object;
+                FailedUploadTuple ft = (FailedUploadTuple) displayObjects.get(position).object;
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 view.set(ft.name, ft.notes);
                 view.setTag(ft.transaction);
@@ -558,7 +577,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             }
             case AttachedFilesViewHolder.TYPE_PAUSED: {
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
-                PausedUploadTuple t = (PausedUploadTuple) objects.get(position).object;
+                PausedUploadTuple t = (PausedUploadTuple) displayObjects.get(position).object;
                 long timeLeft = t.transaction.getQueueTime() - System.currentTimeMillis();
                 WebTransaction wt = t.transaction;
                 if (timeLeft < 0) {
@@ -640,12 +659,12 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
     @Override
     public int getItemCount() {
-        return objects.size();
+        return displayObjects.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return objects.get(position).type;
+        return displayObjects.get(position).type;
     }
 
     public interface Listener {
