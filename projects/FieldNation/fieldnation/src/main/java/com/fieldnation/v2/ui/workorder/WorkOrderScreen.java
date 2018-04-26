@@ -423,11 +423,11 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         if (_workOrder.getRatings().getBuyer().getActionsSet().contains(WorkOrderRatingsBuyer.ActionsEnum.ADD)) {
             menu.add(1, 2, 300, "Rate Buyer");
         }
-//        if (_workOrder.getAssignee().getActionsSet().contains(Assignee.ActionsEnum.UNASSIGN)
-//                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
-//                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
-        menu.add(1, 3, 300, "Remove Assignment");
-//        }
+        if (_workOrder.getAssignee().getActionsSet().contains(Assignee.ActionsEnum.UNASSIGN)
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
+            menu.add(1, 3, 300, "Remove Assignment");
+        }
         if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)
                 && (App.get().getOfflineState() != App.OfflineState.OFFLINE
                 && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
