@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
-import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
@@ -124,7 +123,6 @@ public class SignatureListDialog extends FullScreenDialog {
         _adapter.setSignatures(_workOrderId, _signatures.getResults());
 
     }
-
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
