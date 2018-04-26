@@ -234,6 +234,8 @@
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_duration_v2_title">Set duration</string>
 
+    <string name="dialog_remove_assignment_warning">Removing yourself from this work order may result in bad ratings or suspension</string>
+    <string name="dialog_remove_assignment_warning_bundle">Removing yourself from this bundle of %1$d work orders may result in bad ratings or suspension</string>
     <string name="dialog_review_hold_title">Hold Review</string>
 
     <string name="hint_text_decline_spinner">Please specify</string>

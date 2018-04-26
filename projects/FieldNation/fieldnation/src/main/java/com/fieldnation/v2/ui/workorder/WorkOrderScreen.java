@@ -416,7 +416,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         Menu menu = _morePopup.getMenu();
         menu.clear();
 
-        if (!(_workOrder.getBundle().getId() > 0) && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+        if (!_workOrder.isBundle() && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
                 || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD))) {
             menu.add(1, 1, 300, "Not Interested");
         }
@@ -598,7 +598,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     WorkOrderTracker.onActionButtonEvent(
                             App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
 
-                    if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+                    if (_workOrder.isBundle()) {
                         DeclineDialog.show(
                                 App.get(), null, _workOrder.getBundle().getMetadata().getTotal(),
                                 _workOrderId, _workOrder.getCompany().getId());
@@ -611,7 +611,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     break;
                 case 3:
                     // remove assignment
-                    RemoveAssignmentDialog.show(App.get(), null, _workOrderId);
+                    RemoveAssignmentDialog.show(App.get(), null, _workOrderId,
+                            (_workOrder.isBundle() ? _workOrder.getBundle().getMetadata().getTotal() + 1 : 0));
                     break;
                 case 4: // report a problem
                     WorkOrderTracker.onActionButtonEvent(
@@ -786,7 +787,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
 
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.isBundle()) {
                 DeclineDialog.show(
                         App.get(), null, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrderId, _workOrder.getCompany().getId());
@@ -800,7 +801,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
@@ -817,7 +818,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),

@@ -576,7 +576,7 @@ public class WebCrawlerService extends Service {
                     incRequestCounter(1);
                     WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
 
-                    if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
+                    if (workOrder.isBundle()) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
                         BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, WebTransaction.Type.CRAWLER);
