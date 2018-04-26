@@ -26,6 +26,8 @@ public class WebTransactionUtils {
     public static final String WEB_TRANS_KEY_PREFIX_ADD_MESSAGE = "%/addMessageByWorkOrder/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_ADD_SHIPMENT = "%/addShipmentByWorkOrder/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_DELETE_SHIPMENT = "%/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_ADD_SIGNATURE = "%/addSignatureByWorkOrder/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_DELETE_SIGNATURE = "%/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/";
 
 
     // TODO more key type will be added
@@ -37,8 +39,9 @@ public class WebTransactionUtils {
         DELETE_EXPENSE,
         ADD_MESSAGE,
         ADD_SHIPMENT,
-        DELETE_SHIPMENT
-
+        DELETE_SHIPMENT,
+        ADD_SIGNATURE,
+        DELETE_SIGNATURE
     }
 
     // TODO more cases will be added while implementing more offline features
@@ -60,6 +63,10 @@ public class WebTransactionUtils {
                 return WEB_TRANS_KEY_PREFIX_ADD_SHIPMENT + workOrderId + "%";
             case DELETE_SHIPMENT:
                 return WEB_TRANS_KEY_PREFIX_DELETE_SHIPMENT + workOrderId + "%";
+            case ADD_SIGNATURE:
+                return WEB_TRANS_KEY_PREFIX_ADD_SIGNATURE+ workOrderId + "%";
+            case DELETE_SIGNATURE:
+                return WEB_TRANS_KEY_PREFIX_DELETE_SIGNATURE + workOrderId + "%";
             default:
                 return null;
         }

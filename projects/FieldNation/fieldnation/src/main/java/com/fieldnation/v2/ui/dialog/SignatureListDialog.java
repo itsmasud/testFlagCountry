@@ -1,8 +1,12 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -12,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
-import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
@@ -20,7 +23,6 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -41,7 +43,6 @@ public class SignatureListDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
-    private RefreshView _refreshView;
     private OverScrollRecyclerView _list;
 
     // Data
@@ -66,8 +67,6 @@ public class SignatureListDialog extends FullScreenDialog {
         _finishMenu.setText(R.string.btn_add);
         _finishMenu.setVisibility(View.GONE);
 
-        _refreshView = v.findViewById(R.id.refresh_view);
-
         _list = v.findViewById(R.id.list);
 
         return v;
@@ -76,7 +75,6 @@ public class SignatureListDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        AppMessagingClient.setLoading(true);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _finishMenu.setVisibility(View.GONE);
@@ -88,6 +86,7 @@ public class SignatureListDialog extends FullScreenDialog {
         _workOrdersApi.sub();
 
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
         populateUi();
     }
 
@@ -103,6 +102,7 @@ public class SignatureListDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
 
         _workOrdersApi.unsub();
         super.onStop();
@@ -120,8 +120,9 @@ public class SignatureListDialog extends FullScreenDialog {
         } else {
             _finishMenu.setVisibility(View.GONE);
         }
-    }
+        _adapter.setSignatures(_workOrderId, _signatures.getResults());
 
+    }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
@@ -133,7 +134,7 @@ public class SignatureListDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
             SignOffActivity.startSignOff(App.get(), _workOrderId);
 
             return false;
@@ -142,11 +143,16 @@ public class SignatureListDialog extends FullScreenDialog {
 
     private final SignatureAdapter.Listener _signatures_listener = new SignatureAdapter.Listener() {
         @Override
-        public void onLongClick(View v, Signature signature) {
+        public void onLongClick(View v, Signature signature, WebTransaction webTransaction) {
+            Bundle bundle = new Bundle();
+            if (webTransaction != null)
+                bundle.putParcelable("wt", webTransaction);
+            bundle.putParcelable("sign", signature);
+
             TwoButtonDialog.show(App.get(), DIALOG_DELETE_SIGNATURE,
                     R.string.dialog_delete_signature_title,
                     R.string.dialog_delete_signature_body,
-                    R.string.btn_yes, R.string.btn_no, true, signature);
+                    R.string.btn_yes, R.string.btn_no, true, bundle);
         }
 
         @Override
@@ -159,9 +165,29 @@ public class SignatureListDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_deleteSignature = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            AppMessagingClient.setLoading(true);
-            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-            WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData), App.get().getSpUiContext());
+            if (((Bundle) extraData).containsKey("wt")) {
+                WebTransaction webTransaction = ((Bundle) extraData).getParcelable("wt");
+                WebTransaction.delete(webTransaction.getId());
+                populateUi();
+            } else {
+                WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
+                WorkordersWebApi.deleteSignature(App.get(), _workOrderId, (Signature) ((Bundle) extraData).getParcelable("sign"), App.get().getSpUiContext());
+            }
+
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (_signatures != null) {
+                String op = intent.getStringExtra("op");
+                if (intent.hasExtra("key")) {
+                    String key = intent.getStringExtra("key");
+                    if (key != null && (key.contains("addSignatureByWorkOrder") || key.contains("deleteSignatureByWorkOrderAndSignature")))
+                        populateUi();
+                }
+            }
         }
     };
 
@@ -178,13 +204,27 @@ public class SignatureListDialog extends FullScreenDialog {
         @Override
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (successObject != null && successObject instanceof Signatures) {
-                _signatures = (Signatures) successObject;
-                _adapter.setSignatures(_signatures.getResults());
-                AppMessagingClient.setLoading(false);
-                populateUi();
+                Signatures signatures = (Signatures) successObject;
+
+                if (_signatures != null) {
+                    if (_signatures.getResults().length != signatures.getResults().length) {
+                        _signatures = signatures;
+                        populateUi();
+                    } else {
+                        for (int i = 0; i < _signatures.getResults().length; i++) {
+                            if (_signatures.getResults()[i].getId() != signatures.getResults()[i].getId().intValue()) {
+                                _signatures = signatures;
+                                populateUi();
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    _signatures = signatures;
+                    populateUi();
+                }
             } else {
                 WorkordersWebApi.getSignatures(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
-                AppMessagingClient.setLoading(true);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }
