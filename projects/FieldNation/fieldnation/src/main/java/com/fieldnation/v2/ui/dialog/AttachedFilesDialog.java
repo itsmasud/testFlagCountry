@@ -146,6 +146,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
     }
 
     private void populateUi() {
+        DebugUtils.printStackTrace(TAG + " populateUi");
         Stopwatch stopwatch = new Stopwatch(true);
         try {
             if (_list == null)
@@ -166,14 +167,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
             adapter.setAttachments(folders);
             Log.v(TAG, "setAttachments time: " + sw.finishAndRestart());
-
-            adapter.setFailedUploads(WebTransaction.getZombies());
-            Log.v(TAG, "setFailedUploads time: " + sw.finishAndRestart());
-            adapter.setPausedUploads(WebTransaction.getPaused("%addAttachmentByWorkOrderAndFolder%/workorders/" + _workOrderId + "/attachments/%"));
             adapter.setDeleted(WebTransaction.getPaused("%deleteAttachmentByWorkOrderAndFolderAndAttachment%/workorders/" + _workOrderId + "/attachments/%"));
-
-
-            Log.v(TAG, "setPausedUploads time: " + sw.finishAndRestart());
         } finally {
             Log.v(TAG, "populateUi time: " + stopwatch.finish());
         }
@@ -322,14 +316,12 @@ public class AttachedFilesDialog extends FullScreenDialog {
                     Log.v(TAG, ex);
                 }
             }
-            AppMessagingClient.setLoading(true);
         }
     };
 
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary(Parcelable extraData) {
-            AppMessagingClient.setLoading(true);
             Attachment attachment = (Attachment) extraData;
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, attachment.getFolderId(),
                     attachment, App.get().getSpUiContext());
@@ -475,7 +467,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
                 Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
 
                 if (pos == size) {
-                    AppMessagingClient.setLoading(true);
                     if (adapter != null)
                         adapter.uploadStop(uuidGroup, transactionParams);
                     populateUi();
@@ -500,13 +491,11 @@ public class AttachedFilesDialog extends FullScreenDialog {
                     int folderId = obj.getInt("attachment.folder_id");
                     if (adapter != null)
                         adapter.uploadStop(uuidGroup, transactionParams);
-                    AppMessagingClient.setLoading(true);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
             } else if (methodName.equals("deleteAttachment")) {
-                AppMessagingClient.setLoading(true);
                 WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             } else if (successObject != null && methodName.equals("getAttachments")) {
                 folders = (AttachmentFolders) successObject;

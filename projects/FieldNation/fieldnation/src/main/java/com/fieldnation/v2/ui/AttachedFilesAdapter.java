@@ -10,7 +10,6 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -21,9 +20,10 @@ import com.fieldnation.v2.data.model.AttachmentFolders;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mc on 8/3/17.
@@ -34,14 +34,20 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
     private AttachmentFolders existingFolders = null;
     private List<Tuple> displayObjects = new LinkedList<>();
-    private Hashtable<Integer, Tuple> attachmentLookup = new Hashtable<>();
-    private Hashtable<Integer, Tuple> transactionLookup = new Hashtable<>();
-
-    private List<WebTransaction> _deletedList = new LinkedList<>();
-
+    private Set<Integer> deletedAttachments = new HashSet<>();
+    private List<PausedUploadTuple> pausedUploads = new LinkedList<>();
+    private List<FailedUploadTuple> failedUploads = new LinkedList<>();
+    private List<UploadTuple> uploads = new LinkedList<>();
 
     private Listener _listener;
     private int _workOrderId;
+
+    private boolean _parseAgain = false;
+    private boolean _parseRunning = false;
+
+    private boolean _rebuildAgain = false;
+    private boolean _rebuildRunning = false;
+
 
     public void setWorkOrderId(int workOrderId) {
         _workOrderId = workOrderId;
@@ -126,54 +132,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     }
 
-    private List<PausedUploadTuple> pausedUploads = new LinkedList<>();
-
-    public void setPausedUploads(List<WebTransaction> webTransactions) {
-        new PausedUploadsTask(this).executeEx(webTransactions);
-    }
-
-    private static class PausedUploadsTask extends AsyncTaskEx<Object, Object, Object> {
-        private AttachedFilesAdapter adapter;
-
-        public PausedUploadsTask(AttachedFilesAdapter adapter) {
-            this.adapter = adapter;
-        }
-
-        @Override
-        protected Object doInBackground(Object... objects) {
-            List<WebTransaction> webTransactions = (List<WebTransaction>) objects[0];
-
-            Stopwatch stopwatch = new Stopwatch(true);
-            List<PausedUploadTuple> list = new LinkedList<>();
-            list.clear();
-            Log.v(TAG, "setPausedUploads 1 " + stopwatch.finishAndRestart());
-
-            for (WebTransaction webTransaction : webTransactions) {
-                try {
-                    TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
-
-                    if (params != null && params.apiFunction != null && "addAttachment".equals(params.apiFunction))
-                        list.add(new PausedUploadTuple(webTransaction));
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-                Log.v(TAG, "setPausedUploads 2 " + stopwatch.finishAndRestart());
-            }
-
-            return list;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            adapter.pausedUploads.clear();
-            adapter.pausedUploads.addAll((List<PausedUploadTuple>) o);
-            adapter.rebuild();
-            adapter.notifyDataSetChanged();
-
-            super.onPostExecute(o);
-        }
-    }
-
     /*-*********+***********************-*/
     /*-         Failed Uploads          -*/
     /*-*********************************-*/
@@ -204,35 +162,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 Log.v(TAG, ex);
             }
         }
-    }
-
-    private List<FailedUploadTuple> failedUploads = new LinkedList<>();
-
-    public void setFailedUploads(List<WebTransaction> webTransactions) {
-        failedUploads.clear();
-
-        if (webTransactions == null || webTransactions.size() == 0) {
-            rebuild();
-            notifyDataSetChanged();
-            return;
-        }
-
-        for (WebTransaction webTransaction : webTransactions) {
-            try {
-                FailedUploadTuple ft = new FailedUploadTuple(webTransaction);
-                for (UploadTuple ut : uploads) {
-                    if (ft.uuid.uuid.equals(ut.uuid.uuid)) {
-                        ft.ut = ut;
-                        break;
-                    }
-                }
-                failedUploads.add(ft);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-        rebuild();
-        notifyDataSetChanged();
     }
 
     /*-*********+****************-*/
@@ -267,12 +196,10 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     }
 
-    private List<UploadTuple> uploads = new LinkedList<>();
 
     public void uploadClear() {
         uploads.clear();
         rebuild();
-        notifyDataSetChanged();
     }
 
     public void uploadProgress(UUIDGroup uuid, TransactionParams transactionParams, int progress) {
@@ -289,7 +216,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             if (ut.uuid.uuid.equals(uuid.uuid)) {
                 ut.progress = progress;
                 rebuild();
-                notifyDataSetChanged();
                 return;
             }
         }
@@ -297,7 +223,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         uploads.add(t);
         // TODO find location and notify accordingly
         rebuild();
-        notifyDataSetChanged();
     }
 
     public void uploadStop(UUIDGroup uuidGroup, TransactionParams transactionParams) {
@@ -321,7 +246,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         uploads.remove(t);
         // TODO find location and upload accordingly
         rebuild();
-        notifyDataSetChanged();
     }
 
     /*-*****************************-*/
@@ -337,11 +261,97 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     public void setAttachments(AttachmentFolders folders) {
         this.existingFolders = folders;
 
-        List<WebTransaction> webTransactions = WebTransaction.findByKey("%Attachment%/workorders/" + _workOrderId);
+        if (_parseRunning && _parseAgain) {
+            // do nothing
+        } else if (_parseRunning && !_parseAgain) {
+            _parseAgain = true;
+        } else if (!_parseRunning && _parseAgain) {
+            // should not happen
+        } else if (!_parseRunning && !_parseAgain) {
+            new ParserTask(this, _workOrderId).executeEx();
+        }
+    }
 
+    private static class ParserTask extends AsyncTaskEx<Object, Object, Object> {
+        private List<PausedUploadTuple> pausedUploads = new LinkedList<>();
+        private List<FailedUploadTuple> failedUploads = new LinkedList<>();
+        private Set<Integer> deletedAttachments = new HashSet<>();
+        private AttachedFilesAdapter adapter;
+        private int _workOrderId;
 
-        rebuild();
-        notifyDataSetChanged();
+        public ParserTask(AttachedFilesAdapter adapter, int workOrderId) {
+            this.adapter = adapter;
+            this._workOrderId = workOrderId;
+        }
+
+        @Override
+        protected Object doInBackground(Object... objects) {
+            adapter._parseRunning = true;
+
+            List<WebTransaction> webTransactions = WebTransaction.findByKey("%Attachment%/workorders/" + _workOrderId + "/%");
+
+            failedUploads.clear();
+            pausedUploads.clear();
+            //deletedAttachments.clear();
+            for (WebTransaction webTransaction : webTransactions) {
+                // Failed
+                if (webTransaction.wasZombie() && webTransaction.getState() != WebTransaction.State.IDLE) {
+                    try {
+                        FailedUploadTuple ft = new FailedUploadTuple(webTransaction);
+                        for (UploadTuple ut : adapter.uploads) {
+                            if (ft.uuid.uuid.equals(ut.uuid.uuid)) {
+                                ft.ut = ut;
+                                break;
+                            }
+                        }
+                        failedUploads.add(ft);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+
+                // Paused
+                if (webTransaction.getState() == WebTransaction.State.IDLE && webTransaction.getKey().contains("addAttachmentByWorkOrderAndFolder")) {
+                    try {
+                        TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+                        if (params != null && params.apiFunction != null && "addAttachment".equals(params.apiFunction))
+                            pausedUploads.add(new PausedUploadTuple(webTransaction));
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+
+                // Deleted
+                if (webTransaction.getState() == WebTransaction.State.IDLE && webTransaction.getKey().contains("deleteAttachmentByWorkOrderAndFolderAndAttachment")) {
+                    try {
+                        TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+                        JsonObject methodParams = new JsonObject(params.methodParams);
+                        deletedAttachments.add(methodParams.getInt("attachmentId"));
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            adapter.deletedAttachments.addAll(deletedAttachments);
+            adapter.failedUploads.clear();
+            adapter.failedUploads.addAll(failedUploads);
+            adapter.pausedUploads.clear();
+            adapter.pausedUploads.addAll(pausedUploads);
+            adapter.rebuild();
+
+            if (adapter._parseAgain) {
+                new ParserTask(adapter, _workOrderId).executeEx();
+                adapter._parseAgain = false;
+            } else {
+                adapter._parseRunning = false;
+            }
+        }
     }
 
     private boolean hasFt(int folderId) {
@@ -363,104 +373,160 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     }
 
     public void rebuild() {
-        displayObjects.clear();
+        if (_rebuildRunning && _rebuildAgain) {
+            // do nothing
+        } else if (_rebuildRunning && !_rebuildAgain) {
+            _rebuildAgain = true;
+        } else if (!_rebuildRunning && _rebuildAgain) {
+            // shouldn't be here
+        } else if (!_rebuildRunning && !_rebuildAgain) {
+            new RebuildTask(this).executeEx();
+        }
+    }
 
-        if (existingFolders == null || existingFolders.getResults() == null) {
-            return;
+    private static class RebuildTask extends AsyncTaskEx<Object, Object, Object> {
+        private AttachedFilesAdapter adapter;
+        private List<Tuple> displayObjects = new LinkedList<>();
+        private AttachmentFolders existingFolders = null;
+        private Set<Integer> deletedAttachments = new HashSet<>();
+        private List<PausedUploadTuple> pausedUploads = new LinkedList<>();
+        private List<FailedUploadTuple> failedUploads = new LinkedList<>();
+        private List<UploadTuple> uploads = new LinkedList<>();
+
+        public RebuildTask(AttachedFilesAdapter adapter) {
+            this.adapter = adapter;
+            existingFolders = adapter.existingFolders;
+            deletedAttachments.addAll(adapter.deletedAttachments);
+            pausedUploads.addAll(adapter.pausedUploads);
+            failedUploads.addAll(adapter.failedUploads);
+            uploads.addAll(adapter.uploads);
         }
 
-        boolean hasPaused = false;
-        Tuple t;
-        AttachmentFolder[] attachmentFolders = existingFolders.getResults();
-        for (AttachmentFolder attachmentFolder : attachmentFolders) {
-            if (attachmentFolder.getResults().length > 0
-                    || hasFt(attachmentFolder.getId())
-                    || hasUt(attachmentFolder.getId())
-                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
-                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
-                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
-                t = new Tuple();
-                t.type = AttachedFilesViewHolder.TYPE_HEADER;
-                t.object = attachmentFolder;
-                displayObjects.add(t);
+        @Override
+        protected Object doInBackground(Object... objects) {
+            adapter._rebuildRunning = true;
+            try {
+                Thread.sleep(100);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            displayObjects.clear();
 
-                List<Tuple> group = new LinkedList<>();
-                // Add all paused
-                for (PausedUploadTuple pt : pausedUploads) {
-                    if (pt.folderId == attachmentFolder.getId()) {
-                        t = new Tuple();
-                        t.type = AttachedFilesViewHolder.TYPE_PAUSED;
-                        t.timestamp = pt.timestamp;
-                        t.object = pt;
-                        group.add(t);
-                        hasPaused = true;
-                    }
-                }
+            if (existingFolders == null || existingFolders.getResults() == null) {
+                return null;
+            }
 
-                //Add all failed
-                for (FailedUploadTuple ft : failedUploads) {
-                    if (ft.folderId == attachmentFolder.getId()) {
-                        t = new Tuple();
-                        t.type = AttachedFilesViewHolder.TYPE_FAILED;
-                        t.timestamp = ft.timestamp;
-                        t.object = ft;
-                        group.add(t);
-                    }
-                }
-
-                //Add uploads
-                for (UploadTuple ut : uploads) {
-                    boolean match = false;
-                    for (FailedUploadTuple ft : failedUploads) {
-                        if (ft.uuid.uuid.equals(ut.uuid.uuid))
-                            match = true;
-                    }
-
-                    if (match)
-                        continue;
-
-                    if (ut.folderId == attachmentFolder.getId()) {
-                        t = new Tuple();
-                        t.timestamp = ut.timestamp;
-                        t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
-                        t.object = ut;
-                        group.add(t);
-                    }
-                }
-
-                Attachment[] attachments = attachmentFolder.getResults();
-                for (Attachment attachment : attachments) {
-                    // check if downloading...
+            boolean hasPaused = false;
+            Tuple t;
+            AttachmentFolder[] attachmentFolders = existingFolders.getResults();
+            for (AttachmentFolder attachmentFolder : attachmentFolders) {
+                if (attachmentFolder.getResults().length > 0
+                        || adapter.hasFt(attachmentFolder.getId())
+                        || adapter.hasUt(attachmentFolder.getId())
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                        || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
                     t = new Tuple();
-                    try {
-                        t.timestamp = attachment.getCreated().getUtcLong();
-                    } catch (Exception ex) {
-                        //Log.v(TAG, ex);
-                    }
-                    t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
-                    t.object = attachment;
-                    group.add(t);
-                }
-
-                Collections.sort(group, new Comparator<Tuple>() {
-                    @Override
-                    public int compare(Tuple tuple, Tuple t1) {
-                        if (tuple.timestamp < t1.timestamp)
-                            return 1;
-                        else if (tuple.timestamp > t1.timestamp)
-                            return -1;
-                        return 0;
-                    }
-                });
-
-                displayObjects.addAll(group);
-
-                if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
-                    t = new Tuple();
-                    t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
+                    t.type = AttachedFilesViewHolder.TYPE_HEADER;
                     t.object = attachmentFolder;
                     displayObjects.add(t);
+
+                    List<Tuple> group = new LinkedList<>();
+                    // Add all paused
+                    for (PausedUploadTuple pt : pausedUploads) {
+                        if (pt.folderId == attachmentFolder.getId()) {
+                            t = new Tuple();
+                            t.type = AttachedFilesViewHolder.TYPE_PAUSED;
+                            t.timestamp = pt.timestamp;
+                            t.object = pt;
+                            group.add(t);
+                            hasPaused = true;
+                        }
+                    }
+
+                    //Add all failed
+                    for (FailedUploadTuple ft : failedUploads) {
+                        if (ft.folderId == attachmentFolder.getId()) {
+                            t = new Tuple();
+                            t.type = AttachedFilesViewHolder.TYPE_FAILED;
+                            t.timestamp = ft.timestamp;
+                            t.object = ft;
+                            group.add(t);
+                        }
+                    }
+
+                    //Add uploads
+                    for (UploadTuple ut : uploads) {
+                        boolean match = false;
+                        for (FailedUploadTuple ft : failedUploads) {
+                            if (ft.uuid.uuid.equals(ut.uuid.uuid))
+                                match = true;
+                        }
+
+                        if (match)
+                            continue;
+
+                        if (ut.folderId == attachmentFolder.getId()) {
+                            t = new Tuple();
+                            t.timestamp = ut.timestamp;
+                            t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
+                            t.object = ut;
+                            group.add(t);
+                        }
+                    }
+
+                    Attachment[] attachments = attachmentFolder.getResults();
+                    for (Attachment attachment : attachments) {
+                        // check if downloading...
+                        if (deletedAttachments.contains(attachment.getId()))
+                            continue;
+
+                        t = new Tuple();
+                        try {
+                            t.timestamp = attachment.getCreated().getUtcLong();
+                        } catch (Exception ex) {
+                            //Log.v(TAG, ex);
+                        }
+                        t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
+                        t.object = attachment;
+                        group.add(t);
+                    }
+
+                    Collections.sort(group, new Comparator<Tuple>() {
+                        @Override
+                        public int compare(Tuple tuple, Tuple t1) {
+                            if (tuple.timestamp < t1.timestamp)
+                                return 1;
+                            else if (tuple.timestamp > t1.timestamp)
+                                return -1;
+                            return 0;
+                        }
+                    });
+
+                    displayObjects.addAll(group);
+
+                    if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
+                        t = new Tuple();
+                        t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
+                        t.object = attachmentFolder;
+                        displayObjects.add(t);
+                    }
                 }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            adapter.displayObjects.clear();
+            adapter.displayObjects.addAll(displayObjects);
+            adapter.notifyDataSetChanged();
+
+            if (adapter._rebuildAgain) {
+                adapter._rebuildAgain = false;
+                new RebuildTask(adapter).executeEx();
+            } else {
+                adapter._rebuildRunning = false;
             }
         }
     }
