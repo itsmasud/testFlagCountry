@@ -1588,6 +1588,6 @@ public class WorkOrder /*implements Parcelable*/ {
     }
 
     public boolean isBundle() {
-        return getBundle != null && getBundle().getId() != null && getBundle().getId() > 0;
+        return getBundle() != null && getBundle().getId() != null && getBundle().getId() > 0;
     }
 }
