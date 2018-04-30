@@ -10,6 +10,7 @@ import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -259,6 +260,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     }
 
     public void setAttachments(AttachmentFolders folders) {
+        Log.v(TAG, "setAttachments");
         this.existingFolders = folders;
 
         if (_parseRunning && _parseAgain) {
@@ -268,6 +270,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         } else if (!_parseRunning && _parseAgain) {
             // should not happen
         } else if (!_parseRunning && !_parseAgain) {
+            _parseRunning = true;
+            Log.v(TAG, "setAttachments parser");
             new ParserTask(this, _workOrderId).executeEx();
         }
     }
@@ -286,7 +290,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
         @Override
         protected Object doInBackground(Object... objects) {
-            adapter._parseRunning = true;
+            Stopwatch stopwatch = new Stopwatch(true);
 
             List<WebTransaction> webTransactions = WebTransaction.findByKey("%Attachment%/workorders/" + _workOrderId + "/%");
 
@@ -333,6 +337,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 }
             }
 
+            Log.v(TAG, "ParserTask " + stopwatch.finish());
             return null;
         }
 
@@ -354,7 +359,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     }
 
-    private boolean hasFt(int folderId) {
+    private static boolean hasFt(List<FailedUploadTuple> failedUploads, int folderId) {
         for (FailedUploadTuple ft : failedUploads) {
             if (ft.folderId == folderId)
                 return true;
@@ -363,7 +368,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         return false;
     }
 
-    private boolean hasUt(int folderId) {
+    private static boolean hasUt(List<UploadTuple> uploads, int folderId) {
         for (UploadTuple ut : uploads) {
             if (ut.folderId == folderId)
                 return true;
@@ -380,6 +385,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         } else if (!_rebuildRunning && _rebuildAgain) {
             // shouldn't be here
         } else if (!_rebuildRunning && !_rebuildAgain) {
+            _rebuildRunning = true;
+            Log.v(TAG, "rebuild");
             new RebuildTask(this).executeEx();
         }
     }
@@ -404,12 +411,12 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
         @Override
         protected Object doInBackground(Object... objects) {
-            adapter._rebuildRunning = true;
             try {
-                Thread.sleep(100);
+                Thread.sleep(500);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            Stopwatch stopwatch = new Stopwatch(true);
             displayObjects.clear();
 
             if (existingFolders == null || existingFolders.getResults() == null) {
@@ -421,8 +428,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
             AttachmentFolder[] attachmentFolders = existingFolders.getResults();
             for (AttachmentFolder attachmentFolder : attachmentFolders) {
                 if (attachmentFolder.getResults().length > 0
-                        || adapter.hasFt(attachmentFolder.getId())
-                        || adapter.hasUt(attachmentFolder.getId())
+                        || hasFt(failedUploads, attachmentFolder.getId())
+                        || hasUt(uploads, attachmentFolder.getId())
                         || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
                         || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
                         || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
@@ -513,14 +520,17 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                     }
                 }
             }
+            Log.v(TAG, "RebuildTask " + stopwatch.finish());
             return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {
-            adapter.displayObjects.clear();
-            adapter.displayObjects.addAll(displayObjects);
-            adapter.notifyDataSetChanged();
+            if (adapter.displayObjects.size() != displayObjects.size()) {
+                adapter.displayObjects.clear();
+                adapter.displayObjects.addAll(displayObjects);
+                adapter.notifyDataSetChanged();
+            }
 
             if (adapter._rebuildAgain) {
                 adapter._rebuildAgain = false;
@@ -582,6 +592,7 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
                 view.setActionVisible(false);
                 view.setProgressVisible(false);
                 view.setAlertVisible(false);
+                view.setOnLongClickListener(_attachmentDeleteUpload_onLongClick);
                 holder = new AttachedFilesViewHolder(view);
                 holder.type = viewType;
                 break;
@@ -713,6 +724,16 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         }
     };
 
+    private final View.OnLongClickListener _attachmentDeleteUpload_onLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            Log.v(TAG, "AttachmentFoldersAdapters");
+            WebTransaction a = (WebTransaction) v.getTag();
+            _listener.onDeleteTransaction(a);
+            return true;
+        }
+    };
+
     private final View.OnLongClickListener _attachment_onLongClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View view) {
@@ -749,6 +770,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         void onShowAttachment(Attachment attachment);
 
         void onDeleteAttachment(Attachment attachment);
+
+        void onDeleteTransaction(WebTransaction webTransaction);
 
         void onAdd(AttachmentFolder attachmentFolder);
 

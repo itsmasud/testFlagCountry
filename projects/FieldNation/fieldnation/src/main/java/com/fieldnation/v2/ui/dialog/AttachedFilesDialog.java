@@ -209,6 +209,7 @@ public class AttachedFilesDialog extends FullScreenDialog {
 
     // Ui listeners
     private final AttachedFilesAdapter.Listener _attachmentFolder_listener = new AttachedFilesAdapter.Listener() {
+
         @Override
         public void onShowAttachment(Attachment attachment) {
             Log.v(TAG, "AttachedFilesAdapter.onShowAttachment");
@@ -231,6 +232,14 @@ public class AttachedFilesDialog extends FullScreenDialog {
                     getView().getResources().getString(R.string.dialog_delete_message),
                     getView().getResources().getString(R.string.btn_yes),
                     getView().getResources().getString(R.string.btn_no), true, attachment);
+        }
+
+        @Override
+        public void onDeleteTransaction(WebTransaction webTransaction) {
+            TwoButtonDialog.show(App.get(), DIALOG_YES_NO_FAILED,
+                    "Cancel Upload", "Are you sure you want to cancel this upload?",
+                    getView().getResources().getString(R.string.btn_yes),
+                    getView().getResources().getString(R.string.btn_no), true, webTransaction);
         }
 
         @Override
@@ -352,7 +361,6 @@ public class AttachedFilesDialog extends FullScreenDialog {
     /*-*****************************************-*/
     /*-         WebTransaction listener         -*/
     /*-*****************************************-*/
-
     private final BroadcastReceiver _webTransReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
