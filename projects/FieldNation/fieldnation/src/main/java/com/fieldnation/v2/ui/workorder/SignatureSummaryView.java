@@ -102,9 +102,10 @@ public class SignatureSummaryView extends RelativeLayout implements WorkOrderRen
         int addSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_SIGNATURE + _workOrder.getId() + "/%").size();
         int delSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_SIGNATURE + _workOrder.getId() + "/%").size();
 
-        if (_workOrder.getSignatures() == null
+        if ((_workOrder.getSignatures() == null
                 || _workOrder.getSignatures().getResults() == null
-                || _workOrder.getSignatures().getResults().length == 0) {
+                || _workOrder.getSignatures().getResults().length == 0)
+        && addSize == 0 && delSize == 0) {
             setVisibility(GONE);
             return;
         }
