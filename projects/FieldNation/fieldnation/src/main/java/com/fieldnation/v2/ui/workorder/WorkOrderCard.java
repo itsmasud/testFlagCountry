@@ -591,7 +591,7 @@ public class WorkOrderCard extends RelativeLayout {
         int buttonId = 0;
         Button button = _secondaryButtons[buttonId];
 
-        boolean isBundle = _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
+        boolean isBundle = _workOrder.isBundle();
 
         // decline
         if (!isBundle

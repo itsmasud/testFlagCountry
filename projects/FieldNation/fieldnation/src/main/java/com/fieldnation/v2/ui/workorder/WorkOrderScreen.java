@@ -9,13 +9,18 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.view.ContextThemeWrapper;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -58,6 +63,7 @@ import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -89,6 +95,7 @@ import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
+import com.fieldnation.v2.ui.dialog.RemoveAssignmentDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
@@ -409,28 +416,34 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         Menu menu = _morePopup.getMenu();
         menu.clear();
 
-        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)
+        if (!_workOrder.isBundle() && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
+                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD))) {
+            menu.add(1, 1, 300, "Not Interested");
+        }
+        if (_workOrder.getRatings().getBuyer().getActionsSet().contains(WorkOrderRatingsBuyer.ActionsEnum.ADD)) {
+            menu.add(1, 2, 300, "Rate Buyer");
+        }
+        if (_workOrder.getAssignee().getActionsSet().contains(Assignee.ActionsEnum.UNASSIGN)
                 && (App.get().getOfflineState() != App.OfflineState.OFFLINE
                 && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
-            menu.add(0, 0, 300, "Running Late");
+            menu.add(1, 3, 300, "Remove Assignment");
         }
         if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)
                 && (App.get().getOfflineState() != App.OfflineState.OFFLINE
                 && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
-            menu.add(0, 1, 300, "Report A Problem");
+            menu.add(1, 4, 300, "Report A Problem");
         }
-        if (!(_workOrder.getBundle().getId() > 0) && (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)
-                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD))) {
-            menu.add(0, 2, 300, "Not Interested");
-        }
-        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
-            menu.add(0, 3, 300, "Print");
-        }
-        if (_workOrder.getRatings().getBuyer().getActionsSet().contains(WorkOrderRatingsBuyer.ActionsEnum.ADD)) {
-            menu.add(0, 4, 300, "Rate Buyer");
+        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)
+                && (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING)) {
+            menu.add(1, 5, 300, "Running Late");
         }
 
-        menu.add(0, 5, 300, "Send Debug Log");
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.PRINT)) {
+            menu.add(2, 6, 300, "Print");
+        }
+
+        menu.add(2, 7, 300, "Send Debug Log");
 
         if (menu.size() == 0) {
             _moreMenuButton.setVisibility(GONE);
@@ -581,25 +594,11 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             switch (item.getItemId()) {
-                case 0: // running late
-                    WorkOrderTracker.onActionButtonEvent(
-                            App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE, null, _workOrder.getId());
-
-                    RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder.getId(),
-                            _workOrder.getEta(), _workOrder.getSchedule(), _workOrder.getContacts(),
-                            _workOrder.getTitle());
-                    break;
-                case 1: // report a problem
-                    WorkOrderTracker.onActionButtonEvent(
-                            App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
-
-                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
-                    break;
-                case 2: // not interested
+                case 1: // not interested
                     WorkOrderTracker.onActionButtonEvent(
                             App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
 
-                    if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+                    if (_workOrder.isBundle()) {
                         DeclineDialog.show(
                                 App.get(), null, _workOrder.getBundle().getMetadata().getTotal(),
                                 _workOrderId, _workOrder.getCompany().getId());
@@ -607,16 +606,35 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         DeclineDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany().getId(), true);
                     }
                     break;
-                case 3: { // print
+                case 2: // rate buyer
+                    RateBuyerDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
+                    break;
+                case 3:
+                    // remove assignment
+                    RemoveAssignmentDialog.show(App.get(), null, _workOrderId,
+                            (_workOrder.isBundle() ? _workOrder.getBundle().getMetadata().getTotal() + 1 : 0));
+                    break;
+                case 4: // report a problem
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrderId);
+
+                    ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrderId, _workOrder.getProblems());
+                    break;
+                case 5: // running late
+                    WorkOrderTracker.onActionButtonEvent(
+                            App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE, null, _workOrder.getId());
+
+                    RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder.getId(),
+                            _workOrder.getEta(), _workOrder.getSchedule(), _workOrder.getContacts(),
+                            _workOrder.getTitle());
+                    break;
+                case 6: { // print
                     String url = "https://" + getContext().getString(R.string.web_fn_hostname) + "/marketplace/wo_print.php?workorder_id=" + _workOrderId;
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     ActivityClient.startActivity(intent);
                     break;
                 }
-                case 4: // rate buyer
-                    RateBuyerDialog.show(App.get(), null, _workOrderId, _workOrder.getCompany(), _workOrder.getLocation());
-                    break;
-                case 5: { // send debug log
+                case 7: { // send debug log
                     File tempfile = DebugUtils.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("plain/text");
@@ -769,7 +787,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrderId);
 
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.isBundle()) {
                 DeclineDialog.show(
                         App.get(), null, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrderId, _workOrder.getCompany().getId());
@@ -783,7 +801,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
@@ -800,7 +818,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
-            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(
                         App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
