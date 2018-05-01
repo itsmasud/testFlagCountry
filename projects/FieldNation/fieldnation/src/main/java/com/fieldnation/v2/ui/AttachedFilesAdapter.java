@@ -49,6 +49,8 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
     private boolean _rebuildAgain = false;
     private boolean _rebuildRunning = false;
 
+    private long _nextRebuild = 0;
+
 
     public void setWorkOrderId(int workOrderId) {
         _workOrderId = workOrderId;
@@ -290,8 +292,13 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
         @Override
         protected Object doInBackground(Object... objects) {
-            Stopwatch stopwatch = new Stopwatch(true);
+            try {
+                Thread.sleep(250);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
 
+            Stopwatch stopwatch = new Stopwatch(true);
             List<WebTransaction> webTransactions = WebTransaction.findByKey("%Attachment%/workorders/" + _workOrderId + "/%");
 
             failedUploads.clear();
@@ -411,11 +418,6 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
         @Override
         protected Object doInBackground(Object... objects) {
-            try {
-                Thread.sleep(500);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
             Stopwatch stopwatch = new Stopwatch(true);
             displayObjects.clear();
 
@@ -526,10 +528,15 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
 
         @Override
         protected void onPostExecute(Object o) {
-            if (adapter.displayObjects.size() != displayObjects.size()) {
+            if (adapter.displayObjects.size() != displayObjects.size()
+                    || adapter._nextRebuild < System.currentTimeMillis()) {
+                Log.v(TAG, "Updating UI");
                 adapter.displayObjects.clear();
                 adapter.displayObjects.addAll(displayObjects);
                 adapter.notifyDataSetChanged();
+                adapter._nextRebuild = System.currentTimeMillis() + 1000;
+            } else {
+                Log.v(TAG, "Skip UI update");
             }
 
             if (adapter._rebuildAgain) {
