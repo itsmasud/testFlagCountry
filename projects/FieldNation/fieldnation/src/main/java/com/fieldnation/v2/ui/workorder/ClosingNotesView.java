@@ -1,6 +1,10 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +15,8 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 
@@ -22,8 +28,9 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
 
     // Data
     private WorkOrder _workOrder;
+    private WebTransaction _webTransaction = null;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
@@ -47,7 +54,32 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
+        searchWebTransaction();
         populateUi();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            searchWebTransaction();
+        }
+    };
+
+    private void searchWebTransaction() {
+        if (_workOrder == null) return;
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrder.getId());
     }
 
     private void populateUi() {
@@ -56,8 +88,12 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
             return;
         }
 
-        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
+        final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
+        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes()) && misc.isEmptyOrNull(offlineNotes)) {
             _notesTextView.setText(_workOrder.getClosingNotes());
+            _notesTextView.setVisibility(VISIBLE);
+        } else if (!misc.isEmptyOrNull(offlineNotes)) {
+            _notesTextView.setText(offlineNotes);
             _notesTextView.setVisibility(VISIBLE);
         } else {
             _notesTextView.setVisibility(GONE);
@@ -71,6 +107,7 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         }
     }
 
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -82,5 +119,14 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
                 ClosingNotesDialog.show(App.get(), _workOrder.getId(), _workOrder.getClosingNotes());
         }
     };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+            _webTransaction = webTransaction;
+            populateUi();
+        }
+    };
+
 
 }

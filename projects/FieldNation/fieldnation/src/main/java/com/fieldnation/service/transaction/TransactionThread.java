@@ -150,7 +150,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
                 wtype = WebTransaction.Type.NORMAL;
             }
-            trans = WebTransaction.getNext(wtype, _service.isAuthenticated(), Priority.LOW);
+            trans = WebTransaction.getNext(wtype, _service.isAuthenticated(), Priority.LOW, _isFirstThread);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(ContextProvider.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
@@ -218,7 +218,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthClient.invalidateCommand();
+                AuthClient.requestCommand();
                 trans.requeue(5000);
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
@@ -229,6 +229,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (!_service.isAuthenticated()) {
                 Log.v(TAG, "skip no auth");
                 trans.requeue(5000);
+                AuthClient.requestCommand();
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);

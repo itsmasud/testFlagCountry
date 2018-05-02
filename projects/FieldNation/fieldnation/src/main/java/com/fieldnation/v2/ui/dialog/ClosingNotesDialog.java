@@ -20,8 +20,9 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ClosingNotesDialog extends SimpleDialog {
     private static final String TAG = "ClosingNotesDialog";
@@ -37,6 +38,10 @@ public class ClosingNotesDialog extends SimpleDialog {
     // Data
     private String _notes;
     private int _workOrderId;
+    private boolean isRotated = false;
+
+    private WebTransaction _webTransaction = null;
+
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -68,11 +73,16 @@ public class ClosingNotesDialog extends SimpleDialog {
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
 
+        isRotated = false;
+
         _notes = payload.getString("notes");
         _workOrderId = payload.getInt("workOrderId");
 
         if (!misc.isEmptyOrNull(_notes))
             _editText.setText(_notes);
+
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrderId);
+
     }
 
     @Override
@@ -82,6 +92,7 @@ public class ClosingNotesDialog extends SimpleDialog {
             _notes = savedState.getString(STATE_NOTES);
             _editText.setText(_notes);
         }
+        isRotated = true;
     }
 
     @Override
@@ -91,6 +102,15 @@ public class ClosingNotesDialog extends SimpleDialog {
             outState.putString(STATE_NOTES, _notes);
         }
     }
+
+    private void populateUi() {
+        final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
+
+        if (!misc.isEmptyOrNull(offlineNotes))
+            _editText.setText(offlineNotes);
+
+    }
+
 
     /*-*************************-*/
     /*-			Events			-*/
@@ -111,6 +131,9 @@ public class ClosingNotesDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_webTransaction != null)
+                WebTransaction.delete(_webTransaction.getId());
+
             try {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Closing Notes Dialog";
@@ -132,6 +155,14 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+        }
+    };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+            _webTransaction = webTransaction;
+            if (!isRotated) populateUi();
         }
     };
 

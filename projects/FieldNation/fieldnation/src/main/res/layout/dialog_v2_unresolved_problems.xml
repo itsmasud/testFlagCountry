@@ -11,14 +11,19 @@
         style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        android:theme="@style/FieldNation.Material.ToolBar" />
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
+
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
+        android:layout_below="@+id/toolbar" />
 
     <com.fieldnation.ui.OverScrollRecyclerView
         android:id="@+id/recyclerView"
         style="@style/Dialog.v3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/offline_bar_textview"
         android:background="@color/fn_primary_bg" />
 </RelativeLayout>

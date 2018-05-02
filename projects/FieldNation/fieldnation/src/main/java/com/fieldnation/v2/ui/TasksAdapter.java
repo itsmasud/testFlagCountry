@@ -34,10 +34,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private final int TYPE_TASK_DOWNLOAD = 4;
 
     // data
-    private int _workOrderId;
+    private int _workOrderId = 0;
     private Tasks _tasks = null;
     private String _groupId;
     private Listener _listener;
+    private WebTransaction _webTransaction = null;
 
     private static class DataHolder {
         int type;
@@ -65,9 +66,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     }
 
-    public void setData(int workOrderId, Tasks tasks, String groupId) {
+    public void setData(int workOrderId, Tasks tasks, String groupId, WebTransaction webTransaction) {
+        Log.e(TAG, "setData");
         _tasks = tasks;
         _groupId = groupId;
+        _webTransaction = webTransaction;
         dataHolders.clear();
         _workOrderId = workOrderId;
 
@@ -206,6 +209,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
 
     @Override
     public void onBindViewHolder(TaskViewHolder holder, int position) {
+        Log.e(TAG, "onBindViewHolder");
         switch (getItemViewType(position)) {
             case TYPE_HEADER_INCOMPLETE: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
@@ -224,7 +228,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
                 view.setOnClickListener(_task_onClick);
-                view.setData(task);
+                view.setData(task, _webTransaction);
                 break;
             }
 
@@ -233,7 +237,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
                 view.setOnClickListener(null);
-                view.setData(task);
+                view.setData(task, _webTransaction);
 
                 UploadTuple ut = dataHolders.get(position).uObject;
                 view.setProgress(ut.progress);
@@ -245,7 +249,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 TaskRowView view = (TaskRowView) holder.itemView;
                 Task task = (Task) dataHolders.get(position).object;
                 view.setTag(task);
-                view.setData(task);
+                view.setData(task, _webTransaction);
 
                 if (dataHolders.get(position).dObject.downloading) {
                     view.setProgressVisible(true);

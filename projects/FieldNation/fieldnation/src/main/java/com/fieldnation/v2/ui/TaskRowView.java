@@ -14,6 +14,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.model.Task;
 
 import java.text.DateFormatSymbols;
@@ -39,6 +41,7 @@ public class TaskRowView extends RelativeLayout {
     // Data
     private Task _task;
     private boolean _progressVisible = false;
+    private WebTransaction _webTransaction = null;
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -78,8 +81,9 @@ public class TaskRowView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setData(Task task) {
+    public void setData(Task task, WebTransaction webTransaction) {
         _task = task;
+        _webTransaction = webTransaction;
         populateUi();
     }
 
@@ -177,12 +181,18 @@ public class TaskRowView extends RelativeLayout {
 
                 case CLOSING_NOTES: // closing notes
                     _keyTextView.setText(_task.getLabel());
-                    if (misc.isEmptyOrNull(_task.getClosingNotes()))
-                        _valueTextView.setVisibility(GONE);
-                    else {
+
+                    final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
+                    if (!misc.isEmptyOrNull(_task.getClosingNotes()) && misc.isEmptyOrNull(offlineNotes)) {
                         _valueTextView.setText(_task.getClosingNotes());
                         _valueTextView.setVisibility(VISIBLE);
+                    } else if (!misc.isEmptyOrNull(offlineNotes)){
+                        _valueTextView.setText(offlineNotes);
+                        _valueTextView.setVisibility(VISIBLE);
+                    } else {
+                        _valueTextView.setVisibility(GONE);
                     }
+
                     _rightValueTextView.setVisibility(GONE);
                     break;
 
@@ -336,7 +346,7 @@ public class TaskRowView extends RelativeLayout {
             setEnabled(true);
 
             // offline mode
-            if ((getType(_task).equals(TaskTypeEnum.CHECK_IN) || getType(_task).equals(TaskTypeEnum.CHECK_OUT)|| getType(_task).equals(TaskTypeEnum.SET_ETA))
+            if ((getType(_task).equals(TaskTypeEnum.CHECK_IN) || getType(_task).equals(TaskTypeEnum.CHECK_OUT) || getType(_task).equals(TaskTypeEnum.SET_ETA))
                     && (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING))
                 _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
 
@@ -345,4 +355,5 @@ public class TaskRowView extends RelativeLayout {
             setEnabled(false);
         }
     }
+
 }

@@ -52,11 +52,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public int getOfflineBarId() {
-        return R.id.offline_bar_textview;
-    }
-
-    @Override
     public DialogManager getDialogManager() {
         return (DialogManager) findViewById(R.id.dialogManager);
     }

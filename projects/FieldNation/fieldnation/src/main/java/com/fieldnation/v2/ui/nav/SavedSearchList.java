@@ -10,13 +10,9 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.App;
-import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.nav.ToolbarMenuBehavior;
 import com.fieldnation.ui.nav.ToolbarMenuInterface;
 import com.fieldnation.v2.data.client.WorkordersWebApi;

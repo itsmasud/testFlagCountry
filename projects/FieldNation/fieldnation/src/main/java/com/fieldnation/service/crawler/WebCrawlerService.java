@@ -315,12 +315,14 @@ public class WebCrawlerService extends Service {
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
+            _monitorRunning = false;
+
             if (!_isRunning) {
                 Log.v(TAG, "_activityMonitor_runnable not running");
                 return;
             }
 
-            _monitorRunning = false;// check timer
+            // check timer
             if (System.currentTimeMillis() - _lastRequestTime > 10000
                     && WebTransaction.getPaused(WebTransaction.Type.CRAWLER).size() == 0) {
 
@@ -400,8 +402,7 @@ public class WebCrawlerService extends Service {
 
     private boolean isDownloadable(Attachment attachment) {
         // We cannot download the link, printable badge. So ignoring.
-        return attachment.getActionsSet().contains(Attachment.ActionsEnum.EDIT)
-                || attachment.getActionsSet().contains(Attachment.ActionsEnum.DELETE);
+        return attachment.getFile() != null && attachment.getFile().getType() == com.fieldnation.v2.data.model.File.TypeEnum.FILE;
     }
 
     private Stopwatch _crawlerWatch = new Stopwatch();
@@ -575,7 +576,7 @@ public class WebCrawlerService extends Service {
                     incRequestCounter(1);
                     WorkordersWebApi.getAttachments(WebCrawlerService.this, workOrder.getId(), false, WebTransaction.Type.CRAWLER);
 
-                    if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
+                    if (workOrder.isBundle()) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
                         BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, WebTransaction.Type.CRAWLER);
@@ -633,7 +634,6 @@ public class WebCrawlerService extends Service {
                                 updateDownloadProgress();
                             }
                         }
-
                     }
                 }
             } catch (Exception ex) {

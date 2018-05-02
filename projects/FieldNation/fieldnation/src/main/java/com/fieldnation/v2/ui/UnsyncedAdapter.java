@@ -31,7 +31,6 @@ import java.util.Locale;
 public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
     private static final String TAG = "UnsyncedAdapter";
 
-
     // activity name - need user friendly name
     // Date/time
     // work order id
@@ -41,6 +40,7 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy @ h:mm a", Locale.getDefault());
     private DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+    private Listener _listener;
 
 
     private static class Tuple {
@@ -77,6 +77,10 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
         }
 
         return webTransactions.get(workOrderId);
+    }
+
+    public void setListener(UnsyncedAdapter.Listener listener) {
+        _listener = listener;
     }
 
     public int getWorkOrderCount() {
@@ -133,6 +137,7 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
                 view.setAlertVisible(false);
                 view.setTitleEllipse(true);
+                view.setOnLongClickListener(_view_onLongClick);
                 holder = new UnsyncedViewHolder(view);
                 holder.type = viewType;
 
@@ -170,6 +175,8 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
                 if (t.webTransaction.isZombie() || t.webTransaction.getTryCount() > 0) {
                     view.setAlertVisible(true);
                 }
+                view.setTag(R.string.const_activity_name, (String) transactions.get(position).activityName);
+                view.setTag(R.string.const_web_transaction, (WebTransaction) transactions.get(position).webTransaction);
 
                 break;
             }
@@ -190,6 +197,17 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
         }
     };
 
+    private final View.OnLongClickListener _view_onLongClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (_listener != null) {
+                _listener.onLongClick(v);
+                return true;
+            }
+            return false;
+        }
+    };
+
     @Override
     public int getItemCount() {
         return transactions.size();
@@ -199,4 +217,9 @@ public class UnsyncedAdapter extends RecyclerView.Adapter<UnsyncedViewHolder> {
     public int getItemViewType(int position) {
         return transactions.get(position).type;
     }
+
+    public interface Listener {
+        void onLongClick(View v);
+    }
+
 }

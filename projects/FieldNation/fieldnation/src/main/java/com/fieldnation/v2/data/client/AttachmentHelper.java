@@ -25,6 +25,8 @@ import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.v2.data.model.Attachment;
 
+import java.io.InputStream;
+
 /**
  * Created by mc on 4/19/17.
  */
@@ -97,27 +99,41 @@ public class AttachmentHelper {
                                 .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Compression enabled"))
                                 .addContext(new SpFileContext.Builder().name(filename).build())
                                 .build());
+                        InputStream is = null;
                         try {
                             final BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inJustDecodeBounds = true;
-                            BitmapFactory.decodeStream(context.getContentResolver().openInputStream(cache.getUri()), null, options);
+                            is = context.getContentResolver().openInputStream(cache.getUri());
+                            int size = is.available();
+                            BitmapFactory.decodeStream(is, null, options);
+                            is.close();
 
                             int h = options.outHeight;
                             int w = options.outWidth;
 
-                            if (h * w > 5000000L) {
-                                Bitmap bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
-                                bitmap = MemUtils.rotateImageIfRequired(context, bitmap, cache.getUri());
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, context.getContentResolver().openOutputStream(cache.getUri()));
-                                bitmap.recycle();
-                                Log.v(TAG, "File Compressed");
-                                Tracker.event(App.get(), new CustomEvent.Builder()
-                                        .addContext(new SpTracingContext(uuid))
-                                        .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
-                                        .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Image Compressed"))
-                                        .addContext(new SpFileContext.Builder().name(filename).build())
-                                        .build());
+                            if (h * w > 5000000L || size > 2000000) {
+                                Bitmap bitmap = null;
+                                if (h * w > 5000000L)
+                                    bitmap = ImageUtils.getScalledBitmap(context, cache.getUri(), 5000000L);
+                                else
+                                    bitmap = BitmapFactory.decodeStream(context.getContentResolver().openInputStream(cache.getUri()));
 
+                                if (bitmap != null) {
+                                    bitmap = MemUtils.rotateImageIfRequired(context, bitmap, cache.getUri());
+                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 95, context.getContentResolver().openOutputStream(cache.getUri()));
+                                    bitmap.recycle();
+                                    Log.v(TAG, "File Compressed");
+                                    Tracker.event(App.get(), new CustomEvent.Builder()
+                                            .addContext(new SpTracingContext(uuid))
+                                            .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
+                                            .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Attachment Helper - Image Compressed"))
+                                            .addContext(new SpFileContext.Builder().name(filename).build())
+                                            .build());
+                                    if (filename.contains(".")) {
+                                        filename = filename.substring(0, filename.lastIndexOf(".")) + ".jpg";
+                                        attachment.getFile().name(filename);
+                                    }
+                                }
                             } else {
                                 Tracker.event(App.get(), new CustomEvent.Builder()
                                         .addContext(new SpTracingContext(uuid))
@@ -144,7 +160,6 @@ public class AttachmentHelper {
                                 .build());
 
                     }
-
                     WorkordersWebApi.addAttachment(context, uuid, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
 
                     Tracker.event(App.get(), new CustomEvent.Builder()

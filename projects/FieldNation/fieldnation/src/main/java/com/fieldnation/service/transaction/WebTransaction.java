@@ -34,7 +34,7 @@ import java.util.Set;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
-    public static final String BROADCASE_ON_CHANGE = "WebTransaction.BROADCASE_ON_CHANGE";
+    public static final String BROADCAST_ON_CHANGE = "WebTransaction.BROADCAST_ON_CHANGE";
 
     private long _id;
     private long _createdTime;
@@ -53,6 +53,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private String _timingKey;
     private boolean _wasZombie = false;
     private UUIDGroup _uuid;
+    private boolean _sequential;
     private int _tryCount = 0;
     private int _maxTries = 0;
 
@@ -77,7 +78,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public enum Type {
         ANY, NORMAL, CRAWLER, SYNC
     }
-
 
     public enum ActivityType {
         ACTIVITY_NAME,
@@ -145,6 +145,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             _uuid = UUIDGroup.fromJson(new JsonObject(cursor.getString(Column.UUID.getIndex())));
         } catch (Exception ex) {
         }
+        _sequential = cursor.getInt(Column.SEQUENTIAL.getIndex()) == 1;
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
 
         _notifStartArray = cursor.getBlob(Column.NOTIF_START.getIndex());
@@ -177,6 +178,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _wasZombie = bundle.getBoolean(PARAM_ZOMBIE);
         if (bundle.containsKey(PARAM_UUID))
             _uuid = bundle.getParcelable(PARAM_UUID);
+        _sequential = bundle.getBoolean(PARAM_SEQUENTIAL);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);
         _notifStartArray = bundle.getByteArray(PARAM_NOTIFICATION_START);
@@ -222,6 +224,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         if (_uuid != null)
             bundle.putParcelable(PARAM_UUID, _uuid);
 
+        bundle.putBoolean(PARAM_SEQUENTIAL, _sequential);
         bundle.putInt(PARAM_NOTIFICATION_ID, _notifId);
         if (_notifStartArray != null)
             bundle.putByteArray(PARAM_NOTIFICATION_START, _notifStartArray);
@@ -364,6 +367,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public boolean wasZombie() {
         return _wasZombie;
+    }
+
+    public boolean isSequential() {
+        return _sequential;
     }
 
     public UUIDGroup getUUID() {
@@ -763,7 +770,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
     private static final String GET_NEXT_SORT = Column.PRIORITY + " DESC, " + Column.QUEUE_TIME + " ASC, " + Column.ID + " ASC";
 
-    public static WebTransaction getNext(Type type, boolean allowAuth, Priority minPriority) {
+    public static WebTransaction getNext(Type type, boolean allowAuth, Priority minPriority, boolean allowSequential) {
 //        Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
@@ -781,6 +788,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                                     + " AND " + Column.STATE + " <> " + State.ZOMBIE.ordinal()
                                     + (type == Type.ANY ? "" : " AND " + Column.TYPE + " = " + type.ordinal())
                                     + (allowAuth ? "" : " AND " + Column.USE_AUTH + " = 0")
+                                    + (allowSequential ? "" : " AND " + Column.SEQUENTIAL + " = 0")
                                     + ((!App.get().haveWifi()) ? " AND " + Column.WIFI_REQUIRED + " = 0" : ""),
                             GET_NEXT_PARAMS, null, null, GET_NEXT_SORT, "1");
 
@@ -818,7 +826,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
 
-        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
+        Intent intent = new Intent(BROADCAST_ON_CHANGE);
+        intent.putExtra("op", "saveOrphans");
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
     }
 
     public static WebTransaction put(WebTransaction obj) {
@@ -851,6 +861,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.WAS_ZOMBIE.getName(), obj._wasZombie ? 1 : 0);
         if (obj._uuid != null)
             v.put(Column.UUID.getName(), obj._uuid.toJson().toString());
+        v.put(Column.SEQUENTIAL.getName(), obj._sequential ? 1 : 0);
 
         v.put(Column.NOTIF_ID.getName(), obj._notifId);
         v.put(Column.NOTIF_FAILED.getName(), obj._notifFailedArray);
@@ -881,7 +892,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 return null;
             }
         } finally {
-            LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
+            Intent intent = new Intent(BROADCAST_ON_CHANGE);
+            intent.putExtra("op", "put");
+            intent.putExtra("id", obj._id);
+            intent.putExtra("key", obj._key);
+            intent.putExtra("obj", obj);
+            LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
         }
     }
 
@@ -901,7 +917,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 if (db != null) db.close();
             }
         }
-        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
+        Intent intent = new Intent(BROADCAST_ON_CHANGE);
+        intent.putExtra("op", "delete");
+        intent.putExtra("id", id);
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
         return success;
     }
 
@@ -921,7 +940,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
 
-        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(new Intent(BROADCASE_ON_CHANGE));
+        Intent intent = new Intent(BROADCAST_ON_CHANGE);
+        intent.putExtra("op", "deleteAll");
+        LocalBroadcastManager.getInstance(App.get()).sendBroadcast(intent);
         return success;
     }
 
@@ -1038,6 +1059,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putParcelable(PARAM_UUID, null);
             params.putInt(PARAM_TRY_COUNT, 0);
             params.putInt(PARAM_MAX_TRIES, 0);
+            params.putBoolean(PARAM_SEQUENTIAL, false);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_FAILED, (byte[]) null);
@@ -1050,6 +1072,16 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 params.putParcelableArray(PARAM_TRANSFORM_LIST, parcels);
             }
             return new WebTransaction(params);
+        }
+
+        public Builder sequential(boolean isSequential) {
+            params.putBoolean(PARAM_SEQUENTIAL, isSequential);
+            return this;
+        }
+
+        public Builder queueTime(long queueTime) {
+            params.putLong(PARAM_QUEUE_TIME, queueTime);
+            return this;
         }
 
         public Builder priority(Priority priority) {

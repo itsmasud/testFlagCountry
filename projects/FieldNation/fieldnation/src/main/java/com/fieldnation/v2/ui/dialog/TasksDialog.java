@@ -2,14 +2,17 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -48,6 +51,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -96,6 +100,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
+    private WebTransaction _webTransaction = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -143,6 +148,8 @@ public class TasksDialog extends FullScreenDialog {
         TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
         TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
 
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
         _adapter.setListener(_taskClick_listener);
@@ -161,6 +168,7 @@ public class TasksDialog extends FullScreenDialog {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
         TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
     }
 
     @Override
@@ -179,14 +187,14 @@ public class TasksDialog extends FullScreenDialog {
         _groupId = params.getString(PARAM_GROUP_ID);
         _uiUUID = params.getString("uiUUID");
 
+        searchWebTransaction();
+
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
                 .addContext(new SpStackContext(DebugUtils.getStackTraceElement()))
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Tasks Dialog"))
                 .build());
-
-        populateUi();
 
         AppMessagingClient.setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
@@ -200,7 +208,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId);
+        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransaction);
     }
 
     @Override
@@ -208,6 +216,18 @@ public class TasksDialog extends FullScreenDialog {
         _workOrdersApi.unsub();
         _documentClient.unsub();
         super.onPause();
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            searchWebTransaction();
+        }
+    };
+
+    private void searchWebTransaction() {
+        if (_workOrder == null) return;
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrder.getId());
     }
 
     public TaskTypeEnum getType(Task task) {
@@ -477,7 +497,7 @@ public class TasksDialog extends FullScreenDialog {
                         if (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.SYNC) {
                             AppMessagingClient.setLoading(true);
                         } else {
-                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId);
+                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransaction);
                         }
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -748,6 +768,14 @@ public class TasksDialog extends FullScreenDialog {
                 return;
             }
             _adapter.downloadComplete((int) documentId);
+        }
+    };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+            _webTransaction = webTransaction;
+            populateUi();
         }
     };
 

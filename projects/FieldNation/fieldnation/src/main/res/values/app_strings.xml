@@ -63,6 +63,7 @@
     <string name="btn_counter_disabled">COUNTER DISABLED</string>
     <string name="btn_counter_offer">COUNTER OFFER</string>
     <string name="btn_done">DONE</string>
+    <string name="btn_sync_all">SYNC ALL</string>
     <string name="btn_edit_eta">EDIT ETA</string>
     <string name="btn_edit_profile">EDIT PROFILE</string>
     <string name="btn_email">EMAIL US</string>
@@ -124,6 +125,7 @@
     <string name="btn_view_payment">VIEW PAYMENT</string>
     <string name="btn_withdraw">WITHDRAW</string>
     <string name="btn_yes">YES</string>
+    <string name="btn_delete">DELETE</string>
 
     <string name="complete_tasks">Complete tasks</string>
 
@@ -210,6 +212,7 @@
     <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
     <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
     <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
+    <string name="fieldnation_workers_comp_insurance_percentage">Workers Comp Insurance Fee (%1$s%%)</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
 
@@ -231,6 +234,8 @@
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_duration_v2_title">Set duration</string>
 
+    <string name="dialog_remove_assignment_warning">Removing yourself from this work order may result in bad ratings or suspension</string>
+    <string name="dialog_remove_assignment_warning_bundle">Removing yourself from this bundle of %1$d work orders may result in bad ratings or suspension</string>
     <string name="dialog_review_hold_title">Hold Review</string>
 
     <string name="hint_text_decline_spinner">Please specify</string>
@@ -344,6 +349,11 @@
     <string name="dialog_delete_expense_title">Delete Expense</string>
     <string name="dialog_delete_expense_body">Are you sure you want to delete this expense?</string>
     <string name="dialog_scan_barcode_title">Scan a barcode</string>
+    <string name="dialog_delete_unsynced_title">Delete Activity</string>
+    <string name="dialog_delete_unsynced_body">Are you sure you want to delete %1$s?</string>
+    <string name="const_activity_name" translatable="false">ACTIVITY_NAME</string>
+    <string name="const_web_transaction" translatable="false">WEB_TRANSACTION</string>
+
 
     <string name="dialog_file_upload_title">File Upload</string>
     <string name="dialog_insert_file_name">Please insert file name.</string>

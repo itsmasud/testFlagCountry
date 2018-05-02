@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -50,6 +47,9 @@ public class PayModifier implements Parcelable {
 
     @Json(name = "name")
     private String _name;
+
+    @Json(name = "queued")
+    private Boolean _queued;
 
     @Source
     private JsonObject SOURCE;
@@ -209,6 +209,29 @@ public class PayModifier implements Parcelable {
         SOURCE.put("hours24_applicable", hours24Applicable);
         return this;
     }
+
+    public void setQueued(Boolean queued) throws ParseException {
+        _queued = queued;
+        SOURCE.put("queued", queued);
+    }
+
+    public Boolean getQueued() {
+        try {
+            if (_queued == null && SOURCE.has("queued") && SOURCE.get("queued") != null)
+                _queued = SOURCE.getBoolean("queued");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _queued;
+    }
+
+    public PayModifier queued(Boolean queued) throws ParseException {
+        _queued = queued;
+        SOURCE.put("queued", queued);
+        return this;
+    }
+
 
     public void setId(Integer id) throws ParseException {
         _id = id;
