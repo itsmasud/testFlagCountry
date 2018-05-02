@@ -38,13 +38,26 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     private Tasks _tasks = null;
     private String _groupId;
     private Listener _listener;
-    private WebTransaction _webTransaction = null;
+    private List<TransactionBundle> _webTransactions = new LinkedList<>();
+
+    public static class TransactionBundle {
+        WebTransaction webTransaction;
+        TransactionParams transactionParams;
+        JsonObject methodParams;
+
+        public TransactionBundle(WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            this.webTransaction = webTransaction;
+            this.transactionParams = transactionParams;
+            this.methodParams = methodParams;
+        }
+    }
 
     private static class DataHolder {
         int type;
         Object object;
         UploadTuple uObject;
         DownloadTuple dObject;
+        WebTransaction webTransaction;
 
         public DataHolder(int type, Object object) {
             this.type = type;
@@ -63,16 +76,15 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             this.object = object;
             this.dObject = dObject;
         }
-
     }
 
-    public void setData(int workOrderId, Tasks tasks, String groupId, WebTransaction webTransaction) {
+    public void setData(int workOrderId, Tasks tasks, String groupId, List<TransactionBundle> webTransactions) {
         Log.e(TAG, "setData");
         _tasks = tasks;
         _groupId = groupId;
-        _webTransaction = webTransaction;
         dataHolders.clear();
         _workOrderId = workOrderId;
+        _webTransactions = webTransactions;
 
         rebuild();
         notifyDataSetChanged();
@@ -225,31 +237,33 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             }
             case TYPE_TASK: {
                 TaskRowView view = (TaskRowView) holder.itemView;
-                Task task = (Task) dataHolders.get(position).object;
+                DataHolder dh = dataHolders.get(position);
+                Task task = (Task) dh.object;
                 view.setTag(task);
                 view.setOnClickListener(_task_onClick);
-                view.setData(task, _webTransaction);
+                view.setData(task, dh.webTransaction);
                 break;
             }
 
             case TYPE_TASK_UPLOAD: {
                 TaskRowView view = (TaskRowView) holder.itemView;
-                Task task = (Task) dataHolders.get(position).object;
+                DataHolder dh = dataHolders.get(position);
+                Task task = (Task) dh.object;
                 view.setTag(task);
                 view.setOnClickListener(null);
-                view.setData(task, _webTransaction);
+                view.setData(task, dh.webTransaction);
 
                 UploadTuple ut = dataHolders.get(position).uObject;
                 view.setProgress(ut.progress);
-
                 break;
             }
 
             case TYPE_TASK_DOWNLOAD: {
                 TaskRowView view = (TaskRowView) holder.itemView;
-                Task task = (Task) dataHolders.get(position).object;
+                DataHolder dh = dataHolders.get(position);
+                Task task = (Task) dh.object;
                 view.setTag(task);
-                view.setData(task, _webTransaction);
+                view.setData(task, dh.webTransaction);
 
                 if (dataHolders.get(position).dObject.downloading) {
                     view.setProgressVisible(true);

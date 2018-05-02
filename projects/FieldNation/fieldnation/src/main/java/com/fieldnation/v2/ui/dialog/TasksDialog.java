@@ -100,7 +100,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
-    private WebTransaction _webTransaction = null;
+    private List<TasksAdapter.TransactionBundle> _webTransactions = new LinkedList<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -139,7 +139,6 @@ public class TasksDialog extends FullScreenDialog {
         outState.putParcelable(STATE_TASK, _currentTask);
         super.onSaveDialogState(outState);
     }
-
 
     @Override
     public void onStart() {
@@ -201,6 +200,10 @@ public class TasksDialog extends FullScreenDialog {
         populateUi();
     }
 
+    // plan
+    // run a large sweeping query for api requests like. /api/rest/v2/workorders/{id}
+    // take result,
+
     private void populateUi() {
         if (_list == null) return;
 
@@ -208,7 +211,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransaction);
+        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransactions);
     }
 
     @Override
@@ -227,7 +230,8 @@ public class TasksDialog extends FullScreenDialog {
 
     private void searchWebTransaction() {
         if (_workOrder == null) return;
-        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrder.getId());
+        _webTransactions.clear();
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
     }
 
     public TaskTypeEnum getType(Task task) {
@@ -413,6 +417,7 @@ public class TasksDialog extends FullScreenDialog {
 
             switch (getType(task)) {
 
+                // don't need to handle
                 case SET_ETA: // set eta
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showNotAvailableDialog();
@@ -425,9 +430,11 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CLOSING_NOTES: // closing notes
+                    // TODO
                     showClosingNotesDialog();
                     break;
 
+                // don't need to handle
                 case CHECK_IN: // check in
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showNotAvailableDialog();
@@ -436,6 +443,7 @@ public class TasksDialog extends FullScreenDialog {
                     doCheckin();
                     break;
 
+                // don't need to handle
                 case CHECK_OUT: // check out
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showNotAvailableDialog();
@@ -445,11 +453,13 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case UPLOAD_FILE: // upload file
+                    // TODO
                     _currentTask = task;
                     startAppPickerDialog();
                     break;
 
                 case UPLOAD_PICTURE: // upload picture
+                    // TODO
                     _currentTask = task;
                     startAppPickerDialog();
                     break;
@@ -483,6 +493,7 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case UNIQUE_TASK: // unique task
+                    // TODO
                     if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
                         return;
 
@@ -497,7 +508,7 @@ public class TasksDialog extends FullScreenDialog {
                         if (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.SYNC) {
                             AppMessagingClient.setLoading(true);
                         } else {
-                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransaction);
+                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransactions);
                         }
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -773,8 +784,12 @@ public class TasksDialog extends FullScreenDialog {
 
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
-            _webTransaction = webTransaction;
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            _webTransactions.add(new TasksAdapter.TransactionBundle(webTransaction, transactionParams, methodParams));
+        }
+
+        @Override
+        public void onComplete() {
             populateUi();
         }
     };
