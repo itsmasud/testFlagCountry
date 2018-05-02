@@ -346,15 +346,12 @@ public class CustomFieldDialog extends SimpleDialog {
 
             try {
                 AppMessagingClient.setLoading(true);
-
-                CustomField cf = new CustomField();
-                cf.setValue(value);
-                cf.setName(_customField.getName());
+                _customField.setValue(value);
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Custom Field Dialog";
 
-                WorkordersWebApi.updateCustomField(App.get(), _workOrderId, _customField.getId(), cf, uiContext);
+                WorkordersWebApi.updateCustomField(App.get(), _workOrderId, _customField.getId(), _customField, uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
