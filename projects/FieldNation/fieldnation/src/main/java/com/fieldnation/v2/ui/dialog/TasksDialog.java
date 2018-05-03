@@ -156,7 +156,6 @@ public class TasksDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
         _adapter.setListener(_taskClick_listener);
-
     }
 
     @Override
