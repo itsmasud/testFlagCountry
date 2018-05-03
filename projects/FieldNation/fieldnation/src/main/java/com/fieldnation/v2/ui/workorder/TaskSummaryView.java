@@ -1,7 +1,12 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -9,7 +14,11 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Task;
@@ -64,6 +73,30 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         populateUi();
     }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String op = intent.getStringExtra("op");
+            if (intent.hasExtra("key")) {
+                String key = intent.getStringExtra("key");
+                if (key == null || key.contains("updateCustomFieldByWorkOrderAndCustomField"))
+                    populateUi();
+            }
+        }
+    };
 
     private static class Group {
         String id;
@@ -179,6 +212,30 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         }
 
         _customFieldsView.setTitle(getResources().getString(R.string.fields_to_enter));
+
+        List<WebTransaction> webTransactions = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_CUSTOM_FIELD + _workOrder.getId() + "/%");
+
+        for (WebTransaction webTransaction : webTransactions) {
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+
+                if (params != null
+                        && params.methodParams != null
+                        && params.methodParams.contains("customField")) {
+                    CustomField cf = new CustomField().fromJson(new JsonObject(params.getMethodParamString("customField")));
+                    if (!misc.isEmptyOrNull(cf.getValue()) && cf.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)) {
+                        fteRequiredComplete++;
+                    }
+
+                }
+            } catch (Exception ex) {
+                com.fieldnation.fnlog.Log.v(TAG, ex);
+            }
+        }
+
+        Log.e(TAG, "size of CF: " + webTransactions.size());
+
 
         if (fteRequired == 0) {
             _customFieldsView.setOnClickListener(_fte_onClick);
