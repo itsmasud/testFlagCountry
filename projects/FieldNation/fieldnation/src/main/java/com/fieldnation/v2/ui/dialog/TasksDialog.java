@@ -254,7 +254,6 @@ public class TasksDialog extends FullScreenDialog {
     /*-*********************************************-*/
 
     private void showClosingNotesDialog() {
-        // TODO
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
             ClosingNotesDialog.show(App.get(), _workOrder.getId(), _workOrder.getClosingNotes());
     }
@@ -294,7 +293,6 @@ public class TasksDialog extends FullScreenDialog {
     }
 
     private void startAppPickerDialog() {
-        // TODO offline
         if (checkMedia()) {
             UUIDGroup uuid = new UUIDGroup(null, _uiUUID);
 
@@ -422,8 +420,6 @@ public class TasksDialog extends FullScreenDialog {
                     });
 
             switch (getType(task)) {
-
-                // don't need to handle
                 case SET_ETA: // set eta
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showNotAvailableDialog();
@@ -436,11 +432,9 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CLOSING_NOTES: // closing notes
-                    // TODO
                     showClosingNotesDialog();
                     break;
 
-                // don't need to handle
                 case CHECK_IN: // check in
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showNotAvailableDialog();
@@ -449,7 +443,6 @@ public class TasksDialog extends FullScreenDialog {
                     doCheckin();
                     break;
 
-                // don't need to handle
                 case CHECK_OUT: // check out
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
                         showNotAvailableDialog();
@@ -459,13 +452,11 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case UPLOAD_FILE: // upload file
-                    // TODO
                     _currentTask = task;
                     startAppPickerDialog();
                     break;
 
                 case UPLOAD_PICTURE: // upload picture
-                    // TODO
                     _currentTask = task;
                     startAppPickerDialog();
                     break;
@@ -474,13 +465,11 @@ public class TasksDialog extends FullScreenDialog {
                     if (task.getCustomField().getId() == null) {
                         break;
                     }
-                    // TODO
                     CustomFieldDialog.show(App.get(), null, _workOrder.getId(), task.getCustomField());
                     break;
 
                 case PHONE: // phone
                     _currentTask = task;
-                    // TODO
                     doCallTask();
                     break;
 
@@ -491,7 +480,6 @@ public class TasksDialog extends FullScreenDialog {
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
                     try {
-                        // TODO
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -499,7 +487,6 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case UNIQUE_TASK: // unique task
-                    // TODO
                     if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
                         return;
 
@@ -522,7 +509,6 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case SIGNATURE: // signature
-                    // TODO
                     SignOffActivity.startSignOff(App.get(), _workOrder.getId(), task.getId());
                     break;
 
@@ -534,11 +520,9 @@ public class TasksDialog extends FullScreenDialog {
                     }
 
                     if (shipments.size() == 0) {
-                        // TODO
                         ShipmentAddDialog.show(App.get(), null, _workOrder.getId(),
                                 _workOrder.getAttachments(), App.get().getString(R.string.dialog_task_shipment_title), null, task);
                     } else {
-                        // TODO
                         TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder.getId(),
                                 _workOrder.getShipments(), App.get().getString(R.string.dialog_task_shipment_title), task);
                     }
@@ -550,7 +534,6 @@ public class TasksDialog extends FullScreenDialog {
                         Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                             try {
-                                // TODO
                                 WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                             } catch (Exception ex) {
                                 Log.v(TAG, ex);
@@ -558,7 +541,6 @@ public class TasksDialog extends FullScreenDialog {
                         }
                         _adapter.downloadStart(attachment.getId());
 
-                        // TODO
                         DocumentClient.downloadDocument(App.get(), attachment.getId(),
                                 attachment.getFile().getLink(), attachment.getFile().getName(), false);
                     }
@@ -578,7 +560,6 @@ public class TasksDialog extends FullScreenDialog {
         }
 
         try {
-            // TODO
             WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _currentTask, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
         } catch (Exception ex) {
             Log.v(TAG, ex);
