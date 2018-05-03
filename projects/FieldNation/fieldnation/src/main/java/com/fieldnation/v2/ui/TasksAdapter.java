@@ -531,11 +531,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         public void onClick(View v) {
             Task task = (Task) v.getTag();
             if (_listener != null)
-                _listener.onTaskClick(v, task);
+                _listener.onTaskClick(v, task, _transactionBundleLookupTable.get(getTransBundleKey(task)));
         }
     };
 
     public interface Listener {
-        void onTaskClick(View view, Task task);
+        void onTaskClick(View view, Task task, TaskRowView.TransactionBundle transactionBundle);
     }
 }

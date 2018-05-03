@@ -402,7 +402,7 @@ public class TasksDialog extends FullScreenDialog {
 
     private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
         @Override
-        public void onTaskClick(View view, Task task) {
+        public void onTaskClick(View view, Task task, TaskRowView.TransactionBundle transactionBundle) {
             WorkOrderTracker.onTaskEvent(
                     App.get(),
                     task.getType(),
@@ -464,6 +464,8 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
+                    if (transactionBundle != null)
+                        WebTransaction.delete(transactionBundle.webTransaction.getId());
                     _currentTask = task;
                     doCallTask();
                     break;
@@ -474,6 +476,8 @@ public class TasksDialog extends FullScreenDialog {
                     intent.setData(Uri.parse("mailto:" + email));
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
+                    if (transactionBundle != null)
+                        WebTransaction.delete(transactionBundle.webTransaction.getId());
                     try {
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
@@ -492,6 +496,10 @@ public class TasksDialog extends FullScreenDialog {
                             Log.v(TAG, "deleting old task " + task.getId());
                             WebTransaction.delete(list.get(0).getId());
                         }
+
+                        if (transactionBundle != null)
+                            WebTransaction.delete(transactionBundle.webTransaction.getId());
+
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                         if (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.SYNC) {
                             AppMessagingClient.setLoading(true);
@@ -528,6 +536,9 @@ public class TasksDialog extends FullScreenDialog {
                     if (attachment.getId() != null) {
                         Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                            if (transactionBundle != null)
+                                WebTransaction.delete(transactionBundle.webTransaction.getId());
+
                             try {
                                 WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                             } catch (Exception ex) {
@@ -541,6 +552,7 @@ public class TasksDialog extends FullScreenDialog {
                     }
                     break;
             }
+            searchWebTransaction();
         }
     };
 

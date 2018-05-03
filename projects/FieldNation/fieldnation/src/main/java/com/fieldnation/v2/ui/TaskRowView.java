@@ -366,9 +366,9 @@ public class TaskRowView extends RelativeLayout {
     }
 
     public static class TransactionBundle {
-        WebTransaction webTransaction;
-        TransactionParams transactionParams;
-        JsonObject methodParams;
+        public WebTransaction webTransaction;
+        public TransactionParams transactionParams;
+        public JsonObject methodParams;
 
         public TransactionBundle(WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             this.webTransaction = webTransaction;

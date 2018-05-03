@@ -84,7 +84,6 @@ public class ClosingNotesDialog extends SimpleDialog {
             _editText.setText(_notes);
 
         WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrderId);
-
     }
 
     @Override
