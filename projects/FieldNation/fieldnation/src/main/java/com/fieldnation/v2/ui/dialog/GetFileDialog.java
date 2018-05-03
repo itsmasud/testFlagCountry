@@ -77,6 +77,7 @@ public class GetFileDialog extends SimpleDialog {
     private List<UriIntent> cached = new LinkedList<>();
     private Hashtable<String, Long> progress = new Hashtable<>();
     private String _uiUUID = null;
+    private Parcelable _extraData;
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -117,6 +118,9 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         Log.v(TAG, "show");
+        if (payload.containsKey("extraData"))
+            _extraData = payload.getParcelable("extraData");
+
         Parcelable[] intents = payload.getParcelableArray("intents");
         if (intents != null)
             for (Parcelable parcelable : intents) {
@@ -316,6 +320,10 @@ public class GetFileDialog extends SimpleDialog {
     };
 
     public static void show(Context context, String uid, String uiUUID) {
+        show(context, uid, uiUUID, null);
+    }
+
+    public static void show(Context context, String uid, String uiUUID, Parcelable extraData) {
         Intent intent = new Intent();
         intent.setType("*/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -330,17 +338,19 @@ public class GetFileDialog extends SimpleDialog {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
-            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1, intent2});
+            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1, intent2}, extraData);
         } else {
-            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1});
+            GetFileDialog.show(App.get(), uid, uiUUID, new GetFileIntent[]{intent1}, extraData);
         }
     }
 
-    private static void show(Context context, String uid, String uiUUID, GetFileIntent[] intents) {
+    private static void show(Context context, String uid, String uiUUID, GetFileIntent[] intents, Parcelable extraData) {
         Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelableArray("intents", intents);
         params.putString("uiUUID", uiUUID);
+        if (extraData != null)
+            params.putParcelable("extraData", extraData);
 
         Controller.show(context, uid, GetFileDialog.class, params);
     }
@@ -537,7 +547,7 @@ public class GetFileDialog extends SimpleDialog {
 
                 if (caching.size() == 0 && cached.size() > 0) {
                     _isCancelable = true;
-                    _onFileDispatcher.dispatch(getUid(), cached);
+                    _onFileDispatcher.dispatch(getUid(), cached, _extraData);
                     dismiss(false);
                 }
             }
@@ -548,13 +558,13 @@ public class GetFileDialog extends SimpleDialog {
     /*-         File Listener           -*/
     /*-***********************************/
     public interface OnFileListener {
-        void onFile(List<UriIntent> fileResult);
+        void onFile(List<UriIntent> fileResult, Parcelable extraData);
     }
 
     private static KeyedDispatcher<OnFileListener> _onFileDispatcher = new KeyedDispatcher<OnFileListener>() {
         @Override
         public void onDispatch(OnFileListener listener, Object... parameters) {
-            listener.onFile((List<UriIntent>) parameters[0]);
+            listener.onFile((List<UriIntent>) parameters[0], (Parcelable) parameters[1]);
         }
     };
 
