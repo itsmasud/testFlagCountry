@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -184,7 +185,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult, Parcelable extraData) {
             Log.v(TAG, "onFile");
             if (fileResult.size() == 0)
                 return;
