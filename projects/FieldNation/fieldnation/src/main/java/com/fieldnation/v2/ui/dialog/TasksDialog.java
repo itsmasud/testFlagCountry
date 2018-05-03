@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -321,8 +322,7 @@ public class TasksDialog extends FullScreenDialog {
     /*-*********************************-*/
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
-            // TODO offline mode
+        public void onFile(List<GetFileDialog.UriIntent> fileResult, Parcelable extraData) {
             Log.v(TAG, "onFile");
             if (fileResult == null || fileResult.size() == 0)
                 return;
