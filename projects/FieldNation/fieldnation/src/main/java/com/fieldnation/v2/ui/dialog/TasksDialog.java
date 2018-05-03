@@ -62,6 +62,7 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.TaskRowView;
 import com.fieldnation.v2.ui.TaskTypeEnum;
 import com.fieldnation.v2.ui.TasksAdapter;
 
@@ -100,7 +101,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
-    private List<TasksAdapter.TransactionBundle> _webTransactions = new LinkedList<>();
+    private List<TaskRowView.TransactionBundle> _webTransactions = new LinkedList<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -120,6 +121,8 @@ public class TasksDialog extends FullScreenDialog {
         _list = v.findViewById(R.id.list);
         _list.setItemAnimator(new DefaultItemAnimator());
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
+        v.findViewById(R.id.refresh_view).setVisibility(View.GONE);
 
         return v;
     }
@@ -152,6 +155,7 @@ public class TasksDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
         _adapter.setListener(_taskClick_listener);
+
     }
 
     @Override
@@ -176,6 +180,8 @@ public class TasksDialog extends FullScreenDialog {
 
         _workOrdersApi.sub();
         _documentClient.sub();
+
+        searchWebTransaction();
     }
 
     @Override
@@ -735,6 +741,7 @@ public class TasksDialog extends FullScreenDialog {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
                     _workOrder = workOrder;
+                    searchWebTransaction();
                     populateUi();
                     AppMessagingClient.setLoading(false);
                 }
@@ -745,9 +752,6 @@ public class TasksDialog extends FullScreenDialog {
 
             } else if (methodName.equals("addAttachment")) {
                 try {
-                    JsonObject obj = new JsonObject(transactionParams.methodParams);
-                    String name = obj.getString("attachment.file.name");
-                    int folderId = obj.getInt("attachment.folder_id");
                     _adapter.uploadStop(transactionParams);
                     AppMessagingClient.setLoading(true);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
@@ -756,7 +760,6 @@ public class TasksDialog extends FullScreenDialog {
                 }
 
             } else if (successObject != null && methodName.equals("getAttachments")) {
-//                folders = (AttachmentFolders) successObject;
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
@@ -785,7 +788,7 @@ public class TasksDialog extends FullScreenDialog {
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
-            _webTransactions.add(new TasksAdapter.TransactionBundle(webTransaction, transactionParams, methodParams));
+            _webTransactions.add(new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams));
         }
 
         @Override
