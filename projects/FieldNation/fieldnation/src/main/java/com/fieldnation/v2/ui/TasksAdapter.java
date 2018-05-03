@@ -59,9 +59,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
 
         public DataHolder(int type, Object object, TaskRowView.TransactionBundle transactionBundle) {
-            this.type = type;
-            this.object = object;
-            this.uObject = null;
+            this(type, object);
             this.transactionBundle = transactionBundle;
         }
 
@@ -72,9 +70,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
 
         public DataHolder(int type, Object object, UploadTuple uObject, TaskRowView.TransactionBundle transactionBundle) {
-            this.type = type;
-            this.object = object;
-            this.uObject = uObject;
+            this(type, object, uObject);
             this.transactionBundle = transactionBundle;
         }
 
@@ -85,9 +81,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
 
         public DataHolder(int type, Object object, DownloadTuple dObject, TaskRowView.TransactionBundle transactionBundle) {
-            this.type = type;
-            this.object = object;
-            this.dObject = dObject;
+            this(type, object, dObject);
             this.transactionBundle = transactionBundle;
         }
     }
@@ -290,12 +284,10 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 TaskRowView view = new TaskRowView(parent.getContext());
                 return new TaskViewHolder(view);
             }
-
             case TYPE_TASK_UPLOAD: {
                 TaskRowView view = new TaskRowView(parent.getContext());
                 return new TaskViewHolder(view);
             }
-
             case TYPE_TASK_DOWNLOAD: {
                 TaskRowView view = new TaskRowView(parent.getContext());
                 return new TaskViewHolder(view);
@@ -327,7 +319,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 view.setTag(task);
                 view.setOnClickListener(_task_onClick);
                 view.setData(task, dh.transactionBundle);
-
                 break;
             }
 
@@ -358,7 +349,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                     view.setProgressVisible(false);
                     view.setOnClickListener(_task_onClick);
                 }
-
                 break;
             }
         }
@@ -373,7 +363,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
     public int getItemViewType(int position) {
         return dataHolders.get(position).type;
     }
-
 
     public TaskTypeEnum getType(Task task) {
         return TaskTypeEnum.fromTypeId(task.getType().getId());
@@ -436,7 +425,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
         UploadTuple t = new UploadTuple(transactionParams, -1);
         uploads.add(t);
-        // TODO find position and notify accordingly
         rebuild();
         notifyDataSetChanged();
     }
@@ -462,7 +450,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         }
         UploadTuple t = new UploadTuple(transactionParams, progress);
         uploads.add(t);
-        // TODO find location and notify accordingly
         rebuild();
         notifyDataSetChanged();
     }
@@ -486,7 +473,6 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             }
         }
         uploads.remove(t);
-        // TODO find location and upload accordingly
         rebuild();
         notifyDataSetChanged();
     }

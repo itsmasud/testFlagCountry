@@ -102,7 +102,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
-    private List<TaskRowView.TransactionBundle> _webTransactions = new LinkedList<>();
+    private List<TaskRowView.TransactionBundle> _transactionBundles = new LinkedList<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -214,7 +214,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransactions);
+        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _transactionBundles);
     }
 
     @Override
@@ -233,7 +233,7 @@ public class TasksDialog extends FullScreenDialog {
 
     private void searchWebTransaction() {
         if (_workOrder == null) return;
-        _webTransactions.clear();
+        _transactionBundles.clear();
         WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
     }
 
@@ -497,7 +497,7 @@ public class TasksDialog extends FullScreenDialog {
                         if (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.SYNC) {
                             AppMessagingClient.setLoading(true);
                         } else {
-                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _webTransactions);
+                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _transactionBundles);
                         }
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -765,7 +765,7 @@ public class TasksDialog extends FullScreenDialog {
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
-            _webTransactions.add(new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams));
+            _transactionBundles.add(new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams));
         }
 
         @Override
