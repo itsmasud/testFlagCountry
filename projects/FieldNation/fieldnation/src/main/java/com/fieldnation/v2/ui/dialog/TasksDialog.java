@@ -207,10 +207,6 @@ public class TasksDialog extends FullScreenDialog {
         populateUi();
     }
 
-    // plan
-    // run a large sweeping query for api requests like. /api/rest/v2/workorders/{id}
-    // take result,
-
     private void populateUi() {
         if (_list == null) return;
 
