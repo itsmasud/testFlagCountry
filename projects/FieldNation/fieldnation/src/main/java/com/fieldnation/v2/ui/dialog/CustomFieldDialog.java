@@ -21,17 +21,23 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CustomField;
 
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by michael.carver on 10/29/2014.
@@ -63,6 +69,10 @@ public class CustomFieldDialog extends SimpleDialog {
     private Calendar _expirationDate;
     private int _itemSelectedPosition = -1;
     private String _text;
+    private boolean isRotated = false;
+    private WebTransaction _currentWebTransaction = null;
+
+    private List<WebTransaction> _webTransactions = new LinkedList<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -126,6 +136,8 @@ public class CustomFieldDialog extends SimpleDialog {
         _customField = payload.getParcelable("customField");
         _workOrderId = payload.getInt("workOrderId");
 
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CUSTOM_FIELD, _workOrderId);
+
         populateUi();
     }
 
@@ -142,6 +154,25 @@ public class CustomFieldDialog extends SimpleDialog {
                 || _tipTextView == null
                 || _customField == null)
             return;
+
+        for (WebTransaction webTransaction : _webTransactions) {
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+
+                if (params != null
+                        && params.methodParams != null
+                        && params.methodParams.contains("customField")) {
+                    CustomField cf = new CustomField().fromJson(new JsonObject(params.getMethodParamString("customField")));
+                    if (cf.getId() == _customField.getId()) {
+                        _currentWebTransaction = webTransaction;
+                        _customField = cf;
+                    }
+                }
+            } catch (Exception ex) {
+                com.fieldnation.fnlog.Log.v(TAG, ex);
+            }
+        }
 
         _titleTextView.setText(_customField.getName());
 
@@ -329,6 +360,9 @@ public class CustomFieldDialog extends SimpleDialog {
         public void onClick(View v) {
             dismiss(true);
 
+            if (_currentWebTransaction != null)
+                WebTransaction.delete(_currentWebTransaction.getId());
+
             String value = "";
             if (_customField.getType() == null) {
                 value = _textEditText.getText().toString();
@@ -395,6 +429,22 @@ public class CustomFieldDialog extends SimpleDialog {
             Log.v(TAG, "onNothingSelected");
             if (_okButton != null)
                 _okButton.setEnabled(false);
+        }
+    };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+            if (_webTransactions == null || webTransaction == null) return;
+            Log.e(TAG, "onFoundWebTransaction");
+            _webTransactions.add(webTransaction);
+        }
+
+        @Override
+        public void onComplete() {
+            super.onComplete();
+            Log.e(TAG, "onComplete");
+            if (!isRotated) populateUi();
         }
     };
 

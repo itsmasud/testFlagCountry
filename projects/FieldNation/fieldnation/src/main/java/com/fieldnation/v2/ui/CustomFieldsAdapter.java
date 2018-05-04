@@ -42,7 +42,7 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
         }
     }
 
-    public void setCustomFields(CustomFields customFields) {
+    public void setCustomFields(CustomFields customFields, java.util.Map<Integer, CustomField> offlineCustomFields) {
         dataHolders.clear();
         CustomFieldCategory[] categories = customFields.getResults();
         for (CustomFieldCategory category : categories) {
@@ -52,7 +52,10 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
             dataHolders.add(new DataHolder(TYPE_HEADER, category.getName()));
             CustomField[] fields = category.getResults();
             for (CustomField customField : fields) {
-                dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, customField));
+                if (offlineCustomFields.containsKey(customField.getId())) {
+                    dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, offlineCustomFields.get(customField.getId())));
+                } else
+                    dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, customField));
             }
         }
         notifyDataSetChanged();
