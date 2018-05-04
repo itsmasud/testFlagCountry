@@ -102,7 +102,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         _listener = listener;
     }
 
-    private static String getTransBundleKey(TaskRowView.TransactionBundle transactionBundle) {
+    public static String getTransBundleKey(TaskRowView.TransactionBundle transactionBundle) {
         try {
             if (transactionBundle.webTransaction.getKey().contains("updateTaskByWorkOrder")) {
                 return "updateTaskByWorkOrder/" + transactionBundle.methodParams.getInt("taskId");
@@ -138,7 +138,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
         return ""; // hashtable lookups don't like null, so we do this
     }
 
-    private static String getTransBundleKey(Task task) {
+    public static String getTransBundleKey(Task task) {
         TaskTypeEnum type = TaskTypeEnum.fromTypeId(task.getType().getId());
         switch (type) {
             case CLOSING_NOTES:
