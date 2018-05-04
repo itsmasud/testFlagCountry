@@ -61,6 +61,12 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.mobile"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
+        uat {
+            applicationId "com.fieldnation.android.uat"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"UAT"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.uat"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
         demo {
             applicationId "com.fieldnation.android.demo"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Demo"'
