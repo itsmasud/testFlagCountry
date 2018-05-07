@@ -90,13 +90,17 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
             return;
         }
 
-        final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
-        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes()) && misc.isEmptyOrNull(offlineNotes)) {
+        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes()) && _webTransaction == null) {
             _notesTextView.setText(_workOrder.getClosingNotes());
             _notesTextView.setVisibility(VISIBLE);
-        } else if (!misc.isEmptyOrNull(offlineNotes)) {
-            _notesTextView.setText(offlineNotes);
-            _notesTextView.setVisibility(VISIBLE);
+        } else if (_webTransaction != null) {
+            final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
+            if (misc.isEmptyOrNull(offlineNotes)) {
+                _notesTextView.setVisibility(GONE);
+            } else {
+                _notesTextView.setText(offlineNotes);
+                _notesTextView.setVisibility(VISIBLE);
+            }
         } else {
             _notesTextView.setVisibility(GONE);
         }
