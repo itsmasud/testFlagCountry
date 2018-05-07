@@ -310,8 +310,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatViewHolder> {
     }
 
     private final WebTransactionUtils.Listener _addMessage = new WebTransactionUtils.Listener() {
+
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 Message message = Message.fromJson(new JsonObject(tp.methodParams).getJsonObject("json"));

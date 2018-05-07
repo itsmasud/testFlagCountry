@@ -22,6 +22,8 @@ import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.TaskRowView;
+import com.fieldnation.v2.ui.TasksAdapter;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
 import com.fieldnation.v2.ui.dialog.TasksDialog;
 
@@ -43,6 +45,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     // Data
     private WorkOrder _workOrder;
     private String _myUUID;
+    private Hashtable<String, TaskRowView.TransactionBundle> _transactionBundleLookupTable = new Hashtable<>();
 
     public TaskSummaryView(Context context) {
         super(context);
@@ -82,19 +85,15 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
     @Override
     protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
         LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+        super.onDetachedFromWindow();
     }
 
     private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String op = intent.getStringExtra("op");
-            if (intent.hasExtra("key")) {
-                String key = intent.getStringExtra("key");
-                if (key == null || key.contains("updateCustomFieldByWorkOrderAndCustomField"))
-                    populateUi();
-            }
+            _transactionBundleLookupTable.clear();
+            WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
         }
     };
 
@@ -113,6 +112,8 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
+        _transactionBundleLookupTable.clear();
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
         populateUi();
     }
 
@@ -148,7 +149,8 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 groups.add(group);
             }
 
-            if (task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+            if (task.getStatus().equals(Task.StatusEnum.COMPLETE)
+                    || _transactionBundleLookupTable.containsKey(TasksAdapter.getTransBundleKey(task))) {
                 group.completed++;
             }
             group.total++;
@@ -259,6 +261,20 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         }
     }
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            TaskRowView.TransactionBundle transactionBundle = new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams);
+            String key = TasksAdapter.getTransBundleKey(transactionBundle);
+            _transactionBundleLookupTable.put(key, transactionBundle);
+        }
+
+        @Override
+        public void onComplete() {
+            populateUi();
+        }
+    };
 
     private final OnClickListener _task_onClick = new OnClickListener() {
         @Override

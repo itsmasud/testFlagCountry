@@ -63,6 +63,7 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.TaskRowView;
 import com.fieldnation.v2.ui.TaskTypeEnum;
 import com.fieldnation.v2.ui.TasksAdapter;
 
@@ -101,7 +102,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
-    private WebTransaction _webTransaction = null;
+    private List<TaskRowView.TransactionBundle> _transactionBundles = new LinkedList<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -122,6 +123,8 @@ public class TasksDialog extends FullScreenDialog {
         _list.setItemAnimator(new DefaultItemAnimator());
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        v.findViewById(R.id.refresh_view).setVisibility(View.GONE);
+
         return v;
     }
 
@@ -140,7 +143,6 @@ public class TasksDialog extends FullScreenDialog {
         outState.putParcelable(STATE_TASK, _currentTask);
         super.onSaveDialogState(outState);
     }
-
 
     @Override
     public void onStart() {
@@ -178,6 +180,8 @@ public class TasksDialog extends FullScreenDialog {
 
         _workOrdersApi.sub();
         _documentClient.sub();
+
+        searchWebTransaction();
     }
 
     @Override
@@ -209,7 +213,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrder.getTasks(), _groupId, _webTransaction);
+        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _transactionBundles);
     }
 
     @Override
@@ -228,7 +232,8 @@ public class TasksDialog extends FullScreenDialog {
 
     private void searchWebTransaction() {
         if (_workOrder == null) return;
-        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrder.getId());
+        _transactionBundles.clear();
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
     }
 
     public TaskTypeEnum getType(Task task) {
@@ -252,6 +257,7 @@ public class TasksDialog extends FullScreenDialog {
     /*-				Check In Process				-*/
     /*-*********************************************-*/
     private void doCheckin() {
+        // not in offline mode
         App.get().analActionTitle = null;
         CheckInOutDialog.show(App.get(), null, _uiUUID, _workOrder.getId(),
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -261,6 +267,7 @@ public class TasksDialog extends FullScreenDialog {
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
     private void doCheckOut() {
+        // not in offline mode
         int deviceCount = -1;
 
         Pay pay = _workOrder.getPay();
@@ -297,7 +304,7 @@ public class TasksDialog extends FullScreenDialog {
         }
     }
 
-    private void showAvailableDialog() {
+    private void showNotAvailableDialog() {
         TwoButtonDialog.show(App.get(), null, getContext().getString(R.string.not_available),
                 getContext().getString(R.string.not_available_body_text),
                 getContext().getString(R.string.btn_close), null, true, null);
@@ -395,7 +402,7 @@ public class TasksDialog extends FullScreenDialog {
 
     private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
         @Override
-        public void onTaskClick(View view, Task task) {
+        public void onTaskClick(View view, Task task, TaskRowView.TransactionBundle transactionBundle) {
             WorkOrderTracker.onTaskEvent(
                     App.get(),
                     task.getType(),
@@ -408,10 +415,9 @@ public class TasksDialog extends FullScreenDialog {
                     });
 
             switch (getType(task)) {
-
                 case SET_ETA: // set eta
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
-                        showAvailableDialog();
+                        showNotAvailableDialog();
                         return;
                     }
 
@@ -426,7 +432,7 @@ public class TasksDialog extends FullScreenDialog {
 
                 case CHECK_IN: // check in
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
-                        showAvailableDialog();
+                        showNotAvailableDialog();
                         return;
                     }
                     doCheckin();
@@ -434,7 +440,7 @@ public class TasksDialog extends FullScreenDialog {
 
                 case CHECK_OUT: // check out
                     if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
-                        showAvailableDialog();
+                        showNotAvailableDialog();
                         return;
                     }
                     doCheckOut();
@@ -458,6 +464,8 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
+                    if (transactionBundle != null)
+                        WebTransaction.delete(transactionBundle.webTransaction.getId());
                     _currentTask = task;
                     doCallTask();
                     break;
@@ -468,6 +476,8 @@ public class TasksDialog extends FullScreenDialog {
                     intent.setData(Uri.parse("mailto:" + email));
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
+                    if (transactionBundle != null)
+                        WebTransaction.delete(transactionBundle.webTransaction.getId());
                     try {
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
@@ -480,8 +490,22 @@ public class TasksDialog extends FullScreenDialog {
                         return;
 
                     try {
-                        AppMessagingClient.setLoading(true);
+                        // Testing on wo2151
+                        List<WebTransaction> list = WebTransaction.getPaused("%/updateTaskByWorkOrder/%/workorders/" + _workOrder.getId() + "/tasks/" + task.getId());
+                        if (list != null && list.size() > 0) {
+                            Log.v(TAG, "deleting old task " + task.getId());
+                            WebTransaction.delete(list.get(0).getId());
+                        }
+
+                        if (transactionBundle != null)
+                            WebTransaction.delete(transactionBundle.webTransaction.getId());
+
                         WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        if (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.SYNC) {
+                            AppMessagingClient.setLoading(true);
+                        } else {
+                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _transactionBundles);
+                        }
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -512,6 +536,9 @@ public class TasksDialog extends FullScreenDialog {
                     if (attachment.getId() != null) {
                         Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                            if (transactionBundle != null)
+                                WebTransaction.delete(transactionBundle.webTransaction.getId());
+
                             try {
                                 WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                             } catch (Exception ex) {
@@ -525,6 +552,7 @@ public class TasksDialog extends FullScreenDialog {
                     }
                     break;
             }
+            searchWebTransaction();
         }
     };
 
@@ -701,6 +729,7 @@ public class TasksDialog extends FullScreenDialog {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
                     _workOrder = workOrder;
+                    searchWebTransaction();
                     populateUi();
                     AppMessagingClient.setLoading(false);
                 }
@@ -711,9 +740,6 @@ public class TasksDialog extends FullScreenDialog {
 
             } else if (methodName.equals("addAttachment")) {
                 try {
-                    JsonObject obj = new JsonObject(transactionParams.methodParams);
-                    String name = obj.getString("attachment.file.name");
-                    int folderId = obj.getInt("attachment.folder_id");
                     _adapter.uploadStop(transactionParams);
                     AppMessagingClient.setLoading(true);
                     WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
@@ -722,7 +748,6 @@ public class TasksDialog extends FullScreenDialog {
                 }
 
             } else if (successObject != null && methodName.equals("getAttachments")) {
-//                folders = (AttachmentFolders) successObject;
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
@@ -750,8 +775,12 @@ public class TasksDialog extends FullScreenDialog {
 
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
-            _webTransaction = webTransaction;
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            _transactionBundles.add(new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams));
+        }
+
+        @Override
+        public void onComplete() {
             populateUi();
         }
     };
@@ -772,5 +801,4 @@ public class TasksDialog extends FullScreenDialog {
 
         Controller.show(context, uid, TasksDialog.class, params);
     }
-
 }

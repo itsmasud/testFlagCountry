@@ -28,6 +28,7 @@ public class WebTransactionUtils {
     public static final String WEB_TRANS_KEY_PREFIX_DELETE_SHIPMENT = "%/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_ADD_SIGNATURE = "%/addSignatureByWorkOrder/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_DELETE_SIGNATURE = "%/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_WORKORDER_API = "%/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_CUSTOM_FIELD = "%/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/";
 
 
@@ -43,6 +44,7 @@ public class WebTransactionUtils {
         DELETE_SHIPMENT,
         ADD_SIGNATURE,
         DELETE_SIGNATURE,
+        WORK_ORDER,
         CUSTOM_FIELD
     }
 
@@ -66,9 +68,11 @@ public class WebTransactionUtils {
             case DELETE_SHIPMENT:
                 return WEB_TRANS_KEY_PREFIX_DELETE_SHIPMENT + workOrderId + "%";
             case ADD_SIGNATURE:
-                return WEB_TRANS_KEY_PREFIX_ADD_SIGNATURE+ workOrderId + "%";
+                return WEB_TRANS_KEY_PREFIX_ADD_SIGNATURE + workOrderId + "%";
             case DELETE_SIGNATURE:
                 return WEB_TRANS_KEY_PREFIX_DELETE_SIGNATURE + workOrderId + "%";
+            case WORK_ORDER:
+                return WEB_TRANS_KEY_PREFIX_WORKORDER_API + workOrderId + "%";
             case CUSTOM_FIELD:
                 return WEB_TRANS_KEY_PREFIX_CUSTOM_FIELD + workOrderId + "%";
             default:
@@ -114,7 +118,7 @@ public class WebTransactionUtils {
 
                     if (params != null && params.methodParams != null
                             && (paramKey == null || params.methodParams.contains(paramKey))) {
-                        publishProgress(keyType, workOrderId, webTransaction);
+                        publishProgress(keyType, workOrderId, webTransaction, params, new JsonObject(params.methodParams));
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -128,7 +132,7 @@ public class WebTransactionUtils {
 
         @Override
         protected void onProgressUpdate(Object... values) {
-            this.listener.onFoundWebTransaction((KeyType) values[0], (Integer) values[1], (WebTransaction) values[2]);
+            this.listener.onFoundWebTransaction((KeyType) values[0], (Integer) values[1], (WebTransaction) values[2], (TransactionParams) values[3], (JsonObject) values[4]);
             super.onProgressUpdate(values);
         }
 
@@ -157,7 +161,7 @@ public class WebTransactionUtils {
     }
 
     public abstract static class Listener {
-        public abstract void onFoundWebTransaction(KeyType keyType, int workOrderId, WebTransaction webTransaction);
+        public abstract void onFoundWebTransaction(KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams);
 
         public void onComplete() {
         }
