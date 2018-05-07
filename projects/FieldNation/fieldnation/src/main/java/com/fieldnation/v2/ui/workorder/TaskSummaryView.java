@@ -94,7 +94,8 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void onReceive(Context context, Intent intent) {
             _transactionBundleLookupTable.clear();
-            WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
+            if (_workOrder != null)
+                WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
         }
     };
 
