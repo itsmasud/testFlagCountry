@@ -69,7 +69,7 @@ public class CustomFieldDialog extends SimpleDialog {
     private Calendar _expirationDate;
     private int _itemSelectedPosition = -1;
     private String _text;
-    private boolean isRotated = false;
+    private boolean _isRotated = false;
     private WebTransaction _currentWebTransaction = null;
 
     private List<WebTransaction> _webTransactions = new LinkedList<>();
@@ -436,15 +436,13 @@ public class CustomFieldDialog extends SimpleDialog {
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
             if (_webTransactions == null || webTransaction == null) return;
-            Log.e(TAG, "onFoundWebTransaction");
             _webTransactions.add(webTransaction);
         }
 
         @Override
         public void onComplete() {
             super.onComplete();
-            Log.e(TAG, "onComplete");
-            if (!isRotated) populateUi();
+            if (!_isRotated) populateUi();
         }
     };
 

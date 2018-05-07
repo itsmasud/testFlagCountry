@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.ApatheticOnClickListener;
@@ -17,6 +18,7 @@ import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.CustomFields;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,14 +37,22 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
     private static class DataHolder {
         int type;
         Object object;
+        boolean isOffline = false;
 
         public DataHolder(int type, Object object) {
             this.type = type;
             this.object = object;
         }
+
+        public DataHolder(int type, Object object, boolean isOffline) {
+            this.type = type;
+            this.object = object;
+            this.isOffline = isOffline;
+        }
+
     }
 
-    public void setCustomFields(CustomFields customFields, java.util.Map<Integer, CustomField> offlineCustomFields) {
+    public void setCustomFields(CustomFields customFields, Hashtable<Integer, CustomField> offlineCustomFields) {
         dataHolders.clear();
         CustomFieldCategory[] categories = customFields.getResults();
         for (CustomFieldCategory category : categories) {
@@ -53,9 +63,9 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
             CustomField[] fields = category.getResults();
             for (CustomField customField : fields) {
                 if (offlineCustomFields.containsKey(customField.getId())) {
-                    dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, offlineCustomFields.get(customField.getId())));
+                    dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, offlineCustomFields.get(customField.getId()), true));
                 } else
-                    dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, customField));
+                    dataHolders.add(new DataHolder(TYPE_CUSTOM_FIELD, customField, false));
             }
         }
         notifyDataSetChanged();
@@ -93,7 +103,7 @@ public abstract class CustomFieldsAdapter extends RecyclerView.Adapter<CustomFie
                 view.set(
                         (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED) ? "* " : "")
                                 + customField.getName(),
-                        misc.isEmptyOrNull(customField.getValue()) ? customField.getTip() : customField.getValue());
+                        misc.isEmptyOrNull(customField.getValue()) ? customField.getTip() : customField.getValue(), dataHolders.get(position).isOffline);
                 view.setTag(customField);
                 view.setActionVisible(false);
                 break;

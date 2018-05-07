@@ -30,8 +30,7 @@ import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.ui.CustomFieldsAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Hashtable;
 
 /**
  * Created by mc on 9/28/17.
@@ -47,8 +46,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
     // Data
     private int _workOrderId;
     private CustomFields _customFields;
-    Map<Integer, CustomField> _offlineCustomFields = new HashMap<>();
-    private boolean _haveAllWt = false;
+    Hashtable<Integer, CustomField> _offlineCustomFields = new Hashtable<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -104,22 +102,14 @@ public class CustomFieldsDialog extends FullScreenDialog {
         AppMessagingClient.setLoading(true);
         searchWebTransaction();
         WorkordersWebApi.getCustomFields(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
-
-        populateUi();
     }
 
-    private void populateUi() {
+    synchronized private void populateUi() {
         if (_list == null) return;
 
         if (_customFields == null) return;
 
         _adapter.setCustomFields(_customFields, _offlineCustomFields);
-
-        if (_haveAllWt) {
-            _haveAllWt = false;
-            _offlineCustomFields.clear();
-        }
-
     }
 
     @Override
@@ -140,13 +130,15 @@ public class CustomFieldsDialog extends FullScreenDialog {
     private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "onReceive");
             searchWebTransaction();
         }
     };
 
     private void searchWebTransaction() {
         if (_workOrderId == 0) return;
+
+        _offlineCustomFields.clear();
+
         WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CUSTOM_FIELD, _workOrderId);
     }
 
@@ -177,8 +169,6 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
         @Override
         public void onComplete() {
-            super.onComplete();
-            _haveAllWt = true;
             populateUi();
         }
     };
