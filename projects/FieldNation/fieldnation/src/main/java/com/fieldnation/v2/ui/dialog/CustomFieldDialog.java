@@ -379,7 +379,7 @@ public class CustomFieldDialog extends SimpleDialog {
             }
 
             try {
-                AppMessagingClient.setLoading(true);
+//                AppMessagingClient.setLoading(true);
                 _customField.setValue(value);
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();

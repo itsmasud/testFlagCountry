@@ -267,10 +267,8 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
-            Log.e(TAG, "onFoundWebTransaction");
             TaskRowView.TransactionBundle transactionBundle = new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams);
             String key = TasksAdapter.getTransBundleKey(transactionBundle);
-            Log.e(TAG, "key: " + key);
             _transactionBundleLookupTable.put(key, transactionBundle);
         }
 
