@@ -1,7 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -15,14 +19,18 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.ui.CustomFieldsAdapter;
+
+import java.util.Hashtable;
 
 /**
  * Created by mc on 9/28/17.
@@ -38,6 +46,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
     // Data
     private int _workOrderId;
     private CustomFields _customFields;
+    Hashtable<Integer, CustomField> _offlineCustomFields = new Hashtable<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -65,9 +74,17 @@ public class CustomFieldsDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
 
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
+    }
+
+    @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+
+        super.onStop();
     }
 
     @Override
@@ -83,16 +100,16 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
         _workOrderId = params.getInt("workOrderId");
         AppMessagingClient.setLoading(true);
+        searchWebTransaction();
         WorkordersWebApi.getCustomFields(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
-        populateUi();
     }
 
-    private void populateUi() {
+    synchronized private void populateUi() {
         if (_list == null) return;
 
         if (_customFields == null) return;
 
-        _adapter.setCustomFields(_customFields);
+        _adapter.setCustomFields(_customFields, _offlineCustomFields);
     }
 
     @Override
@@ -107,6 +124,52 @@ public class CustomFieldsDialog extends FullScreenDialog {
             if (customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT)) {
                 CustomFieldDialog.show(App.get(), null, _workOrderId, customField);
             }
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            searchWebTransaction();
+        }
+    };
+
+    private void searchWebTransaction() {
+        if (_workOrderId == 0) return;
+
+        _offlineCustomFields.clear();
+
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CUSTOM_FIELD, _workOrderId);
+    }
+
+    private CustomField getCfFromWt(WebTransaction webTransaction) {
+        CustomField cf = null;
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+            if (params != null
+                    && params.methodParams != null
+                    && params.methodParams.contains("customField")) {
+                cf = new CustomField().fromJson(new JsonObject(params.getMethodParamString("customField")));
+
+            }
+        } catch (Exception ex) {
+            com.fieldnation.fnlog.Log.v(TAG, ex);
+        }
+        return cf;
+    }
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            if (_offlineCustomFields == null || webTransaction == null) return;
+            CustomField cf = getCfFromWt(webTransaction);
+            _offlineCustomFields.put(cf.getId(), cf);
+        }
+
+        @Override
+        public void onComplete() {
+            populateUi();
         }
     };
 

@@ -125,6 +125,13 @@ public class ListItemTwoVertView extends RelativeLayout {
         populateUi();
     }
 
+    public void set(String key, String value, boolean isOffline) {
+        _key = key;
+        _value = value;
+        _isOffline = isOffline;
+        populateUi();
+    }
+
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
@@ -198,7 +205,8 @@ public class ListItemTwoVertView extends RelativeLayout {
         // offline logic
         if (_isOffline) {
             _alertText = _alertTextView.getResources().getString(R.string.icon_cloud_off);
-            _keyIconView.setTextColor(getResources().getColor(R.color.fn_dark_text_50));
+            if (_keyIconView.getVisibility() == VISIBLE)
+                _keyIconView.setTextColor(getResources().getColor(R.color.fn_dark_text_50));
             _alertTextView.setTextColor(getResources().getColor(R.color.fn_dark_text_50));
         }
 
@@ -210,8 +218,6 @@ public class ListItemTwoVertView extends RelativeLayout {
         } else {
             _alertTextView.setVisibility(GONE);
         }
-
-
     }
 
     private final OnClickListener _action_onClick = new ApatheticOnClickListener() {

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -192,12 +193,13 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         int fteRequiredComplete = 0;
 //        editable = false;
 
+        Hashtable<Integer, CustomField> requiredCf = new Hashtable<>();
+
         for (CustomFieldCategory category : _workOrder.getCustomFields().getResults()) {
             if (category.getRole().equals("buyer"))
                 continue;
 
-            CustomField[] customFields = category.getResults();
-            for (CustomField customField : customFields) {
+            for (CustomField customField : category.getResults()) {
 
 //                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
 
@@ -207,14 +209,38 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 if (!misc.isEmptyOrNull(customField.getValue())) {
                     fteComplete++;
 
-                    if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED))
+                    if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)) {
+                        requiredCf.put(customField.getId(), customField);
                         fteRequiredComplete++;
+                    }
                 }
                 fteTotal++;
             }
         }
 
         _customFieldsView.setTitle(getResources().getString(R.string.fields_to_enter));
+
+        List<WebTransaction> webTransactions = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_CUSTOM_FIELD + _workOrder.getId() + "/%");
+
+        for (WebTransaction webTransaction : webTransactions) {
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+                if (params != null
+                        && params.methodParams != null
+                        && params.methodParams.contains("customField")) {
+                    CustomField cf = new CustomField().fromJson(new JsonObject(params.getMethodParamString("customField")));
+                    if (!misc.isEmptyOrNull(cf.getValue())
+                            && cf.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)
+                            && !requiredCf.containsKey(cf.getId())) {
+                        fteRequiredComplete++;
+                    }
+
+                }
+            } catch (Exception ex) {
+                com.fieldnation.fnlog.Log.v(TAG, ex);
+            }
+        }
 
         if (fteRequired == 0) {
             _customFieldsView.setOnClickListener(_fte_onClick);
