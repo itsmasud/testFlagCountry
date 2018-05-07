@@ -191,8 +191,13 @@ public class TaskRowView extends RelativeLayout {
                         _valueTextView.setText(_task.getClosingNotes());
                         _valueTextView.setVisibility(VISIBLE);
                     } else if (_transactionBundle != null) {
-                        _valueTextView.setText(_transactionBundle.methodParams.getString("closingNotes"));
-                        _valueTextView.setVisibility(VISIBLE);
+                        String notes = _transactionBundle.methodParams.getString("closingNotes");
+                        if (misc.isEmptyOrNull(notes)) {
+                            _valueTextView.setVisibility(GONE);
+                        } else {
+                            _valueTextView.setText(_transactionBundle.methodParams.getString("closingNotes"));
+                            _valueTextView.setVisibility(VISIBLE);
+                        }
                     } else {
                         _valueTextView.setVisibility(GONE);
                     }

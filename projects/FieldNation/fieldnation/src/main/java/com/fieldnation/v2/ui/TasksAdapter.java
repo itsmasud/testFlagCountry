@@ -184,9 +184,23 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             if (!_groupId.equals(task.getGroup().getId()))
                 continue;
 
+            String key = getTransBundleKey(task);
             if (task.getStatus().equals(Task.StatusEnum.COMPLETE)
-                    || _transactionBundleLookupTable.containsKey(getTransBundleKey(task))) {
-                completeTasks.add(task);
+                    || _transactionBundleLookupTable.containsKey(key)) {
+                try {
+                    if (key.equals("updateClosingNotesByWorkOrder")) {
+                        if (misc.isEmptyOrNull(_transactionBundleLookupTable.get(key).methodParams.getString("closingNotes"))) {
+                            incompleteTasks.add(task);
+                        } else {
+                            completeTasks.add(task);
+                        }
+                    } else {
+                        completeTasks.add(task);
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                    incompleteTasks.add(task);
+                }
             } else {
                 incompleteTasks.add(task);
             }
@@ -201,7 +215,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                 if (task.getAttachments().getId() != null) {
                     for (UploadTuple ut : uploads) {
                         if (ut.folderId == task.getAttachments().getId()) {
-                            dataHolders.add(new DataHolder(TYPE_TASK_UPLOAD, task, ut));
+                            dataHolders.add(new DataHolder(TYPE_TASK_UPLOAD, task, ut, _transactionBundleLookupTable.get(getTransBundleKey(task))));
                             match = true;
                             break;
                         }
@@ -222,11 +236,11 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                         }
                     }
 
-                    dataHolders.add(new DataHolder(TYPE_TASK_DOWNLOAD, task, tuple));
+                    dataHolders.add(new DataHolder(TYPE_TASK_DOWNLOAD, task, tuple, _transactionBundleLookupTable.get(getTransBundleKey(task))));
                     continue;
                 }
 
-                dataHolders.add(new DataHolder(TYPE_TASK, task));
+                dataHolders.add(new DataHolder(TYPE_TASK, task, _transactionBundleLookupTable.get(getTransBundleKey(task))));
             }
         }
 

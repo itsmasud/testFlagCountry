@@ -40,7 +40,6 @@ public class ClosingNotesDialog extends SimpleDialog {
     // Data
     private String _notes;
     private int _workOrderId;
-    private boolean isRotated = false;
 
     private WebTransaction _webTransaction = null;
 
@@ -72,10 +71,14 @@ public class ClosingNotesDialog extends SimpleDialog {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
+    }
+
+    @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
-
-        isRotated = false;
 
         _notes = payload.getString("notes");
         _workOrderId = payload.getInt("workOrderId");
@@ -84,6 +87,8 @@ public class ClosingNotesDialog extends SimpleDialog {
             _editText.setText(_notes);
 
         WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrderId);
+
+        populateUi();
     }
 
     @Override
@@ -93,7 +98,6 @@ public class ClosingNotesDialog extends SimpleDialog {
             _notes = savedState.getString(STATE_NOTES);
             _editText.setText(_notes);
         }
-        isRotated = true;
     }
 
     @Override
@@ -105,11 +109,14 @@ public class ClosingNotesDialog extends SimpleDialog {
     }
 
     private void populateUi() {
+        if (_webTransaction == null)
+            return;
+
+        if (_editText == null)
+            return;
+
         final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
-
-        if (!misc.isEmptyOrNull(offlineNotes))
-            _editText.setText(offlineNotes);
-
+        _editText.setText(offlineNotes);
     }
 
 
@@ -163,7 +170,7 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             _webTransaction = webTransaction;
-            if (!isRotated) populateUi();
+            populateUi();
         }
     };
 
