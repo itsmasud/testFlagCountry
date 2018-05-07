@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -112,6 +113,24 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         } else {
             _etaView.setOnClickListener(null);
             _etaView.setEnabled(false);
+        }
+
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+            ((TextView) _etaView.findViewById(R.id.key))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_disabled_text));
+            ((TextView) _etaView.findViewById(R.id.value))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_disabled_text));
+        } else {
+            ((TextView) _etaView.findViewById(R.id.key))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_light_text_statefull));
+            ((TextView) _etaView.findViewById(R.id.value))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_light_text_statefull));
+
         }
 
         Schedule schedule = _workOrder.getSchedule();
