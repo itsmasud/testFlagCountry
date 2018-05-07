@@ -129,7 +129,7 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
 
     private final WebTransactionUtils.Listener _addDiscounts = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 PayModifier discount = PayModifier.fromJson(new JsonObject(tp.methodParams).getJsonObject("json"));
@@ -148,7 +148,7 @@ public class DiscountsAdapter extends RecyclerView.Adapter<DiscountViewHolder> {
 
     private final WebTransactionUtils.Listener _deleteDiscounts = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 int id = new JsonObject(tp.methodParams).getInt("discountId");

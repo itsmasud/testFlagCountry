@@ -147,7 +147,7 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
 
     private final WebTransactionUtils.Listener _deleteShipment = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 int id = new JsonObject(tp.methodParams).getInt("shipmentId");
@@ -165,7 +165,7 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
     };
     private final WebTransactionUtils.Listener _addShipment = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 Shipment shipment = Shipment.fromJson(new JsonObject(tp.methodParams).getJsonObject("shipment"));

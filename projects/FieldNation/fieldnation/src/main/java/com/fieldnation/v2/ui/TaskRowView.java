@@ -4,18 +4,21 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionUtils;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 
 import java.text.DateFormatSymbols;
@@ -37,11 +40,12 @@ public class TaskRowView extends RelativeLayout {
     private TextView _valueTextView;
     private TextView _rightValueTextView;
     private ProgressBar _progressBar;
+    private View _alertView;
 
     // Data
     private Task _task;
     private boolean _progressVisible = false;
-    private WebTransaction _webTransaction = null;
+    private TransactionBundle _transactionBundle = null;
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -72,6 +76,7 @@ public class TaskRowView extends RelativeLayout {
         _valueTextView = findViewById(R.id.value);
         _rightValueTextView = findViewById(R.id.value_right);
         _progressBar = findViewById(R.id.progressBar);
+        _alertView = findViewById(R.id.alert);
 
         populateUi();
     }
@@ -81,9 +86,9 @@ public class TaskRowView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setData(Task task, WebTransaction webTransaction) {
+    public void setData(Task task, TransactionBundle transactionBundle) {
         _task = task;
-        _webTransaction = webTransaction;
+        _transactionBundle = transactionBundle;
         populateUi();
     }
 
@@ -182,12 +187,11 @@ public class TaskRowView extends RelativeLayout {
                 case CLOSING_NOTES: // closing notes
                     _keyTextView.setText(_task.getLabel());
 
-                    final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
-                    if (!misc.isEmptyOrNull(_task.getClosingNotes()) && misc.isEmptyOrNull(offlineNotes)) {
+                    if (!misc.isEmptyOrNull(_task.getClosingNotes()) && _transactionBundle == null) {
                         _valueTextView.setText(_task.getClosingNotes());
                         _valueTextView.setVisibility(VISIBLE);
-                    } else if (!misc.isEmptyOrNull(offlineNotes)){
-                        _valueTextView.setText(offlineNotes);
+                    } else if (_transactionBundle != null) {
+                        _valueTextView.setText(_transactionBundle.methodParams.getString("closingNotes"));
                         _valueTextView.setVisibility(VISIBLE);
                     } else {
                         _valueTextView.setVisibility(GONE);
@@ -336,6 +340,11 @@ public class TaskRowView extends RelativeLayout {
         } catch (Exception e) {
             Log.v(TAG, e);
         }
+
+        if (_transactionBundle == null)
+            _alertView.setVisibility(GONE);
+        else
+            _alertView.setVisibility(VISIBLE);
     }
 
     private void updateView() {
@@ -356,4 +365,15 @@ public class TaskRowView extends RelativeLayout {
         }
     }
 
+    public static class TransactionBundle {
+        public WebTransaction webTransaction;
+        public TransactionParams transactionParams;
+        public JsonObject methodParams;
+
+        public TransactionBundle(WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            this.webTransaction = webTransaction;
+            this.transactionParams = transactionParams;
+            this.methodParams = methodParams;
+        }
+    }
 }

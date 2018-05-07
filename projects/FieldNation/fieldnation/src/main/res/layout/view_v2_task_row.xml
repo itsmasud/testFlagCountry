@@ -4,62 +4,82 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/key"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Key"
-        android:textColor="@color/fn_dark_text"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/key"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:gravity="left"
-        android:text="Value"
-        android:textColor="@color/fn_dark_text_50"
-        android:textSize="14sp" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+    <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/value"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_toLeftOf="@+id/alert"
-        android:max="100"
-        android:indeterminate="true"
-        android:visibility="gone" />
+        android:layout_toLeftOf="@+id/alert">
 
-    <TextView
-        android:id="@+id/value_right"
+        <TextView
+            android:id="@+id/key"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            android:text="Key"
+            android:textColor="@color/fn_dark_text"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/key"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="left"
+            android:text="Value"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="14sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/value"
+            android:layout_marginBottom="4dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:indeterminate="true"
+            android:max="100"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/value_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_toRightOf="@+id/key"
+            android:gravity="right"
+            android:text="Value"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/alert"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_toRightOf="@+id/key"
-        android:text="Value"
-        android:textColor="@color/fn_dark_text_50"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="16dp"
-        android:textSize="14sp"/>
+        android:layout_marginRight="16dp"
+        android:gravity="center_vertical"
+        android:text="@string/icon_cloud_off"
+        android:textColor="@color/fn_dark_text_50"
+        android:textSize="16sp"
+        android:visibility="visible" />
 
     <View
         style="@style/DividerFull"
-        android:layout_below="@+id/progressBar"
-        android:layout_marginTop="12dp" />
+        android:layout_below="@+id/container"
+        android:layout_marginTop="8dp" />
 </RelativeLayout>

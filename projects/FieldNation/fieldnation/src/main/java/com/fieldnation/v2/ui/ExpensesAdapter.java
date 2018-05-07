@@ -127,7 +127,7 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
 
     private final WebTransactionUtils.Listener _addExpense = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 Expense expense = Expense.fromJson(new JsonObject(tp.methodParams).getJsonObject("expense"));
@@ -146,7 +146,7 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpenseViewHolder> {
 
     private final WebTransactionUtils.Listener _deleteExpense = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             try {
                 TransactionParams tp = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
                 int id = new JsonObject(tp.methodParams).getInt("expenseId");
