@@ -433,8 +433,9 @@ public class CustomFieldDialog extends SimpleDialog {
     };
 
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             if (_webTransactions == null || webTransaction == null) return;
             _webTransactions.add(webTransaction);
         }

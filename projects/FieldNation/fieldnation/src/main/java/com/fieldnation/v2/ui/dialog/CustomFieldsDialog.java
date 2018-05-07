@@ -161,7 +161,7 @@ public class CustomFieldsDialog extends FullScreenDialog {
 
     private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
         @Override
-        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction) {
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             if (_offlineCustomFields == null || webTransaction == null) return;
             CustomField cf = getCfFromWt(webTransaction);
             _offlineCustomFields.put(cf.getId(), cf);
