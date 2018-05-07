@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -26,6 +25,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
 import com.fieldnation.v2.ui.dialog.TasksDialog;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -189,12 +189,13 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         int fteRequiredComplete = 0;
 //        editable = false;
 
+        Hashtable<Integer, CustomField> requiredCf = new Hashtable<>();
+
         for (CustomFieldCategory category : _workOrder.getCustomFields().getResults()) {
             if (category.getRole().equals("buyer"))
                 continue;
 
-            CustomField[] customFields = category.getResults();
-            for (CustomField customField : customFields) {
+            for (CustomField customField : category.getResults()) {
 
 //                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
 
@@ -204,8 +205,10 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 if (!misc.isEmptyOrNull(customField.getValue())) {
                     fteComplete++;
 
-                    if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED))
+                    if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)) {
+                        requiredCf.put(customField.getId(), customField);
                         fteRequiredComplete++;
+                    }
                 }
                 fteTotal++;
             }
@@ -219,12 +222,13 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
 
-
                 if (params != null
                         && params.methodParams != null
                         && params.methodParams.contains("customField")) {
                     CustomField cf = new CustomField().fromJson(new JsonObject(params.getMethodParamString("customField")));
-                    if (!misc.isEmptyOrNull(cf.getValue()) && cf.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)) {
+                    if (!misc.isEmptyOrNull(cf.getValue())
+                            && cf.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)
+                            && !requiredCf.containsKey(cf.getId())) {
                         fteRequiredComplete++;
                     }
 
@@ -233,9 +237,6 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 com.fieldnation.fnlog.Log.v(TAG, ex);
             }
         }
-
-        Log.e(TAG, "size of CF: " + webTransactions.size());
-
 
         if (fteRequired == 0) {
             _customFieldsView.setOnClickListener(_fte_onClick);
