@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TEST BUTTON"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
 
                 <com.fieldnation.v2.ui.workorder.WorkOrderHeaderView
                     android:id="@+id/header_view"

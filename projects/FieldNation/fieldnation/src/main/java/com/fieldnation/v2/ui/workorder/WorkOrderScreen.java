@@ -9,18 +9,13 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -61,6 +56,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
+import com.fieldnation.v2.data.client.SystemWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
@@ -78,6 +74,7 @@ import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.Translation;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
@@ -103,6 +100,7 @@ import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
+import com.fieldnation.v2.ui.dialog.WorkersCompDialog;
 
 import java.io.File;
 import java.util.Calendar;
@@ -169,6 +167,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private int _workOrderId;
     private SimpleGps _simpleGps;
     private String _myUUID;
+    private Translation _translation = null;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -322,6 +321,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
+        _systemWebApi.sub();
 
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
@@ -335,6 +335,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+
+        SystemWebApi.getTranslation(App.get(), "en", "workers.compensation.terms", false, WebTransaction.Type.NORMAL);
 
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_simpleGps_listener)
@@ -366,6 +368,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
 
         _workOrderApi.unsub();
+        _systemWebApi.unsub();
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
         if (_activityResultListener != null) _activityResultListener.unsub();
     }
@@ -1195,4 +1198,26 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             return false;
         }
     };
+
+    private final SystemWebApi _systemWebApi = new SystemWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getTranslation");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getTranslation")) {
+                Translation translation = (Translation) successObject;
+                setLoading(false);
+
+                if (!success || translation == null) {
+                    return;
+                }
+
+                _translation = translation;
+            }
+        }
+    };
+
 }
