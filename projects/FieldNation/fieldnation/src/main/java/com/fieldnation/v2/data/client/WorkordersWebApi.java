@@ -2142,8 +2142,8 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: cancelAssignmentByWorkOrder
      * Cancel assignment of a work order and moves it to draft status
      *
-     * @param workOrderId ID of work order
-     * @param cancelReason      Cancellation Reason
+     * @param workOrderId  ID of work order
+     * @param cancelReason Cancellation Reason
      */
     public static void cancelAssignment(Context context, Integer workOrderId, int cancelReasonId, String cancelReason, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -2189,9 +2189,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: cancelAssignmentByWorkOrder
      * Cancel assignment of a work order and moves it to draft status
      *
-     * @param workOrderId ID of work order
-     * @param cancelReason      Cancellation Reason
-     * @param async             Async (Optional)
+     * @param workOrderId  ID of work order
+     * @param cancelReason Cancellation Reason
+     * @param async        Async (Optional)
      */
     public static void cancelAssignment(Context context, Integer workOrderId, int cancelReasonId, String cancelReason, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -10041,8 +10041,10 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             if (!misc.isEmptyOrNull(closingNotes)) {
                 activityName = WebTransaction.ActivityName.getActivityTitleByType(
-                        WebTransaction.ActivityName.CLOSING_NOTES,
-                        closingNotes);
+                        WebTransaction.ActivityName.CLOSING_NOTES, closingNotes);
+            } else {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE, "Closing Notes");
             }
 
             if (!misc.isEmptyOrNull(activityName)) {
