@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 
 import com.fieldnation.App;
+import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -126,13 +127,16 @@ public class WorkersCompDialog extends FullScreenDialog {
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            AppMessagingClient.setLoading(true);
+
             if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)){
-                _onAcceptedDispatcher.dispatch(getUid());
+                _onAcceptedDispatcher.dispatch(getUid(), _dialogType);
             }else if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)){
-                _onRequestedDispatcher.dispatch(getUid());
+                _onRequestedDispatcher.dispatch(getUid(), _dialogType);
             }
             dismiss(true);
 
+            UsersWebApi.setUserPreference(App.get(), (int) App.getProfileId(), "acceptedWorkersCompTerm","{\"preference_value\": 1}", null);
             UsersWebApi.getUser(App.get(), App.getProfileId(), false, WebTransaction.Type.NORMAL);
         }
     };
@@ -211,13 +215,13 @@ public class WorkersCompDialog extends FullScreenDialog {
     /*-           Accept           -*/
     /*-****************************-*/
     public interface OnAcceptListener {
-        void onAccept();
+        void onAccept(String dialogType);
     }
 
     private static KeyedDispatcher<WorkersCompDialog.OnAcceptListener> _onAcceptedDispatcher = new KeyedDispatcher<WorkersCompDialog.OnAcceptListener>() {
         @Override
         public void onDispatch(WorkersCompDialog.OnAcceptListener listener, Object... parameters) {
-            listener.onAccept();
+            listener.onAccept((String) parameters[0]);
         }
     };
 
@@ -237,13 +241,13 @@ public class WorkersCompDialog extends FullScreenDialog {
     /*-         Request            -*/
     /*-****************************-*/
     public interface OnRequestListener {
-        void onRequest();
+        void onRequest(String dialogType);
     }
 
     private static KeyedDispatcher<WorkersCompDialog.OnRequestListener> _onRequestedDispatcher = new KeyedDispatcher<WorkersCompDialog.OnRequestListener>() {
         @Override
         public void onDispatch(WorkersCompDialog.OnRequestListener listener, Object... parameters) {
-            listener.onRequest();
+            listener.onRequest((String) parameters[0]);
         }
     };
 

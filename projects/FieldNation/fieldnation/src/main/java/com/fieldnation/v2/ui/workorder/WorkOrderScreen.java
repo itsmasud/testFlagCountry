@@ -79,6 +79,7 @@ import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.Translation;
 import com.fieldnation.v2.data.model.User;
+import com.fieldnation.v2.data.model.UserPreferencesResults;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
@@ -175,6 +176,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private PayModifier _workersCompFee = null;
     private User _user = null;
     private boolean _isWorkersCompTermsAccepted = false;
+    private String _dialogType = null;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -496,7 +498,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private boolean shouldShowWorkersCompTerms() {
         if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getFees() == null
-                || _user == null || _user.getWorkerCompensation() == null)
+                || _user == null || _user.getPreferences() == null || _user.getPreferences().getResults() == null || _user.getPreferences().getResults().length == 0)
             return false;
 
         PayModifier[] fees = _workOrder.getPay().getFees();
@@ -508,7 +510,18 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     _workersCompFee = fee;
-                    if (_user.getWorkerCompensation() || _isWorkersCompTermsAccepted) {
+                    break;
+                }
+            }
+        }
+
+        UserPreferencesResults[] preferences = _user.getPreferences().getResults();
+        if (_workersCompFee != null && preferences != null) {
+            for (UserPreferencesResults preference : preferences) {
+                if (preference.getName() != null
+                        && preference.getName().equals("acceptedWorkersCompTerm")
+                        && preference.getValue() != null) {
+                    if (preference.getValue().equals("1")) {
                         return false;
                     } else {
                         return true;
@@ -850,9 +863,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
-            if (shouldShowWorkersCompTerms()) {
-                if (_translation != null && _workersCompFee != null)
-                    WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+            if (shouldShowWorkersCompTerms() && _translation != null && _workersCompFee != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
                 return;
             }
 
@@ -874,9 +886,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
-            if (shouldShowWorkersCompTerms()) {
-                if (_translation != null)
-                    WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
                 return;
             }
 
@@ -1186,19 +1199,19 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private final WorkersCompDialog.OnAcceptListener _workersCompDialog_onAccecpt = new WorkersCompDialog.OnAcceptListener() {
         @Override
-        public void onAccept() {
+        public void onAccept(String dialogType) {
+            _dialogType = dialogType;
             refreshUserContext();
             _isWorkersCompTermsAccepted = true;
-            _actionbartop_listener.onAccept();
         }
     };
 
     private final WorkersCompDialog.OnRequestListener _workersCompDialog_onRequest = new WorkersCompDialog.OnRequestListener() {
         @Override
-        public void onRequest() {
+        public void onRequest(String dialogType) {
+            _dialogType = dialogType;
             _isWorkersCompTermsAccepted = true;
             refreshUserContext();
-            _actionbartop_listener.onRequest();
         }
     };
 
@@ -1302,7 +1315,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final UsersWebApi _usersWebApi = new UsersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return methodName.equals("getUser");
+            return methodName.equals("getUser") || methodName.startsWith("setUserPreference");
         }
 
         @Override
@@ -1316,6 +1329,22 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                 }
 
                 _user = user;
+
+                if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType)){
+                    switch (_dialogType){
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT:
+                            _actionbartop_listener.onAccept();
+                            break;
+
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST:
+                            _actionbartop_listener.onRequest();
+                            break;
+                    }
+                }
+            }
+
+            if (methodName.equals("setUserPreference")) {
+                setLoading(false);
             }
         }
     };

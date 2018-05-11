@@ -84,6 +84,9 @@ public class User implements Parcelable {
     @Json(name = "phone")
     private String _phone;
 
+    @Json(name = "preferences")
+    private UserPreferences _preferences;
+
     @Json(name = "preferred_groups")
     private UserPreferredGroups[] _preferredGroups;
 
@@ -625,6 +628,31 @@ public class User implements Parcelable {
     public User phone(String phone) throws ParseException {
         _phone = phone;
         SOURCE.put("phone", phone);
+        return this;
+    }
+
+    public void setPreferences(UserPreferences preferences) throws ParseException {
+        _preferences = preferences;
+        SOURCE.put("preferences", preferences.getJson());
+    }
+
+    public UserPreferences getPreferences() {
+        try {
+            if (_preferences == null && SOURCE.has("preferences") && SOURCE.get("preferences") != null)
+                _preferences = UserPreferences.fromJson(SOURCE.getJsonObject("preferences"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_preferences == null)
+            _preferences = new UserPreferences();
+
+        return _preferences;
+    }
+
+    public User preferences(UserPreferences preferences) throws ParseException {
+        _preferences = preferences;
+        SOURCE.put("preferences", preferences.getJson());
         return this;
     }
 

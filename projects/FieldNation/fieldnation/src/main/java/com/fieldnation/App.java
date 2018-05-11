@@ -428,7 +428,7 @@ public class App extends Application {
     /*-     User context     -*/
     /*-**********************-*/
     // TODO MAR-1596: user context from OAuth is not useful because that user context data doesn't contain worker_compensation property
-    private static User getUser() {
+    public static User getUser() {
         return get()._user;
     }
 
