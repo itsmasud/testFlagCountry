@@ -345,6 +345,7 @@ public class SearchResultScreen extends RelativeLayout {
                     return;
                 }
                 _user = user;
+//                _adapter.refreshAll();
             }
 
             if (methodName.equals("setUserPreference")) {

@@ -173,9 +173,6 @@ public class WorkOrderCard extends RelativeLayout {
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
 
-//        WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
-//        WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
-
         setOnClickListener(_this_onClick);
     }
 
@@ -200,7 +197,6 @@ public class WorkOrderCard extends RelativeLayout {
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         WorkersCompDialog.removeOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.removeOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
-
 
         _usersWebApi.unsub();
 
@@ -270,6 +266,7 @@ public class WorkOrderCard extends RelativeLayout {
         populateTime();
         populateButtons();
 
+        refreshUserContext();
     }
 
     private void setWarning(boolean warning) {
