@@ -431,7 +431,7 @@ public class App extends Application {
         return get()._user;
     }
 
-    private void setUser(User user) {
+    public void setUser(User user) {
         synchronized (STAG) {
             _user = user;
         }

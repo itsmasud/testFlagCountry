@@ -24,10 +24,14 @@ import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
+import com.fieldnation.v2.data.client.SystemWebApi;
+import com.fieldnation.v2.data.client.UsersWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.Translation;
+import com.fieldnation.v2.data.model.User;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.FilterDrawerDialog;
@@ -63,6 +67,7 @@ public class SearchResultScreen extends RelativeLayout {
     private OnWorkOrderListReceivedListener _onListReceivedListener;
     private ListEnvelope _envelope = null;
     private String _myUUID = UUID.randomUUID().toString();
+    private Translation _translation = null;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -118,14 +123,23 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void onResume() {
         _workOrderApi.sub();
+        _systemWebApi.sub();
+        _usersWebApi.sub();
+
         _adapter.refreshAll();
 
         _appMessagingClient.subUserSwitched();
         _appMessagingClient.subOfflineMode();
+
+        SystemWebApi.getTranslation(App.get(), "en", "workers.compensation.terms", false, WebTransaction.Type.NORMAL);
+        UsersWebApi.getUser(App.get(), App.getProfileId(), false, WebTransaction.Type.NORMAL);
+
     }
 
     public void onPause() {
         _workOrderApi.unsub();
+        _systemWebApi.unsub();
+        _usersWebApi.unsub();
         _appMessagingClient.unsubUserSwitched();
         _appMessagingClient.unsubOfflineMode();
     }
@@ -141,7 +155,6 @@ public class SearchResultScreen extends RelativeLayout {
         Log.v(TAG, "onDetachedFromWindow");
 
         FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
-
         super.onDetachedFromWindow();
     }
 
@@ -295,6 +308,52 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
+    private final SystemWebApi _systemWebApi = new SystemWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getTranslation");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getTranslation")) {
+                Translation translation = (Translation) successObject;
+//                setLoading(false);
+
+                if (!success || translation == null) {
+                    return;
+                }
+                _translation = translation;
+                _adapter.refreshAll();
+            }
+        }
+    };
+
+    private final UsersWebApi _usersWebApi = new UsersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getUser") || methodName.startsWith("setUserPreference");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getUser")) {
+                User user = (User) successObject;
+
+                if (!success || user == null) {
+                    return;
+                }
+//                _user = user;
+//                _adapter.refreshAll();
+            }
+
+            if (methodName.equals("setUserPreference")) {
+                if (_refreshView != null)
+                    _refreshView.refreshComplete();
+            }
+        }
+    };
+
     private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
         @Override
         public void onUserSwitched(Profile profile) {
@@ -327,7 +386,7 @@ public class SearchResultScreen extends RelativeLayout {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
-            v.setData(_myUUID, object, _location, _savedList.getLabel());
+            v.setData(_myUUID, object, _location, _savedList.getLabel(), _translation);
         }
 
         @Override

@@ -9,18 +9,13 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.view.ContextThemeWrapper;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -48,6 +43,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -61,6 +57,8 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.detail.CounterOfferSummaryView;
 import com.fieldnation.ui.workorder.detail.ScheduleSummaryView;
 import com.fieldnation.ui.workorder.detail.WorkSummaryView;
+import com.fieldnation.v2.data.client.SystemWebApi;
+import com.fieldnation.v2.data.client.UsersWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
@@ -72,12 +70,16 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.Translation;
+import com.fieldnation.v2.data.model.User;
+import com.fieldnation.v2.data.model.UserPreferencesResults;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyer;
 import com.fieldnation.v2.ui.dialog.AttachedFoldersDialog;
@@ -97,12 +99,12 @@ import com.fieldnation.v2.ui.dialog.RateBuyerDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.RemoveAssignmentDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
-import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
+import com.fieldnation.v2.ui.dialog.WorkersCompDialog;
 
 import java.io.File;
 import java.util.Calendar;
@@ -127,6 +129,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private static final String DIALOG_DELETE_SIGNATURE = TAG + ".deleteSignatureDialog";
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
+    private static final String DIALOG_WORKERS_COMP = TAG + ".workersCompDialog";
 
     // saved state keys
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
@@ -169,6 +172,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private int _workOrderId;
     private SimpleGps _simpleGps;
     private String _myUUID;
+    private Translation _translation = null;
+    private PayModifier _workersCompFee = null;
+    private boolean _isWorkersCompTermsAccepted = false;
+    private String _dialogType = null;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -322,6 +329,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
         _workOrderApi.sub();
+        _systemWebApi.sub();
+        _usersWebApi.sub();
+
+        refreshUserContext();
 
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
@@ -333,8 +344,13 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
+        WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+        WorkersCompDialog.addOnCounterOfferListener(DIALOG_WORKERS_COMP, _workersCompDialog_onCounterOffer);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+
+        SystemWebApi.getTranslation(App.get(), "en", "workers.compensation.terms", false, WebTransaction.Type.NORMAL);
 
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_simpleGps_listener)
@@ -364,12 +380,22 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        WorkersCompDialog.removeOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
+        WorkersCompDialog.removeOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+        WorkersCompDialog.removeOnCounterOfferListener(DIALOG_WORKERS_COMP, _workersCompDialog_onCounterOffer);
 
         _workOrderApi.unsub();
+        _systemWebApi.unsub();
+        _usersWebApi.unsub();
+
         if (_simpleGps != null && _simpleGps.isRunning()) _simpleGps.stop();
         if (_activityResultListener != null) _activityResultListener.unsub();
     }
 
+
+    private void refreshUserContext() {
+        UsersWebApi.getUser(App.get(), App.getProfileId(), false, WebTransaction.Type.NORMAL);
+    }
 
     public boolean onBackPressed() {
         return _bottomsheetView.onBackPressed();
@@ -461,7 +487,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
     }
 
-    public void setLoading(boolean isLoading) {
+    private void setLoading(boolean isLoading) {
         if (_refreshView != null) {
             if (isLoading) {
                 _refreshView.startRefreshing();
@@ -469,6 +495,43 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                 _refreshView.refreshComplete();
             }
         }
+    }
+
+    private boolean shouldShowWorkersCompTerms() {
+        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getFees() == null
+                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0)
+            return false;
+
+        PayModifier[] fees = _workOrder.getPay().getFees();
+        if (fees != null && _workOrder.getPay().getTotal() > 0) {
+            for (PayModifier fee : fees) {
+                // Workers comp fee
+                if (fee.getName() != null
+                        && fee.getName().equals("workers_comp")
+                        && fee.getAmount() != null
+                        && fee.getModifier() != null) {
+                    _workersCompFee = fee;
+                    break;
+                }
+            }
+        }
+
+        UserPreferencesResults[] preferences = App.getUser().getPreferences().getResults();
+        if (_workersCompFee != null && preferences != null) {
+            for (UserPreferencesResults preference : preferences) {
+                if (preference.getName() != null
+                        && preference.getName().equals("acceptedWorkersCompTerm")
+                        && preference.getValue() != null) {
+                    if (preference.getValue().equals("1")) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /*-*********************************************-*/
@@ -801,11 +864,17 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
+            if (shouldShowWorkersCompTerms() && _translation != null && _workersCompFee != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+                return;
+            }
+
+
             if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
-                RequestBundleDialog.show(
-                        App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
+//                RequestBundleDialog.show(
+//                        App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+//                        _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_REQUEST);
             } else {
                 App.get().analActionTitle = null;
                 EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
@@ -818,12 +887,20 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                return;
+            }
+
             if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
-                RequestBundleDialog.show(
-                        App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
+//                RequestBundleDialog.show(
+//                        App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+//                        _workOrder.getBundle().getMetadata().getTotal(), _workOrderId, RequestBundleDialog.TYPE_ACCEPT);
             } else {
+                // TODO need to delete the following block and add that to WorkersCompDialog
                 App.get().analActionTitle = null;
                 EtaDialog.show(App.get(), null, _workOrderId, _workOrder.getSchedule(),
                         _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
@@ -1051,6 +1128,13 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_COUNTER_OFFER, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                return;
+            }
+
             CounterOfferDialog.show(App.get(), _workOrderId, false);
         }
 
@@ -1117,6 +1201,37 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     .build());
 
             AttachedFoldersDialog.show(App.get(), DIALOG_ATTACHED_FOLDERS, _myUUID, _workOrderId);
+        }
+    };
+
+    private final WorkersCompDialog.OnAcceptListener _workersCompDialog_onAccecpt = new WorkersCompDialog.OnAcceptListener() {
+        @Override
+        public void onAccept(int workOrderId, String dialogType) {
+            if (workOrderId != _workOrder.getId()) return;
+
+            _dialogType = dialogType;
+            refreshUserContext();
+            _isWorkersCompTermsAccepted = true;
+        }
+    };
+
+    private final WorkersCompDialog.OnRequestListener _workersCompDialog_onRequest = new WorkersCompDialog.OnRequestListener() {
+        @Override
+        public void onRequest(int workOrderId, String dialogType) {
+            if (workOrderId != _workOrder.getId()) return;
+
+            _dialogType = dialogType;
+            _isWorkersCompTermsAccepted = true;
+            refreshUserContext();
+        }
+    };
+
+    private final WorkersCompDialog.OnCounterOfferListener _workersCompDialog_onCounterOffer = new WorkersCompDialog.OnCounterOfferListener() {
+        @Override
+        public void onCounterOffer(String dialogType) {
+            _dialogType = dialogType;
+            _isWorkersCompTermsAccepted = true;
+            refreshUserContext();
         }
     };
 
@@ -1195,4 +1310,69 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             return false;
         }
     };
+
+    private final SystemWebApi _systemWebApi = new SystemWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getTranslation");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getTranslation")) {
+                Translation translation = (Translation) successObject;
+                setLoading(false);
+
+                if (!success || translation == null) {
+                    return;
+                }
+
+                _translation = translation;
+            }
+        }
+    };
+
+    private final UsersWebApi _usersWebApi = new UsersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getUser") || methodName.startsWith("setUserPreference");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getUser")) {
+                User user = (User) successObject;
+                setLoading(false);
+
+                if (!success || user == null) {
+                    return;
+                }
+
+                App.get().setUser(user);
+
+                if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType)) {
+                    switch (_dialogType) {
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT:
+                            _actionbartop_listener.onAccept();
+                            break;
+
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST:
+                            _actionbartop_listener.onRequest();
+                            break;
+
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_COUNTER_OFFER:
+                            _bottomsheetView_listener.addCounterOffer();
+                            break;
+
+                    }
+                }
+            }
+
+            if (methodName.equals("setUserPreference")) {
+                setLoading(false);
+            }
+        }
+    };
+
+
 }

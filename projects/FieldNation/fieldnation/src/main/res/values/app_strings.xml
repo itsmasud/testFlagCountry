@@ -128,6 +128,7 @@
     <string name="btn_delete">DELETE</string>
 
     <string name="complete_tasks">Complete tasks</string>
+    <string name="accept_terms_and_continue">ACCEPT TERMS AND CONTINUE</string>
 
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
@@ -215,6 +216,8 @@
     <string name="fieldnation_workers_comp_insurance_percentage">Workers Comp Insurance Fee (%1$s%%)</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
+
+    <string name="dialog_workers_comp_title">Review and Accept Terms</string>
 
     <string name="dialog_withdraw_title">Withdraw Request?</string>
     <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
