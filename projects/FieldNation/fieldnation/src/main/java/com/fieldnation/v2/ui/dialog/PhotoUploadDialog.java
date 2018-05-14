@@ -655,12 +655,17 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 return;
             }
 
-            Intent intent;
-            intent = new Intent(Intent.ACTION_VIEW);
-            File f = new File(_cachedUri.getPath());
-            intent.setDataAndType(App.getUriFromFile(f), MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1)));
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            try {
+                File f = new File(_cachedUri.getPath());
+                intent.setDataAndType(App.getUriFromFile(f), MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1)));
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                ToastClient.toast(App.get(), "Can't show the preview. ", Toast.LENGTH_SHORT);
+            }
 
             try {
                 if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
