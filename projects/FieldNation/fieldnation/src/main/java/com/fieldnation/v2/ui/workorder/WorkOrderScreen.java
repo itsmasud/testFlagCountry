@@ -890,7 +890,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             if (shouldShowWorkersCompTerms()
                     && _translation != null && _translation.getValue() != null
                     && _workersCompFee != null && _workersCompFee.getModifier() != null) {
-                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
                 return;
             }
 
