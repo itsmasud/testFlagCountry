@@ -80,7 +80,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private String _myUUID = UUID.randomUUID().toString();
     private Translation _translation = null;
     private PayModifier _workersCompFee = null;
-    private User _user = null;
     private boolean _isWorkersCompTermsAccepted = false;
     private String _dialogType = null;
 
@@ -248,7 +247,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
 
         if (workOrder == null || workOrder.getPay() == null || workOrder.getPay().getFees() == null
-                || _user == null || _user.getPreferences() == null || _user.getPreferences().getResults() == null || _user.getPreferences().getResults().length == 0)
+                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0)
             return false;
 
         PayModifier[] fees = workOrder.getPay().getFees();
@@ -265,7 +264,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             }
         }
 
-        UserPreferencesResults[] preferences = _user.getPreferences().getResults();
+        UserPreferencesResults[] preferences = App.getUser().getPreferences().getResults();
         if (_workersCompFee != null && preferences != null) {
             for (UserPreferencesResults preference : preferences) {
                 if (preference.getName() != null
@@ -521,7 +520,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                     return;
                 }
 
-                _user = user;
+                App.get().setUser( user);
 
                 if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType) && _dialogType.equals(WorkersCompDialog.PARAM_DIALOG_TYPE_BUNDLE)) {
                     _ok_onClick.onClick(_okButton);

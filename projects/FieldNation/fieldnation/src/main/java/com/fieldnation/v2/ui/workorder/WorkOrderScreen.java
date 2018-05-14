@@ -174,7 +174,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private String _myUUID;
     private Translation _translation = null;
     private PayModifier _workersCompFee = null;
-    private User _user = null;
     private boolean _isWorkersCompTermsAccepted = false;
     private String _dialogType = null;
 
@@ -500,7 +499,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private boolean shouldShowWorkersCompTerms() {
         if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getFees() == null
-                || _user == null || _user.getPreferences() == null || _user.getPreferences().getResults() == null || _user.getPreferences().getResults().length == 0)
+                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0)
             return false;
 
         PayModifier[] fees = _workOrder.getPay().getFees();
@@ -517,7 +516,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             }
         }
 
-        UserPreferencesResults[] preferences = _user.getPreferences().getResults();
+        UserPreferencesResults[] preferences = App.getUser().getPreferences().getResults();
         if (_workersCompFee != null && preferences != null) {
             for (UserPreferencesResults preference : preferences) {
                 if (preference.getName() != null
@@ -1349,7 +1348,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     return;
                 }
 
-                _user = user;
+                App.get().setUser(user);
 
                 if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType)) {
                     switch (_dialogType) {

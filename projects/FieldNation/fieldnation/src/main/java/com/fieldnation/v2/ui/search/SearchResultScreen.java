@@ -68,7 +68,6 @@ public class SearchResultScreen extends RelativeLayout {
     private ListEnvelope _envelope = null;
     private String _myUUID = UUID.randomUUID().toString();
     private Translation _translation = null;
-    private User _user = null;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -344,7 +343,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (!success || user == null) {
                     return;
                 }
-                _user = user;
+//                _user = user;
 //                _adapter.refreshAll();
             }
 
