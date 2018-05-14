@@ -34,6 +34,8 @@ public class WorkersCompDialog extends FullScreenDialog {
     // Params
     public static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
     public static final String PARAM_DIALOG_TYPE_REQUEST = "request";
+    public static final String PARAM_DIALOG_TYPE_COUNTER_OFFER = "counter_offer";
+    public static final String PARAM_DIALOG_TYPE_BUNDLE = "bundle";
 
     // Ui
     private Toolbar _toolbar;
@@ -42,6 +44,7 @@ public class WorkersCompDialog extends FullScreenDialog {
 
     // Data
     private String _dialogType = null;
+    private int _workOrderId = 0;
 
     public WorkersCompDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -49,7 +52,7 @@ public class WorkersCompDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_v2_web_view, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_workers_comp_terms, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
@@ -83,6 +86,7 @@ public class WorkersCompDialog extends FullScreenDialog {
         _toolbar.setTitle(params.getString("title"));
 
         _dialogType = params.getString("dialogType");
+        _workOrderId = params.getInt("workOrderId");
 
         String html = params.getString("html");
 
@@ -129,14 +133,18 @@ public class WorkersCompDialog extends FullScreenDialog {
         public void onClick(View v) {
             AppMessagingClient.setLoading(true);
 
-            if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)){
-                _onAcceptedDispatcher.dispatch(getUid(), _dialogType);
-            }else if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)){
-                _onRequestedDispatcher.dispatch(getUid(), _dialogType);
+            if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
+                _onAcceptedDispatcher.dispatch(getUid(), _workOrderId, _dialogType);
+            } else if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
+                _onRequestedDispatcher.dispatch(getUid(), _workOrderId, _dialogType);
+            } else if (_dialogType.equals(PARAM_DIALOG_TYPE_COUNTER_OFFER)) {
+                _onCounterOfferDispatcher.dispatch(getUid(), _dialogType);
+            } else if (_dialogType.equals(PARAM_DIALOG_TYPE_BUNDLE)) {
+                _onBundleDispatcher.dispatch(getUid(), _dialogType);
             }
             dismiss(true);
 
-            UsersWebApi.setUserPreference(App.get(), (int) App.getProfileId(), "acceptedWorkersCompTerm","{\"preference_value\": 1}", null);
+            UsersWebApi.setUserPreference(App.get(), (int) App.getProfileId(), "acceptedWorkersCompTerm", "{\"preference_value\": 1}", null);
             UsersWebApi.getUser(App.get(), App.getProfileId(), false, WebTransaction.Type.NORMAL);
         }
     };
@@ -163,12 +171,14 @@ public class WorkersCompDialog extends FullScreenDialog {
         Controller.show(context, null, WorkersCompDialog.class, params);
     }
 
-    public static void show(Context context, String uid, String dialogType, String title, String html, String replacingString) {
+    // TODO workorderId has been added here
+    public static void show(Context context, String uid, int workOrderId, String dialogType, String title, String html, String replacingString) {
         Bundle params = new Bundle();
         params.putString("title", title);
         params.putString("html", html);
         params.putString("replacingString", replacingString);
         params.putString("dialogType", dialogType);
+        params.putInt("workOrderId", workOrderId);
         params.putBoolean("skipFormatting", false);
 
         Controller.show(context, uid, WorkersCompDialog.class, params);
@@ -215,13 +225,13 @@ public class WorkersCompDialog extends FullScreenDialog {
     /*-           Accept           -*/
     /*-****************************-*/
     public interface OnAcceptListener {
-        void onAccept(String dialogType);
+        void onAccept(int workOrdderId, String dialogType);
     }
 
     private static KeyedDispatcher<WorkersCompDialog.OnAcceptListener> _onAcceptedDispatcher = new KeyedDispatcher<WorkersCompDialog.OnAcceptListener>() {
         @Override
         public void onDispatch(WorkersCompDialog.OnAcceptListener listener, Object... parameters) {
-            listener.onAccept((String) parameters[0]);
+            listener.onAccept((Integer) parameters[0], (String) parameters[1]);
         }
     };
 
@@ -241,13 +251,13 @@ public class WorkersCompDialog extends FullScreenDialog {
     /*-         Request            -*/
     /*-****************************-*/
     public interface OnRequestListener {
-        void onRequest(String dialogType);
+        void onRequest(int workOrdderId, String dialogType);
     }
 
     private static KeyedDispatcher<WorkersCompDialog.OnRequestListener> _onRequestedDispatcher = new KeyedDispatcher<WorkersCompDialog.OnRequestListener>() {
         @Override
         public void onDispatch(WorkersCompDialog.OnRequestListener listener, Object... parameters) {
-            listener.onRequest((String) parameters[0]);
+            listener.onRequest((Integer) parameters[0], (String) parameters[1]);
         }
     };
 
@@ -262,4 +272,57 @@ public class WorkersCompDialog extends FullScreenDialog {
     public static void removeAllOnRequestedListener(String uid) {
         _onRequestedDispatcher.removeAll(uid);
     }
+
+    /*-****************************-*/
+    /*-        Counter offer       -*/
+    /*-****************************-*/
+    public interface OnCounterOfferListener {
+        void onCounterOffer(String dialogType);
+    }
+
+    private static KeyedDispatcher<WorkersCompDialog.OnCounterOfferListener> _onCounterOfferDispatcher = new KeyedDispatcher<WorkersCompDialog.OnCounterOfferListener>() {
+        @Override
+        public void onDispatch(WorkersCompDialog.OnCounterOfferListener listener, Object... parameters) {
+            listener.onCounterOffer((String) parameters[0]);
+        }
+    };
+
+    public static void addOnCounterOfferListener(String uid, WorkersCompDialog.OnCounterOfferListener onCounterOfferListener) {
+        _onCounterOfferDispatcher.add(uid, onCounterOfferListener);
+    }
+
+    public static void removeOnCounterOfferListener(String uid, WorkersCompDialog.OnCounterOfferListener onCounterOfferListener) {
+        _onCounterOfferDispatcher.remove(uid, onCounterOfferListener);
+    }
+
+    public static void removeAllOnCounterOfferListener(String uid) {
+        _onCounterOfferDispatcher.removeAll(uid);
+    }
+
+    /*-****************************-*/
+    /*-           Bundle           -*/
+    /*-****************************-*/
+    public interface OnBundleListener {
+        void onBundle(String dialogType);
+    }
+
+    private static KeyedDispatcher<WorkersCompDialog.OnBundleListener> _onBundleDispatcher = new KeyedDispatcher<WorkersCompDialog.OnBundleListener>() {
+        @Override
+        public void onDispatch(WorkersCompDialog.OnBundleListener listener, Object... parameters) {
+            listener.onBundle((String) parameters[0]);
+        }
+    };
+
+    public static void addOnBundledListener(String uid, WorkersCompDialog.OnBundleListener onBundleListener) {
+        _onBundleDispatcher.add(uid, onBundleListener);
+    }
+
+    public static void removeOnBundleListener(String uid, WorkersCompDialog.OnBundleListener onBundleListener) {
+        _onBundleDispatcher.remove(uid, onBundleListener);
+    }
+
+    public static void removeAllOnBundleListener(String uid) {
+        _onBundleDispatcher.removeAll(uid);
+    }
+
 }

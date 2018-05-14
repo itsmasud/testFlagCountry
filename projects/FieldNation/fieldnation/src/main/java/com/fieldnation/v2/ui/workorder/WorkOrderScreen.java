@@ -347,6 +347,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+        WorkersCompDialog.addOnCounterOfferListener(DIALOG_WORKERS_COMP, _workersCompDialog_onCounterOffer);
 
         new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
 
@@ -382,6 +383,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
         WorkersCompDialog.removeOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.removeOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+        WorkersCompDialog.removeOnCounterOfferListener(DIALOG_WORKERS_COMP, _workersCompDialog_onCounterOffer);
 
         _workOrderApi.unsub();
         _systemWebApi.unsub();
@@ -864,7 +866,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                     App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
             if (shouldShowWorkersCompTerms() && _translation != null && _workersCompFee != null) {
-                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
                 return;
             }
 
@@ -889,10 +891,9 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             if (shouldShowWorkersCompTerms()
                     && _translation != null && _translation.getValue() != null
                     && _workersCompFee != null && _workersCompFee.getModifier() != null) {
-                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
                 return;
             }
-
 
             if (_workOrder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
@@ -1128,6 +1129,13 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_COUNTER_OFFER, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                return;
+            }
+
             CounterOfferDialog.show(App.get(), _workOrderId, false);
         }
 
@@ -1199,7 +1207,9 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private final WorkersCompDialog.OnAcceptListener _workersCompDialog_onAccecpt = new WorkersCompDialog.OnAcceptListener() {
         @Override
-        public void onAccept(String dialogType) {
+        public void onAccept(int workOrderId, String dialogType) {
+            if (workOrderId != _workOrder.getId()) return;
+
             _dialogType = dialogType;
             refreshUserContext();
             _isWorkersCompTermsAccepted = true;
@@ -1208,7 +1218,18 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private final WorkersCompDialog.OnRequestListener _workersCompDialog_onRequest = new WorkersCompDialog.OnRequestListener() {
         @Override
-        public void onRequest(String dialogType) {
+        public void onRequest(int workOrderId, String dialogType) {
+            if (workOrderId != _workOrder.getId()) return;
+
+            _dialogType = dialogType;
+            _isWorkersCompTermsAccepted = true;
+            refreshUserContext();
+        }
+    };
+
+    private final WorkersCompDialog.OnCounterOfferListener _workersCompDialog_onCounterOffer = new WorkersCompDialog.OnCounterOfferListener() {
+        @Override
+        public void onCounterOffer(String dialogType) {
             _dialogType = dialogType;
             _isWorkersCompTermsAccepted = true;
             refreshUserContext();
@@ -1330,8 +1351,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
                 _user = user;
 
-                if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType)){
-                    switch (_dialogType){
+                if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType)) {
+                    switch (_dialogType) {
                         case WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT:
                             _actionbartop_listener.onAccept();
                             break;
@@ -1339,6 +1360,11 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                         case WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST:
                             _actionbartop_listener.onRequest();
                             break;
+
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_COUNTER_OFFER:
+                            _bottomsheetView_listener.addCounterOffer();
+                            break;
+
                     }
                 }
             }

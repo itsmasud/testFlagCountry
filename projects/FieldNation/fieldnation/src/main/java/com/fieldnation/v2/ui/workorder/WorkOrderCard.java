@@ -27,11 +27,14 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.data.gmaps.Position;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
+import com.fieldnation.v2.data.client.UsersWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
@@ -42,6 +45,7 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
@@ -51,6 +55,9 @@ import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.Translation;
+import com.fieldnation.v2.data.model.User;
+import com.fieldnation.v2.data.model.UserPreferencesResults;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ChatDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
@@ -63,6 +70,7 @@ import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
+import com.fieldnation.v2.ui.dialog.WorkersCompDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -80,6 +88,7 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteWarningDialog";
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
+    private static final String DIALOG_WORKERS_COMP = TAG + ".workersCompDialog";
 
     // Ui
     private View _warningBarView;
@@ -104,6 +113,11 @@ public class WorkOrderCard extends RelativeLayout {
     private String _savedSearchTitle;
     private OnActionListener _onActionListener;
     private String _myUUID;
+    private Translation _translation = null;
+    private PayModifier _workersCompFee = null;
+    private User _user = null;
+    private boolean _isWorkersCompTermsAccepted = false;
+    private String _dialogType = null;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -159,16 +173,36 @@ public class WorkOrderCard extends RelativeLayout {
         HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
 
+//        WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
+//        WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+
         setOnClickListener(_this_onClick);
+    }
+
+
+    @Override
+    protected void onAttachedToWindow() {
+        Log.v(TAG, "onAttachedToWindow");
+        super.onAttachedToWindow();
+        WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
+        WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+
+        _usersWebApi.sub();
     }
 
     @Override
     protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.removeOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
         HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
+        WorkersCompDialog.removeOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
+        WorkersCompDialog.removeOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+
+
+        _usersWebApi.unsub();
 
         super.onDetachedFromWindow();
     }
@@ -180,6 +214,16 @@ public class WorkOrderCard extends RelativeLayout {
         _savedSearchTitle = savedSearchTitle;
         populateUi();
     }
+
+    public void setData(String uuid, WorkOrder workOrder, Location location, String savedSearchTitle, Translation translation) {
+        _myUUID = uuid;
+        _workOrder = workOrder;
+        _location = location;
+        _translation = translation;
+        _savedSearchTitle = savedSearchTitle;
+        populateUi();
+    }
+
 
     public WorkOrder getWorkOrder() {
         return _workOrder;
@@ -225,6 +269,7 @@ public class WorkOrderCard extends RelativeLayout {
         populatePay();
         populateTime();
         populateButtons();
+
     }
 
     private void setWarning(boolean warning) {
@@ -669,6 +714,47 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
+    private void refreshUserContext() {
+        UsersWebApi.getUser(App.get(), App.getProfileId(), false, WebTransaction.Type.NORMAL);
+    }
+
+    private boolean shouldShowWorkersCompTerms() {
+        if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getFees() == null
+                || _user == null || _user.getPreferences() == null || _user.getPreferences().getResults() == null || _user.getPreferences().getResults().length == 0)
+            return false;
+
+        PayModifier[] fees = _workOrder.getPay().getFees();
+        if (fees != null && _workOrder.getPay().getTotal() > 0) {
+            for (PayModifier fee : fees) {
+                // Workers comp fee
+                if (fee.getName() != null
+                        && fee.getName().equals("workers_comp")
+                        && fee.getAmount() != null
+                        && fee.getModifier() != null) {
+                    _workersCompFee = fee;
+                    break;
+                }
+            }
+        }
+
+        UserPreferencesResults[] preferences = _user.getPreferences().getResults();
+        if (_workersCompFee != null && preferences != null) {
+            for (UserPreferencesResults preference : preferences) {
+                if (preference.getName() != null
+                        && preference.getName().equals("acceptedWorkersCompTerm")
+                        && preference.getValue() != null) {
+                    if (preference.getValue().equals("1")) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -766,6 +852,14 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
+
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                return;
+            }
+
             EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
         }
@@ -776,6 +870,14 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
+
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
+                return;
+            }
+
             EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                     _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
         }
@@ -1023,6 +1125,69 @@ public class WorkOrderCard extends RelativeLayout {
                     R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
         }
     };
+
+    private final WorkersCompDialog.OnAcceptListener _workersCompDialog_onAccecpt = new WorkersCompDialog.OnAcceptListener() {
+        @Override
+        public void onAccept(int workOrderId, String dialogType) {
+            if (workOrderId != _workOrder.getId()) return;
+
+            _dialogType = dialogType;
+            refreshUserContext();
+            _isWorkersCompTermsAccepted = true;
+        }
+    };
+
+    private final WorkersCompDialog.OnRequestListener _workersCompDialog_onRequest = new WorkersCompDialog.OnRequestListener() {
+        @Override
+        public void onRequest(int workOrderId, String dialogType) {
+            if (workOrderId != _workOrder.getId()) return;
+
+            _dialogType = dialogType;
+            _isWorkersCompTermsAccepted = true;
+            refreshUserContext();
+        }
+    };
+
+
+    private final UsersWebApi _usersWebApi = new UsersWebApi() {
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getUser") || methodName.startsWith("setUserPreference");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getUser")) {
+                User user = (User) successObject;
+
+                if (!success || user == null) {
+                    return;
+                }
+
+                _user = user;
+
+                if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType)) {
+                    switch (_dialogType) {
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT:
+                            _accept_onClick.onClick(_primaryButton);
+                            _isWorkersCompTermsAccepted = false;
+                            break;
+
+                        case WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST:
+                            _request_onClick.onClick(_primaryButton);
+                            _isWorkersCompTermsAccepted = false;
+                            break;
+                    }
+                }
+            }
+
+            if (methodName.equals("setUserPreference")) {
+                // TODO i dont know
+//                setLoading(false);
+            }
+        }
+    };
+
 
     public interface OnActionListener {
         void onAction();
