@@ -6321,8 +6321,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/workorders/lists")
-                    .urlParams("?sticky=count");
+                    .path("/api/rest/v2/workorders/lists");
 
             JsonObject methodParams = new JsonObject();
 
@@ -6362,7 +6361,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders/lists")
-                    .urlParams("?sticky=count&list=" + list);
+                    .urlParams("?list=" + list);
 
             JsonObject methodParams = new JsonObject();
 

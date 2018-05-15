@@ -35,8 +35,6 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private OnSavedListChangeListener _onSavedListChangeListener;
     private SavedList[] _list;
 
-    private WorkordersWebApi _workOrderClient;
-
     public SavedSearchList(Context context) {
         super(context);
         init();
