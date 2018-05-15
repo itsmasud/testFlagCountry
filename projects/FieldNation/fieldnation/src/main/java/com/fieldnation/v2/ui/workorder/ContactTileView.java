@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -155,7 +156,7 @@ public class ContactTileView extends RelativeLayout {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult) {
+        public void onComplete(String permission, int grantResult, Parcelable extraData) {
 
             if (permission.equals(Manifest.permission.CALL_PHONE)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
