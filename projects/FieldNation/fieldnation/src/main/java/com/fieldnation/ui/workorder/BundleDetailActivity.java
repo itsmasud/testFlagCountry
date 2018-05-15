@@ -238,25 +238,24 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         UsersWebApi.getUser(App.get(), App.getProfileId(), false, WebTransaction.Type.NORMAL);
     }
 
-   private boolean shouldShowWorkersCompTerms() {
+    private boolean shouldShowWorkersCompTerms() {
 
         if (_workOrders == null || _workOrders.getResults() == null || _workOrders.getResults().length == 0)
             return false;
 
         WorkOrder workOrder = _workOrders.getResults()[0];
 
-
         if (workOrder == null || workOrder.getPay() == null || workOrder.getPay().getFees() == null
-                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0)
+                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0
+                || _translation == null || _translation.getValue() == null)
             return false;
 
         PayModifier[] fees = workOrder.getPay().getFees();
-        if (fees != null) {
+        if (fees != null && workOrder.getPay().getTotal() > 0) {
             for (PayModifier fee : fees) {
                 // Workers comp fee
                 if (fee.getName() != null
                         && fee.getName().equals("workers_comp")
-                        && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     _workersCompFee = fee;
                     break;
@@ -281,6 +280,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         return false;
     }
 
+    private void showWorkersCompTermsDialog(final int workOrderId, final String dialogType) {
+        WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, workOrderId, dialogType, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+    }
 
     @Override
     public void onProfile(Profile profile) {
@@ -302,10 +304,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
             if (workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
 
-                if (shouldShowWorkersCompTerms()
-                        && _translation != null && _translation.getValue() != null
-                        && _workersCompFee != null && _workersCompFee.getModifier() != null) {
-                    WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_BUNDLE, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+                if (shouldShowWorkersCompTerms()) {
+                    showWorkersCompTermsDialog(workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_BUNDLE);
                     return;
                 }
 
@@ -314,10 +314,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
             } else if (workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
 
-                if (shouldShowWorkersCompTerms()
-                        && _translation != null && _translation.getValue() != null
-                        && _workersCompFee != null && _workersCompFee.getModifier() != null) {
-                    WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_BUNDLE, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+                if (shouldShowWorkersCompTerms()) {
+                    showWorkersCompTermsDialog(workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_BUNDLE);
                     return;
                 }
 
@@ -520,7 +518,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                     return;
                 }
 
-                App.get().setUser( user);
+                App.get().setUser(user);
 
                 if (_isWorkersCompTermsAccepted && !misc.isEmptyOrNull(_dialogType) && _dialogType.equals(WorkersCompDialog.PARAM_DIALOG_TYPE_BUNDLE)) {
                     _ok_onClick.onClick(_okButton);

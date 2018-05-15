@@ -716,7 +716,8 @@ public class WorkOrderCard extends RelativeLayout {
 
     private boolean shouldShowWorkersCompTerms() {
         if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getFees() == null
-                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0)
+                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0
+                || _translation == null || _translation.getValue() == null)
             return false;
 
         PayModifier[] fees = _workOrder.getPay().getFees();
@@ -725,7 +726,6 @@ public class WorkOrderCard extends RelativeLayout {
                 // Workers comp fee
                 if (fee.getName() != null
                         && fee.getName().equals("workers_comp")
-                        && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     _workersCompFee = fee;
                     break;
@@ -749,6 +749,10 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         return false;
+    }
+
+    private void showWorkersCompTermsDialog(final String dialogType) {
+        WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), dialogType, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
     }
 
     private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
@@ -849,10 +853,8 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
 
-            if (shouldShowWorkersCompTerms()
-                    && _translation != null && _translation.getValue() != null
-                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
-                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+            if (shouldShowWorkersCompTerms()) {
+                showWorkersCompTermsDialog(WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST);
                 return;
             }
 
@@ -867,10 +869,8 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getId());
             App.get().analActionTitle = _savedSearchTitle + " Saved Search";
 
-            if (shouldShowWorkersCompTerms()
-                    && _translation != null && _translation.getValue() != null
-                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
-                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
+            if (shouldShowWorkersCompTerms()) {
+                showWorkersCompTermsDialog(WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT);
                 return;
             }
 
