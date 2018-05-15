@@ -499,10 +499,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
     private boolean shouldShowWorkersCompTerms() {
         if (_workOrder == null || _workOrder.getPay() == null || _workOrder.getPay().getFees() == null
-                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0
-                || _translation == null || _translation.getValue() == null)
+                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0)
             return false;
-
 
         PayModifier[] fees = _workOrder.getPay().getFees();
         if (fees != null && _workOrder.getPay().getTotal() > 0) {
@@ -510,6 +508,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
                 // Workers comp fee
                 if (fee.getName() != null
                         && fee.getName().equals("workers_comp")
+                        && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     _workersCompFee = fee;
                     break;
@@ -533,10 +532,6 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         }
 
         return false;
-    }
-
-    private void showWorkersCompTermsDialog(final String dialogType) {
-        WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), dialogType, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
     }
 
     /*-*********************************************-*/
@@ -869,8 +864,8 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrderId);
 
-            if (shouldShowWorkersCompTerms()) {
-                showWorkersCompTermsDialog(WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST);
+            if (shouldShowWorkersCompTerms() && _translation != null && _workersCompFee != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_REQUEST, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
                 return;
             }
 
@@ -892,8 +887,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             WorkOrderTracker.onActionButtonEvent(
                     App.get(), WorkOrderTracker.ActionButton.CONFIRM, null, _workOrderId);
 
-            if (shouldShowWorkersCompTerms()) {
-                showWorkersCompTermsDialog(WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT);
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_ACCEPT, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
                 return;
             }
 
@@ -1131,8 +1128,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private final WodBottomSheetView.Listener _bottomsheetView_listener = new WodBottomSheetView.Listener() {
         @Override
         public void addCounterOffer() {
-            if (shouldShowWorkersCompTerms()) {
-                showWorkersCompTermsDialog(WorkersCompDialog.PARAM_DIALOG_TYPE_COUNTER_OFFER);
+            if (shouldShowWorkersCompTerms()
+                    && _translation != null && _translation.getValue() != null
+                    && _workersCompFee != null && _workersCompFee.getModifier() != null) {
+                WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), WorkersCompDialog.PARAM_DIALOG_TYPE_COUNTER_OFFER, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getAmount() * 100) + "%");
                 return;
             }
 
