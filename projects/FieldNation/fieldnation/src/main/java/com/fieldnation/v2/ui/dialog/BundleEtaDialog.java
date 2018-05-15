@@ -237,6 +237,7 @@ public class BundleEtaDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
