@@ -6321,8 +6321,7 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/workorders/lists")
-                    .urlParams("?sticky=count");
+                    .path("/api/rest/v2/workorders/lists");
 
             JsonObject methodParams = new JsonObject();
 
@@ -6355,14 +6354,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      */
     public static void getWorkOrderLists(Context context, String list, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/lists?sticky=count&list=" + list);
+            String key = misc.md5("GET//api/rest/v2/workorders/lists?list=" + list);
             String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders/lists")
-                    .urlParams("?sticky=count&list=" + list);
+                    .urlParams("?list=" + list);
 
             JsonObject methodParams = new JsonObject();
 
