@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
@@ -175,7 +176,7 @@ public class SimpleGps {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult) {
+        public void onComplete(String permission, int grantResult, Parcelable extraData) {
             if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     start(ContextProvider.get());

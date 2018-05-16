@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -541,7 +542,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult) {
+        public void onComplete(String permission, int grantResult, Parcelable extraData) {
             if (permission.equals(Manifest.permission.CAMERA)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     _scan_onClick.onClick(null);
