@@ -532,7 +532,10 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             }
         }
 
-        return false;
+        if (_workersCompFee == null)
+            return false;
+        else
+            return true;
     }
 
     private void showWorkersCompTermsDialog(final String dialogType) {

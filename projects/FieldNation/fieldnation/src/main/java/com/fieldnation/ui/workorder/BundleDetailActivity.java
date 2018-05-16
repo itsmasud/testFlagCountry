@@ -277,7 +277,10 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 }
             }
         }
-        return false;
+        if (_workersCompFee == null)
+            return false;
+        else
+            return true;
     }
 
     private void showWorkersCompTermsDialog(final int workOrderId, final String dialogType) {

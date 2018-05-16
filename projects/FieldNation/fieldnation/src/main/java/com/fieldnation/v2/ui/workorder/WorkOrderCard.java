@@ -748,7 +748,10 @@ public class WorkOrderCard extends RelativeLayout {
             }
         }
 
-        return false;
+        if (_workersCompFee == null)
+            return false;
+        else
+            return true;
     }
 
     private void showWorkersCompTermsDialog(final String dialogType) {
