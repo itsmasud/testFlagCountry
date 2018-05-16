@@ -1,6 +1,7 @@
 package com.fieldnation.fnpermissions;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
@@ -31,9 +32,10 @@ public abstract class PermissionsResponseListener extends Pigeon implements Cons
         if (address.equals(ADDRESS_COMPLETE)) {
             Bundle bundle = (Bundle) message;
             onComplete(bundle.getString("permission"),
-                    bundle.getInt("grantResult"));
+                    bundle.getInt("grantResult"),
+                    bundle.getParcelable("extraData"));
         }
     }
 
-    public abstract void onComplete(String permission, int grantResult);
+    public abstract void onComplete(String permission, int grantResult, Parcelable extras);
 }

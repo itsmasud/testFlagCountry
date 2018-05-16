@@ -560,9 +560,12 @@ public class TasksDialog extends FullScreenDialog {
         int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
             _permissionsListener.sub();
+            Bundle phoneNumber = new Bundle();
+            phoneNumber.putString("phone", _currentTask.getPhone());
             PermissionsClient.requestPermissions(
                     new String[]{Manifest.permission.CALL_PHONE},
-                    new boolean[]{false});
+                    new boolean[]{false},
+                    phoneNumber);
             return;
         }
 
@@ -611,19 +614,19 @@ public class TasksDialog extends FullScreenDialog {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult) {
-
+        public void onComplete(final String permission, final int grantResult, Parcelable extraData) {
             if (permission.equals(Manifest.permission.CALL_PHONE)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     doCallTask();
                     _permissionsListener.unsub();
                 } else {
+                    String phone = ((Bundle) extraData).getString("phone");
                     ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", _currentTask.getPhone());
+                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", phone);
                     clipboard.setPrimaryClip(clip);
 
                     ToastClient.toast(getContext(), "Couldn't call number: "
-                            + _currentTask.getPhone() + ". Permissions denied. Copied to clipboard.", Toast.LENGTH_LONG);
+                            + phone + ". Permissions denied. Copied to clipboard.", Toast.LENGTH_LONG);
                     _permissionsListener.unsub();
                 }
             }
