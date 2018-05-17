@@ -298,7 +298,9 @@ public class TasksDialog extends FullScreenDialog {
                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog, start get file"))
                     .build());
 
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
+            Bundle id = new Bundle();
+            id.putInt("id", _currentTask.getAttachments().getId());
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid, id);
         } else {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
         }
@@ -320,11 +322,13 @@ public class TasksDialog extends FullScreenDialog {
             if (fileResult == null || fileResult.size() == 0)
                 return;
 
+            int attachmentsId = ((Bundle) extraData).getInt("id");
+
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
                     PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrderId,
-                            _currentTask.getAttachments().getId(), true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                            attachmentsId, true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
                             .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
@@ -350,7 +354,7 @@ public class TasksDialog extends FullScreenDialog {
 
                 try {
                     Attachment attachment = new Attachment();
-                    attachment.folderId(_currentTask.getAttachments().getId());
+                    attachment.folderId(attachmentsId);
                     AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
