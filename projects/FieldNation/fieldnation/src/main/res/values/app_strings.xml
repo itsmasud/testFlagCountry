@@ -910,22 +910,22 @@
     </string-array>
 
     <!-- sync settings -->
-    <string name="pref_string_sync_category_title">Sync Settings</string>
+    <!--<string name="pref_string_sync_category_title">Sync Settings</string>-->
 
-    <string name="pref_key_sync_enabled">pref_key_sync_enabled</string>
-    <string name="pref_string_sync_enable_title">Enable sync</string>
-    <string name="pref_string_sync_enable_summary">Sync will download all of your data every day allowing you to access it while offline.</string>
+    <!--<string name="pref_key_sync_enabled">pref_key_sync_enabled</string>-->
+    <!--<string name="pref_string_sync_enable_title">Enable sync</string>-->
+    <!--<string name="pref_string_sync_enable_summary">Sync will download all of your data every day allowing you to access it while offline.</string>-->
 
-    <string name="pref_key_sync_start_time">pref_key_sync_start_time</string>
-    <string name="pref_string_sync_start_title">Start sync at</string>
+    <!--<string name="pref_key_sync_start_time">pref_key_sync_start_time</string>-->
+    <!--<string name="pref_string_sync_start_title">Start sync at</string>-->
 
-    <string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>
-    <string name="pref_string_sync_require_wifi_title">Only on wifi</string>
-    <string name="pref_string_sync_require_wifi_summary">Sync will only run when connected to wifi.</string>
+    <!--<string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>-->
+    <!--<string name="pref_string_sync_require_wifi_title">Only on wifi</string>-->
+    <!--<string name="pref_string_sync_require_wifi_summary">Sync will only run when connected to wifi.</string>-->
 
-    <string name="pref_key_sync_require_power">pref_key_sync_require_power</string>
-    <string name="pref_string_sync_require_power_title">Only while charging</string>
-    <string name="pref_string_sync_require_power_summary">Sync will only run while device is charging.</string>
+    <!--<string name="pref_key_sync_require_power">pref_key_sync_require_power</string>-->
+    <!--<string name="pref_string_sync_require_power_title">Only while charging</string>-->
+    <!--<string name="pref_string_sync_require_power_summary">Sync will only run while device is charging.</string>-->
 
     <!-- data settings -->
     <string name="pref_string_data_settings_category_title">Data Settings</string>

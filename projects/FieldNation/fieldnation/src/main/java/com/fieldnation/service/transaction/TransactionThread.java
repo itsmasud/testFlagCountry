@@ -371,29 +371,29 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
     }
 
-    private boolean allowSync() {
-        synchronized (SYNC_LOCK) {
-            if (_syncCheckCoolDown < System.currentTimeMillis()) {
-                //Log.v(TAG, "Running allowSync");
-                _allowSync = true;
-
-                SharedPreferences settings = App.get().getSharedPreferences();
-
-                boolean requireWifi = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_wifi), true);
-                boolean requirePower = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_power), true);
-                boolean haveWifi = App.get().haveWifi();
-
-                if (requireWifi && !haveWifi) {
-                    _allowSync = false;
-                } else {
-                    boolean pluggedIn = App.get().isCharging();
-                    if (requirePower && !pluggedIn) {
-                        _allowSync = false;
-                    }
-                }
-                _syncCheckCoolDown = System.currentTimeMillis() + 60000;
-            }
-            return _allowSync;
-        }
-    }
+//    private boolean allowSync() {
+//        synchronized (SYNC_LOCK) {
+//            if (_syncCheckCoolDown < System.currentTimeMillis()) {
+//                //Log.v(TAG, "Running allowSync");
+//                _allowSync = true;
+//
+//                SharedPreferences settings = App.get().getSharedPreferences();
+//
+//                boolean requireWifi = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_wifi), true);
+//                boolean requirePower = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_power), true);
+//                boolean haveWifi = App.get().haveWifi();
+//
+//                if (requireWifi && !haveWifi) {
+//                    _allowSync = false;
+//                } else {
+//                    boolean pluggedIn = App.get().isCharging();
+//                    if (requirePower && !pluggedIn) {
+//                        _allowSync = false;
+//                    }
+//                }
+//                _syncCheckCoolDown = System.currentTimeMillis() + 60000;
+//            }
+//            return _allowSync;
+//        }
+//    }
 }
