@@ -11,32 +11,32 @@
             android:title="@string/pref_string_workorder_card_location_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_string_sync_category_title">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="@string/pref_key_sync_enabled"
-            android:title="@string/pref_string_sync_enable_title" />
-        <Preference
-            android:dependency="@string/pref_key_sync_enabled"
-            android:summary="@string/pref_string_sync_enable_summary" />
-        <com.fieldnation.TimePreference
-            android:defaultValue="180"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_start_time"
-            android:title="@string/pref_string_sync_start_title" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_require_wifi"
-            android:summary="@string/pref_string_sync_require_wifi_summary"
-            android:title="@string/pref_string_sync_require_wifi_title" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_require_power"
-            android:summary="@string/pref_string_sync_require_power_summary"
-            android:title="@string/pref_string_sync_require_power_title" />
-    </PreferenceCategory>
+    <!--<PreferenceCategory android:title="@string/pref_string_sync_category_title">-->
+        <!--<SwitchPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="@string/pref_key_sync_enabled"-->
+            <!--android:title="@string/pref_string_sync_enable_title" />-->
+        <!--<Preference-->
+            <!--android:dependency="@string/pref_key_sync_enabled"-->
+            <!--android:summary="@string/pref_string_sync_enable_summary" />-->
+        <!--<com.fieldnation.TimePreference-->
+            <!--android:defaultValue="180"-->
+            <!--android:dependency="@string/pref_key_sync_enabled"-->
+            <!--android:key="@string/pref_key_sync_start_time"-->
+            <!--android:title="@string/pref_string_sync_start_title" />-->
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:dependency="@string/pref_key_sync_enabled"-->
+            <!--android:key="@string/pref_key_sync_require_wifi"-->
+            <!--android:summary="@string/pref_string_sync_require_wifi_summary"-->
+            <!--android:title="@string/pref_string_sync_require_wifi_title" />-->
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="true"-->
+            <!--android:dependency="@string/pref_key_sync_enabled"-->
+            <!--android:key="@string/pref_key_sync_require_power"-->
+            <!--android:summary="@string/pref_string_sync_require_power_summary"-->
+            <!--android:title="@string/pref_string_sync_require_power_title" />-->
+    <!--</PreferenceCategory>-->
 
     <PreferenceCategory android:title="@string/pref_string_data_settings_category_title">
         <CheckBoxPreference

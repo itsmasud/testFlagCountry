@@ -23,7 +23,6 @@ import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthClient;
@@ -45,11 +44,9 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Michael Carver on 4/21/2015.
@@ -147,7 +144,7 @@ public class WebCrawlerService extends Service {
         }
 
         // we're not allowed to run, stop
-        if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && !forceRun
+        if (/*!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false) && */ !forceRun
                 && App.get().getOfflineState() != App.OfflineState.DOWNLOADING) {
             Log.v(TAG, "sync disabled, quiting");
             startActivityMonitor();
@@ -155,8 +152,8 @@ public class WebCrawlerService extends Service {
         }
 
         // schedule if sync is enabled
-        if (settings.getBoolean(getString(R.string.pref_key_sync_enabled), false))
-            scheduleNext();
+//        if (settings.getBoolean(getString(R.string.pref_key_sync_enabled), false))
+//            scheduleNext();
 
         // if already running, then return
         if (_isRunning) {
@@ -358,36 +355,36 @@ public class WebCrawlerService extends Service {
         stopSelf();
     }
 
-    private void scheduleNext() {
-        Log.v(TAG, "scheduleNext");
-        SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
-                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
-
-        // if clock is not set, set it
-        long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
-
-        Calendar cal = Calendar.getInstance();
-        if (BuildConfig.DEBUG) {
-            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
-            cal.set(Calendar.MINUTE, (int) (runTime % 60));
-        } else {
-            Random random = new Random();
-            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1)); // add 0-1 hour
-            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60)); // add 0-60 min
-        }
-
-        long nextTime = cal.getTimeInMillis();
-        if (nextTime < System.currentTimeMillis()) {
-            nextTime += 86400000;
-        }
-
-        Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CrawlerJobService.schedule(this, nextTime);
-        } else {
-            AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
-        }
-    }
+//    private void scheduleNext() {
+//        Log.v(TAG, "scheduleNext");
+//        SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
+//                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+//
+//        // if clock is not set, set it
+//        long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
+//
+//        Calendar cal = Calendar.getInstance();
+//        if (BuildConfig.DEBUG) {
+//            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
+//            cal.set(Calendar.MINUTE, (int) (runTime % 60));
+//        } else {
+//            Random random = new Random();
+//            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1)); // add 0-1 hour
+//            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60)); // add 0-60 min
+//        }
+//
+//        long nextTime = cal.getTimeInMillis();
+//        if (nextTime < System.currentTimeMillis()) {
+//            nextTime += 86400000;
+//        }
+//
+//        Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            CrawlerJobService.schedule(this, nextTime);
+//        } else {
+//            AlarmBroadcastReceiver.registerCrawlerAlarm(this, nextTime);
+//        }
+//    }
 
     private synchronized void updateDownloadProgress() {
         Log.v(TAG, "updateDownloadProgress");
