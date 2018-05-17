@@ -213,11 +213,11 @@
     <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
     <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
     <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
-    <string name="fieldnation_workers_comp_insurance_percentage">Workers Comp Insurance Fee (%1$s%%)</string>
+    <string name="fieldnation_workers_comp_insurance_percentage">Trust &amp; Safety Protection Fee (%1$s%%)</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
 
-    <string name="dialog_workers_comp_title">Review and Accept Terms</string>
+    <string name="dialog_workers_comp_title">Trust &amp; Safety Protection</string>
 
     <string name="dialog_withdraw_title">Withdraw Request?</string>
     <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
