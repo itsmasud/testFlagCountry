@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 
 import com.fieldnation.fnlog.Log;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -18,6 +19,21 @@ import java.io.InputStream;
  * Created by Michael on 3/10/2016.
  */
 public class ImageUtils {
+
+    public static String guessMimeTypeFromUri(Context context, Uri uri) throws IOException {
+        BitmapFactory.Options opt = new BitmapFactory.Options();
+        /* The doc says that if inJustDecodeBounds set to true, the decoder
+         * will return null (no bitmap), but the out... fields will still be
+         * set, allowing the caller to query the bitmap without having to
+         * allocate the memory for its pixels. */
+        opt.inJustDecodeBounds = true;
+
+        InputStream istream = context.getContentResolver().openInputStream(uri);
+        BitmapFactory.decodeStream(istream, null, opt);
+        istream.close();
+
+        return opt.outMimeType;
+    }
 
     public static Bitmap resizeBitmap(Bitmap source, int width, int height) {
         Matrix m = new Matrix();
