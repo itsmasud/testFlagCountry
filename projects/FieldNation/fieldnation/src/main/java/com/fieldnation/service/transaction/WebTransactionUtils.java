@@ -30,6 +30,9 @@ public class WebTransactionUtils {
     public static final String WEB_TRANS_KEY_PREFIX_DELETE_SIGNATURE = "%/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_WORKORDER_API = "%/api/rest/v2/workorders/";
     public static final String WEB_TRANS_KEY_PREFIX_CUSTOM_FIELD = "%/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_ADD_ATTACHMENT = "%/addAttachmentByWorkOrderAndFolder/api/rest/v2/workorders/";
+    public static final String WEB_TRANS_KEY_PREFIX_DELETE_ATTACHMENT = "%/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/";
+
 
 
     // TODO more key type will be added
