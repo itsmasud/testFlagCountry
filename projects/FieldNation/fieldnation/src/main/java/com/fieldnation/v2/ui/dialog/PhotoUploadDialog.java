@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -44,6 +45,7 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
@@ -277,6 +279,29 @@ public class PhotoUploadDialog extends FullScreenDialog {
         populateUi();
     }
 
+    private void guessExtension() {
+        if (!misc.isEmptyOrNull(_extension))
+            return;
+
+        if (_originalFileName == null)
+            return;
+
+        if (_originalFileName.contains(".")) {
+            _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
+            return;
+        }
+
+        if (_cachedUri != null) {
+            try {
+                String mimeType = ImageUtils.guessMimeTypeFromUri(App.get(), _cachedUri);
+                if (!misc.isEmptyOrNull(mimeType))
+                    _extension = "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    }
+
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
@@ -294,13 +319,12 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _originalFileName = _methodParams.getString("attachment.file.name");
                 _description = _methodParams.has("attachment.notes") ? _methodParams.getString("attachment.notes") : "";
                 _workOrderId = _methodParams.getInt("workOrderId");
-                if (_originalFileName.contains(".")) {
-                    _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
-                }
 
                 StoredObject so = StoredObject.get(App.get(), _methodParams.getLong("storedObjectId"));
                 _sourceUri = _cachedUri = so.getUri();
                 _cacheSize = so.size();
+
+                guessExtension();
 
                 if (_cacheSize > 100000000) {
                     ToastClient.toast(App.get(), "File is over 100mb limit. Cannot upload.", Toast.LENGTH_SHORT);
@@ -322,9 +346,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             _mode = MODE_NORMAL;
             _originalFileName = payload.getString("fileName");
             _workOrderId = payload.getInt("workOrderId");
-            if (_originalFileName.contains(".")) {
-                _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
-            }
+            guessExtension();
 
             _isTask = payload.getBoolean("isTask");
             _folderId = payload.getInt("folderId");
@@ -659,7 +681,16 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             try {
                 File f = new File(_cachedUri.getPath());
-                intent.setDataAndType(App.getUriFromFile(f), MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1)));
+                String mimeType = null;
+                if (_extension != null)
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1));
+
+                if (mimeType == null) {
+                    ToastClient.toast(App.get(), "Can't show the preview. ", Toast.LENGTH_SHORT);
+                    return;
+                }
+
+                intent.setDataAndType(App.getUriFromFile(f), mimeType);
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             } catch (Exception ex) {
@@ -693,6 +724,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             _cacheSize = size;
             _cachedUri = uri;
+            guessExtension();
             try {
                 setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
             } catch (Exception ex) {
