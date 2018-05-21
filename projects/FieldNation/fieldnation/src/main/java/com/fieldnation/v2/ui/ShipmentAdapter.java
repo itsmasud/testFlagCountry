@@ -60,8 +60,6 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
         } else {
             _runAgain = true;
         }
-        rebuild();
-
     }
 
     public void setListener(Listener listener) {
@@ -160,7 +158,7 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
         @Override
         public void onComplete() {
             _running--;
-            if (_running == 0) rebuild();
+            if (_running <= 0) rebuild();
         }
     };
     private final WebTransactionUtils.Listener _addShipment = new WebTransactionUtils.Listener() {
@@ -178,7 +176,7 @@ public class ShipmentAdapter extends RecyclerView.Adapter<ShipmentViewHolder> {
         @Override
         public void onComplete() {
             _running--;
-            if (_running == 0) rebuild();
+            if (_running <= 0) rebuild();
         }
     };
 
