@@ -27,7 +27,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     // Data
     private WorkOrder _workOrder;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
@@ -54,6 +54,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         _renderers.add((WorkOrderRenderer) findViewById(R.id.bonus_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.insurance_summary_view));
         _renderers.add((WorkOrderRenderer) findViewById(R.id.fnServiceFeeSummaryView));
+        _renderers.add((WorkOrderRenderer) findViewById(R.id.workers_comp_summary_view));
 
         setVisibility(View.GONE);
     }

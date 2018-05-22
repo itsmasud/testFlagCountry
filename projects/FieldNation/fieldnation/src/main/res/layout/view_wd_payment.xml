@@ -33,4 +33,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:visibility="visible" />
+
+    <com.fieldnation.v2.ui.workorder.WorkersCompSummaryView
+        android:id="@+id/workers_comp_summary_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible" />
 </LinearLayout>
