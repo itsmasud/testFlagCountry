@@ -89,7 +89,7 @@
     <color name="fn_accent_color_dark">#FF1A78C2</color>
 
     <!--<color name="fn_accent_color">#FF3FD4AD</color>-->
-    <!--<color name="fn_accent_color_medium">#FF37ba98</color>-->
+    <color name="fn_success">#FF37ba98</color>
     <!--<color name="fn_accent_color_80">#CC3FD4AD</color>-->
     <!--<color name="fn_accent_color_50">#803FD4AD</color>-->
     <!--<color name="fn_accent_color_40">#663FD4AD</color>-->

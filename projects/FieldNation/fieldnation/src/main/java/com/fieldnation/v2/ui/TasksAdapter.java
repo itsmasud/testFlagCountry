@@ -323,7 +323,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
             case TYPE_HEADER_COMPLETE: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 view.setTitle((String) dataHolders.get(position).object);
-                view.setIcon(App.get().getResources().getString(R.string.icon_checkmark), ContextCompat.getColor(App.get(), R.color.fn_accent_color_medium));
+                view.setIcon(App.get().getResources().getString(R.string.icon_checkmark), ContextCompat.getColor(App.get(), R.color.fn_success));
                 break;
             }
             case TYPE_TASK: {
