@@ -199,7 +199,7 @@ public class TasksAdapter extends RecyclerView.Adapter<TaskViewHolder> {
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
-                    incompleteTasks.add(task);
+                    completeTasks.add(task);
                 }
             } else {
                 incompleteTasks.add(task);
