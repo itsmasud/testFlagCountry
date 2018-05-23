@@ -266,6 +266,7 @@ public class EtaDialog extends FullScreenDialog {
         outState.putSerializable("etaStart", _etaStart);
         outState.putBoolean("isDateSet", _isDateSet);
         outState.putBoolean("isTimeSet", _isTimeSet);
+        outState.putBoolean("isDirty", _isDirty);
 
         super.onSaveDialogState(outState);
     }
@@ -293,6 +294,8 @@ public class EtaDialog extends FullScreenDialog {
             _isDateSet = savedState.getBoolean("isDateSet");
         if (savedState.containsKey("isTimeSet"))
             _isTimeSet = savedState.getBoolean("isTimeSet");
+        if (savedState.containsKey("isDirty"))
+            _isDirty = savedState.getBoolean("isDirty");
 
         super.onRestoreDialogState(savedState);
 
