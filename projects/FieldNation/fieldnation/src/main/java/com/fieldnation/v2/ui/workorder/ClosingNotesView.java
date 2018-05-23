@@ -81,6 +81,7 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
 
     private void searchWebTransaction() {
         if (_workOrder == null) return;
+        _webTransaction = null;
         WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrder.getId());
     }
 
@@ -130,6 +131,10 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
         @Override
         public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
             _webTransaction = webTransaction;
+        }
+
+        @Override
+        public void onComplete() {
             populateUi();
         }
     };
