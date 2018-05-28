@@ -96,6 +96,12 @@ public class ResolveProblemDialog extends FullScreenDialog {
             _resolveButton.setEnabled(false);
         }
 
+        if (_problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)
+                && (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING)) {
+            _resolveButton.setTextColor(getContext().getResources().getColor(R.color.fn_white_text_30));
+        }
+
         super.show(params, animate);
     }
 
@@ -118,19 +124,26 @@ public class ResolveProblemDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_resolve_onClick");
-            try {
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Resolve Problem Dialog";
 
-                Problem problem = new Problem()
-                        .id(_problem.getId())
-                        .resolution(new ProblemResolution()
-                                .status(ProblemResolution.StatusEnum.RESOLVED));
+            if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                    && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                try {
+                    SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                    uiContext.page += " - Resolve Problem Dialog";
 
-                WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), problem, uiContext);
-                _refreshView.startRefreshing();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+                    Problem problem = new Problem()
+                            .id(_problem.getId())
+                            .resolution(new ProblemResolution()
+                                    .status(ProblemResolution.StatusEnum.RESOLVED));
+                    WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), problem, uiContext);
+                    _refreshView.startRefreshing();
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else {
+                TwoButtonDialog.show(App.get(), null, v.getContext().getResources().getString(R.string.not_available),
+                        v.getContext().getResources().getString(R.string.not_available_body_text),
+                        v.getContext().getResources().getString(R.string.btn_close), null, true, null);
             }
         }
     };
