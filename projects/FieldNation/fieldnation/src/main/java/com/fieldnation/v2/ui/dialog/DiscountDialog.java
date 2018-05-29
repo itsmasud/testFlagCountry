@@ -142,7 +142,8 @@ public class DiscountDialog extends SimpleDialog {
             if (App.get().getOfflineState() != App.OfflineState.OFFLINE
                     && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
                 AppMessagingClient.setLoading(true);
-            }        }
+            }
+        }
     };
 
     private final View.OnClickListener _cancelButton_onClick = new ApatheticOnClickListener() {
