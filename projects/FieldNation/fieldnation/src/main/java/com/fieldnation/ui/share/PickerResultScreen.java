@@ -180,7 +180,7 @@ public class PickerResultScreen extends RelativeLayout {
         if (_envelope == null || page <= _envelope.getPages() || page <= 1) {
             _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
 
-            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, WebTransaction.Type.NORMAL);
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, true, WebTransaction.Type.NORMAL);
 
             if (_refreshView != null)
                 _refreshView.startRefreshing();

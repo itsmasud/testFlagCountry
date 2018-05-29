@@ -497,7 +497,7 @@ public class WebCrawlerService extends Service {
                         incRequestCounter(1);
                         // only run on assigned work
                         if (list.getId().equals("workorders_assignments"))
-                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, WebTransaction.Type.CRAWLER);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, false, WebTransaction.Type.CRAWLER);
                     }
 
                 } else if (successObject != null && methodName.equals("getWorkOrders")) {
@@ -531,7 +531,7 @@ public class WebCrawlerService extends Service {
                         for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
                             incrementPendingRequestCounter(1);
                             incRequestCounter(1);
-                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, WebTransaction.Type.CRAWLER);
+                            WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), true, false, WebTransaction.Type.CRAWLER);
                         }
                     }
 
