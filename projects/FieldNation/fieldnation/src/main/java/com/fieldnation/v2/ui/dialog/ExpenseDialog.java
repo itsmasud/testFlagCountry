@@ -253,8 +253,10 @@ public class ExpenseDialog extends FullScreenDialog {
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
-                AppMessagingClient.setLoading(true);
-            }
+                if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                        && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                    AppMessagingClient.setLoading(true);
+                }            }
 
             ExpenseDialog.this.dismiss(true);
             return true;
