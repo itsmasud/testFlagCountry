@@ -1,7 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +77,9 @@ public class ResolveProblemDialog extends FullScreenDialog {
 
         _resolveButton = ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton();
         _resolveButton.setOnClickListener(_resolve_onClick);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+
     }
 
     @Override
@@ -83,9 +90,22 @@ public class ResolveProblemDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+        super.onStop();
+    }
+
+    @Override
     public void show(Bundle params, boolean animate) {
         _problem = params.getParcelable("problem");
         _workOrderId = params.getInt("workOrderId");
+
+        populateUi();
+
+        super.show(params, animate);
+    }
+
+    private void populateUi() {
 
         _titleTextView.setText(_problem.getType().getName());
         _commentsTextView.setText(_problem.getComments());
@@ -100,9 +120,10 @@ public class ResolveProblemDialog extends FullScreenDialog {
                 && (App.get().getOfflineState() == App.OfflineState.OFFLINE
                 || App.get().getOfflineState() == App.OfflineState.UPLOADING)) {
             _resolveButton.setTextColor(getContext().getResources().getColor(R.color.fn_white_text_30));
+        } else {
+            _resolveButton.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
         }
 
-        super.show(params, animate);
     }
 
     @Override
@@ -145,6 +166,13 @@ public class ResolveProblemDialog extends FullScreenDialog {
                         v.getContext().getResources().getString(R.string.not_available_body_text),
                         v.getContext().getResources().getString(R.string.btn_close), null, true, null);
             }
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            populateUi();
         }
     };
 
