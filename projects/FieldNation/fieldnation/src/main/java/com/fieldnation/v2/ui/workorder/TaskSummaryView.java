@@ -152,7 +152,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
             }
 
             if (task.getStatus().equals(Task.StatusEnum.COMPLETE)
-                    || _transactionBundleLookupTable.containsKey(TasksAdapter.getTransBundleKey(task))) {
+                    || (!misc.isEmptyOrNull(TasksAdapter.getTransBundleKey(task)) && _transactionBundleLookupTable.containsKey(TasksAdapter.getTransBundleKey(task)))) {
                 group.completed++;
             }
             group.total++;

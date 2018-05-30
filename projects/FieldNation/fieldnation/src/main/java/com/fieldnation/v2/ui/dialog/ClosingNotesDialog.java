@@ -146,14 +146,17 @@ public class ClosingNotesDialog extends SimpleDialog {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Closing Notes Dialog";
 
-                AppMessagingClient.setLoading(true);
                 WorkordersWebApi.updateClosingNotes(App.get(), _workOrderId, _editText.getText().toString(), uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            AppMessagingClient.setLoading(true);
+
+            if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                    && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                AppMessagingClient.setLoading(true);
+            }
 
             dismiss(true);
         }
