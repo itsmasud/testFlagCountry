@@ -239,48 +239,59 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     }
 
     private boolean shouldShowWorkersCompTerms() {
-
         if (_workOrders == null || _workOrders.getResults() == null || _workOrders.getResults().length == 0)
             return false;
 
-        WorkOrder workOrder = _workOrders.getResults()[0];
-
-        if (workOrder == null || workOrder.getPay() == null || workOrder.getPay().getFees() == null
-                || App.getUser() == null || App.getUser().getPreferences() == null || App.getUser().getPreferences().getResults() == null || App.getUser().getPreferences().getResults().length == 0
-                || _translation == null || _translation.getValue() == null)
+        // check user/system data. If we don't have it, then don't show
+        if (App.getUser() == null
+                || App.getUser().getPreferences() == null
+                || App.getUser().getPreferences().getResults() == null
+                || App.getUser().getPreferences().getResults().length == 0
+                || _translation == null
+                || _translation.getValue() == null)
             return false;
 
-        PayModifier[] fees = workOrder.getPay().getFees();
-        if (fees != null && workOrder.getPay().getTotal() > 0) {
-            for (PayModifier fee : fees) {
-                // Workers comp fee
-                if (fee.getName() != null
-                        && fee.getName().equals("workers_comp")
-                        && fee.getModifier() != null) {
-                    _workersCompFee = fee;
-                    break;
-                }
-            }
-        }
-
+        // check if we've accepted the terms already
         UserPreferencesResults[] preferences = App.getUser().getPreferences().getResults();
-        if (_workersCompFee != null && preferences != null) {
+        if (preferences != null) {
             for (UserPreferencesResults preference : preferences) {
                 if (preference.getName() != null
                         && preference.getName().equals("acceptedWorkersCompTerm")
                         && preference.getValue() != null) {
                     if (preference.getValue().equals("1")) {
+                        // we have, no need to check work orders
                         return false;
-                    } else {
-                        return true;
                     }
                 }
             }
         }
-        if (_workersCompFee == null)
-            return false;
-        else
-            return true;
+
+        for (WorkOrder workOrder : _workOrders.getResults()) {
+            // make sure it's a valid work order
+            if (workOrder == null
+                    || workOrder.getPay() == null
+                    || workOrder.getPay().getFees() == null)
+                continue;
+
+            // find the workers_comp fee
+            PayModifier[] fees = workOrder.getPay().getFees();
+            if (fees != null && workOrder.getPay().getTotal() > 0) {
+                for (PayModifier fee : fees) {
+                    // Workers comp fee
+                    if (fee.getName() != null
+                            && fee.getName().equals("workers_comp")
+                            && fee.getModifier() != null) {
+                        _workersCompFee = fee;
+                        break;
+                    }
+                }
+            }
+
+            if (_workersCompFee != null)
+                return true;
+        }
+        // no fee found return false
+        return false;
     }
 
     private void showWorkersCompTermsDialog(final int workOrderId, final String dialogType) {
