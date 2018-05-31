@@ -6321,7 +6321,8 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/workorders/lists");
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?sticky=count");
 
             JsonObject methodParams = new JsonObject();
 
@@ -6361,7 +6362,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders/lists")
-                    .urlParams("?list=" + list);
+                    .urlParams("?list=" + list + "&sticky=count");
 
             JsonObject methodParams = new JsonObject();
 
@@ -6432,7 +6433,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param getWorkOrdersOptions Additional optional parameters
      * @param type                 indicates that this call is low priority
      */
-    public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, WebTransaction.Type type) {
+    public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean sticky, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
                     + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
@@ -6447,7 +6448,8 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders")
-                    .urlParams("?sticky=1" + (getWorkOrdersOptions.getList() != null ? "&list=" + getWorkOrdersOptions.getList() : "")
+                    .urlParams("?sticky=" + (sticky ? "1" : "0")
+                            + (getWorkOrdersOptions.getList() != null ? "&list=" + getWorkOrdersOptions.getList() : "")
                             + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                             + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                             + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")

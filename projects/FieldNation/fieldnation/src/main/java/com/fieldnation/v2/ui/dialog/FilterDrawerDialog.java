@@ -5,6 +5,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.RightDrawerDialog;
 import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -159,7 +162,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         _otherLocationEditText.setText(_filterParams.uiLocationText);
     }
 
-    private void writeSearch() {
+    private void writeSearch(final Runnable onFinishRunnable) {
         // Run search and results page
         _filterParams.uiLocationSpinner = _locationSpinner.getSelectedItemPosition();
         _filterParams.uiDistanceSpinner = _distanceSpinner.getSelectedItemPosition();
@@ -171,6 +174,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
                 _filterParams.latitude = null;
                 _filterParams.longitude = null;
                 _filterParams.save();
+                new Handler().post(onFinishRunnable);
                 break;
             case 1: // here
                 _simpleGps.updateListener(new SimpleGps.Listener() {
@@ -180,6 +184,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
                         _filterParams.longitude = location.getLongitude();
                         _simpleGps.stop();
                         _filterParams.save();
+                        new Handler().post(onFinishRunnable);
                     }
 
                     @Override
@@ -214,12 +219,14 @@ public class FilterDrawerDialog extends RightDrawerDialog {
                             _filterParams.longitude = o.getLongitude();
                         }
                         _filterParams.save();
+                        new Handler().post(onFinishRunnable);
                     }
                 }.executeEx(_otherLocationEditText.getText().toString());
                 break;
             case 3: // Remote Work
                 _filterParams.remoteWork = true;
                 _filterParams.save();
+                new Handler().post(onFinishRunnable);
                 break;
         }
         SearchTracker.onSearch(App.get(), SearchTracker.Item.SEARCH_BAR, _filterParams);
@@ -250,9 +257,13 @@ public class FilterDrawerDialog extends RightDrawerDialog {
     private final View.OnClickListener _apply_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            writeSearch();
-            _onOkDispatcher.dispatch(getUid(), _filterParams);
-            dismiss(true);
+            writeSearch(new Runnable() {
+                @Override
+                public void run() {
+                    _onOkDispatcher.dispatch(getUid(), _filterParams);
+                    dismiss(true);
+                }
+            });
         }
     };
 

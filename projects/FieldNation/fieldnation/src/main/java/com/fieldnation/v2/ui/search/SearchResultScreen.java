@@ -196,7 +196,7 @@ public class SearchResultScreen extends RelativeLayout {
                 WorkordersWebApi.getWorkOrderLists(App.get(), _workOrdersOptions.getList(), false, WebTransaction.Type.NORMAL);
             }
 
-            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, WebTransaction.Type.NORMAL);
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, true, WebTransaction.Type.NORMAL);
 
             if (_refreshView != null)
                 _refreshView.startRefreshing();

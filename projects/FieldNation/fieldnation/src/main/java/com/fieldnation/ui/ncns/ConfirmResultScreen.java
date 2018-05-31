@@ -180,7 +180,7 @@ public class ConfirmResultScreen extends RelativeLayout {
             Log.v(TAG, "getPage.getWorkOrders");
 
             // this is locked down so that we don't have multiple pages
-            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, WebTransaction.Type.NORMAL);
+            WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), false, true, WebTransaction.Type.NORMAL);
 
             if (_refreshView != null)
                 _refreshView.startRefreshing();

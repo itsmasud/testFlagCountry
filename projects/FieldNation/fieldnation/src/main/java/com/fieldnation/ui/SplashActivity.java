@@ -164,7 +164,7 @@ public class SplashActivity extends AuthSimpleActivity {
         opts.setList("workorders_assignments");
         opts.setFFlightboardTomorrow(true);
         opts.setPage(1);
-        WorkordersWebApi.getWorkOrders(App.get(), opts, true, WebTransaction.Type.NORMAL);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, false, true, WebTransaction.Type.NORMAL);
 
         doNextStep();
     }
@@ -248,7 +248,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
         Log.v(TAG, "doNextStep 3");
 
-        if (App.getProfile().isProvider() && (_gotConfirmList || App.get().getOfflineState()== App.OfflineState.OFFLINE) && !_calledMyWork) {
+        if (App.getProfile().isProvider() && (_gotConfirmList || App.get().getOfflineState() == App.OfflineState.OFFLINE) && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
             _calledMyWork = true;
             finish();
