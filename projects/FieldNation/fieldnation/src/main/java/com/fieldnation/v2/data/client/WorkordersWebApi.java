@@ -6337,6 +6337,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .useAuth(true)
                     .setType(type)
                     .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
@@ -6377,6 +6378,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .useAuth(true)
                     .setType(type)
                     .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
@@ -6416,6 +6418,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .useAuth(true)
                     .setType(type)
                     .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
@@ -6519,6 +6522,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .useAuth(true)
                     .setType(type)
                     .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
