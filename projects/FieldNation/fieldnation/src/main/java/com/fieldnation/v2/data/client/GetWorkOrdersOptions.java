@@ -26,7 +26,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private Integer _page;
 
     @Json(name = "perPage")
-    private Integer _perPage;
+    private Integer _perPage = 25;
 
     @Json(name = "view")
     private String _view;
