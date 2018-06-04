@@ -2,14 +2,18 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +51,8 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.v2.data.client.AttachmentHelper;
@@ -57,6 +63,7 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.TaskRowView;
 import com.fieldnation.v2.ui.TaskTypeEnum;
 import com.fieldnation.v2.ui.TasksAdapter;
 
@@ -95,6 +102,7 @@ public class TasksDialog extends FullScreenDialog {
     private final TasksAdapter _adapter = new TasksAdapter();
     private Task _currentTask;
     private String _uiUUID = null;
+    private List<TaskRowView.TransactionBundle> _transactionBundles = new LinkedList<>();
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -115,6 +123,8 @@ public class TasksDialog extends FullScreenDialog {
         _list.setItemAnimator(new DefaultItemAnimator());
         _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
+        v.findViewById(R.id.refresh_view).setVisibility(View.GONE);
+
         return v;
     }
 
@@ -130,10 +140,9 @@ public class TasksDialog extends FullScreenDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-            outState.putParcelable(STATE_TASK, _currentTask);
+        outState.putParcelable(STATE_TASK, _currentTask);
         super.onSaveDialogState(outState);
     }
-
 
     @Override
     public void onStart() {
@@ -141,6 +150,8 @@ public class TasksDialog extends FullScreenDialog {
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
         TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
 
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _list.setAdapter(_adapter);
@@ -160,6 +171,7 @@ public class TasksDialog extends FullScreenDialog {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
         TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
     }
 
     @Override
@@ -168,6 +180,8 @@ public class TasksDialog extends FullScreenDialog {
 
         _workOrdersApi.sub();
         _documentClient.sub();
+
+        searchWebTransaction();
     }
 
     @Override
@@ -178,6 +192,8 @@ public class TasksDialog extends FullScreenDialog {
         _groupId = params.getString(PARAM_GROUP_ID);
         _uiUUID = params.getString("uiUUID");
 
+        searchWebTransaction();
+
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
                 .addContext(new SpTracingContext(new UUIDGroup(null, _uiUUID)))
@@ -185,10 +201,8 @@ public class TasksDialog extends FullScreenDialog {
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Tasks Dialog"))
                 .build());
 
-        populateUi();
-
         AppMessagingClient.setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -199,7 +213,7 @@ public class TasksDialog extends FullScreenDialog {
 
         _toolbar.setTitle(_dialogTitle);
 
-        _adapter.setData(_workOrder.getTasks(), _groupId);
+        _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _transactionBundles);
     }
 
     @Override
@@ -207,6 +221,19 @@ public class TasksDialog extends FullScreenDialog {
         _workOrdersApi.unsub();
         _documentClient.unsub();
         super.onPause();
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            searchWebTransaction();
+        }
+    };
+
+    private void searchWebTransaction() {
+        if (_workOrder == null) return;
+        _transactionBundles.clear();
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
     }
 
     public TaskTypeEnum getType(Task task) {
@@ -230,6 +257,7 @@ public class TasksDialog extends FullScreenDialog {
     /*-				Check In Process				-*/
     /*-*********************************************-*/
     private void doCheckin() {
+        // not in offline mode
         App.get().analActionTitle = null;
         CheckInOutDialog.show(App.get(), null, _uiUUID, _workOrder.getId(),
                 _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -239,6 +267,7 @@ public class TasksDialog extends FullScreenDialog {
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
     private void doCheckOut() {
+        // not in offline mode
         int deviceCount = -1;
 
         Pay pay = _workOrder.getPay();
@@ -269,10 +298,18 @@ public class TasksDialog extends FullScreenDialog {
                     .addContext(new SpStatusContext(SpStatusContext.Status.INFO, "Tasks Dialog, start get file"))
                     .build());
 
-            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid);
+            Bundle id = new Bundle();
+            id.putInt("id", _currentTask.getAttachments().getId());
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, uuid.uuid, id);
         } else {
             ToastClient.toast(App.get(), R.string.toast_external_storage_needed, Toast.LENGTH_LONG);
         }
+    }
+
+    private void showNotAvailableDialog() {
+        TwoButtonDialog.show(App.get(), null, getContext().getString(R.string.not_available),
+                getContext().getString(R.string.not_available_body_text),
+                getContext().getString(R.string.btn_close), null, true, null);
     }
 
     /*-*********************************-*/
@@ -280,16 +317,18 @@ public class TasksDialog extends FullScreenDialog {
     /*-*********************************-*/
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult, Parcelable extraData) {
             Log.v(TAG, "onFile");
-            if (fileResult.size() == 0)
+            if (fileResult == null || fileResult.size() == 0)
                 return;
+
+            int attachmentsId = ((Bundle) extraData).getInt("id");
 
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
                     PhotoUploadDialog.show(App.get(), null, fui.uuid, _workOrderId,
-                            _currentTask.getAttachments().getId(), true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                            attachmentsId, true, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     Tracker.event(App.get(), new CustomEvent.Builder()
                             .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
@@ -315,8 +354,8 @@ public class TasksDialog extends FullScreenDialog {
 
                 try {
                     Attachment attachment = new Attachment();
-                    attachment.folderId(_currentTask.getAttachments().getId());
-                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent);
+                    attachment.folderId(attachmentsId);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrder.getId(), attachment, fui.intent, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -350,7 +389,7 @@ public class TasksDialog extends FullScreenDialog {
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Task Shipment Add Dialog";
-            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment.getId(), uiContext);
+            WorkordersWebApi.deleteShipment(App.get(), workOrderId, shipment, uiContext);
         }
     };
 
@@ -367,7 +406,7 @@ public class TasksDialog extends FullScreenDialog {
 
     private final TasksAdapter.Listener _taskClick_listener = new TasksAdapter.Listener() {
         @Override
-        public void onTaskClick(View view, Task task) {
+        public void onTaskClick(View view, Task task, TaskRowView.TransactionBundle transactionBundle) {
             WorkOrderTracker.onTaskEvent(
                     App.get(),
                     task.getType(),
@@ -380,8 +419,12 @@ public class TasksDialog extends FullScreenDialog {
                     });
 
             switch (getType(task)) {
-
                 case SET_ETA: // set eta
+                    if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+                        showNotAvailableDialog();
+                        return;
+                    }
+
                     App.get().analActionTitle = null;
                     EtaDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(),
                             _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_ADD);
@@ -392,10 +435,18 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case CHECK_IN: // check in
+                    if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+                        showNotAvailableDialog();
+                        return;
+                    }
                     doCheckin();
                     break;
 
                 case CHECK_OUT: // check out
+                    if (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+                        showNotAvailableDialog();
+                        return;
+                    }
                     doCheckOut();
                     break;
 
@@ -417,6 +468,8 @@ public class TasksDialog extends FullScreenDialog {
                     break;
 
                 case PHONE: // phone
+                    if (transactionBundle != null)
+                        WebTransaction.delete(transactionBundle.webTransaction.getId());
                     _currentTask = task;
                     doCallTask();
                     break;
@@ -427,8 +480,10 @@ public class TasksDialog extends FullScreenDialog {
                     intent.setData(Uri.parse("mailto:" + email));
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
+                    if (transactionBundle != null)
+                        WebTransaction.delete(transactionBundle.webTransaction.getId());
                     try {
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -439,8 +494,22 @@ public class TasksDialog extends FullScreenDialog {
                         return;
 
                     try {
-                        AppMessagingClient.setLoading(true);
-                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        // Testing on wo2151
+                        List<WebTransaction> list = WebTransaction.getPaused("%/updateTaskByWorkOrder/%/workorders/" + _workOrder.getId() + "/tasks/" + task.getId());
+                        if (list != null && list.size() > 0) {
+                            Log.v(TAG, "deleting old task " + task.getId());
+                            WebTransaction.delete(list.get(0).getId());
+                        }
+
+                        if (transactionBundle != null)
+                            WebTransaction.delete(transactionBundle.webTransaction.getId());
+
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                        if (App.get().getOfflineState() == App.OfflineState.NORMAL || App.get().getOfflineState() == App.OfflineState.SYNC) {
+                            AppMessagingClient.setLoading(true);
+                        } else {
+                            _adapter.setData(_workOrderId, _workOrder.getTasks(), _groupId, _transactionBundles);
+                        }
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -471,8 +540,11 @@ public class TasksDialog extends FullScreenDialog {
                     if (attachment.getId() != null) {
                         Log.v(TAG, "attachmentid: " + attachment.getId());
                         if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                            if (transactionBundle != null)
+                                WebTransaction.delete(transactionBundle.webTransaction.getId());
+
                             try {
-                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                             } catch (Exception ex) {
                                 Log.v(TAG, ex);
                             }
@@ -484,6 +556,7 @@ public class TasksDialog extends FullScreenDialog {
                     }
                     break;
             }
+            searchWebTransaction();
         }
     };
 
@@ -491,14 +564,17 @@ public class TasksDialog extends FullScreenDialog {
         int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
             _permissionsListener.sub();
+            Bundle phoneNumber = new Bundle();
+            phoneNumber.putString("phone", _currentTask.getPhone());
             PermissionsClient.requestPermissions(
                     new String[]{Manifest.permission.CALL_PHONE},
-                    new boolean[]{false});
+                    new boolean[]{false},
+                    phoneNumber);
             return;
         }
 
         try {
-            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _currentTask.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), _currentTask, new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -542,19 +618,19 @@ public class TasksDialog extends FullScreenDialog {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult) {
-
+        public void onComplete(final String permission, final int grantResult, Parcelable extraData) {
             if (permission.equals(Manifest.permission.CALL_PHONE)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     doCallTask();
                     _permissionsListener.unsub();
                 } else {
+                    String phone = ((Bundle) extraData).getString("phone");
                     ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", _currentTask.getPhone());
+                    ClipData clip = android.content.ClipData.newPlainText("Copied Text", phone);
                     clipboard.setPrimaryClip(clip);
 
                     ToastClient.toast(getContext(), "Couldn't call number: "
-                            + _currentTask.getPhone() + ". Permissions denied. Copied to clipboard.", Toast.LENGTH_LONG);
+                            + phone + ". Permissions denied. Copied to clipboard.", Toast.LENGTH_LONG);
                     _permissionsListener.unsub();
                 }
             }
@@ -660,28 +736,25 @@ public class TasksDialog extends FullScreenDialog {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
                     _workOrder = workOrder;
+                    searchWebTransaction();
                     populateUi();
                     AppMessagingClient.setLoading(false);
                 }
 
             } else if (methodName.equals("updateTask")) {
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
                 AppMessagingClient.setLoading(true);
 
             } else if (methodName.equals("addAttachment")) {
                 try {
-                    JsonObject obj = new JsonObject(transactionParams.methodParams);
-                    String name = obj.getString("attachment.file.name");
-                    int folderId = obj.getInt("attachment.folder_id");
                     _adapter.uploadStop(transactionParams);
                     AppMessagingClient.setLoading(true);
-                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
 
             } else if (successObject != null && methodName.equals("getAttachments")) {
-//                folders = (AttachmentFolders) successObject;
                 populateUi();
                 AppMessagingClient.setLoading(false);
             }
@@ -691,12 +764,12 @@ public class TasksDialog extends FullScreenDialog {
 
     private final DocumentClient _documentClient = new DocumentClient() {
         @Override
-        public boolean processDownload(long documentId) {
+        public boolean processDownload(int documentId) {
             return true;
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state, boolean isSync) {
+        public void onDownload(int documentId, File file, int state, boolean isSync) {
             Log.v(TAG, "DocumentClient.onDownload");
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
@@ -704,6 +777,18 @@ public class TasksDialog extends FullScreenDialog {
                 return;
             }
             _adapter.downloadComplete((int) documentId);
+        }
+    };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            _transactionBundles.add(new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams));
+        }
+
+        @Override
+        public void onComplete() {
+            populateUi();
         }
     };
 
@@ -723,5 +808,4 @@ public class TasksDialog extends FullScreenDialog {
 
         Controller.show(context, uid, TasksDialog.class, params);
     }
-
 }

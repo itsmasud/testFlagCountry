@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +26,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.AttachmentHelper;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -105,7 +107,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
         _workOrderId = params.getInt("workOrderId");
         _uiUUID = params.getString("uiUUID");
-        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getAttachments(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
 
         Tracker.event(App.get(), new CustomEvent.Builder()
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(_workOrderId).build())
@@ -183,7 +185,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
 
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult, Parcelable extraData) {
             Log.v(TAG, "onFile");
             if (fileResult.size() == 0)
                 return;
@@ -219,7 +221,7 @@ public class AttachedFoldersDialog extends FullScreenDialog {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentFolderId);
-                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent);
+                    AttachmentHelper.addAttachment(App.get(), fui.uuid, _workOrderId, attachment, fui.intent, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -241,9 +243,9 @@ public class AttachedFoldersDialog extends FullScreenDialog {
     private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName) {
-                if (transactionParams.getMethodParamInt("workOrderId") == null
-                        || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
-                    return false;
+            if (transactionParams.getMethodParamInt("workOrderId") == null
+                    || transactionParams.getMethodParamInt("workOrderId") != _workOrderId)
+                return false;
 
             return methodName.toLowerCase().contains("attachment");
         }

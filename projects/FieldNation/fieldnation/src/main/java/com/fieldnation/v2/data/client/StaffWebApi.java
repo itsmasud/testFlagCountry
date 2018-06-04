@@ -50,12 +50,12 @@ public abstract class StaffWebApi extends Pigeon {
      * Swagger operationId: getEmailTemplates
      * Get email templates by category.
      *
-     * @param category     email category
-     * @param isBackground indicates that this call is low priority
+     * @param category email category
+     * @param type     indicates that this call is low priority
      */
-    public static void getEmailTemplates(Context context, String category, boolean allowCacheResponse, boolean isBackground) {
+    public static void getEmailTemplates(Context context, String category, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/staff/email-templates/category/" + category + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/staff/email-templates/category/" + category);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -74,7 +74,7 @@ public abstract class StaffWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/StaffWebApi",
                                     StaffWebApi.class, "getEmailTemplates", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -91,11 +91,11 @@ public abstract class StaffWebApi extends Pigeon {
      * Swagger operationId: getRobocalls
      * Get robocalls
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getRobocalls(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getRobocalls(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/staff/robocalls" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/staff/robocalls");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -113,7 +113,7 @@ public abstract class StaffWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/StaffWebApi",
                                     StaffWebApi.class, "getRobocalls", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

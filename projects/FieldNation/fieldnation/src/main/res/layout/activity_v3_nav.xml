@@ -52,6 +52,12 @@
                     android:paddingRight="4dp"
                     android:text="@string/icon_arrow_down" />
             </android.support.v7.widget.Toolbar>
+
+            <com.fieldnation.v2.ui.OfflineTextView
+                android:id="@+id/offline_bar_textview"
+                style="@style/Text_Subhead_Offline"
+                android:layout_below="@+id/toolbar" />
+
         </android.support.design.widget.AppBarLayout>
 
         <com.fieldnation.fndialog.DialogManager

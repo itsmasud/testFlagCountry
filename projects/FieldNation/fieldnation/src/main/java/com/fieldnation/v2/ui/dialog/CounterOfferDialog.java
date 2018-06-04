@@ -40,6 +40,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.IconFontTextView;
@@ -345,7 +346,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         _workOrderId = payload.getInt("workOrderId");
         _isReadOnly = payload.getBoolean("readonly");
 
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
 
         populateUi();
     }

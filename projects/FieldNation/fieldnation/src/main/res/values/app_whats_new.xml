@@ -3,18 +3,30 @@
     <string name="added_new_feature">
 &lt;b&gt;What\'s new with Field Nation&lt;/b&gt;&lt;br/&gt;
 &lt;br/&gt;
-Our work order sync setting is now available for all phones with supported Android versions including Android O.
+We\'re updating the way we contact you about available work that may help you expand your skills: &lt;a href=\"http://go.fieldnation.com/work-order-notification-update\"&gt;http://go.fieldnation.com/work-order-notification-update&lt;/a&gt;
 &lt;br/&gt;
 &lt;br/&gt;
 
 &lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Work order sync setting support for Android O&lt;/li&gt;
+&lt;li&gt;User enabled offline mode. Allowing you to continue working when you know there will be no network connection.&lt;/li&gt;
+&lt;li&gt;The ability to remove an assignment outside of the confirmation window&lt;/li&gt;
+&lt;li&gt;Automatic photo compression with an opt-in to upload full resolution&lt;/li&gt;
+&lt;li&gt;Display of Trust &amp; Safety Protection&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;b&gt;What we changed:&lt;/b&gt;
+&lt;ul&gt;
+&lt;li&gt;Work order syncing can no longer be scheduled overnight&lt;/li&gt;
+&lt;li&gt;Work orders will be synced when using offline mode&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Work order sync setting not working on older Android versions&lt;/li&gt;
+&lt;li&gt;App crashing when tapping on payments&lt;/li&gt;
+&lt;li&gt;Inaccuracy of work order list counts&lt;/li&gt;
+&lt;li&gt;Photo uploads and tasks related crashes&lt;/li&gt;
+&lt;li&gt;MP3 and PDF deliverable preview crashes&lt;/li&gt;
 &lt;/ul&gt;
 </string>
 </resources>

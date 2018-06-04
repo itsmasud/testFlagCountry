@@ -5,6 +5,7 @@ package com.fieldnation.service.transaction;
  */
 interface WebTransactionConstants {
     String PARAM_ID = "PARAM_ID";
+    String PARAM_CREATED_TIME = "CREATED_TIME";
     String PARAM_LISTENER_NAME = "PARAM_LISTENER_NAME";
     String PARAM_LISTENER_PARAMS = "PARAM_LISTENER_PARAMS";
     String PARAM_USE_AUTH = "PARAM_USE_AUTH";
@@ -13,7 +14,7 @@ interface WebTransactionConstants {
     String PARAM_REQUEST = "PARAM_REQUEST";
     String PARAM_KEY = "PARAM_KEY";
     String PARAM_TRANSFORM_LIST = "PARAM_TRANSFORM_LIST";
-    String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+    String PARAM_TYPE = "PARAM_TYPE";
     String PARAM_QUEUE_TIME = "PARAM_QUEUE_TIME";
     String PARAM_TRY_COUNT = "PARAM_TRY_COUNT";
     String PARAM_MAX_TRIES = "PARAM_MAX_TRIES";
@@ -23,6 +24,7 @@ interface WebTransactionConstants {
     String PARAM_TIMING_KEY = "timingKey";
     String PARAM_ZOMBIE = "wasZombie";
     String PARAM_UUID = "uuid";
+    String PARAM_SEQUENTIAL = "sequential";
 
     String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";
     String PARAM_NOTIFICATION_START = "PARAM_NOTIFICATION_START";

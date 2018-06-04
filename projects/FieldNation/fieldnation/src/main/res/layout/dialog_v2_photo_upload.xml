@@ -14,6 +14,10 @@
         android:theme="@style/FieldNation.Material.ToolBar"
         app:layout_scrollFlags="scroll|enterAlways" />
 
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -114,6 +118,37 @@
                     android:inputType="text"
                     android:singleLine="true" />
             </android.support.design.widget.TextInputLayout>
+
+            <RelativeLayout
+                android:id="@+id/switch_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/description_textInputLayout"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/fn_menu_bg"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/switchLabel_textview"
+                    style="@style/Text_Subhead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:text="Upload full resolution" />
+
+                <Switch
+                    android:id="@+id/fullrez_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="16dp"
+                    android:text="" />
+
+            </RelativeLayout>
+
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>

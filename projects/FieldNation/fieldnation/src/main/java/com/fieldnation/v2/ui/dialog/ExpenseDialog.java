@@ -52,7 +52,6 @@ public class ExpenseDialog extends FullScreenDialog {
     private LinearLayout _categoryLayout;
 
     // Data
-    private ExpenseCategory[] _categories;
     private HintArrayAdapter _adapter;
     private InputMethodManager _imm;
     private boolean _showCategories = true;
@@ -151,7 +150,6 @@ public class ExpenseDialog extends FullScreenDialog {
 
     private void setCategories(ExpenseCategory[] categories) {
         try {
-            _categories = categories;
             _adapter = HintArrayAdapter.createFromArray(getView().getContext(), categories,
                     R.layout.view_spinner_item);
 
@@ -255,7 +253,10 @@ public class ExpenseDialog extends FullScreenDialog {
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
-                AppMessagingClient.setLoading(true);
+                if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                        && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                    AppMessagingClient.setLoading(true);
+                }
             }
 
             ExpenseDialog.this.dismiss(true);

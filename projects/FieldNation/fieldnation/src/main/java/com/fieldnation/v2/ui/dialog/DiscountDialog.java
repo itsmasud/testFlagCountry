@@ -92,7 +92,7 @@ public class DiscountDialog extends SimpleDialog {
         }
     }
 
-	/*-*********************************-*/
+    /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
 
@@ -130,6 +130,7 @@ public class DiscountDialog extends SimpleDialog {
                 PayModifier discount = new PayModifier();
                 discount.setAmount(getAmount());
                 discount.setDescription(getDescription());
+                discount.setName(getDescription());
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Discount Dialog";
@@ -138,7 +139,10 @@ public class DiscountDialog extends SimpleDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            AppMessagingClient.setLoading(true);
+            if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                    && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                AppMessagingClient.setLoading(true);
+            }
         }
     };
 

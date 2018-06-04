@@ -18,10 +18,13 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.listener.TransactionParams;
 
 public class ClosingNotesDialog extends SimpleDialog {
     private static final String TAG = "ClosingNotesDialog";
@@ -37,6 +40,9 @@ public class ClosingNotesDialog extends SimpleDialog {
     // Data
     private String _notes;
     private int _workOrderId;
+
+    private WebTransaction _webTransaction = null;
+
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -65,6 +71,12 @@ public class ClosingNotesDialog extends SimpleDialog {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
+    }
+
+    @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
 
@@ -73,6 +85,10 @@ public class ClosingNotesDialog extends SimpleDialog {
 
         if (!misc.isEmptyOrNull(_notes))
             _editText.setText(_notes);
+
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.CLOSING_NOTES, _workOrderId);
+
+        populateUi();
     }
 
     @Override
@@ -91,6 +107,18 @@ public class ClosingNotesDialog extends SimpleDialog {
             outState.putString(STATE_NOTES, _notes);
         }
     }
+
+    private void populateUi() {
+        if (_webTransaction == null)
+            return;
+
+        if (_editText == null)
+            return;
+
+        final String offlineNotes = WebTransactionUtils.getOfflineClosingNotes(_webTransaction);
+        _editText.setText(offlineNotes);
+    }
+
 
     /*-*************************-*/
     /*-			Events			-*/
@@ -111,21 +139,24 @@ public class ClosingNotesDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                WorkOrder workOrder = new WorkOrder();
-                workOrder.closingNotes(_editText.getText().toString());
+            if (_webTransaction != null)
+                WebTransaction.delete(_webTransaction.getId());
 
+            try {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Closing Notes Dialog";
 
-                AppMessagingClient.setLoading(true);
-                WorkordersWebApi.updateWorkOrder(App.get(), _workOrderId, workOrder, uiContext);
+                WorkordersWebApi.updateClosingNotes(App.get(), _workOrderId, _editText.getText().toString(), uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrderId);
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            AppMessagingClient.setLoading(true);
+
+            if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                    && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                AppMessagingClient.setLoading(true);
+            }
 
             dismiss(true);
         }
@@ -135,6 +166,14 @@ public class ClosingNotesDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+        }
+    };
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            _webTransaction = webTransaction;
+            populateUi();
         }
     };
 

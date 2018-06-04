@@ -8,7 +8,7 @@
         android:id="@+id/items_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/button_toolbar" />
+        android:layout_below="@+id/offline_bar_textview" />
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"
@@ -35,7 +35,7 @@
         android:orientation="horizontal"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <Button
             android:id="@+id/notInterested_button"
@@ -58,6 +58,10 @@
             android:visibility="visible" />
     </LinearLayout>
 
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
+        android:layout_below="@+id/button_toolbar" />
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"

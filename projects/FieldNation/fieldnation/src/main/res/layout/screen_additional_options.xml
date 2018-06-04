@@ -13,11 +13,90 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:id="@+id/offline_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/switchLabel_textview"
+                        style="@style/OptionsMenuTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="Offline Mode" />
+
+                    <Switch
+                        android:id="@+id/offline_switch"
+                        style="@style/OptionsMenuTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="16dp"
+                        android:text="" />
+
+                </RelativeLayout>
+
+                <View style="@style/DividerFull" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/unsynced_menu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/offline_menu"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/title_textview"
+                        style="@style/OptionsMenuTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:text="Unsynced Activity"
+                        android:textColor="@color/fn_dark_text" />
+
+                    <TextView
+                        android:id="@+id/unsyncedCount_textview"
+                        style="@style/Text_Body_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_below="@+id/upper_divider"
+                        android:layout_marginRight="24dp"
+                        android:background="@drawable/round_rect_red"
+                        android:gravity="center"
+                        android:paddingBottom="2dp"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:paddingTop="2dp"
+                        android:text="3"
+                        android:textColor="@color/fn_white_text" />
+
+                </RelativeLayout>
+
+                <View style="@style/DividerFull" />
+            </LinearLayout>
+
             <TextView
                 android:id="@+id/options_textview"
                 style="@style/OptionsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/unsynced_menu"
                 android:text="@string/account" />
 
             <View

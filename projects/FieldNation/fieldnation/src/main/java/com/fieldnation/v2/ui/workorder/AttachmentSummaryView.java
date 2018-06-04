@@ -1,6 +1,10 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,8 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.AttachedFilesDialog;
@@ -58,6 +64,33 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         populateUi();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String op = intent.getStringExtra("op");
+            if (intent.hasExtra("key")) {
+                String key = intent.getStringExtra("key");
+                if (key == null || key.contains("addAttachmentByWorkOrderAndFolder") || key.contains("deleteAttachmentByWorkOrderAndFolderAndAttachment"))
+                    populateUi();
+            } else if (op.equals("delete") || op.equals("deleteAll")) {
+                populateUi();
+            }
+        }
+    };
+
+
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
@@ -75,6 +108,10 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         if (_countTextView == null)
             return;
 
+        int addSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_ATTACHMENT + _workOrder.getId() + "/%").size();
+        int delSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_ATTACHMENT + _workOrder.getId() + "/%").size();
+
+
         int count = 0;
         boolean canModify = false;
 
@@ -86,11 +123,13 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
             count += ob.getResults().length;
         }
 
-        if (!canModify && count == 0) {
+        int total = count + addSize - delSize;
+
+        if (!canModify && total == 0) {
             setVisibility(GONE);
         } else {
             setVisibility(VISIBLE);
-            _countTextView.setText(String.valueOf(count));
+            _countTextView.setText(String.valueOf(total));
         }
     }
 

@@ -190,7 +190,7 @@ public class NestedScrollView extends android.support.v4.widget.NestedScrollView
 
             int actionBarHeight = 0;
             TypedValue tv = new TypedValue();
-            if (((Activity) getContext()).getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            if (getContext().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
                 actionBarHeight = TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics());
             }
 

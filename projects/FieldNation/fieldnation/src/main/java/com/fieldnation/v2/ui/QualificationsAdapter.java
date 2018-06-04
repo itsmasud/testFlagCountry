@@ -123,7 +123,7 @@ public class QualificationsAdapter extends RecyclerView.Adapter<QualificationsVi
             case TYPE_MATCHED_GROUP: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 view.setTitle((String) dataHolders.get(position).object, Gravity.LEFT, ContextCompat.getColor(App.get(), R.color.fn_light_text_80));
-                view.setIcon(App.get().getResources().getString(R.string.icon_checkmark), ContextCompat.getColor(App.get(), R.color.fn_accent_color_medium));
+                view.setIcon(App.get().getResources().getString(R.string.icon_checkmark), ContextCompat.getColor(App.get(), R.color.fn_success));
                 break;
             }
 

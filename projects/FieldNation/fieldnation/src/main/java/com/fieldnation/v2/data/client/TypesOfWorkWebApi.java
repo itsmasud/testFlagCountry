@@ -46,11 +46,11 @@ public abstract class TypesOfWorkWebApi extends Pigeon {
      * Swagger operationId: getTypesOfWork
      * Gets a list of type of work
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getTypesOfWork(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTypesOfWork(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/types-of-work" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/types-of-work");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -68,7 +68,7 @@ public abstract class TypesOfWorkWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/TypesOfWorkWebApi",
                                     TypesOfWorkWebApi.class, "getTypesOfWork", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 

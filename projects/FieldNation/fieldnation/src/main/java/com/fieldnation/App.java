@@ -3,6 +3,7 @@ package com.fieldnation;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -47,6 +49,7 @@ import com.fieldnation.gcm.RegClient;
 import com.fieldnation.service.auth.AuthClient;
 import com.fieldnation.service.auth.AuthSystem;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.photo.PhotoConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -55,9 +58,11 @@ import com.fieldnation.service.profileimage.ProfilePhotoConstants;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
 import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.User;
 import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -92,6 +97,7 @@ public class App extends Application {
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
     public static final String PREF_CONFIRMATION_REMIND_EXPIRE = "PREF_CONFIRMATION_REMIND_EXPIRE";
     public static final String PREF_LAST_VISITED_WOL = "PREF_LAST_VISITED_WOL";
+    public static final String PREF_OFFLINE_STATE = "PREF_OFFLINE_STATE";
 
     private static App _context;
 
@@ -103,6 +109,7 @@ public class App extends Application {
     public String deviceToken = null;
     private boolean _isConnected = false;
     private OAuth _auth = null;
+    private User _user = null;
     private boolean _hasInteracted = false;
 
     // UI context hack
@@ -113,6 +120,10 @@ public class App extends Application {
     private static final int THRESHOLD_FREE_MB = 5;
 
     public static final SecureRandom secureRandom = new SecureRandom();
+
+    public enum OfflineState {
+        NORMAL, DOWNLOADING, OFFLINE, SYNC, UPLOADING
+    }
 
     static {
         Log.setRoller(new DebugLogRoller());
@@ -226,6 +237,7 @@ public class App extends Application {
         _appMessagingClient.subProfileInvalid();
         _appMessagingClient.subNetworkConnect();
         _appMessagingClient.subNetworkState();
+        _appMessagingClient.subOfflineMode();
 
         _profileClient.subGet();
         _profileClient.subSwitchUser();
@@ -246,12 +258,36 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
-        // new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+        new Thread(_pausedTest).start(); // easy way to pause the app and run db queries. for debug only!
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                fillDisk();
+//                Log.v(TAG, "FillDisk done");
+//            }
+//        }).start();
 
         NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
 
         new DataPurgeAsync().run(this, null);
+
+        registerReceiver(broadcastReceiver, new IntentFilter(
+                WebCrawlerService.BROADCAST_ACTION));
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateProgressOfflineMode(intent);
+        }
+    };
+
+    private void updateProgressOfflineMode(Intent intent) {
+        Bundle bundle = intent.getBundleExtra(WebCrawlerService.UPDATE_OFFLINE_MODE);
+
+        Log.v(TAG, "Total assigned wos: " + bundle.get(WebCrawlerService.TOTAL_ASSIGNED_WOS));
+        Log.v(TAG, "Total left downloading wos: " + bundle.get(WebCrawlerService.TOTAL_LEFT_DOWNLOADING));
     }
 
     private Runnable _anrReport = new Runnable() {
@@ -272,7 +308,14 @@ public class App extends Application {
         @Override
         public void run() {
             while (true) {
-                Log.v(TAG, "PAUSED CHECK " + (WebTransaction.getPaused(true).size() + WebTransaction.getPaused(false).size()));
+/*
+                Log.v(TAG, "PAUSED CHECK " + WebTransaction.getPaused().size());
+                Log.v(TAG, "OFFLINE: " + getOfflineState().name());
+                File f = new File(getStoragePath());
+                Log.v(TAG, "Size T:" + misc.humanReadableBytes(f.getTotalSpace())
+                        + " F:" + misc.humanReadableBytes(f.getFreeSpace())
+                        + " U:" + misc.humanReadableBytes(f.getUsableSpace()));
+*/
                 try {
                     Thread.sleep(2000);
                 } catch (Exception ex) {
@@ -281,6 +324,33 @@ public class App extends Application {
             }
         }
     };
+
+    private void fillDisk() {
+        byte[] packet = new byte[1024 * 1024];
+
+        File folder = new File(getStoragePath());
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(getDownloadsFolder() + "/filler.dat", true);
+            while (folder.getUsableSpace() > 70000000) {
+                fos.write(packet);
+                fos.flush();
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        } finally {
+            if (fos != null)
+                try {
+                    fos.close();
+                } catch (Exception ex1) {
+                    Log.v(TAG, ex1);
+                }
+        }
+    }
+
+    public boolean isDiskFull() {
+        return new File(App.get().getStoragePath()).getUsableSpace() <= 50000000;
+    }
 
     private SharedPreferences _userPreferences = null;
 
@@ -348,6 +418,22 @@ public class App extends Application {
     private void setAuth(OAuth auth) {
         synchronized (STAG) {
             _auth = auth;
+            if (auth == null)
+                setUser(null);
+            else setUser(auth.getUser());
+        }
+    }
+
+    /*-**********************-*/
+    /*-     User context     -*/
+    /*-**********************-*/
+    public static User getUser() {
+        return get()._user;
+    }
+
+    public void setUser(User user) {
+        synchronized (STAG) {
+            _user = user;
         }
     }
 
@@ -471,13 +557,26 @@ public class App extends Application {
         public void onNetworkDisconnected() {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
-            ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AppMessagingClient.networkConnected();
-                    WebTransactionSystem.getInstance();
-                }
-            }, Snackbar.LENGTH_INDEFINITE);
+
+            if (getOfflineState() == OfflineState.NORMAL) {
+                ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AppMessagingClient.networkConnected();
+                        WebTransactionSystem.getInstance();
+                    }
+                }, Snackbar.LENGTH_INDEFINITE);
+            }
+        }
+
+        @Override
+        public void onOfflineMode(App.OfflineState state) {
+            Log.v(TAG, "onOfflineMode");
+            if (state == OfflineState.DOWNLOADING) {
+                startService(new Intent(App.get(), WebCrawlerService.class));
+            } else if (state == OfflineState.OFFLINE || state == OfflineState.NORMAL) {
+                stopService(new Intent(App.get(), WebCrawlerService.class));
+            }
         }
     };
 
@@ -556,6 +655,18 @@ public class App extends Application {
             return profile.getUserId();
         }
         return -1;
+    }
+
+    public OfflineState getOfflineState() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return OfflineState.valueOf(settings.getString(PREF_OFFLINE_STATE, OfflineState.NORMAL.name()));
+    }
+
+    public void setOffline(OfflineState state) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putString(PREF_OFFLINE_STATE, state.name());
+        edit.apply();
     }
 
     public boolean canRemindCoi() {
@@ -770,6 +881,13 @@ public class App extends Application {
         SavedList _savedList = null;
 
         try {
+
+            if (App.get().getOfflineState() != OfflineState.NORMAL) {
+                return new SavedList()
+                        .id("workorders_assignments")
+                        .label("assigned");
+            }
+
             if (misc.isEmptyOrNull(jsonData)) {
                 _savedList = new SavedList()
                         .id("workorders_available")
@@ -944,7 +1062,9 @@ public class App extends Application {
     }
 
     public static void logout() {
+        get().setOffline(OfflineState.NORMAL);
         WebTransactionSystem.stop();
+        PigeonRoost.clearAddressCache(AppMessagingClient.ADDRESS_OFFLINE_MODE);
         PigeonRoost.clearAddressCache(ProfileConstants.ADDRESS_GET);
         PigeonRoost.clearAddressCache(ProfilePhotoConstants.ADDRESS_GET);
         PigeonRoost.clearAddressCache(PhotoConstants.ADDRESS_GET_PHOTO);

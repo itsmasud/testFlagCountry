@@ -23,7 +23,7 @@ import java.text.ParseException;
 public class DocumentTransactionListener extends WebTransactionListener implements DocumentConstants {
     private static final String TAG = "DocumentTransactionListener";
 
-    public static byte[] pDownload(long documentId, String filename) {
+    public static byte[] pDownload(int documentId, String filename) {
         try {
             JsonObject obj = new JsonObject("action", "pDownload");
             obj.put("documentId", documentId);
@@ -53,8 +53,8 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
     }
 
     public void onStartDownload(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
-        long documentId = params.getLong("documentId");
-        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.isSync());
+        int documentId = params.getInt("documentId");
+        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.getType() == WebTransaction.Type.SYNC);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
 
     private Result onDownload(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException, IOException {
         String filename = params.getString("filename");
-        long documentId = params.getLong("documentId");
+        int documentId = params.getInt("documentId");
 
         if (result == Result.CONTINUE) {
             StoredObject obj = null;
@@ -86,18 +86,23 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
                 obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getByteArray(), filename);
             }
 
-            Uri uri = obj.getUri();
-            String name = FileUtils.getFileNameFromUri(context, uri);
-            File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
-            if (!dlFolder.exists())
-                FileUtils.writeStream(context.getContentResolver().openInputStream(uri), dlFolder);
+            if (transaction.getType() == WebTransaction.Type.CRAWLER) {
+                DocumentDispatch.download(context, documentId, new File(obj.getUri().toString()), DocumentConstants.PARAM_STATE_FINISH, true);
+            } else {
 
-            DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, transaction.isSync());
+                Uri uri = obj.getUri();
+                String name = FileUtils.getFileNameFromUri(context, uri);
+                File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
+                if (!dlFolder.exists())
+                    FileUtils.writeStream(context.getContentResolver().openInputStream(uri), dlFolder);
+
+                DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, transaction.getType() == WebTransaction.Type.SYNC);
+            }
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.isSync());
+            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {

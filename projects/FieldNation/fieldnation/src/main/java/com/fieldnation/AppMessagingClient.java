@@ -7,6 +7,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.v2.data.model.User;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -36,6 +37,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sub(this, ADDRESS_PROFILE_INVALID);
     }
 
+    public void subGotUser() {
+        PigeonRoost.sub(this, ADDRESS_GOT_USER);
+    }
+
+    public void subUserInvalid() {
+        PigeonRoost.sub(this, ADDRESS_GOT_USER_INVALID);
+    }
+
     public void subShutdownUI() {
         PigeonRoost.sub(this, ADDRESS_SHUTDOWN_UI);
     }
@@ -60,6 +69,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sub(this, ADDRESS_SHOW_LOADING);
     }
 
+    public void subOfflineMode() {
+        PigeonRoost.sub(this, ADDRESS_OFFLINE_MODE);
+    }
+
+    public void subLowDiskSpace() {
+        PigeonRoost.sub(this, ADDRESS_LOW_DISK_SPACE);
+    }
+
     public void unsubGcm() {
         PigeonRoost.unsub(this, ADDRESS_GCM_MESSAGE);
     }
@@ -74,6 +91,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
 
     public void unsubProfileInvalid() {
         PigeonRoost.unsub(this, ADDRESS_PROFILE_INVALID);
+    }
+
+    public void unsubGotUser() {
+        PigeonRoost.unsub(this, ADDRESS_GOT_USER);
+    }
+
+    public void unsubUserInvalid() {
+        PigeonRoost.unsub(this, ADDRESS_GOT_USER_INVALID);
     }
 
     public void unsubShutdownUI() {
@@ -100,6 +125,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.unsub(this, ADDRESS_SHOW_LOADING);
     }
 
+    public void unsubOfflineMode() {
+        PigeonRoost.unsub(this, ADDRESS_OFFLINE_MODE);
+    }
+
+    public void unsubLowDiskSpace() {
+        PigeonRoost.unsub(this, ADDRESS_LOW_DISK_SPACE);
+    }
+
     public static void updateApp() {
         PigeonRoost.sendMessage(ADDRESS_APP_UPDATE, null, Sticky.FOREVER);
     }
@@ -110,6 +143,14 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
 
     public static void profileInvalid() {
         PigeonRoost.sendMessage(ADDRESS_PROFILE_INVALID, null, Sticky.NONE);
+    }
+
+    public static void gotUser(User user) {
+        PigeonRoost.sendMessage(ADDRESS_GOT_USER, user, Sticky.NONE);
+    }
+
+    public static void userInvalid() {
+        PigeonRoost.sendMessage(ADDRESS_GOT_USER_INVALID, null, Sticky.NONE);
     }
 
     public static void appShutdown() {
@@ -158,6 +199,17 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
         PigeonRoost.sendMessage(ADDRESS_SHOW_LOADING, bundle, Sticky.NONE);
     }
 
+    public static void setOfflineMode(App.OfflineState isOffline) {
+        App.get().setOffline(isOffline);
+        Bundle bundle = new Bundle();
+        bundle.putString("offline", isOffline.name());
+        PigeonRoost.sendMessage(ADDRESS_OFFLINE_MODE, bundle, Sticky.FOREVER);
+    }
+
+    public static void lowDiskSpace() {
+        PigeonRoost.sendMessage(ADDRESS_LOW_DISK_SPACE, null, Sticky.NONE);
+    }
+
     @Override
     public void onMessage(String address, Object message) {
         switch (address) {
@@ -169,6 +221,12 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
                 break;
             case ADDRESS_PROFILE_INVALID:
                 onProfileInvalid();
+                break;
+            case ADDRESS_GOT_USER:
+                onGotUser((User) message);
+                break;
+            case ADDRESS_GOT_USER_INVALID:
+                onUserInvalid();
                 break;
             case ADDRESS_SHUTDOWN_UI:
                 onShutdownUI();
@@ -199,7 +257,19 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
             case ADDRESS_USER_SWITCHED:
                 onUserSwitched((Profile) ((Bundle) message).getParcelable(PARAM_PROFILE));
                 break;
+            case ADDRESS_OFFLINE_MODE:
+                onOfflineMode(App.OfflineState.valueOf(((Bundle) message).getString("offline")));
+                break;
+            case ADDRESS_LOW_DISK_SPACE:
+                onLowDiskSpace();
+                break;
         }
+    }
+
+    public void onLowDiskSpace() {
+    }
+
+    public void onOfflineMode(App.OfflineState state) {
     }
 
     public void onUserSwitched(Profile profile) {
@@ -212,6 +282,12 @@ public class AppMessagingClient extends Pigeon implements AppMessagingConstants 
     }
 
     public void onProfileInvalid() {
+    }
+
+    public void onGotUser(User user) {
+    }
+
+    public void onUserInvalid() {
     }
 
     public void onShutdownUI() {

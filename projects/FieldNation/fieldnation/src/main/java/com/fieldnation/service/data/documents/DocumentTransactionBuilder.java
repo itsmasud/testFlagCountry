@@ -17,18 +17,18 @@ import com.fieldnation.service.transaction.WebTransactionSystem;
 public class DocumentTransactionBuilder {
     private static final String TAG = "DocumentTransactionBuilder";
 
-    public static void download(Context context, long documentId, String link, String filename, boolean isSync) {
+    public static void download(Context context, int documentId, String link, String filename, boolean isSync) {
         try {
             Resources res = context.getResources();
             HttpJsonBuilder builder = new HttpJsonBuilder().path(link);
 
             WebTransaction.Builder webBuilder = new WebTransaction.Builder()
-                    .priority(isSync ? Priority.LOW : Priority.HIGH)
+                    .priority(isSync ? Priority.NORMAL : Priority.HIGH)
                     .listener(DocumentTransactionListener.class)
                     .listenerParams(DocumentTransactionListener.pDownload(documentId, filename))
                     .key((isSync ? "Sync/" : "") + "Document/" + documentId)
                     .useAuth(false)
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(builder);
 
             if (!isSync) {

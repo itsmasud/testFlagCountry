@@ -66,13 +66,13 @@ public class PaymentTransactionListener extends WebTransactionListener implement
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
-            PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
+            PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.getType() == WebTransaction.Type.SYNC, false);
             StoredObject.put(context, App.getProfileId(), PSO_PAYMENT_LIST, page, data);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            PaymentDispatch.list(context, page, null, true, transaction.isSync(), true);
+            PaymentDispatch.list(context, page, null, true, transaction.getType() == WebTransaction.Type.SYNC, true);
             return Result.DELETE;
 
         } else {
@@ -86,13 +86,13 @@ public class PaymentTransactionListener extends WebTransactionListener implement
         if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
-            PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
+            PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.getType() == WebTransaction.Type.SYNC);
             StoredObject.put(context, App.getProfileId(), PSO_PAYMENT, paymentId, data);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            PaymentDispatch.get(context, paymentId, null, true, transaction.isSync());
+            PaymentDispatch.get(context, paymentId, null, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {

@@ -4,15 +4,21 @@ import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Task;
 
 import java.text.DateFormatSymbols;
@@ -34,10 +40,12 @@ public class TaskRowView extends RelativeLayout {
     private TextView _valueTextView;
     private TextView _rightValueTextView;
     private ProgressBar _progressBar;
+    private View _alertView;
 
     // Data
     private Task _task;
     private boolean _progressVisible = false;
+    private TransactionBundle _transactionBundle = null;
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -68,6 +76,7 @@ public class TaskRowView extends RelativeLayout {
         _valueTextView = findViewById(R.id.value);
         _rightValueTextView = findViewById(R.id.value_right);
         _progressBar = findViewById(R.id.progressBar);
+        _alertView = findViewById(R.id.alert);
 
         populateUi();
     }
@@ -77,8 +86,9 @@ public class TaskRowView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setData(Task task) {
+    public void setData(Task task, TransactionBundle transactionBundle) {
         _task = task;
+        _transactionBundle = transactionBundle;
         populateUi();
     }
 
@@ -176,12 +186,22 @@ public class TaskRowView extends RelativeLayout {
 
                 case CLOSING_NOTES: // closing notes
                     _keyTextView.setText(_task.getLabel());
-                    if (misc.isEmptyOrNull(_task.getClosingNotes()))
-                        _valueTextView.setVisibility(GONE);
-                    else {
+
+                    if (!misc.isEmptyOrNull(_task.getClosingNotes()) && _transactionBundle == null) {
                         _valueTextView.setText(_task.getClosingNotes());
                         _valueTextView.setVisibility(VISIBLE);
+                    } else if (_transactionBundle != null) {
+                        String notes = _transactionBundle.methodParams.getString("closingNotes");
+                        if (misc.isEmptyOrNull(notes)) {
+                            _valueTextView.setVisibility(GONE);
+                        } else {
+                            _valueTextView.setText(_transactionBundle.methodParams.getString("closingNotes"));
+                            _valueTextView.setVisibility(VISIBLE);
+                        }
+                    } else {
+                        _valueTextView.setVisibility(GONE);
                     }
+
                     _rightValueTextView.setVisibility(GONE);
                     break;
 
@@ -271,7 +291,7 @@ public class TaskRowView extends RelativeLayout {
                     break;
 
                 case UNIQUE_TASK: // unique task
-                    _keyTextView.setText("Complete tasks");
+                    _keyTextView.setText(getResources().getString(R.string.complete_tasks));
                     _rightValueTextView.setVisibility(GONE);
                     if (misc.isEmptyOrNull(_task.getLabel())) {
                         _valueTextView.setVisibility(GONE);
@@ -325,6 +345,11 @@ public class TaskRowView extends RelativeLayout {
         } catch (Exception e) {
             Log.v(TAG, e);
         }
+
+        if (_transactionBundle == null)
+            _alertView.setVisibility(GONE);
+        else
+            _alertView.setVisibility(VISIBLE);
     }
 
     private void updateView() {
@@ -333,9 +358,27 @@ public class TaskRowView extends RelativeLayout {
                 || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE))) {
             _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_dark_text));
             setEnabled(true);
+
+            // offline mode
+            if ((getType(_task).equals(TaskTypeEnum.CHECK_IN) || getType(_task).equals(TaskTypeEnum.CHECK_OUT) || getType(_task).equals(TaskTypeEnum.SET_ETA))
+                    && (App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING))
+                _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
+
         } else {
             _keyTextView.setTextColor(ContextCompat.getColor(getContext(), R.color.fn_light_text_50));
             setEnabled(false);
+        }
+    }
+
+    public static class TransactionBundle {
+        public WebTransaction webTransaction;
+        public TransactionParams transactionParams;
+        public JsonObject methodParams;
+
+        public TransactionBundle(WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            this.webTransaction = webTransaction;
+            this.transactionParams = transactionParams;
+            this.methodParams = methodParams;
         }
     }
 }

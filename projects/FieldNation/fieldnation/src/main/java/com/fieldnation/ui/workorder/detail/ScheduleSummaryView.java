@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -17,6 +18,7 @@ import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.text.DateFormatSymbols;
@@ -38,7 +40,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
     private WorkOrder _workOrder;
     private boolean _dirty = true;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
@@ -111,6 +113,25 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         } else {
             _etaView.setOnClickListener(null);
             _etaView.setEnabled(false);
+        }
+
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING
+                || !_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+            ((TextView) _etaView.findViewById(R.id.key))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_disabled_text));
+            ((TextView) _etaView.findViewById(R.id.value))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_disabled_text));
+        } else {
+            ((TextView) _etaView.findViewById(R.id.key))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_light_text_statefull));
+            ((TextView) _etaView.findViewById(R.id.value))
+                    .setTextColor(getContext().getResources()
+                            .getColor(R.color.fn_light_text_statefull));
+
         }
 
         Schedule schedule = _workOrder.getSchedule();
@@ -189,8 +210,15 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
     private final View.OnClickListener _editEta_onClick = new ApatheticOnClickListener() {
         @Override
         public void onSingleClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
-                    _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+            if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                    && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(),
+                        _workOrder.getEta(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+            } else {
+                TwoButtonDialog.show(App.get(), null, v.getContext().getResources().getString(R.string.not_available),
+                        v.getContext().getResources().getString(R.string.not_available_body_text),
+                        v.getContext().getResources().getString(R.string.btn_close), null, true, null);
+            }
         }
     };
 }

@@ -10,11 +10,8 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.App;
-import com.fieldnation.AppMessagingClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.nav.ToolbarMenuBehavior;
 import com.fieldnation.ui.nav.ToolbarMenuInterface;
@@ -37,8 +34,6 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private OnShowListener _onShowListener;
     private OnSavedListChangeListener _onSavedListChangeListener;
     private SavedList[] _list;
-
-    private WorkordersWebApi _workOrderClient;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -69,18 +64,12 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
         _workOrdersApi.sub();
-        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
-
-        _appMessagingClient.subUserSwitched();
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _workOrdersApi.unsub();
-        _appMessagingClient.unsubUserSwitched();
-
         super.onDetachedFromWindow();
     }
 
@@ -210,13 +199,6 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
                 populateUi();
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
-        }
-    };
-
-    private final AppMessagingClient _appMessagingClient = new AppMessagingClient() {
-        @Override
-        public void onUserSwitched(Profile profile) {
-            WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
         }
     };
 

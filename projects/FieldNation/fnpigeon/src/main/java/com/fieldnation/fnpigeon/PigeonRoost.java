@@ -4,7 +4,6 @@ import android.os.Handler;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
-import com.fieldnation.fntools.Stopwatch;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -118,6 +117,7 @@ public class PigeonRoost {
         List<Pigeon> pigeonList = new LinkedList<>();
         List<Object> objectList = new LinkedList<>();
         List<String> addressList = new LinkedList<>();
+
         synchronized (TAG) {
             String[] addressTree = address.split("/");
             // Fill stickies

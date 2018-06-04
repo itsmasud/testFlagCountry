@@ -107,19 +107,38 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
         PayModifier[] fees = pay.getFees();
         if (fees != null && pay.getTotal() > 0) {
             for (PayModifier fee : fees) {
+                // GL insurance fee
                 if (fee.getName() != null && fee.getName().equals("insurance") && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
                             new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_insurance_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
                                     "-" + misc.toCurrency(fee.getAmount()))));
 
+                    // 10% FN fee
                 } else if (fee.getName() != null && fee.getName().equals("provider") && fee.getAmount() != null
                         && fee.getModifier() != null) {
                     dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
                             new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_expected_fee_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
                                     "-" + misc.toCurrency(fee.getAmount()))));
 
+                    // Late Cancellation fee
+                } else if (fee.getName() != null
+                        && fee.getName().equals("cancellation")
+                        && fee.getAmount() != null
+                        && ((fee.getQueued() != null && fee.getQueued()) || (fee.getCharged() != null && fee.getCharged()))) {
+                    dataHolders.add(new DataHolder(TYPE_KEY_VALUE, new KeyValueTuple("Late Cancellation Fee", misc.toCurrency(fee.getAmount()))));
+
+                    // TODO verify this with Adam
+                    // Workers comp fee
+                } else if (fee.getName() != null
+                        && fee.getName().equals("workers_comp")
+                        && fee.getAmount() != null
+                        && fee.getModifier() != null) {
+                    dataHolders.add(new DataHolder(TYPE_KEY_VALUE,
+                            new KeyValueTuple(String.format(App.get().getString(R.string.fieldnation_workers_comp_insurance_percentage), String.valueOf(misc.to2Decimal((double) (fee.getModifier() * 100.0)))),
+                                    "-" + misc.toCurrency(fee.getAmount()))));
                 }
+
             }
         }
 
@@ -144,14 +163,20 @@ public class EarnedPayAdapter extends RecyclerView.Adapter<EarnedPayViewHolder> 
             }
             case TYPE_BONUS: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new EarnedPayViewHolder(view);
             }
             case TYPE_PENALTY: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new EarnedPayViewHolder(view);
             }
             case TYPE_EXPENSE: {
                 ListItemTwoHorizTwoVertView view = new ListItemTwoHorizTwoVertView(parent.getContext());
+                view.setTitleEllipse(false);
+                view.setAlertVisible(false);
                 return new EarnedPayViewHolder(view);
             }
         }

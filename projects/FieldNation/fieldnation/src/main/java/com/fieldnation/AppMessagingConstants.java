@@ -7,6 +7,8 @@ public interface AppMessagingConstants {
     String ADDRESS_APP_UPDATE = "AppMessagingConstants:ADDRESS_APP_UPDATE";
     String ADDRESS_GOT_PROFILE = "AppMessagingConstants:ADDRESS_GOT_PROFILE";
     String ADDRESS_PROFILE_INVALID = "AppMessagingConstants:ADDRESS_PROFILE_INVALID";
+    String ADDRESS_GOT_USER = "AppMessagingConstants:ADDRESS_GOT_USER";
+    String ADDRESS_GOT_USER_INVALID = "AppMessagingConstants:ADDRESS_GOT_USER_INVALID";
     String ADDRESS_SHUTDOWN_UI = "AppMessagingConstants:ADDRESS_SHUTDOWN_UI";
     String ADDRESS_FINISH_ACTIVITY = "AppMessagingConstants:ADDRESS_FINISH_ACTIVITY";
     String ADDRESS_NETWORK_STATE = "AppMessagingConstants:ADDRESS_NETWORK_STATE";
@@ -14,6 +16,8 @@ public interface AppMessagingConstants {
     String ADDRESS_GCM_MESSAGE = "AppMessagingConstants:ADDRESS_GCM_MESSAGE";
     String ADDRESS_USER_SWITCHED = "AppMessagingConstants:ADDRESS_USER_SWITCHED";
     String ADDRESS_SHOW_LOADING = "AppMessagingConstants:ADDRESS_SHOW_LOADING";
+    String ADDRESS_OFFLINE_MODE = "AppMessagingConstants:ADDRESS_OFFLINE_MODE";
+    String ADDRESS_LOW_DISK_SPACE = "AppMessagingConstants:ADDRESS_LOW_DISK_SPACE";
 
     String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
     String PARAM_PROFILE = "PARAM_PROFILE";

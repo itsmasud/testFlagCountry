@@ -9,6 +9,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
@@ -215,13 +216,15 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
             _addCounterOfferButton.setVisibility(VISIBLE);
         else _addCounterOfferButton.setVisibility(GONE);
 
-        if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD))
+        if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)
+                && isOffline())
             _addRequestNewPayButton.setVisibility(VISIBLE);
         else _addRequestNewPayButton.setVisibility(GONE);
 
-        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD))
+        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)
+                && isOffline()) {
             _addTimeLogButton.setVisibility(VISIBLE);
-        else _addTimeLogButton.setVisibility(GONE);
+        } else _addTimeLogButton.setVisibility(GONE);
 
         if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD))
             _addExpenseButton.setVisibility(VISIBLE);
@@ -253,6 +256,11 @@ public class WodBottomSheetView extends RelativeLayout implements WorkOrderRende
         if (shouldFabVisible())
             _fab.setVisibility(View.VISIBLE);
         else _fab.setVisibility(View.GONE);
+    }
+
+    private boolean isOffline() {
+        return App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING;
     }
 
     private boolean shouldFabVisible() {

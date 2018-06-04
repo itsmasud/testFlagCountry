@@ -52,7 +52,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
     private final WebTransactionSystem _service;
 
-    private boolean _syncThread = false;
     private boolean _allowSync = true;
     private long _syncCheckCoolDown = 0;
 
@@ -68,11 +67,10 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
     }
 
-    public TransactionThread(ThreadManager manager, WebTransactionSystem service, boolean syncThread) {
+    public TransactionThread(ThreadManager manager, WebTransactionSystem service) {
         super(manager);
         setName(TAG);
         _service = service;
-        _syncThread = syncThread;
         start();
     }
 
@@ -106,6 +104,16 @@ class TransactionThread extends ThreadManager.ManagedThread {
     @Override
     public boolean doWork() {
         // try to get a transaction
+        App.OfflineState os = App.get().getOfflineState();
+        if (os == App.OfflineState.OFFLINE) {
+            Log.v(TAG, "Offline mode, skipping");
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ex) {
+            }
+            return false;
+        }
+
         if (!App.get().isConnected()) {
             if (!_isFirstThread) {
                 Log.v(TAG, "Connection down, skipping");
@@ -134,8 +142,15 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
         WebTransaction trans = null;
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
-                    _syncThread ? Priority.LOW : Priority.NORMAL);
+            WebTransaction.Type wtype = WebTransaction.Type.ANY;
+            if (App.get().getOfflineState() == App.OfflineState.NORMAL) {
+                //
+            } else if (App.get().getOfflineState() == App.OfflineState.DOWNLOADING) {
+                wtype = WebTransaction.Type.CRAWLER;
+            } else if (App.get().getOfflineState() == App.OfflineState.SYNC) {
+                wtype = WebTransaction.Type.NORMAL;
+            }
+            trans = WebTransaction.getNext(wtype, _service.isAuthenticated(), Priority.LOW, _isFirstThread);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(ContextProvider.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
@@ -144,6 +159,11 @@ class TransactionThread extends ThreadManager.ManagedThread {
         // if failed, then exit
         if (trans == null) {
             return false;
+        }
+
+        if (App.get().getOfflineState() == App.OfflineState.NORMAL && trans.getType() == WebTransaction.Type.CRAWLER) {
+            WebTransaction.delete(trans.getId());
+            return true;
         }
 
         if (trans.getUUID() != null) {
@@ -198,7 +218,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthClient.invalidateCommand();
+                AuthClient.requestCommand();
                 trans.requeue(5000);
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
@@ -209,6 +229,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (!_service.isAuthenticated()) {
                 Log.v(TAG, "skip no auth");
                 trans.requeue(5000);
+                AuthClient.requestCommand();
 //                trans.requeue(getRetry(trans.getTryCount()));
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(App.get(), listenerName, trans);
@@ -350,29 +371,29 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
     }
 
-    private boolean allowSync() {
-        synchronized (SYNC_LOCK) {
-            if (_syncCheckCoolDown < System.currentTimeMillis()) {
-                //Log.v(TAG, "Running allowSync");
-                _allowSync = true;
-
-                SharedPreferences settings = App.get().getSharedPreferences();
-
-                boolean requireWifi = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_wifi), true);
-                boolean requirePower = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_power), true);
-                boolean haveWifi = App.get().haveWifi();
-
-                if (requireWifi && !haveWifi) {
-                    _allowSync = false;
-                } else {
-                    boolean pluggedIn = App.get().isCharging();
-                    if (requirePower && !pluggedIn) {
-                        _allowSync = false;
-                    }
-                }
-                _syncCheckCoolDown = System.currentTimeMillis() + 60000;
-            }
-            return _allowSync;
-        }
-    }
+//    private boolean allowSync() {
+//        synchronized (SYNC_LOCK) {
+//            if (_syncCheckCoolDown < System.currentTimeMillis()) {
+//                //Log.v(TAG, "Running allowSync");
+//                _allowSync = true;
+//
+//                SharedPreferences settings = App.get().getSharedPreferences();
+//
+//                boolean requireWifi = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_wifi), true);
+//                boolean requirePower = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_power), true);
+//                boolean haveWifi = App.get().haveWifi();
+//
+//                if (requireWifi && !haveWifi) {
+//                    _allowSync = false;
+//                } else {
+//                    boolean pluggedIn = App.get().isCharging();
+//                    if (requirePower && !pluggedIn) {
+//                        _allowSync = false;
+//                    }
+//                }
+//                _syncCheckCoolDown = System.currentTimeMillis() + 60000;
+//            }
+//            return _allowSync;
+//        }
+//    }
 }

@@ -126,7 +126,7 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                 builder.setOnlyAlertOnce(true);
                 builder.setCategory(Notification.CATEGORY_PROGRESS);
                 builder.setOngoing(true);
-                
+
                 //builder.setSmallIcon(R.drawable.ic_notif_queued);
 
                 if (uploading > 0) {
@@ -154,7 +154,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     } else {
                         builder.setContentTitle(context.getResources().getString(
                                 R.string.uploading_to_wo, _workOrderId));
-                        builder.setContentText(context.getString(R.string.waiting_for_network));
+                        if (App.get().getOfflineState() == App.OfflineState.NORMAL)
+                            builder.setContentText(context.getString(R.string.waiting_for_network));
+                        else
+                            builder.setContentText(context.getString(R.string.offline_mode_waiting_for_sync));
                     }
 
                 } else if (failed > 0) {
@@ -172,8 +175,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle(context.getResources().getString(
                             R.string.uploading_to_wo, _workOrderId));
-                    builder.setContentText(context.getString(
-                            R.string.waiting_for_network));
+                    if (App.get().getOfflineState() == App.OfflineState.NORMAL)
+                        builder.setContentText(context.getString(R.string.waiting_for_network));
+                    else
+                        builder.setContentText(context.getString(R.string.offline_mode_waiting_for_sync));
                 } else if (success > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_success);
                     builder.setContentTitle(context.getResources().getQuantityString(
@@ -219,7 +224,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     } else {
                         builder.setContentTitle(context.getResources().getString(
                                 R.string.uploading_to_wo, _workOrderId));
-                        builder.setContentText(context.getString(R.string.waiting_for_network));
+                        if (App.get().getOfflineState() == App.OfflineState.NORMAL)
+                            builder.setContentText(context.getString(R.string.waiting_for_network));
+                        else
+                            builder.setContentText(context.getString(R.string.offline_mode_waiting_for_sync));
                     }
 
                 } else if (failed > 0) {
@@ -237,8 +245,10 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
                     builder.setSmallIcon(R.drawable.ic_notif_queued);
                     builder.setContentTitle(context.getResources().getString(
                             R.string.uploading_to_wo, _workOrderId));
-                    builder.setContentText(context.getString(
-                            R.string.waiting_for_network));
+                    if (App.get().getOfflineState() == App.OfflineState.NORMAL)
+                        builder.setContentText(context.getString(R.string.waiting_for_network));
+                    else
+                        builder.setContentText(context.getString(R.string.offline_mode_waiting_for_sync));
                 } else if (success > 0) {
                     builder.setSmallIcon(R.drawable.ic_notif_success);
                     builder.setContentTitle(context.getResources().getQuantityString(

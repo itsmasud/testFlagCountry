@@ -153,13 +153,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             byte[] data = httpResult.getByteArray();
 
             // todo parse json and put Profile/id ?
-            ProfileDispatch.get(profileId, new JsonObject(data), false, transaction.isSync());
+            ProfileDispatch.get(profileId, new JsonObject(data), false, transaction.getType() == WebTransaction.Type.SYNC);
             StoredObject.put(context, (int) profileId, PSO_PROFILE, profileId, data);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.get(profileId, null, true, transaction.isSync());
+            ProfileDispatch.get(profileId, null, true, transaction.getType() == WebTransaction.Type.SYNC);
             return Result.DELETE;
 
         } else {
@@ -175,13 +175,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             // store object
             byte[] pagedata = httpResult.getByteArray();
 
-            ProfileDispatch.listNotifications(new JsonArray(pagedata), page, false, transaction.isSync(), false);
+            ProfileDispatch.listNotifications(new JsonArray(pagedata), page, false, transaction.getType() == WebTransaction.Type.SYNC, false);
             StoredObject.put(context, App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.listNotifications(null, page, true, transaction.isSync(), true);
+            ProfileDispatch.listNotifications(null, page, true, transaction.getType() == WebTransaction.Type.SYNC, true);
             return Result.DELETE;
 
         } else {
@@ -197,13 +197,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             // store object
             byte[] pagedata = httpResult.getByteArray();
 
-            ProfileDispatch.listMessages(new JsonArray(pagedata), page, false, transaction.isSync(), false);
+            ProfileDispatch.listMessages(new JsonArray(pagedata), page, false, transaction.getType() == WebTransaction.Type.SYNC, false);
             StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ProfileDispatch.listMessages(null, page, true, transaction.isSync(), true);
+            ProfileDispatch.listMessages(null, page, true, transaction.getType() == WebTransaction.Type.SYNC, true);
             return Result.DELETE;
 
         } else {

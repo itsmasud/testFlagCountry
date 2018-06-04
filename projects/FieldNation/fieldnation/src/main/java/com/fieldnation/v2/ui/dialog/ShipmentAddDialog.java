@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.share.SharedFile;
@@ -180,7 +182,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                 .addContext(new SpStatusContext(SpStatusContext.Status.START, "Shipment Dialog"))
                 .build());
 
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
 
         populateUi();
         super.show(payload, animate);
@@ -475,7 +477,10 @@ public class ShipmentAddDialog extends SimpleDialog {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        AppMessagingClient.setLoading(true);
+        if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+            AppMessagingClient.setLoading(true);
+        }
     }
 
     private void uploadBarcodeImage() {
@@ -504,7 +509,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                         .file(new com.fieldnation.v2.data.model.File().name(_scannedFile.getFileName()));
 
                 AttachmentHelper.addAttachment(App.get(), _scannedFile.getUUID(), _workOrderId,
-                        attachment, _scannedFile.getFileName(), _scannedFile.getUri());
+                        attachment, _scannedFile.getFileName(), _scannedFile.getUri(), true);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -540,7 +545,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult) {
+        public void onComplete(String permission, int grantResult, Parcelable extraData) {
             if (permission.equals(Manifest.permission.CAMERA)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     _scan_onClick.onClick(null);

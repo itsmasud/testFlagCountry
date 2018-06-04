@@ -1,6 +1,10 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +13,8 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.ExpenseListDialog;
@@ -52,9 +58,34 @@ public class ExpensesSummaryView extends RelativeLayout implements WorkOrderRend
         _countTextView.setBackgroundResource(R.drawable.round_rect_gray);
 
         setVisibility(GONE);
-
         populateUi();
     }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String op = intent.getStringExtra("op");
+            if (intent.hasExtra("key")) {
+                String key = intent.getStringExtra("key");
+                if (key == null || key.contains("addExpenseByWorkOrder") || key.contains("deleteExpenseByWorkOrderAndExpense"))
+                    populateUi();
+            } else if (op.equals("delete") || op.equals("deleteAll")) {
+                populateUi();
+            }
+        }
+    };
 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
@@ -68,16 +99,21 @@ public class ExpensesSummaryView extends RelativeLayout implements WorkOrderRend
 
         _titleTextView.setText("Expenses");
 
-        if (_workOrder.getPay() == null
+        int addSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_ADD_EXPENSE + _workOrder.getId() + "/%").size();
+        int delSize = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_DELETE_EXPENSE + _workOrder.getId() + "/%").size();
+
+
+        if ((_workOrder.getPay() == null
                 || _workOrder.getPay().getExpenses() == null
                 || _workOrder.getPay().getExpenses().getResults() == null
-                || _workOrder.getPay().getExpenses().getResults().length == 0) {
+                || _workOrder.getPay().getExpenses().getResults().length == 0)
+                && addSize == 0 && delSize == 0) {
             setVisibility(GONE);
             return;
         }
 
         setVisibility(VISIBLE);
-        _countTextView.setText(_workOrder.getPay().getExpenses().getResults().length + "");
+        _countTextView.setText((_workOrder.getPay().getExpenses().getResults().length + addSize - delSize) + "");
         setOnClickListener(_this_onClick);
     }
 

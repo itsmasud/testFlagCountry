@@ -23,6 +23,7 @@ import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.KeyValue;
+import com.fieldnation.v2.data.model.Translation;
 import com.fieldnation.v2.data.model.UpdateModel;
 
 import java.util.LinkedList;
@@ -47,11 +48,11 @@ public abstract class SystemWebApi extends Pigeon {
      * Swagger operationId: getBanners
      * Get a list of all banners.
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getBanners(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBanners(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
-            String key = misc.md5("GET//api/rest/v2/system/banners" + (isBackground ? ":isBackground" : ""));
+            String key = misc.md5("GET//api/rest/v2/system/banners");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -69,7 +70,7 @@ public abstract class SystemWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/SystemWebApi",
                                     SystemWebApi.class, "getBanners", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -87,13 +88,12 @@ public abstract class SystemWebApi extends Pigeon {
      * Get a list of all banners.
      *
      * @param getBannersOptions Additional optional parameters
-     * @param isBackground      indicates that this call is low priority
+     * @param type              indicates that this call is low priority
      */
-    public static void getBanners(Context context, GetBannersOptions getBannersOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBanners(Context context, GetBannersOptions getBannersOptions, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/system/banners" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
-                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
-                    + (isBackground ? ":isBackground" : ""));
+                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -114,7 +114,51 @@ public abstract class SystemWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/SystemWebApi",
                                     SystemWebApi.class, "getBanners", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+
+            if (allowCacheResponse)
+                new CacheDispatcher(context, key, "ADDRESS_WEB_API_V2/SystemWebApi");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getTranslation
+     * Retrieves a single translated language key in a given locale
+     *
+     * @param locale   Locale: e.g.: en, de, es, etc.
+     * @param keyParam Language key (see /translations for a POT file with a list of keys)
+     * @param type     indicates that this call is low priority
+     */
+    public static void getTranslation(Context context, String locale, String keyParam, boolean allowCacheResponse, WebTransaction.Type type) {
+        Log.e(TAG, "getTranslation");
+        try {
+            String key = misc.md5("GET//api/rest/v2/system/translate/" + locale + "/" + keyParam);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/system/translate/" + locale + "/" + keyParam);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locale", locale);
+            methodParams.put("key", keyParam);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/system/translate/:locale/:key")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/SystemWebApi",
+                                    SystemWebApi.class, "getTranslation", methodParams))
+                    .useAuth(true)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -129,7 +173,7 @@ public abstract class SystemWebApi extends Pigeon {
 
     /**
      * Swagger operationId: systemUpdateModel
-     * Fires an event that a model has been updated and propogates the new model to all interested parties.
+     * Fires an event that a model has been updated and propagates the new model to all interested parties.
      *
      * @param path  The route for obtaining the new model
      * @param event operationId from the swagger API route
@@ -365,6 +409,12 @@ public abstract class SystemWebApi extends Pigeon {
                             case "systemUpdateModel":
                                 successObject = UpdateModel.fromJson(new JsonObject(data));
                                 break;
+                            case "getTranslation":
+                                successObject = Translation.fromJson(new JsonObject(data));
+                                break;
+                            case "createScreening":
+                                successObject = data;
+                                break;
                             case "getBanners":
                                 //successObject = Banner.fromJson(new JsonObject(data));
                                 break;
@@ -374,6 +424,7 @@ public abstract class SystemWebApi extends Pigeon {
                         }
                     } else if (data != null) {
                         switch (transactionParams.apiFunction) {
+                            case "createScreening":
                             case "getBanners":
                             case "systemUpdateModel":
                                 failObject = Error.fromJson(new JsonObject(data));

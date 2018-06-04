@@ -63,6 +63,7 @@
     <string name="btn_counter_disabled">COUNTER DISABLED</string>
     <string name="btn_counter_offer">COUNTER OFFER</string>
     <string name="btn_done">DONE</string>
+    <string name="btn_sync_all">SYNC ALL</string>
     <string name="btn_edit_eta">EDIT ETA</string>
     <string name="btn_edit_profile">EDIT PROFILE</string>
     <string name="btn_email">EMAIL US</string>
@@ -124,6 +125,10 @@
     <string name="btn_view_payment">VIEW PAYMENT</string>
     <string name="btn_withdraw">WITHDRAW</string>
     <string name="btn_yes">YES</string>
+    <string name="btn_delete">DELETE</string>
+
+    <string name="complete_tasks">Complete tasks</string>
+    <string name="accept_terms_and_continue">ACCEPT TERMS AND CONTINUE</string>
 
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
@@ -208,8 +213,12 @@
     <string name="fieldnation_fee_percentage">Field Nation Service Fee</string>
     <string name="fieldnation_expected_fee_percentage">Field Nation Service Fee (%1$s%%)</string>
     <string name="fieldnation_expected_insurance_percentage">GL Insurance Fee (%1$s%%)</string>
+    <string name="fieldnation_workers_comp_insurance_percentage">Trust &amp; Safety Protection Fee (%1$s%%)</string>
+    <string name="fieldnation_workers_comp_insurance">Trust &amp; Safety Protection Fee</string>
     <string name="fieldnation_insurance_percentage">GL Insurance Fee</string>
     <string name="fields_to_enter">Fields to Enter</string>
+
+    <string name="dialog_workers_comp_title">Trust &amp; Safety Protection</string>
 
     <string name="dialog_withdraw_title">Withdraw Request?</string>
     <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
@@ -229,6 +238,8 @@
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_duration_v2_title">Set duration</string>
 
+    <string name="dialog_remove_assignment_warning">Removing yourself from this work order may result in bad ratings or suspension</string>
+    <string name="dialog_remove_assignment_warning_bundle">Removing yourself from this bundle of %1$d work orders may result in bad ratings or suspension</string>
     <string name="dialog_review_hold_title">Hold Review</string>
 
     <string name="hint_text_decline_spinner">Please specify</string>
@@ -342,6 +353,11 @@
     <string name="dialog_delete_expense_title">Delete Expense</string>
     <string name="dialog_delete_expense_body">Are you sure you want to delete this expense?</string>
     <string name="dialog_scan_barcode_title">Scan a barcode</string>
+    <string name="dialog_delete_unsynced_title">Delete Activity</string>
+    <string name="dialog_delete_unsynced_body">Are you sure you want to delete %1$s?</string>
+    <string name="const_activity_name" translatable="false">ACTIVITY_NAME</string>
+    <string name="const_web_transaction" translatable="false">WEB_TRANSACTION</string>
+
 
     <string name="dialog_file_upload_title">File Upload</string>
     <string name="dialog_insert_file_name">Please insert file name.</string>
@@ -589,7 +605,7 @@
     <string name="no_routed_work">No routed work</string>
     <string name="no_work_available">No work available</string>
     <string name="no_work_found">No work found</string>
-    <string name="not_available">Not available</string>
+    <string name="not_available">Not Available</string>
     <string name="not_interested">Not Interested</string>
     <string name="nothing_to_worry_about">Nothing to worry about</string>
     <string name="number_of_devices">Number of Devices</string>
@@ -602,6 +618,7 @@
     <string name="num_mi_straight_line"> \u2022 %1$smi (straight line)</string>
     <string name="num_uploading">%1$d uploading</string>
     <string name="num_workorders_and_payments">%1$s %2$s</string>
+    <string name="not_available_body_text">This action is currently not available while in offline mode.</string>
 
     <string name="offer_expires">Offer expires</string>
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
@@ -610,6 +627,8 @@
     <string name="optional">Optional</string>
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating">Overall rating: </string>
+    <string name="offline">Offline</string>
+    <string name="offline_mode_waiting_for_sync">Offline Mode: Waiting for sync</string>
 
     <string name="pay">Pay</string>
     <string name="payment">Payment</string>
@@ -892,22 +911,22 @@
     </string-array>
 
     <!-- sync settings -->
-    <string name="pref_string_sync_category_title">Sync Settings</string>
+    <!--<string name="pref_string_sync_category_title">Sync Settings</string>-->
 
-    <string name="pref_key_sync_enabled">pref_key_sync_enabled</string>
-    <string name="pref_string_sync_enable_title">Enable sync</string>
-    <string name="pref_string_sync_enable_summary">Sync will download all of your data every day allowing you to access it while offline.</string>
+    <!--<string name="pref_key_sync_enabled">pref_key_sync_enabled</string>-->
+    <!--<string name="pref_string_sync_enable_title">Enable sync</string>-->
+    <!--<string name="pref_string_sync_enable_summary">Sync will download all of your data every day allowing you to access it while offline.</string>-->
 
-    <string name="pref_key_sync_start_time">pref_key_sync_start_time</string>
-    <string name="pref_string_sync_start_title">Start sync at</string>
+    <!--<string name="pref_key_sync_start_time">pref_key_sync_start_time</string>-->
+    <!--<string name="pref_string_sync_start_title">Start sync at</string>-->
 
-    <string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>
-    <string name="pref_string_sync_require_wifi_title">Only on wifi</string>
-    <string name="pref_string_sync_require_wifi_summary">Sync will only run when connected to wifi.</string>
+    <!--<string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>-->
+    <!--<string name="pref_string_sync_require_wifi_title">Only on wifi</string>-->
+    <!--<string name="pref_string_sync_require_wifi_summary">Sync will only run when connected to wifi.</string>-->
 
-    <string name="pref_key_sync_require_power">pref_key_sync_require_power</string>
-    <string name="pref_string_sync_require_power_title">Only while charging</string>
-    <string name="pref_string_sync_require_power_summary">Sync will only run while device is charging.</string>
+    <!--<string name="pref_key_sync_require_power">pref_key_sync_require_power</string>-->
+    <!--<string name="pref_string_sync_require_power_title">Only while charging</string>-->
+    <!--<string name="pref_string_sync_require_power_summary">Sync will only run while device is charging.</string>-->
 
     <!-- data settings -->
     <string name="pref_string_data_settings_category_title">Data Settings</string>

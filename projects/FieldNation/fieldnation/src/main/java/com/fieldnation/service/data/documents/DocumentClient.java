@@ -26,7 +26,7 @@ import java.io.File;
 public abstract class DocumentClient extends Pigeon implements DocumentConstants {
     private static final String TAG = "DocumentClient";
 
-    public static void downloadDocument(Context context, long documentId, String url, String filename, boolean isSync) {
+    public static void downloadDocument(Context context, int documentId, String url, String filename, boolean isSync) {
         if (misc.isEmptyOrNull(url)) {
             return;
         }
@@ -49,7 +49,7 @@ public abstract class DocumentClient extends Pigeon implements DocumentConstants
             new AsyncTaskEx<Object, Object, Object>() {
                 @Override
                 protected Object doInBackground(Object... params) {
-                    long documentId = (Long) params[0];
+                    int documentId = (Integer) params[0];
                     String url = (String) params[1];
                     boolean isSync = (Boolean) params[2];
                     String filename = (String) params[3];
@@ -90,14 +90,14 @@ public abstract class DocumentClient extends Pigeon implements DocumentConstants
         Bundle bundle = (Bundle) message;
 
         if (address.startsWith(ADDRESS_DOWNLOAD_DOCUMENT)) {
-            if (processDownload(bundle.getLong(PARAM_DOCUMENT_ID))) {
+            if (processDownload(bundle.getInt(PARAM_DOCUMENT_ID))) {
                 Log.v(TAG, "preOnDownload: " + address);
                 preOnDownload(bundle);
             }
         }
     }
 
-    public abstract boolean processDownload(long documentId);
+    public abstract boolean processDownload(int documentId);
 
     private void preOnDownload(Bundle bundle) {
         File file = null;
@@ -106,10 +106,10 @@ public abstract class DocumentClient extends Pigeon implements DocumentConstants
         if (bundle.containsKey(PARAM_FILE))
             file = (File) bundle.getSerializable(PARAM_FILE);
 
-        onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
+        onDownload(bundle.getInt(PARAM_DOCUMENT_ID),
                 file, state, bundle.getBoolean(PARAM_IS_SYNC));
     }
 
-    public void onDownload(long documentId, File file, int state, boolean isSync) {
+    public void onDownload(int documentId, File file, int state, boolean isSync) {
     }
 }

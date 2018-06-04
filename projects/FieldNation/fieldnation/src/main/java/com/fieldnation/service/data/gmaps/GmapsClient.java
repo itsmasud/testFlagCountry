@@ -89,7 +89,7 @@ public abstract class GmapsClient extends Pigeon implements GmapsConstants {
                     .listener(GmapsTransactionListener.class)
                     .listenerParams(GmapsTransactionListener.pStaticMapClassic(workOrderId))
                     .useAuth(false)
-                    .isSyncCall(false)
+                    .setType(WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 

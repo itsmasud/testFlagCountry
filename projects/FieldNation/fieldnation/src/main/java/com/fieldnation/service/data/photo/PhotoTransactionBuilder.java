@@ -22,7 +22,7 @@ public class PhotoTransactionBuilder implements PhotoConstants {
                     .priority(Priority.HIGH)
                     .listener(PhotoTransactionListener.class)
                     .listenerParams(PhotoTransactionListener.pGet(sourceUrl, getCircle))
-                    .isSyncCall(isSync)
+                    .setType(isSync ? WebTransaction.Type.CRAWLER : WebTransaction.Type.NORMAL)
                     .request(
                             new HttpJsonBuilder()
                                     .method("GET")

@@ -16,35 +16,37 @@ import java.util.List;
 public class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 9; // last update: 1-26-2018 MAR-1304, added index on IS_SYNC
+    private static final int TABLE_VER = 11; // last update: 4-09-2018 MAR-1573, added sequential flag
     public static final String TABLE_NAME = "transactions";
 
     private static WebTransactionSqlHelper _instance = null;
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        LISTENER(1, "listener", "text"),
-        LISTENER_PARAMS(2, "listener_params", "blob"),
-        USE_AUTH(3, "use_auth", "integer not null"),
-        IS_SYNC(4, "is_sync", "integer not null", true),
-        STATE(5, "state", "integer not null", true),
-        REQUEST(6, "request", "text"),
-        PRIORITY(7, "priority", "integer not null", true),
-        KEY(8, "key", "text", true),
-        QUEUE_TIME(9, "queue_time", "integer not null", true),
-        TRY_COUNT(10, "try_count", "integer not null", true),
-        MAX_TRIES(11, "max_tries", "integer not null"),
-        WIFI_REQUIRED(12, "wifi_req", "integer not null", true),
-        TRACK(13, "track", "integer not null"),
-        TRACK_TYPE(14, "track_type", "integer not null"),
-        TIMING_KEY(15, "timing_key", "text"),
-        WAS_ZOMBIE(16, "was_zombie", "integer not null", true),
-        UUID(17, "uuid", "text"),
-        NOTIF_ID(18, "notif_id", "integer"),
-        NOTIF_START(19, "notif_start", "integer"),
-        NOTIF_SUCCESS(20, "notif_success", "integer"),
-        NOTIF_FAILED(21, "notif_failed", "integer"),
-        NOTIF_RETRY(22, "notif_retry", "integer"),;
+        CREATED_TIME(1, "created_time", "integer not null"),
+        LISTENER(2, "listener", "text"),
+        LISTENER_PARAMS(3, "listener_params", "blob"),
+        USE_AUTH(4, "use_auth", "integer not null"),
+        TYPE(5, "type", "integer not null", true),
+        STATE(6, "state", "integer not null", true),
+        REQUEST(7, "request", "text"),
+        PRIORITY(8, "priority", "integer not null", true),
+        KEY(9, "key", "text", true),
+        QUEUE_TIME(10, "queue_time", "integer not null", true),
+        TRY_COUNT(11, "try_count", "integer not null", true),
+        MAX_TRIES(12, "max_tries", "integer not null"),
+        WIFI_REQUIRED(13, "wifi_req", "integer not null", true),
+        TRACK(14, "track", "integer not null"),
+        TRACK_TYPE(15, "track_type", "integer not null"),
+        TIMING_KEY(16, "timing_key", "text"),
+        WAS_ZOMBIE(17, "was_zombie", "integer not null", true),
+        UUID(18, "uuid", "text"),
+        SEQUENTIAL(19, "sequential", "integer not null", true),
+        NOTIF_ID(20, "notif_id", "integer"),
+        NOTIF_START(21, "notif_start", "integer"),
+        NOTIF_SUCCESS(22, "notif_success", "integer"),
+        NOTIF_FAILED(23, "notif_failed", "integer"),
+        NOTIF_RETRY(24, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;

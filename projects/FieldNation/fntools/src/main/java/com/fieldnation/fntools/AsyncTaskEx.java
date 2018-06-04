@@ -2,8 +2,6 @@ package com.fieldnation.fntools;
 
 import android.os.AsyncTask;
 
-import com.fieldnation.fnlog.Log;
-
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;

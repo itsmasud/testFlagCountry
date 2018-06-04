@@ -66,7 +66,7 @@ public class BundleSummaryView extends RelativeLayout implements WorkOrderRender
         if (_countTextView == null)
             return;
 
-        if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+        if (_workOrder.isBundle()) {
             setVisibility(VISIBLE);
             _countTextView.setText((_workOrder.getBundle().getMetadata().getTotal() + 1) + "");
         } else {

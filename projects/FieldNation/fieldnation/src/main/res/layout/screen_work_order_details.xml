@@ -43,6 +43,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
+                <com.fieldnation.v2.ui.workorder.UnsyncedSummaryView
+                    android:id="@+id/unsyncedSummary_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
                 <com.fieldnation.v2.ui.workorder.FailedUploadsView
                     android:id="@+id/failedUploads_view"
                     android:layout_width="match_parent"
@@ -152,6 +157,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll|enterAlways" />
+
+        <com.fieldnation.v2.ui.OfflineTextView
+            android:id="@+id/offline_bar_textview"
+            style="@style/Text_Subhead_Offline"
+            android:layout_below="@+id/actiontop_view" />
 
     </android.support.design.widget.AppBarLayout>
 

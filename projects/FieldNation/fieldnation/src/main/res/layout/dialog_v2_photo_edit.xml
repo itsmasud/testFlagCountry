@@ -15,6 +15,11 @@
         android:theme="@style/FieldNation.Material.ToolBar"
         app:layout_scrollFlags="scroll|enterAlways" />
 
+    <com.fieldnation.v2.ui.OfflineTextView
+        android:id="@+id/offline_bar_textview"
+        style="@style/Text_Subhead_Offline"
+        android:layout_below="@+id/toolbar" />
+
     <com.yalantis.ucrop.view.UCropView
         android:id="@+id/ucrop"
         android:layout_width="match_parent"
@@ -22,14 +27,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/toolbar" />
+        android:layout_below="@+id/offline_bar_textview" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/offline_bar_textview"
         android:layout_marginTop="40dp"
         android:indeterminate="true"
         android:visibility="visible" />

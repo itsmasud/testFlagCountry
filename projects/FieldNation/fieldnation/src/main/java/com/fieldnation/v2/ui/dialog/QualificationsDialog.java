@@ -15,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.UUIDGroup;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnClickListener;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
@@ -81,7 +82,7 @@ public class QualificationsDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _workOrderId = params.getInt("workOrderId");
-        WorkordersWebApi.getQualifications(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getQualifications(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
         populateUi();
     }
 
@@ -131,7 +132,7 @@ public class QualificationsDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(false);
                 populateUi();
             } else {
-                WorkordersWebApi.getQualifications(App.get(), _workOrderId, true, false);
+                WorkordersWebApi.getQualifications(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }

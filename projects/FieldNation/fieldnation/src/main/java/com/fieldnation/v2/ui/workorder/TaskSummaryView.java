@@ -1,7 +1,12 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -9,14 +14,21 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionUtils;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.TaskRowView;
+import com.fieldnation.v2.ui.TasksAdapter;
 import com.fieldnation.v2.ui.dialog.CustomFieldsDialog;
 import com.fieldnation.v2.ui.dialog.TasksDialog;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,6 +46,7 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     // Data
     private WorkOrder _workOrder;
     private String _myUUID;
+    private Hashtable<String, TaskRowView.TransactionBundle> _transactionBundleLookupTable = new Hashtable<>();
 
     public TaskSummaryView(Context context) {
         super(context);
@@ -65,6 +78,27 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         populateUi();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+        super.onDetachedFromWindow();
+    }
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            _transactionBundleLookupTable.clear();
+            if (_workOrder != null)
+                WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
+        }
+    };
+
     private static class Group {
         String id;
         String name;
@@ -80,6 +114,8 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
+        _transactionBundleLookupTable.clear();
+        WebTransactionUtils.setData(_webTransListener, WebTransactionUtils.KeyType.WORK_ORDER, _workOrder.getId());
         populateUi();
     }
 
@@ -115,7 +151,8 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 groups.add(group);
             }
 
-            if (task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+            if (task.getStatus().equals(Task.StatusEnum.COMPLETE)
+                    || (!misc.isEmptyOrNull(TasksAdapter.getTransBundleKey(task)) && _transactionBundleLookupTable.containsKey(TasksAdapter.getTransBundleKey(task)))) {
                 group.completed++;
             }
             group.total++;
@@ -156,12 +193,13 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
         int fteRequiredComplete = 0;
 //        editable = false;
 
+        Hashtable<Integer, CustomField> requiredCf = new Hashtable<>();
+
         for (CustomFieldCategory category : _workOrder.getCustomFields().getResults()) {
             if (category.getRole().equals("buyer"))
                 continue;
 
-            CustomField[] customFields = category.getResults();
-            for (CustomField customField : customFields) {
+            for (CustomField customField : category.getResults()) {
 
 //                editable = editable || customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT);
 
@@ -171,14 +209,38 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
                 if (!misc.isEmptyOrNull(customField.getValue())) {
                     fteComplete++;
 
-                    if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED))
+                    if (customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)) {
+                        requiredCf.put(customField.getId(), customField);
                         fteRequiredComplete++;
+                    }
                 }
                 fteTotal++;
             }
         }
 
         _customFieldsView.setTitle(getResources().getString(R.string.fields_to_enter));
+
+        List<WebTransaction> webTransactions = WebTransaction.findByKey(WebTransactionUtils.WEB_TRANS_KEY_PREFIX_CUSTOM_FIELD + _workOrder.getId() + "/%");
+
+        for (WebTransaction webTransaction : webTransactions) {
+            try {
+                TransactionParams params = TransactionParams.fromJson(new JsonObject(webTransaction.getListenerParams()));
+
+                if (params != null
+                        && params.methodParams != null
+                        && params.methodParams.contains("customField")) {
+                    CustomField cf = new CustomField().fromJson(new JsonObject(params.getMethodParamString("customField")));
+                    if (!misc.isEmptyOrNull(cf.getValue())
+                            && cf.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)
+                            && !requiredCf.containsKey(cf.getId())) {
+                        fteRequiredComplete++;
+                    }
+
+                }
+            } catch (Exception ex) {
+                com.fieldnation.fnlog.Log.v(TAG, ex);
+            }
+        }
 
         if (fteRequired == 0) {
             _customFieldsView.setOnClickListener(_fte_onClick);
@@ -201,6 +263,20 @@ public class TaskSummaryView extends RelativeLayout implements WorkOrderRenderer
 
         }
     }
+
+    private final WebTransactionUtils.Listener _webTransListener = new WebTransactionUtils.Listener() {
+        @Override
+        public void onFoundWebTransaction(WebTransactionUtils.KeyType keyType, int workOrderId, WebTransaction webTransaction, TransactionParams transactionParams, JsonObject methodParams) {
+            TaskRowView.TransactionBundle transactionBundle = new TaskRowView.TransactionBundle(webTransaction, transactionParams, methodParams);
+            String key = TasksAdapter.getTransBundleKey(transactionBundle);
+            _transactionBundleLookupTable.put(key, transactionBundle);
+        }
+
+        @Override
+        public void onComplete() {
+            populateUi();
+        }
+    };
 
     private final OnClickListener _task_onClick = new OnClickListener() {
         @Override

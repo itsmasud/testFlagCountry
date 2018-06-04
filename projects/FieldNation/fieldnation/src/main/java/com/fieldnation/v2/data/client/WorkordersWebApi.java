@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.R;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpFileContext;
@@ -34,10 +35,12 @@ import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionSystem;
+import com.fieldnation.service.transaction.WebTransactionUtils;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.AssignmentCancelReason;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
@@ -89,9 +92,12 @@ import com.fieldnation.v2.data.model.WorkOrderOverview;
 import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
 import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.TaskTypeEnum;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -100,19 +106,25 @@ import java.util.List;
 public abstract class WorkordersWebApi extends Pigeon {
     private static final String TAG = "WorkordersWebApi";
 
+    private Set<String> addresses = new HashSet<>();
+
     public void sub() {
+        addresses.add("ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.sub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     public void sub(boolean isSync) {
+        addresses.add(isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.sub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     public void unsub() {
+        addresses.remove("ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.unsub(this, "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
     public void unsub(boolean isSync) {
+        addresses.remove(isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
         PigeonRoost.unsub(this, isSync ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi");
     }
 
@@ -137,6 +149,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "acceptSwapRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -179,6 +192,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "acknowledgeDelay", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -231,6 +245,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addAlertToWorkOrderAndTask", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -349,8 +364,21 @@ public abstract class WorkordersWebApi extends Pigeon {
             methodParams.put("timestamp", System.currentTimeMillis());
             methodParams.put("fileHash", storedObject.getHashHex());
 
+            String activityName = null;
+
+            if (attachment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.ATTACHMENT,
+                        filename);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addAttachmentByWorkOrderAndFolder/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -358,6 +386,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                     "ADDRESS_WEB_API_V2/WorkordersWebApi", WorkordersWebApi.class,
                                     "addAttachment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .setTrack(true)
                     .setTrackType(TrackerEnum.DELIVERABLES)
@@ -465,6 +494,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addBonus", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -517,6 +547,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addBonus", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -565,6 +596,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addContact", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -602,17 +634,36 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (json != null)
+            String activityName = null;
+            Double activityValue = null;
+
+            if (json != null) {
                 methodParams.put("json", json.getJson());
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.DISCOUNT,
+                        json.getDescription());
+
+                activityValue = json.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addDiscount", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -653,14 +704,34 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (expense != null)
                 methodParams.put("expense", expense.getJson());
 
+            String activityName = null;
+            Double activityValue = null;
+
+            if (expense != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.EXPENSE,
+                        expense.getDescription());
+
+                activityValue = expense.getAmount();
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addExpenseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/expenses")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addExpense", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -706,12 +777,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addExpenseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/expenses")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addExpense", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -760,6 +833,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -811,6 +885,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -859,6 +934,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addHold", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -910,6 +986,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addHold", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -952,12 +1029,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/increases")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addIncreaseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/increases")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addIncrease", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1003,12 +1082,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/increases")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addIncreaseByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/increases")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addIncrease", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1046,17 +1127,32 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            if (json != null)
+
+            String activityName = null;
+
+            if (json != null) {
                 methodParams.put("json", json.getJson());
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.MESSAGE,
+                        json.getTo().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addMessageByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/messages")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addMessage", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .queueTime(System.currentTimeMillis())
+                    .sequential(true)
                     .request(builder)
                     .build();
 
@@ -1102,12 +1198,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addMessageByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/messages")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addMessage", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1154,6 +1252,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addPenalty", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1206,6 +1305,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addPenalty", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1248,12 +1348,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/problems")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addProblemByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/problems")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addProblem", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1299,12 +1401,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/problems")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addProblemByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/problems")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addProblem", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1353,6 +1457,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addQualification", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1393,14 +1498,29 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (shipment != null)
                 methodParams.put("shipment", shipment.getJson());
 
+
+            String activityName = null;
+
+            if (shipment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.SHIPMENT,
+                        shipment.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addShipmentByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/shipments")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addShipment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1446,12 +1566,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addShipmentByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/shipments")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addShipment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1492,14 +1614,28 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (signature != null)
                 methodParams.put("signature", signature.getJson());
 
+            String activityName = null;
+
+            if (signature != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.SIGNATURE,
+                        signature.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addSignatureByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/signatures")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1545,12 +1681,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addSignatureByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/signatures")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1599,6 +1737,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTag", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1650,6 +1789,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTag", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1698,6 +1838,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTask", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1745,12 +1886,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/time_logs")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/addTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs")
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .uuid(uuid)
                     .build();
@@ -1795,6 +1938,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1837,6 +1981,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "approveWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1882,6 +2027,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "approveWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1930,6 +2076,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "assignUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1981,6 +2128,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "assignUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -1989,6 +2137,103 @@ public abstract class WorkordersWebApi extends Pigeon {
             Log.v(TAG, ex);
         }
     }
+
+    /**
+     * Swagger operationId: cancelAssignmentByWorkOrder
+     * Cancel assignment of a work order and moves it to draft status
+     *
+     * @param workOrderId  ID of work order
+     * @param cancelReason Cancellation Reason
+     */
+    public static void cancelAssignment(Context context, Integer workOrderId, int cancelReasonId, String cancelReason, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("cancelAssignmentByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment")
+                    .urlParams("?cancel_reason_id=" + cancelReasonId + "&cancel_reason=" + cancelReason);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("cancel_reason_id", cancelReasonId);
+            if (cancelReason != null)
+                methodParams.put("cancel_reason", cancelReason);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/cancel-assignment")
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "cancelAssignment", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: cancelAssignmentByWorkOrder
+     * Cancel assignment of a work order and moves it to draft status
+     *
+     * @param workOrderId  ID of work order
+     * @param cancelReason Cancellation Reason
+     * @param async        Async (Optional)
+     */
+    public static void cancelAssignment(Context context, Integer workOrderId, int cancelReasonId, String cancelReason, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("cancelAssignmentByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/cancel-assignment")
+                    .urlParams("?async=" + async + "&cancel_reason_id=" + cancelReasonId + "&cancel_reason=" + cancelReason);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("async", async);
+            methodParams.put("cancel_reason_id", cancelReasonId);
+            if (cancelReason != null)
+                methodParams.put("cancel_reason", cancelReason);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/cancel-assignment")
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "cancelAssignment", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
 
     /**
      * Swagger operationId: cancelSwapRequest
@@ -2011,6 +2256,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "cancelSwapRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2055,6 +2301,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2102,6 +2349,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2144,6 +2392,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "decline", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2189,6 +2438,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "decline", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2235,6 +2485,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2284,6 +2535,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2314,6 +2566,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineSwapRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2351,6 +2604,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAlert", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2386,6 +2640,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAlerts", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2399,11 +2654,11 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: deleteAttachmentByWorkOrderAndFolderAndAttachment
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
-     * @param attachmentId File id
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param attachment  Payload of the attachment
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, EventContext uiContext) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, EventContext uiContext) {
         if (uiContext != null) {
             Tracker.event(context, new SimpleEvent.Builder()
                     .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
@@ -2421,21 +2676,35 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachment.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             methodParams.put("folderId", folderId);
-            methodParams.put("attachmentId", attachmentId);
+            methodParams.put("attachmentId", attachment.getId());
+
+            String activityName = null;
+
+            if (attachment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        attachment.getFile().getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachment.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAttachment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2481,12 +2750,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteAttachmentByWorkOrderAndFolderAndAttachment/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAttachment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2533,6 +2804,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteBonus", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2579,6 +2851,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteContact", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2593,9 +2866,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Allows an assigned provider to removes a discount they previously applied from a work order, increasing the amount they will be paid.
      *
      * @param workOrderId ID of work order
-     * @param discountId  ID of the discount
+     * @param discount    Payload of the discount
      */
-    public static void deleteDiscount(Context context, Integer workOrderId, Integer discountId, EventContext uiContext) {
+    public static void deleteDiscount(Context context, Integer workOrderId, PayModifier discount, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteDiscountByWorkOrder")
                 .label(workOrderId + "")
@@ -2603,7 +2876,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("discount_id")
-                .value(discountId)
+                .value(discount.getId())
                 .build()
         );
 
@@ -2611,20 +2884,42 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discount.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("discountId", discountId);
+            methodParams.put("discountId", discount.getId());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (discount != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        discount.getName());
+
+                activityValue = discount.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
+
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteDiscountByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discount.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteDiscount", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2639,9 +2934,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId   ID of expense
+     * @param expense     Payload of the expense
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, EventContext uiContext) {
+    public static void deleteExpense(Context context, Integer workOrderId, Expense expense, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteExpenseByWorkOrderAndExpense")
                 .label(workOrderId + "")
@@ -2649,7 +2944,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("expense_id")
-                .value(expenseId)
+                .value(expense.getId())
                 .build()
         );
 
@@ -2657,20 +2952,41 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expense.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("expenseId", expenseId);
+            methodParams.put("expenseId", expense.getId());
+
+            String activityName = null;
+            Double activityValue = null;
+
+            if (expense != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        expense.getDescription());
+
+                activityValue = expense.getAmount();
+
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+            if (activityValue != null) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_VALUE.name(), activityValue);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expense.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteExpense", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2714,12 +3030,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteExpenseByWorkOrderAndExpense/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteExpense", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2766,6 +3084,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteFolder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2815,6 +3134,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteFolder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2861,6 +3181,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteHold", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2910,6 +3231,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteHold", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2950,12 +3272,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteIncreaseByWorkOrderAndIncrease/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteIncrease", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -2999,12 +3323,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteIncreaseByWorkOrderAndIncrease/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteIncrease", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3051,6 +3377,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteMessage", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3097,6 +3424,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deletePenalty", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3143,6 +3471,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteProblem", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3192,6 +3521,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteProblem", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3238,6 +3568,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3287,6 +3618,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteRequest", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3301,9 +3633,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Deletes a shipment from a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId  Shipment id
+     * @param shipment    Payload of the shipment
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, EventContext uiContext) {
+    public static void deleteShipment(Context context, Integer workOrderId, Shipment shipment, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteShipmentByWorkOrderAndShipment")
                 .label(workOrderId + "")
@@ -3311,7 +3643,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("shipment_id")
-                .value(shipmentId)
+                .value(shipment.getId())
                 .build()
         );
 
@@ -3319,20 +3651,34 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipment.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("shipmentId", shipmentId);
+            methodParams.put("shipmentId", shipment.getId());
+
+            String activityName = null;
+
+            if (shipment != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        shipment.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipment.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteShipment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3376,12 +3722,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteShipmentByWorkOrderAndShipment/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteShipment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3396,9 +3744,9 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Delete signature by work order and signature
      *
      * @param workOrderId ID of work order
-     * @param signatureId ID of signature
+     * @param signature   Payload of the signature
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, EventContext uiContext) {
+    public static void deleteSignature(Context context, Integer workOrderId, Signature signature, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("deleteSignatureByWorkOrderAndSignature")
                 .label(workOrderId + "")
@@ -3406,7 +3754,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("signature_id")
-                .value(signatureId)
+                .value(signature.getId())
                 .build()
         );
 
@@ -3414,20 +3762,34 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signature.getId());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("signatureId", signatureId);
+            methodParams.put("signatureId", signature.getId());
+
+            String activityName = null;
+
+            if (signature != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE,
+                        signature.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signature.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteSignature", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3471,12 +3833,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteSignatureByWorkOrderAndSignature/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteSignature", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3523,6 +3887,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTag", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3572,6 +3937,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTag", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3618,6 +3984,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTask", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3658,12 +4025,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3707,12 +4076,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/deleteTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3761,6 +4132,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3812,6 +4184,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3822,16 +4195,52 @@ public abstract class WorkordersWebApi extends Pigeon {
     }
 
     /**
+     * Swagger operationId: getAssignmentCancelReasons
+     * Get assignee of a work order
+     */
+    public static void getAssignmentCancelReasons(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
+        try {
+            String key = misc.md5("GET//workorder/assignment-cancel-reasons");
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .host(context.getString(R.string.web_fn_hostname))
+                    .path("/workorder/assignment-cancel-reasons");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//workorder/assignment-cancel-reasons")
+                    .key(key)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params(topicId,
+                                    WorkordersWebApi.class, "getAssignmentCancelReasons", new JsonObject()))
+                    .useAuth(false)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key, topicId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getAssigneeByWorkOrder
      * Get assignee of a work order
      *
-     * @param workOrderId  Work order id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param type        indicates that this call is low priority
      */
-    public static void getAssignee(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getAssignee(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3844,13 +4253,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/assignee")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getAssignee", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -3866,13 +4275,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getAttachmentsByWorkOrder
      * Gets a list of attachment folders which contain files and deliverables for the work order
      *
-     * @param workOrderId  Work order id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param type        indicates that this call is low priority
      */
-    public static void getAttachments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getAttachments(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3885,13 +4294,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getAttachments", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -3907,14 +4316,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getBonusByWorkOrderAndBonus
      * Gets a bonus for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param bonusId      Bonus ID
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param bonusId     Bonus ID
+     * @param type        indicates that this call is low priority
      */
-    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3928,13 +4337,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getBonus", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -3950,15 +4359,15 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getBonusByWorkOrderAndBonus
      * Gets a bonus for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param bonusId      Bonus ID
-     * @param bonus        Bonus (Optional)
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param bonusId     Bonus ID
+     * @param bonus       Bonus (Optional)
+     * @param type        indicates that this call is low priority
      */
-    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3977,13 +4386,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getBonus", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -3999,13 +4408,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getBonusesByWorkOrder
      * Get a list of available bonuses on a work order that can be applied to increase the amount paid to the provider upon conditions being met
      *
-     * @param workOrderId  Work Order ID
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work Order ID
+     * @param type        indicates that this call is low priority
      */
-    public static void getBonuses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getBonuses(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4018,13 +4427,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getBonuses", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4040,13 +4449,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getContactsByWorkOrder
      * Get a list of contacts on a work order
      *
-     * @param workOrderId  Work order id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param type        indicates that this call is low priority
      */
-    public static void getContacts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getContacts(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4059,13 +4468,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/contacts")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getContacts", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4083,12 +4492,12 @@ public abstract class WorkordersWebApi extends Pigeon {
      *
      * @param workOrderId   ID of work order
      * @param customFieldId Custom field id
-     * @param isBackground  indicates that this call is low priority
+     * @param type          indicates that this call is low priority
      */
-    public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4102,13 +4511,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getCustomField", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4124,13 +4533,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getCustomFieldsByWorKOrder
      * Get a list of custom fields and their values for a work order.
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getCustomFields(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getCustomFields(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4143,13 +4552,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getCustomFields", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4165,13 +4574,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getDiscountsByWorkOrder
      * Returns a list of discounts applied by the assigned provider to reduce the payout of the work order.
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getDiscounts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getDiscounts(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4184,13 +4593,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/discounts")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getDiscounts", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4206,13 +4615,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getETAByWorkOrder
      * Gets the eta for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getETA(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getETA(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/eta");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4225,13 +4634,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/eta")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getETA", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4247,13 +4656,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getExpensesByWorkOrder
      * Get all expenses of a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getExpenses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getExpenses(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4266,13 +4675,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/expenses")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getExpenses", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4291,12 +4700,12 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param workOrderId  Work order id
      * @param folderId     Folder id
      * @param attachmentId File id
-     * @param isBackground indicates that this call is low priority
+     * @param type         indicates that this call is low priority
      */
-    public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4311,13 +4720,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getFile", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4333,14 +4742,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getFolderByWorkOrderAndFolder
      * Gets an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param type        indicates that this call is low priority
      */
-    public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4354,13 +4763,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getFolder", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4376,14 +4785,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getHoldByWorkOrderAndHold
      * Gets a hold on a work order
      *
-     * @param workOrderId  ID of work order
-     * @param holdId       ID of hold to update
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param holdId      ID of hold to update
+     * @param type        indicates that this call is low priority
      */
-    public static void getHold(Context context, Integer workOrderId, Integer holdId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getHold(Context context, Integer workOrderId, Integer holdId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4397,13 +4806,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getHold", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4419,15 +4828,15 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getHoldByWorkOrderAndHold
      * Gets a hold on a work order
      *
-     * @param workOrderId  ID of work order
-     * @param holdId       ID of hold to update
-     * @param async        Async (Optional)
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param holdId      ID of hold to update
+     * @param async       Async (Optional)
+     * @param type        indicates that this call is low priority
      */
-    public static void getHold(Context context, Integer workOrderId, Integer holdId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
+    public static void getHold(Context context, Integer workOrderId, Integer holdId, Boolean async, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4443,13 +4852,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getHold", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4465,13 +4874,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getHoldsByWorkOrder
      * Get holds on work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getHolds(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getHolds(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4484,13 +4893,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getHolds", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4506,14 +4915,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getIncreaseByWorkOrderAndIncrease
      * Get pay increase for assigned work order.
      *
-     * @param workOrderId  ID of work order
-     * @param increaseId   ID of work order increase
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param increaseId  ID of work order increase
+     * @param type        indicates that this call is low priority
      */
-    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4527,13 +4936,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getIncrease", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4549,15 +4958,15 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getIncreaseByWorkOrderAndIncrease
      * Get pay increase for assigned work order.
      *
-     * @param workOrderId  ID of work order
-     * @param increaseId   ID of work order increase
-     * @param async        Async (Optional)
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param increaseId  ID of work order increase
+     * @param async       Async (Optional)
+     * @param type        indicates that this call is low priority
      */
-    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
+    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4573,13 +4982,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getIncrease", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4595,13 +5004,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getIncreasesByWorkOrder
      * Returns a list of pay increases requested by the assigned provider.
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getIncreases(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getIncreases(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4614,13 +5023,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getIncreases", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4636,13 +5045,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getLocationByWorkOrder
      * Gets the address and geo information for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getLocation(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getLocation(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4655,13 +5064,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/location")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getLocation", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4677,13 +5086,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getMessagesByWorkOrder
      * Gets a list of work order messages
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getMessages(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getMessages(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4696,13 +5105,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/messages")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getMessages", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4718,13 +5127,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getMilestonesByWorkOrder
      * Get the milestones of a work order
      *
-     * @param workOrderId  ID of Work Order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of Work Order
+     * @param type        indicates that this call is low priority
      */
-    public static void getMilestones(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getMilestones(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4737,13 +5146,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/milestones")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getMilestones", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4759,13 +5168,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getOverviewByWorkOrder
      * Gets overview by work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getOverview(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getOverview(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4778,13 +5187,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getOverview", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4800,13 +5209,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getOverviewValuesByWorkOrder
      * Gets overview values by work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getOverviewValues(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getOverviewValues(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4819,13 +5228,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getOverviewValues", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4843,16 +5252,16 @@ public abstract class WorkordersWebApi extends Pigeon {
      *
      * @param workOrderId              ID of work order
      * @param getOverviewValuesOptions Additional optional parameters
-     * @param isBackground             indicates that this call is low priority
+     * @param type                     indicates that this call is low priority
      */
-    public static void getOverviewValues(Context context, Integer workOrderId, GetOverviewValuesOptions getOverviewValuesOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getOverviewValues(Context context, Integer workOrderId, GetOverviewValuesOptions getOverviewValuesOptions, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values" + (getOverviewValuesOptions.getClientId() != null ? "?client_id=" + getOverviewValuesOptions.getClientId() : "")
                     + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
                     + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
                     + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
             );
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4870,13 +5279,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getOverviewValues", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4892,13 +5301,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getPayByWorkOrder
      * Gets the pay for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getPay(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getPay(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4911,13 +5320,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/pay")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getPay", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4933,13 +5342,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getPenaltiesByWorkOrder
      * Get a list of penalties and their applied status for a work order
      *
-     * @param workOrderId  Work Order ID
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work Order ID
+     * @param type        indicates that this call is low priority
      */
-    public static void getPenalties(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getPenalties(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4952,13 +5361,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getPenalties", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -4974,14 +5383,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getPenaltyByWorkOrderAndPenalty
      * Gets a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
-     * @param workOrderId  Work Order ID
-     * @param penaltyId    Penalty ID
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work Order ID
+     * @param penaltyId   Penalty ID
+     * @param type        indicates that this call is low priority
      */
-    public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4995,13 +5404,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getPenalty", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5017,14 +5426,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getProblemByWorkOrderAndProblem
      * Gets information about a problem on a work order
      *
-     * @param workOrderId  ID of work order
-     * @param problemId    ID of problem
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param problemId   ID of problem
+     * @param type        indicates that this call is low priority
      */
-    public static void getProblem(Context context, Integer workOrderId, Integer problemId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProblem(Context context, Integer workOrderId, Integer problemId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5038,13 +5447,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getProblem", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5060,13 +5469,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getProblemsByWorkOrder
      * Gets problems reported on a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getProblems(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProblems(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5079,13 +5488,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getProblems", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5101,13 +5510,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getProvidersByWorkOrder
      * Gets list of providers available for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getProviders(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProviders(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5120,13 +5529,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5144,15 +5553,15 @@ public abstract class WorkordersWebApi extends Pigeon {
      *
      * @param workOrderId         ID of work order
      * @param getProvidersOptions Additional optional parameters
-     * @param isBackground        indicates that this call is low priority
+     * @param type                indicates that this call is low priority
      */
-    public static void getProviders(Context context, Integer workOrderId, GetProvidersOptions getProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProviders(Context context, Integer workOrderId, GetProvidersOptions getProvidersOptions, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
                     + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
                     + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
             );
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5169,13 +5578,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5191,13 +5600,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getQualificationsByWorkOrder
      * Returns a list of qualifications applied to work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getQualifications(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getQualifications(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/qualifications");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5210,13 +5619,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/qualifications")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getQualifications", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5232,13 +5641,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getRatingsByWorkOrder
      * Get ratings by work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5251,13 +5660,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/ratings")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getRatings", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5273,14 +5682,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getRequestByWorkOrderAndRequest
      * Get request/ counter offer for assigned work order.
      *
-     * @param workOrderId  ID of work order
-     * @param requestId    ID of work order request/counter offer
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param requestId   ID of work order request/counter offer
+     * @param type        indicates that this call is low priority
      */
-    public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5294,13 +5703,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getRequest", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5316,15 +5725,15 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getRequestByWorkOrderAndRequest
      * Get request/ counter offer for assigned work order.
      *
-     * @param workOrderId  ID of work order
-     * @param requestId    ID of work order request/counter offer
-     * @param async        Async (Optional)
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param requestId   ID of work order request/counter offer
+     * @param async       Async (Optional)
+     * @param type        indicates that this call is low priority
      */
-    public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
+    public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5340,13 +5749,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getRequest", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5362,13 +5771,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getRequestsByWorkOrder
      * Returns a list of work order requests or counter offers requested by the assigned provider.
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getRequests(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getRequests(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5381,13 +5790,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getRequests", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5403,13 +5812,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: GetScheduleAndLocation
      * Get schedule and location for a list of work orders by work orders
      *
-     * @param workOrderId  array of work order ids
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId array of work order ids
+     * @param type        indicates that this call is low priority
      */
-    public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5423,13 +5832,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/mass-accept")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "GetScheduleAndLocation", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5445,13 +5854,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getScheduleByWorkOrder
      * Gets the service schedule for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getSchedule(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getSchedule(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5464,13 +5873,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/schedule")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getSchedule", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5486,13 +5895,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getShipmentsByWorkOrder
      * Get a list of shipments on a work order
      *
-     * @param workOrderId  Work order id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param type        indicates that this call is low priority
      */
-    public static void getShipments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getShipments(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5505,13 +5914,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/shipments")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getShipments", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5527,14 +5936,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getSignatureByWorkOrderAndSignature
      * Gets a single signature uploaded by the assigned provider
      *
-     * @param workOrderId  ID of work order
-     * @param signatureId  ID of signature
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param signatureId ID of signature
+     * @param type        indicates that this call is low priority
      */
-    public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5548,13 +5957,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getSignature", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5570,13 +5979,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getSignaturesByWorkOrder
      * Returns a list of signatures uploaded by the assigned provider
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getSignatures(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getSignatures(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5589,13 +5998,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getSignatures", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5611,13 +6020,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getStatusByWorkOrder
      * Gets the current real-time status for a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getStatus(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getStatus(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5630,13 +6039,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/status")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getStatus", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5652,14 +6061,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getTagByWorkOrderAndTag
      * Gets a tag on a work order
      *
-     * @param workOrderId  ID of work order
-     * @param tagId        ID of tag
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param tagId       ID of tag
+     * @param type        indicates that this call is low priority
      */
-    public static void getTag(Context context, Integer workOrderId, Integer tagId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTag(Context context, Integer workOrderId, Integer tagId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5673,13 +6082,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tags/{tag_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getTag", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5695,13 +6104,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getTagsByWorkOrder
      * Gets tags/labels reported on a work order
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5714,13 +6123,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tags")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getTags", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5736,14 +6145,14 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getTaskByWorkOrder
      * Get a task by work order
      *
-     * @param workOrderId  Work order id
-     * @param taskId       Task id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param taskId      Task id
+     * @param type        indicates that this call is low priority
      */
-    public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5757,13 +6166,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getTask", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5779,13 +6188,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getTasksByWorkOrder
      * Get a list of a work order's tasks
      *
-     * @param workOrderId  Work order id
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId Work order id
+     * @param type        indicates that this call is low priority
      */
-    public static void getTasks(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTasks(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5798,13 +6207,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getTasks", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5820,13 +6229,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getTimeLogsByWorkOrder
      * Returns a list of time logs applied by the assigned provider
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getTimeLogs(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getTimeLogs(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5839,13 +6248,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getTimeLogs", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5861,13 +6270,13 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getWorkOrderByWorkOrder
      * Gets a work order by its id
      *
-     * @param workOrderId  ID of work order
-     * @param isBackground indicates that this call is low priority
+     * @param workOrderId ID of work order
+     * @param type        indicates that this call is low priority
      */
-    public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5880,13 +6289,13 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.LOW : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getWorkOrder", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
                     .build();
 
@@ -5902,31 +6311,74 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getWorkOrderLists
      * Pre-filters results by a certain category or type, settings by list are persisted with 'sticky' by user.
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getWorkOrderLists(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getWorkOrderLists(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/lists");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .path("/api/rest/v2/workorders/lists");
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?sticky=count");
 
             JsonObject methodParams = new JsonObject();
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/lists")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId, WorkordersWebApi.class,
                                     "getWorkOrderLists", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
+                    .sequential(true)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key, topicId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getWorkOrderLists
+     * Pre-filters results by a certain category or type, settings by list are persisted with 'sticky' by user.
+     *
+     * @param type indicates that this call is low priority
+     */
+    public static void getWorkOrderLists(Context context, String list, boolean allowCacheResponse, WebTransaction.Type type) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/lists?list=" + list);
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/lists")
+                    .urlParams("?list=" + list + "&sticky=count");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/lists")
+                    .key(key)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params(topicId, WorkordersWebApi.class,
+                                    "getWorkOrderLists", methodParams))
+                    .useAuth(true)
+                    .setType(type)
+                    .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
@@ -5941,12 +6393,12 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Swagger operationId: getWorkOrders
      * Returns a list of work orders.
      *
-     * @param isBackground indicates that this call is low priority
+     * @param type indicates that this call is low priority
      */
-    public static void getWorkOrders(Context context, boolean allowCacheResponse, boolean isBackground) {
+    public static void getWorkOrders(Context context, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders");
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5958,14 +6410,15 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getWorkOrders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
@@ -5981,16 +6434,16 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Returns a list of work orders.
      *
      * @param getWorkOrdersOptions Additional optional parameters
-     * @param isBackground         indicates that this call is low priority
+     * @param type                 indicates that this call is low priority
      */
-    public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean sticky, boolean allowCacheResponse, WebTransaction.Type type) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
                     + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                     + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                     + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
             );
-            String topicId = isBackground ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
+            String topicId = (type != WebTransaction.Type.NORMAL) ? "ADDRESS_WEB_API_V2_SYNC/WorkordersWebApi" : "ADDRESS_WEB_API_V2/WorkordersWebApi";
 
             Log.v(TAG, "getWorkOrders Key " + key);
 
@@ -5998,15 +6451,15 @@ public abstract class WorkordersWebApi extends Pigeon {
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders")
-                    .urlParams("" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+                    .urlParams("?sticky=" + (sticky ? "1" : "0")
+                            + (getWorkOrdersOptions.getList() != null ? "&list=" + getWorkOrdersOptions.getList() : "")
                             + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                             + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                             + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
                             + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
-                            + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
                             + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
                             + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
-                            + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                            + "&f_="
                             + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                             + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
                             + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
@@ -6051,8 +6504,8 @@ public abstract class WorkordersWebApi extends Pigeon {
                             + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
                             + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                             + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
-                            + (getWorkOrdersOptions.getFLocationRadius() != null ? ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
-                            + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
+                            + (getWorkOrdersOptions.getFLocationRadius() != null ?
+                            ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0] + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
                     );
 
             JsonObject methodParams = new JsonObject();
@@ -6061,14 +6514,15 @@ public abstract class WorkordersWebApi extends Pigeon {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
                     .key(key)
-                    .priority(isBackground ? Priority.LOW : Priority.HIGH)
+                    .priority((type != WebTransaction.Type.NORMAL) ? Priority.NORMAL : Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params(topicId,
                                     WorkordersWebApi.class, "getWorkOrders", methodParams))
                     .useAuth(true)
-                    .isSyncCall(isBackground)
+                    .setType(type)
                     .request(builder)
+                    .sequential(true)
                     .build();
 
             WebTransactionSystem.queueTransaction(context, transaction);
@@ -6120,6 +6574,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "groupTask", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6162,6 +6617,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6208,6 +6664,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6245,6 +6702,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6285,6 +6743,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6322,6 +6781,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "massRequests", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6364,6 +6824,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6414,6 +6875,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6456,6 +6918,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeProvider", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6502,6 +6965,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeQualification", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6541,6 +7005,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "reorderTask", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6593,6 +7058,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "replyMessage", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6648,6 +7114,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "replyMessage", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6696,6 +7163,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "request", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6747,6 +7215,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "request", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6789,6 +7258,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "revertWorkOrderToDraft", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6834,6 +7304,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "revertWorkOrderToDraft", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6882,6 +7353,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "routeUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6933,6 +7405,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "routeUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -6975,6 +7448,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unapproveWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7020,6 +7494,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unapproveWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7068,6 +7543,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unassignUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7119,6 +7595,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unassignUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7161,6 +7638,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unpublish", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7206,6 +7684,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unpublish", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7254,6 +7733,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unRouteUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7305,6 +7785,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unRouteUser", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7353,6 +7834,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAllTimeLogs", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7404,6 +7886,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAllTimeLogs", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7458,6 +7941,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAttachment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7515,6 +7999,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAttachment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7567,6 +8052,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateBonus", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7619,6 +8105,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateContact", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7663,14 +8150,28 @@ public abstract class WorkordersWebApi extends Pigeon {
             if (customField != null)
                 methodParams.put("customField", customField.getJson());
 
+            String activityName = null;
+
+            if (customField != null) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.CUSTOM_FIELD,
+                        customField.getName());
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateCustomField", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7720,12 +8221,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateCustomFieldByWorkOrderAndCustomField/api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateCustomField", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7778,6 +8281,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateDiscount", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7826,6 +8330,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateETA", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7879,6 +8384,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateETA", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7925,6 +8431,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateExpense", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -7979,6 +8486,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateExpense", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8031,6 +8539,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateFolder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8086,6 +8595,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateFolder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8138,6 +8648,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHold", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8193,6 +8704,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHold", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8245,6 +8757,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateIncrease", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8300,6 +8813,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateIncrease", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8348,6 +8862,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateLocation", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8399,6 +8914,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateLocation", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8451,6 +8967,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateMessage", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8499,6 +9016,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8550,6 +9068,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8596,6 +9115,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePenalty", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8648,6 +9168,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePenalty", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8694,12 +9215,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateProblemByWorkOrderAndProblem/api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateProblem", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8749,12 +9272,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/problems/{problem_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateProblemByWorkOrderAndProblem/api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateProblem", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8803,6 +9328,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateQualification", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8851,6 +9377,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateRatings", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8902,6 +9429,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateRatings", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -8950,6 +9478,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateSchedule", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9001,6 +9530,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateSchedule", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9053,6 +9583,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9108,6 +9639,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9160,6 +9692,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTag", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9215,6 +9748,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTag", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9229,10 +9763,10 @@ public abstract class WorkordersWebApi extends Pigeon {
      * Updates a work order's task
      *
      * @param workOrderId Work order id
-     * @param taskId      Task id
+     * @param task        Payload of the Task
      * @param json        JSON Model
      */
-    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json, EventContext uiContext) {
+    public static void updateTask(Context context, Integer workOrderId, Task task, Task json, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("updateTaskByWorkOrder")
                 .label(workOrderId + "")
@@ -9240,7 +9774,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                 .addContext(uiContext)
                 .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
                 .property("task_id")
-                .value(taskId)
+                .value(task.getId())
                 .build()
         );
 
@@ -9248,25 +9782,38 @@ public abstract class WorkordersWebApi extends Pigeon {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + task.getId());
 
             if (json != null)
                 builder.body(json.getJson().toString());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("taskId", taskId);
+            methodParams.put("taskId", task.getId());
             if (json != null)
                 methodParams.put("json", json.getJson());
 
+
+            String activityName = null;
+
+            if (task != null) {
+                activityName = TaskTypeEnum.getActivityName(task);
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTaskByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/tasks/" + task.getId())
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTask", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9318,12 +9865,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .uuid(uuid)
                     .build();
@@ -9385,12 +9934,14 @@ public abstract class WorkordersWebApi extends Pigeon {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateTimeLogByWorkOrder/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .uuid(uuid)
                     .build();
@@ -9446,6 +9997,75 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
+                    .request(builder)
+                    .build();
+
+            WebTransactionSystem.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: updateWorkOrderByWorkOrder
+     * Updates a work order's closing notes by its id
+     *
+     * @param workOrderId  ID of work order
+     * @param closingNotes the new cosing notes data
+     */
+    public static void updateClosingNotes(Context context, Integer workOrderId, String closingNotes, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateClosingNotesByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId);
+
+
+            if (closingNotes != null) {
+                WorkOrder workOrder = new WorkOrder();
+                workOrder.closingNotes(closingNotes);
+                builder.body(workOrder.getJson().toString());
+            }
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (closingNotes != null)
+                methodParams.put(WebTransactionUtils.PARAM_CLOSING_NOTES_KEY, closingNotes);
+
+            String activityName = null;
+
+            if (!misc.isEmptyOrNull(closingNotes)) {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.CLOSING_NOTES, closingNotes);
+            } else {
+                activityName = WebTransaction.ActivityName.getActivityTitleByType(
+                        WebTransaction.ActivityName.REMOVE, "Closing Notes");
+            }
+
+            if (!misc.isEmptyOrNull(activityName)) {
+                methodParams.put(WebTransaction.ActivityType.ACTIVITY_NAME.name(), activityName);
+            }
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
+                    .key(misc.longToHex(System.currentTimeMillis(), 11) + "/updateClosingNotesByWorkOrder/api/rest/v2/workorders/" + workOrderId)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateWorkOrder", methodParams))
+                    .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9497,6 +10117,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateWorkOrder", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9543,6 +10164,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "verifyTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9592,6 +10214,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             TransactionListener.params("ADDRESS_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "verifyTimeLog", methodParams))
                     .useAuth(true)
+                    .setType(App.get().getOfflineState() == App.OfflineState.OFFLINE ? WebTransaction.Type.SYNC : WebTransaction.Type.NORMAL)
                     .request(builder)
                     .build();
 
@@ -9607,6 +10230,11 @@ public abstract class WorkordersWebApi extends Pigeon {
     @Override
     public void onMessage(String address, Object message) {
         //Log.v(TAG, "Listener " + address);
+
+        if (!addresses.contains(address)) {
+            Log.v(TAG, "skipping, not subscribed");
+            return;
+        }
 
         Bundle bundle = (Bundle) message;
         String type = bundle.getString("type");
@@ -9662,7 +10290,7 @@ public abstract class WorkordersWebApi extends Pigeon {
      * @param failObject
      * @return true if data handled, false if not
      */
-    public boolean onComplete(UUIDGroup uuid, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
+    public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
         return false;
     }
 
@@ -9820,6 +10448,9 @@ public abstract class WorkordersWebApi extends Pigeon {
                                 break;
                             case "getOverview":
                                 successObject = WorkOrderOverview.fromJson(new JsonObject(data));
+                                break;
+                            case "getAssignmentCancelReasons":
+                                successObject = AssignmentCancelReason.fromJsonArray(new JsonArray(data));
                                 break;
                             case "getAssignee":
                                 successObject = Assignee.fromJson(new JsonObject(data));
@@ -9982,6 +10613,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                 successObject = Request.fromJson(new JsonObject(data));
                                 break;
                             default:
+                                successObject = data;
                                 Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                                 break;
                         }
@@ -10010,6 +10642,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             case "addWorkOrder":
                             case "approveWorkOrder":
                             case "assignUser":
+                            case "cancelAssignment":
                             case "cancelSwapRequest":
                             case "completeWorkOrder":
                             case "decline":
@@ -10035,6 +10668,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                             case "deleteTask":
                             case "deleteTimeLog":
                             case "deleteWorkOrder":
+                            case "getAssignmentCancelReasons":
                             case "getAssignee":
                             case "getAttachments":
                             case "getBonus":
@@ -10124,6 +10758,7 @@ public abstract class WorkordersWebApi extends Pigeon {
                                 failObject = Error.fromJson(new JsonObject(data));
                                 break;
                             default:
+                                failObject = data;
                                 Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                                 break;
                         }
@@ -10167,6 +10802,10 @@ public abstract class WorkordersWebApi extends Pigeon {
 
         @Override
         public void run() {
+            if (!workordersWebApi.addresses.contains(transactionParams.topicId)) {
+                Log.v(TAG, "Unsubbed skipping");
+                return;
+            }
             if (!workordersWebApi.onComplete(uuid, transactionParams, transactionParams.apiFunction, successObject, success, failObject, isCached)) {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);

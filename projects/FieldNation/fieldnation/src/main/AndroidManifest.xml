@@ -235,6 +235,11 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
 
+        <activity
+            android:name=".v2.ui.UnsyncedActivity"
+            android:label="Unsynced Activity"
+            android:process=":frontside" />
+
         <service
             android:name=".service.auth.AuthService"
             android:exported="true"

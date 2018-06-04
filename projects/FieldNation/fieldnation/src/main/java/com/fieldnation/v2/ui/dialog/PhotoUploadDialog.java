@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.view.menu.ActionMenuItemView;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
@@ -69,6 +72,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private static final String STATE_CACHED_URI = "STATE_CACHED_URI";
     private static final String STATE_CACHED_SIZE = "STATE_CACHED_SIZE";
     private static final String STATE_SOURCE_URI = "STATE_SOURCE_URI";
+    private static final String STATE_COMPRESS_CHECKED = "STATE_COMPRESS_CHECKED";
 
     // Mode
     private static final int MODE_NORMAL = 0;
@@ -84,6 +88,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
     private ProgressBar _progressBar;
     private RelativeLayout _noPreviewLayout;
     private TextView _iconTextView;
+    private RelativeLayout _fullrezLayout;
+    private Switch _fullrezSwitch;
 
     // Data user entered
     private String _newFileName;
@@ -241,6 +247,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _noPreviewLayout = v.findViewById(R.id.previewUnavailable_view);
         _iconTextView = v.findViewById(R.id.icon_textview);
 
+        _fullrezLayout = v.findViewById(R.id.switch_layout);
+        _fullrezSwitch = v.findViewById(R.id.fullrez_switch);
+
         return v;
     }
 
@@ -257,6 +266,10 @@ public class PhotoUploadDialog extends FullScreenDialog {
         _descriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
         _noPreviewLayout.setOnClickListener(_preview_onClick);
         _progressBar.setOnClickListener(_preview_onClick);
+
+        _fullrezLayout.setOnClickListener(_fullrez_onClick);
+        _fullrezSwitch.setClickable(false);
+        _fullrezSwitch.setChecked(false);
     }
 
     @Override
@@ -264,6 +277,29 @@ public class PhotoUploadDialog extends FullScreenDialog {
         super.onResume();
         _fileCacheClient.sub();
         populateUi();
+    }
+
+    private void guessExtension() {
+        if (!misc.isEmptyOrNull(_extension))
+            return;
+
+        if (_originalFileName == null)
+            return;
+
+        if (_originalFileName.contains(".")) {
+            _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
+            return;
+        }
+
+        if (_cachedUri != null) {
+            try {
+                String mimeType = ImageUtils.guessMimeTypeFromUri(App.get(), _cachedUri);
+                if (!misc.isEmptyOrNull(mimeType))
+                    _extension = "." + MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     }
 
     @Override
@@ -283,13 +319,12 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 _originalFileName = _methodParams.getString("attachment.file.name");
                 _description = _methodParams.has("attachment.notes") ? _methodParams.getString("attachment.notes") : "";
                 _workOrderId = _methodParams.getInt("workOrderId");
-                if (_originalFileName.contains(".")) {
-                    _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
-                }
 
                 StoredObject so = StoredObject.get(App.get(), _methodParams.getLong("storedObjectId"));
                 _sourceUri = _cachedUri = so.getUri();
                 _cacheSize = so.size();
+
+                guessExtension();
 
                 if (_cacheSize > 100000000) {
                     ToastClient.toast(App.get(), "File is over 100mb limit. Cannot upload.", Toast.LENGTH_SHORT);
@@ -311,9 +346,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
             _mode = MODE_NORMAL;
             _originalFileName = payload.getString("fileName");
             _workOrderId = payload.getInt("workOrderId");
-            if (_originalFileName.contains(".")) {
-                _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
-            }
+            guessExtension();
 
             _isTask = payload.getBoolean("isTask");
             _folderId = payload.getInt("folderId");
@@ -359,6 +392,9 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             if (savedState.containsKey(STATE_CACHED_SIZE))
                 _cacheSize = savedState.getLong(STATE_CACHED_SIZE);
+
+            if (savedState.containsKey(STATE_COMPRESS_CHECKED))
+                _fullrezSwitch.setChecked(savedState.getBoolean(STATE_COMPRESS_CHECKED));
         }
     }
 
@@ -384,6 +420,8 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
         if (_cacheSize > 0)
             outState.putLong(STATE_CACHED_SIZE, _cacheSize);
+
+        outState.putBoolean(STATE_COMPRESS_CHECKED, _fullrezSwitch.isChecked());
     }
 
     @Override
@@ -421,15 +459,18 @@ public class PhotoUploadDialog extends FullScreenDialog {
             _imageView.setVisibility(View.VISIBLE);
             _imageView.setImageBitmap(_bitmap);
             _noPreviewLayout.setVisibility(View.GONE);
+            _fullrezLayout.setVisibility(View.VISIBLE);
         } else if (_hideImageView) {
             _progressBar.setVisibility(View.GONE);
             _imageView.setVisibility(View.INVISIBLE);
             _noPreviewLayout.setVisibility(View.VISIBLE);
             _iconTextView.setText(getIcon(_extension));
+            _fullrezLayout.setVisibility(View.GONE);
         } else {
             _progressBar.setVisibility(View.VISIBLE);
             _imageView.setVisibility(View.INVISIBLE);
             _noPreviewLayout.setVisibility(View.GONE);
+            _fullrezLayout.setVisibility(View.GONE);
         }
 
         _descriptionEditText.setText(misc.isEmptyOrNull(_description) ? "" : _description);
@@ -451,6 +492,13 @@ public class PhotoUploadDialog extends FullScreenDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _fullrez_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _fullrezSwitch.setChecked(!_fullrezSwitch.isChecked());
+        }
+    };
+
     private final TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -567,7 +615,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
                     attachment.notes(_description);
                     attachment.file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri);
+                    AttachmentHelper.addAttachment(App.get(), _uuid, _workOrderId, attachment, _newFileName, _cachedUri, !_fullrezSwitch.isChecked());
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -629,12 +677,26 @@ public class PhotoUploadDialog extends FullScreenDialog {
                 return;
             }
 
-            Intent intent;
-            intent = new Intent(Intent.ACTION_VIEW);
-            File f = new File(_cachedUri.getPath());
-            intent.setDataAndType(App.getUriFromFile(f), MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1)));
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            try {
+                File f = new File(_cachedUri.getPath());
+                String mimeType = null;
+                if (_extension != null)
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(_extension.substring(1));
+
+                if (mimeType == null) {
+                    ToastClient.toast(App.get(), "Can't show the preview. ", Toast.LENGTH_SHORT);
+                    return;
+                }
+
+                intent.setDataAndType(App.getUriFromFile(f), mimeType);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                ToastClient.toast(App.get(), "Can't show the preview. ", Toast.LENGTH_SHORT);
+            }
 
             try {
                 if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
@@ -662,6 +724,7 @@ public class PhotoUploadDialog extends FullScreenDialog {
 
             _cacheSize = size;
             _cachedUri = uri;
+            guessExtension();
             try {
                 setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
             } catch (Exception ex) {

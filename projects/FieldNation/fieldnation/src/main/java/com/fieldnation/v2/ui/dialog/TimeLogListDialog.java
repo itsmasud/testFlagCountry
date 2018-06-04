@@ -27,6 +27,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.ApatheticOnMenuItemClickListener;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -117,7 +118,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                 .build());
 
         AppMessagingClient.setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, WebTransaction.Type.NORMAL);
     }
 
     private void populateUi() {
@@ -131,6 +132,12 @@ public class TimeLogListDialog extends FullScreenDialog {
         if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             _finishMenu.setVisibility(View.VISIBLE);
         }
+
+        if ((App.get().getOfflineState() == App.OfflineState.OFFLINE || App.get().getOfflineState() == App.OfflineState.UPLOADING))
+            _finishMenu.setEnabled(false);
+        else
+            _finishMenu.setEnabled(true);
+
     }
 
     @Override
@@ -294,7 +301,7 @@ public class TimeLogListDialog extends FullScreenDialog {
                 AppMessagingClient.setLoading(false);
             } else {
                 AppMessagingClient.setLoading(true);
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
             }
             return super.onComplete(uuidGroup, transactionParams, methodName, successObject, success, failObject, isCached);
         }

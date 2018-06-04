@@ -1,6 +1,7 @@
 package com.fieldnation.v2.ui;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
@@ -21,12 +22,14 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
     private TextView _valueTitleTextView;
     private TextView _keyDescriptionTextView;
     private TextView _valueDescriptionTextView;
+    private TextView _alertTextView;
 
     // Data
     private String _keyTitle;
     private String _keyDescription;
     private String _valueTitle;
     private String _valueDescription;
+    private boolean _alertVisible = false;
 
     public ListItemTwoHorizTwoVertView(Context context) {
         super(context);
@@ -53,6 +56,7 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
         _valueTitleTextView = findViewById(R.id.valueTitle_textview);
         _keyDescriptionTextView = findViewById(R.id.keyDescription_textview);
         _valueDescriptionTextView = findViewById(R.id.valueDescription_textview);
+        _alertTextView = findViewById(R.id.alert);
 
         populateUi();
     }
@@ -66,6 +70,16 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
         _valueDescriptionTextView.setEnabled(enabled);
     }
 
+    public void setTitleEllipse(boolean isEllipsized){
+        if (isEllipsized) {
+            _keyTitleTextView.setEllipsize(TextUtils.TruncateAt.END);
+            _keyTitleTextView.setMaxLines(2);
+        } else {
+            _keyTitleTextView.setEllipsize(null);
+            _keyTitleTextView.setMaxLines(Integer.MAX_VALUE);
+        }
+    }
+
     public void set(String keyTitle, String keyDescription, String valueTitle, String valueDescription) {
         _keyTitle = keyTitle;
         _keyDescription = keyDescription;
@@ -77,6 +91,12 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
 
     public void set(String keyTitle, String valueTitle) {
         set(keyTitle, null, valueTitle, null);
+
+        populateUi();
+    }
+
+    public void setAlertVisible(boolean visible) {
+        _alertVisible = visible;
 
         populateUi();
     }
@@ -108,6 +128,13 @@ public class ListItemTwoHorizTwoVertView extends RelativeLayout {
             _valueDescriptionTextView.setVisibility(VISIBLE);
             _valueDescriptionTextView.setText(_valueDescription);
         }
+
+        if (_alertVisible) {
+            _alertTextView.setVisibility(VISIBLE);
+        } else {
+            _alertTextView.setVisibility(GONE);
+        }
+
 
     }
 }

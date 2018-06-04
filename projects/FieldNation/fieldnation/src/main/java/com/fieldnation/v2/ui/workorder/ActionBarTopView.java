@@ -21,6 +21,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
 import java.util.Set;
 
@@ -104,13 +105,14 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             inflate();
 
             _rightGreenButton.setVisibility(VISIBLE);
-            _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             if (_workOrder.getHolds().areHoldsAcknowledged()) {
                 _rightGreenButton.setText(R.string.btn_on_hold);
                 _rightGreenButton.setEnabled(false);
+//                _rightGreenButton.setBackgroundColor(R.drawable.btn_bg_gray);
             } else {
                 _rightGreenButton.setText(R.string.btn_review_hold);
                 _rightGreenButton.setEnabled(true);
+                _rightGreenButton.setOnClickListener(_acknowledge_onClick);
             }
             setVisibility(View.VISIBLE);
 
@@ -170,7 +172,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
             inflate();
             _rightGreenButton.setVisibility(VISIBLE);
-            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() >= 1) {
                 _rightGreenButton.setText(R.string.btn_check_in_again);
                 _rightGreenButton.setOnClickListener(_checkinAgain_onClick);
                 _rightGreenButton.setEnabled(true);
@@ -277,6 +279,29 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGreenButton.setText(R.string.btn_closing_notes);
             setVisibility(View.VISIBLE);
             _rightGreenButton.setEnabled(true);
+        }
+
+        if (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING) {
+            inflate();
+            _rightGreenButton.setEnabled(true);
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            _rightGreenButton.setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.btn_bg_white_normal));
+            _rightGreenButton.setAlpha(0.5f);
+
+
+            if (_workOrder.getHolds().isOnHold() && !_workOrder.getHolds().areHoldsAcknowledged()) {
+                _rightGreenButton.setOnClickListener(_disable_onClick); // review hold
+            } else if (_workOrder.getHolds().isOnHold()) {
+                // on hold but not acked
+            } else
+                _rightGreenButton.setOnClickListener(_disable_onClick); // not on hold
+
+        } else if (!_workOrder.getHolds().isOnHold()) {
+            inflate();
+            _rightGreenButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_green));
+            _rightGreenButton.setTextColor(getResources().getColor(R.color.fn_white_text));
+            _rightGreenButton.setAlpha(1.0f);
         }
     }
 
@@ -441,6 +466,16 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             if (_listener != null) _listener.onViewPayment();
         }
     };
+
+    private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TwoButtonDialog.show(App.get(), null, getResources().getString(R.string.not_available),
+                    getResources().getString(R.string.not_available_body_text),
+                    getResources().getString(R.string.btn_close), null, true, null);
+        }
+    };
+
 
     public interface Listener {
         void onNotInterested();

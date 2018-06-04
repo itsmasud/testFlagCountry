@@ -1,7 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +21,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.PigeonRoost;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.menu.ResolveMenuButton;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -72,6 +77,9 @@ public class ResolveProblemDialog extends FullScreenDialog {
 
         _resolveButton = ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton();
         _resolveButton.setOnClickListener(_resolve_onClick);
+
+        LocalBroadcastManager.getInstance(App.get()).registerReceiver(_webTransactionChanged, new IntentFilter(WebTransaction.BROADCAST_ON_CHANGE));
+
     }
 
     @Override
@@ -82,9 +90,22 @@ public class ResolveProblemDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onStop() {
+        LocalBroadcastManager.getInstance(App.get()).unregisterReceiver(_webTransactionChanged);
+        super.onStop();
+    }
+
+    @Override
     public void show(Bundle params, boolean animate) {
         _problem = params.getParcelable("problem");
         _workOrderId = params.getInt("workOrderId");
+
+        populateUi();
+
+        super.show(params, animate);
+    }
+
+    private void populateUi() {
 
         _titleTextView.setText(_problem.getType().getName());
         _commentsTextView.setText(_problem.getComments());
@@ -95,7 +116,14 @@ public class ResolveProblemDialog extends FullScreenDialog {
             _resolveButton.setEnabled(false);
         }
 
-        super.show(params, animate);
+        if (_problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)
+                && (App.get().getOfflineState() == App.OfflineState.OFFLINE
+                || App.get().getOfflineState() == App.OfflineState.UPLOADING)) {
+            _resolveButton.setTextColor(getContext().getResources().getColor(R.color.fn_white_text_30));
+        } else {
+            _resolveButton.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
+        }
+
     }
 
     @Override
@@ -117,20 +145,34 @@ public class ResolveProblemDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_resolve_onClick");
-            try {
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Resolve Problem Dialog";
 
-                Problem problem = new Problem()
-                        .id(_problem.getId())
-                        .resolution(new ProblemResolution()
-                                .status(ProblemResolution.StatusEnum.RESOLVED));
+            if (App.get().getOfflineState() != App.OfflineState.OFFLINE
+                    && App.get().getOfflineState() != App.OfflineState.UPLOADING) {
+                try {
+                    SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                    uiContext.page += " - Resolve Problem Dialog";
 
-                WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), problem, uiContext);
-                _refreshView.startRefreshing();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+                    Problem problem = new Problem()
+                            .id(_problem.getId())
+                            .resolution(new ProblemResolution()
+                                    .status(ProblemResolution.StatusEnum.RESOLVED));
+                    WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), problem, uiContext);
+                    _refreshView.startRefreshing();
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else {
+                TwoButtonDialog.show(App.get(), null, v.getContext().getResources().getString(R.string.not_available),
+                        v.getContext().getResources().getString(R.string.not_available_body_text),
+                        v.getContext().getResources().getString(R.string.btn_close), null, true, null);
             }
+        }
+    };
+
+    private final BroadcastReceiver _webTransactionChanged = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            populateUi();
         }
     };
 
@@ -148,7 +190,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         public boolean onComplete(UUIDGroup uuidGroup, TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject, boolean isCached) {
             if (methodName.equals("updateProblem") && success) {
                 PigeonRoost.clearAddressCacheAll("ADDRESS_WEB_API_V2/WorkordersWebApi");
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, WebTransaction.Type.NORMAL);
                 dismiss(true);
             } else {
                 Log.v(TAG, "onComplete");

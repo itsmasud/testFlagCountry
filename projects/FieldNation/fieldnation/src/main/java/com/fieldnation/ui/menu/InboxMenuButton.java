@@ -20,9 +20,11 @@ public class InboxMenuButton extends RelativeLayout {
 
     // UI
     private TextView _inboxCountTextView;
+    private TextView _inboxTextView;
 
     // data
     private Profile _profile = null;
+    private boolean _enabled = true;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -49,6 +51,7 @@ public class InboxMenuButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _inboxTextView = findViewById(R.id.inbox_textview);
         _inboxCountTextView = findViewById(R.id.inboxCount_textview);
 
         setOnClickListener(_inbox_onClick);
@@ -65,6 +68,17 @@ public class InboxMenuButton extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
+    @Override
+    public void setEnabled(boolean enabled) {
+        if (_enabled = enabled) {
+            _inboxCountTextView.setVisibility(VISIBLE);
+            setOnClickListener(_inbox_onClick);
+        } else {
+            _inboxCountTextView.setVisibility(GONE);
+            setOnClickListener(null);
+        }
+        _inboxTextView.setEnabled(enabled);
+    }
 
     private final View.OnClickListener _inbox_onClick = new OnClickListener() {
         @Override
@@ -83,7 +97,7 @@ public class InboxMenuButton extends RelativeLayout {
     };
 
     private void refresh() {
-        if (_profile == null)
+        if (_profile == null || !_enabled)
             return;
 
         int count = _profile.getNewNotificationCount() + _profile.getUnreadMessageCount();

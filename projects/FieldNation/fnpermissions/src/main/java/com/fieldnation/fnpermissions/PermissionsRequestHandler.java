@@ -3,6 +3,7 @@ package com.fieldnation.fnpermissions;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 
 import com.fieldnation.fnlog.Log;
@@ -46,26 +47,28 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
             PigeonRoost.clearAddressCacheAll(ADDRESS_REQUESTS);
             Bundle bundle = (Bundle) message;
             onRequest(bundle.getStringArray("permissions"),
-                    bundle.getBooleanArray("required"));
+                    bundle.getBooleanArray("required"),
+                    bundle.getParcelable("extraData"));
 
         } else if (address.equals(ADDRESS_REQUEST_RESULT)) {
             PigeonRoost.clearAddressCacheAll(ADDRESS_REQUEST_RESULT);
             Bundle bundle = (Bundle) message;
             onResponse(bundle.getInt("requestCode"),
                     bundle.getStringArray("permissions"),
-                    bundle.getIntArray("grantResults"));
+                    bundle.getIntArray("grantResults"),
+                    bundle.getParcelable("extraData"));
         }
     }
 
     public abstract Activity getActivity();
 
-    private void onRequest(String[] permissions, boolean[] required) {
+    private void onRequest(String[] permissions, boolean[] required, Parcelable extraData) {
         Log.v(TAG, "onRequest");
 
         List<String> requestable = new LinkedList<>();
         for (int i = 0; i < permissions.length; i++) {
             if (State.isPermissionDenied(getActivity(), permissions[i])) {
-                PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_DENIED);
+                PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_DENIED, extraData);
             } else {
                 requestable.add(permissions[i]);
             }
@@ -87,7 +90,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
     }
 
 
-    private void onResponse(int requestCode, String[] permissions, int[] grantResults) {
+    private void onResponse(int requestCode, String[] permissions, int[] grantResults, Parcelable extraData) {
         Log.v(TAG, "onResponse " + requestCode);
         requesting = false;
 
@@ -104,7 +107,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                     Log.v(TAG, "onResponse Granted");
                     State.clearPermissionDenied(getActivity(), permissions[i]);
                     tuple.delete(getActivity());
-                    PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_GRANTED);
+                    PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_GRANTED, extraData);
 
                 } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                     Log.v(TAG, "onResponse denied");
@@ -121,7 +124,7 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                         } else {
                             Log.v(TAG, "onResponse not shouldShowRequestPermissionRationale not required");
                             tuple.shouldShowRationale(false).save(getActivity());
-                            PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_DENIED);
+                            PermissionsClient.onComplete(permissions[i], PackageManager.PERMISSION_DENIED, extraData);
                             State.setPermissionDenied(getActivity(), permissions[i]);
                         }
                     }
@@ -143,14 +146,14 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                         tuple.delete(getActivity());
                         State.clearPermissionDenied(getActivity(), permissions[i]);
                     }
-                    PermissionsClient.onComplete(permissions[i], grantResults[i]);
+                    PermissionsClient.onComplete(permissions[i], grantResults[i], extraData);
                 }
             }
         }
-        processQueue();
+        processQueue(extraData);
     }
 
-    private void processQueue() {
+    private void processQueue(Parcelable extraData) {
         Log.v(TAG, "processQueue");
         while (QUEUED_PERMS.size() > 0) {
             Log.v(TAG, "processQueue tuple");
@@ -161,18 +164,18 @@ public abstract class PermissionsRequestHandler extends Pigeon implements Consta
                 Log.v(TAG, "processQueue denied");
                 if (tuple.shouldShowRationale || tuple.required) {
                     Log.v(TAG, "processQueue shouldShowRationale || required");
-                    PermissionsDialog.show(getActivity(), tuple.permission, tuple);
+                    PermissionsDialog.show(getActivity(), tuple.permission, tuple, extraData);
                     requesting = true;
                     break;
                 } else {
                     Log.v(TAG, "processQueue !shouldShowRationale && !required");
                     State.setPermissionDenied(getActivity(), tuple.permission);
-                    PermissionsClient.onComplete(tuple.permission, PackageManager.PERMISSION_DENIED);
+                    PermissionsClient.onComplete(tuple.permission, PackageManager.PERMISSION_DENIED, extraData);
                 }
             } else {
                 Log.v(TAG, "processQueue granted");
                 State.clearPermissionDenied(getActivity(), tuple.permission);
-                PermissionsClient.onComplete(tuple.permission, PackageManager.PERMISSION_GRANTED);
+                PermissionsClient.onComplete(tuple.permission, PackageManager.PERMISSION_GRANTED, extraData);
             }
         }
     }
