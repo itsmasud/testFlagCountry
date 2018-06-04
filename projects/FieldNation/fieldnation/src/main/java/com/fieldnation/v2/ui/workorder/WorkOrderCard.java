@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
@@ -89,6 +90,9 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteWarningDialog";
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
     private static final String DIALOG_WORKERS_COMP = TAG + ".workersCompDialog";
+    private static final String DIALOG_ON_MY_WAY_YESNO = TAG + ".onMyWayYesNoDialog";
+
+    private static final long ONE_DAY = 86400000;
 
     // Ui
     private View _warningBarView;
@@ -182,6 +186,7 @@ public class WorkOrderCard extends RelativeLayout {
         super.onAttachedToWindow();
         WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_ON_MY_WAY_YESNO, _twoButtonDialog_onMyWayYesNo);
 
         _usersWebApi.sub();
     }
@@ -196,6 +201,7 @@ public class WorkOrderCard extends RelativeLayout {
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         WorkersCompDialog.removeOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.removeOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_ON_MY_WAY_YESNO, _twoButtonDialog_onMyWayYesNo);
 
         _usersWebApi.unsub();
 
@@ -758,6 +764,45 @@ public class WorkOrderCard extends RelativeLayout {
         WorkersCompDialog.show(App.get(), DIALOG_WORKERS_COMP, _workOrder.getId(), dialogType, getResources().getString(R.string.dialog_workers_comp_title), _translation.getValue(), misc.to2Decimal(_workersCompFee.getModifier() * 100) + "%");
     }
 
+    private void markOnMyWay() {
+
+        AppMessagingClient.setLoading(true);
+
+        if (_onActionListener != null) _onActionListener.onAction();
+
+        if (!App.get().isLocationEnabled()) {
+            ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                }
+            }, Snackbar.LENGTH_INDEFINITE);
+        }
+
+        WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
+        try {
+            ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
+
+            ETA eta = new ETA();
+            eta.status(etaStatus);
+
+            if (_location != null)
+                eta.condition(new Condition()
+                        .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
+
+            Log.e(TAG, "eta: " + eta.getJson());
+            WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        try {
+            GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
     private final View.OnClickListener _disable_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -923,40 +968,34 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AppMessagingClient.setLoading(true);
 
-            if (_onActionListener != null) _onActionListener.onAction();
-
-            if (!App.get().isLocationEnabled()) {
-                ToastClient.snackbar(App.get(), getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", new OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                        ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
-                    }
-                }, Snackbar.LENGTH_INDEFINITE);
-            }
-
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
-                ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
+                if (System.currentTimeMillis() + ONE_DAY <= _workOrder.getEta().getStart().getUtcLong()) {
+                    android.os.Bundle bundle = new android.os.Bundle();
+                    bundle.putInt("workOrderId", _workOrder.getId());
 
-                ETA eta = new ETA();
-                eta.status(etaStatus);
-
-                if (_location != null)
-                    eta.condition(new Condition()
-                            .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
-
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
+                    TwoButtonDialog.show(App.get(), DIALOG_ON_MY_WAY_YESNO,
+                            getResources().getString(R.string.dialog_yes_no_onmyway_title),
+                            getResources().getString(R.string.dialog_yes_no_onmyway_body, DateUtils.millisecondToHourOrDay(_workOrder.getEta().getStart().getUtcLong() - System.currentTimeMillis())),
+                            getResources().getString(R.string.btn_continue),
+                            getResources().getString(R.string.btn_cancel), true, bundle);
+                } else markOnMyWay();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+
+
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_onMyWayYesNo = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            if (((android.os.Bundle) extraData).containsKey("workOrderId")
+                    && ((android.os.Bundle) extraData).getInt("workOrderId") == _workOrder.getId()) {
+                markOnMyWay();
             }
+
         }
     };
 

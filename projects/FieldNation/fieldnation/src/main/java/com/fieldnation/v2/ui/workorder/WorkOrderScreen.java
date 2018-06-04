@@ -41,6 +41,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
@@ -115,6 +116,8 @@ import java.util.UUID;
 public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private static final String TAG = "WorkOrderScreen";
 
+    private static final long ONE_DAY = 86400000;
+
     // Dialog tags
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
@@ -130,6 +133,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_ATTACHED_FOLDERS = TAG + ".attachedFoldersDialog";
     private static final String DIALOG_WORKERS_COMP = TAG + ".workersCompDialog";
+    private static final String DIALOG_ON_MY_WAY_YESNO = TAG + ".onMyWayYesNoDialog";
 
     // saved state keys
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
@@ -344,6 +348,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_ON_MY_WAY_YESNO, _twoButtonDialog_onMyWayYesNo);
         WorkersCompDialog.addOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.addOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
         WorkersCompDialog.addOnCounterOfferListener(DIALOG_WORKERS_COMP, _workersCompDialog_onCounterOffer);
@@ -380,6 +385,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_WORKLOG, _twoButtonDialog_deleteWorkLog);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_SIGNATURE, _twoButtonDialog_deleteSignature);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_ON_MY_WAY_YESNO, _twoButtonDialog_onMyWayYesNo);
         WorkersCompDialog.removeOnAcceptedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onAccecpt);
         WorkersCompDialog.removeOnRequestedListener(DIALOG_WORKERS_COMP, _workersCompDialog_onRequest);
         WorkersCompDialog.removeOnCounterOfferListener(DIALOG_WORKERS_COMP, _workersCompDialog_onCounterOffer);
@@ -574,6 +580,47 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             CheckInOutDialog.show(App.get(), null, _myUUID, _workOrderId,
                     _workOrder.getTimeLogs(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
         }
+    }
+
+    private void markOnMyWay() {
+
+        if (!App.get().isLocationEnabled()) {
+            ToastClient.snackbar(
+                    App.get(),
+                    getResources().getString(R.string.snackbar_location_disabled),
+                    "LOCATION SETTINGS",
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
+                        }
+                    },
+                    Snackbar.LENGTH_INDEFINITE);
+        }
+
+        WorkOrderTracker.onActionButtonEvent(
+                App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);
+        try {
+            ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
+
+            ETA eta = new ETA();
+            eta.status(etaStatus);
+
+            if (_currentLocation != null)
+                eta.condition(new Condition()
+                        .coords(new Coords(_currentLocation.getLatitude(), _currentLocation.getLongitude())));
+
+            WorkordersWebApi.updateETA(App.get(), _workOrderId, eta, App.get().getSpUiContext());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        try {
+            GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        setLoading(true);
     }
 
     /*-*********************************-*/
@@ -807,43 +854,21 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         @Override
         public void onMyWay() {
-            if (!App.get().isLocationEnabled()) {
-                ToastClient.snackbar(
-                        App.get(),
-                        getResources().getString(R.string.snackbar_location_disabled),
-                        "LOCATION SETTINGS",
-                        new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                                ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS);
-                            }
-                        },
-                        Snackbar.LENGTH_INDEFINITE);
-            }
 
-            WorkOrderTracker.onActionButtonEvent(
-                    App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrderId);
             try {
-                ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
+                if (System.currentTimeMillis() + ONE_DAY <= _workOrder.getEta().getStart().getUtcLong()) {
+                    android.os.Bundle bundle = new android.os.Bundle();
+                    bundle.putInt("workOrderId", _workOrder.getId());
 
-                ETA eta = new ETA();
-                eta.status(etaStatus);
-
-                if (_currentLocation != null)
-                    eta.condition(new Condition()
-                            .coords(new Coords(_currentLocation.getLatitude(), _currentLocation.getLongitude())));
-
-                WorkordersWebApi.updateETA(App.get(), _workOrderId, eta, App.get().getSpUiContext());
+                    TwoButtonDialog.show(App.get(), DIALOG_ON_MY_WAY_YESNO,
+                            getResources().getString(R.string.dialog_yes_no_onmyway_title),
+                            getResources().getString(R.string.dialog_yes_no_onmyway_body, DateUtils.millisecondToHourOrDay(_workOrder.getEta().getStart().getUtcLong() - System.currentTimeMillis())),
+                            getResources().getString(R.string.btn_continue),
+                            getResources().getString(R.string.btn_cancel), true, bundle);
+                } else markOnMyWay();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            setLoading(true);
         }
 
         @Override
@@ -987,6 +1012,16 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
         public void onPrimary(Parcelable extraData) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
             WorkordersWebApi.deleteSignature(App.get(), _workOrderId, ((Signature) extraData), App.get().getSpUiContext());
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _twoButtonDialog_onMyWayYesNo = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary(Parcelable extraData) {
+            if (((android.os.Bundle) extraData).containsKey("workOrderId")
+                    && ((android.os.Bundle) extraData).getInt("workOrderId") == _workOrder.getId()) {
+                markOnMyWay();
+            }
         }
     };
 

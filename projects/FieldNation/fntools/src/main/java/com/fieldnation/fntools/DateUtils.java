@@ -6,8 +6,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 public class DateUtils {
+
+    private static final long ONE_DAY = 86400000;
+    private static final long TWO_DAY = 172800000;
 
     private static final SimpleDateFormat V2_DATE_FORMAT_PARSE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
     private static final SimpleDateFormat V2_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -129,9 +133,9 @@ public class DateUtils {
         return toCal;
     }
 
-	/*
+    /*
      * http://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html#dt
-	 */
+     */
 
     /**
      * @param calendar
@@ -638,5 +642,15 @@ public class DateUtils {
     public static String getDeviceTimezone(Date date) {
         TimeZone timeZone = TimeZone.getDefault();
         return " (" + timeZone.getDisplayName(timeZone.inDaylightTime(date), TimeZone.SHORT) + ")";
+    }
+
+    public static String millisecondToHourOrDay(long milliseconds) {
+
+        String humanReadable;
+        if (milliseconds < TWO_DAY) {
+            humanReadable = TimeUnit.MILLISECONDS.toHours(milliseconds) + " hr(s)";
+        } else humanReadable = TimeUnit.MILLISECONDS.toDays(milliseconds) + " day(s)";
+
+        return humanReadable;
     }
 }
