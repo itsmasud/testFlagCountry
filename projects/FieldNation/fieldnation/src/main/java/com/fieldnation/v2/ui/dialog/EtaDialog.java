@@ -461,14 +461,11 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private boolean isValidEta(final Calendar arrival) {
-        Log.e(TAG, "isValidEta");
         if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             return true;
         } else if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-            Log.e(TAG, "HOURS ");
             return isWithinBusinessHours(arrival, _woSchedule);
         } else if (_woSchedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-            Log.e(TAG, "BETWEEN ");
             return isWithinRange(arrival, _woSchedule);
         }
         return true;
