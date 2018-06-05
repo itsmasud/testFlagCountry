@@ -15,9 +15,9 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
 
         if (intent.hasExtra("ALARM_CRAWLER")) {
-            Intent service = new Intent(context, WebCrawlerService.class);
-            service.putExtra("IS_ALARM", true);
-            context.startService(service);
+            //Intent service = new Intent(context, WebCrawlerService.class);
+            //service.putExtra("IS_ALARM", true);
+            //context.startService(service);
         }
     }
 

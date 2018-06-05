@@ -29,7 +29,7 @@ public class CrawlerJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        startForegroundService(new Intent(this, WebCrawlerService.class));
+        //startForegroundService(new Intent(this, WebCrawlerService.class));
         return true;
     }
 
