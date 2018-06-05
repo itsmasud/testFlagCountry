@@ -180,6 +180,10 @@ public class FilterDrawerDialog extends RightDrawerDialog {
                 _simpleGps.updateListener(new SimpleGps.Listener() {
                     @Override
                     public void onLocation(SimpleGps simpleGps, Location location) {
+                        if (location == null) {
+                            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+                            return;
+                        }
                         _filterParams.latitude = location.getLatitude();
                         _filterParams.longitude = location.getLongitude();
                         _simpleGps.stop();
@@ -194,6 +198,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
 
                     @Override
                     public void onPermissionDenied(SimpleGps simpleGps) {
+                        ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
                     }
                 }).start(App.get());
                 break;

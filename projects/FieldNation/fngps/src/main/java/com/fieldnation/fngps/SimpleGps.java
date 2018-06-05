@@ -209,6 +209,8 @@ public class SimpleGps {
                     if (_listener != null && location.getTime() + MAX_AGE > System.currentTimeMillis()) {
                         _listener.onLocation(SimpleGps.this, location);
                     }
+                } else {
+                    _listener.onFail(SimpleGps.this);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
