@@ -648,8 +648,8 @@ public class DateUtils {
 
         String humanReadable;
         if (milliseconds < TWO_DAY) {
-            humanReadable = TimeUnit.MILLISECONDS.toHours(milliseconds) + " hr(s)";
-        } else humanReadable = TimeUnit.MILLISECONDS.toDays(milliseconds) + " day(s)";
+            humanReadable = TimeUnit.MILLISECONDS.toHours(milliseconds) + " hrs";
+        } else humanReadable = TimeUnit.MILLISECONDS.toDays(milliseconds) + " days";
 
         return humanReadable;
     }
