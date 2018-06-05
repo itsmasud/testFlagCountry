@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -564,12 +565,9 @@ public class TasksDialog extends FullScreenDialog {
         int permissionCheck = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CALL_PHONE);
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
             _permissionsListener.sub();
-            Bundle phoneNumber = new Bundle();
-            phoneNumber.putString("phone", _currentTask.getPhone());
             PermissionsClient.requestPermissions(
                     new String[]{Manifest.permission.CALL_PHONE},
-                    new boolean[]{false},
-                    phoneNumber);
+                    new boolean[]{false});
             return;
         }
 
@@ -618,13 +616,24 @@ public class TasksDialog extends FullScreenDialog {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(final String permission, final int grantResult, Parcelable extraData) {
+        public void onComplete(final String permission, final int grantResult) {
             if (permission.equals(Manifest.permission.CALL_PHONE)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     doCallTask();
                     _permissionsListener.unsub();
                 } else {
-                    String phone = ((Bundle) extraData).getString("phone");
+
+                    if (_currentTask == null) {
+                        new Handler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _permissionsListener.onComplete(permission, grantResult);
+                            }
+                        });
+                        return;
+                    }
+
+                    String phone = _currentTask.getPhone();
                     ClipboardManager clipboard = (android.content.ClipboardManager) App.get().getSystemService(Context.CLIPBOARD_SERVICE);
                     ClipData clip = android.content.ClipData.newPlainText("Copied Text", phone);
                     clipboard.setPrimaryClip(clip);

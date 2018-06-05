@@ -35,7 +35,6 @@ public class PermissionsDialog extends FullScreenDialog {
 
     // Data
     private PermissionsTuple _permissionTuple;
-    private Parcelable _extraData;
 
     public PermissionsDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -66,7 +65,6 @@ public class PermissionsDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _permissionTuple = params.getParcelable("permissionsTuple");
-        _extraData = params.getParcelable("extraData");
 
         populateUi();
     }
@@ -109,7 +107,7 @@ public class PermissionsDialog extends FullScreenDialog {
     public void cancel() {
         super.cancel();
         State.setPermissionDenied(getContext(), _permissionTuple.permission);
-        PermissionsClient.onComplete(_permissionTuple.permission, PackageManager.PERMISSION_DENIED, _extraData);
+        PermissionsClient.onComplete(_permissionTuple.permission, PackageManager.PERMISSION_DENIED);
         PermissionsRequestHandler.requesting = false;
     }
 
@@ -127,17 +125,16 @@ public class PermissionsDialog extends FullScreenDialog {
                         Uri.fromParts("package", getContext().getPackageName(), null)));
             } else {
                 _permissionTuple.secondTry(true).save(getContext());
-                PermissionsClient.requestPermissions(new String[]{_permissionTuple.permission}, new boolean[]{_permissionTuple.required}, _extraData);
+                PermissionsClient.requestPermissions(new String[]{_permissionTuple.permission}, new boolean[]{_permissionTuple.required});
             }
             dismiss(true);
         }
     };
 
-    public static void show(Context context, String uid, PermissionsTuple permissionsTuple, Parcelable extraData) {
+    public static void show(Context context, String uid, PermissionsTuple permissionsTuple) {
         Log.v(TAG, "static show");
         Bundle params = new Bundle();
         params.putParcelable("permissionsTuple", permissionsTuple);
-        params.putParcelable("extraData", extraData);
         Controller.show(context, uid, PermissionsDialog.class, params);
     }
 }
