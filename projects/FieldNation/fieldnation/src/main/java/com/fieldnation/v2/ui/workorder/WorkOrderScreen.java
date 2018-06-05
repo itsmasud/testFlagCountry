@@ -324,9 +324,11 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
 
         _messagesMenuButton = _toolbar.findViewById(R.id.messages_menu);
         _messagesMenuButton.setOnClickListener(_messagesMenuButton_onClick);
+        _messagesMenuButton.setEnabled(false);
 
         _moreMenuButton = _toolbar.findViewById(R.id.more_menu);
         _moreMenuButton.setOnClickListener(_moreMenuButton_onClick);
+        _moreMenuButton.setEnabled(false);
 
         _morePopup = new PopupMenu(getContext(), _moreMenuButton);
         _morePopup.setOnMenuItemClickListener(_morePopup_onClick);
@@ -427,11 +429,16 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
     private void populateUi() {
         //misc.hideKeyboard(this);
 
-        if (_workOrder == null)
-            return;
-
         if (_morePopup == null)
             return;
+
+        if (_workOrder == null) {
+            _messagesMenuButton.setEnabled(false);
+            _moreMenuButton.setEnabled(false);
+            return;
+        }
+
+        _messagesMenuButton.setEnabled(true);
 
         _toolbar.setTitle("WO " + _workOrderId);
 
@@ -481,6 +488,7 @@ public class WorkOrderScreen extends RelativeLayout implements UUIDView {
             _moreMenuButton.setVisibility(GONE);
         } else {
             _moreMenuButton.setVisibility(VISIBLE);
+            _moreMenuButton.setEnabled(true);
         }
     }
 
