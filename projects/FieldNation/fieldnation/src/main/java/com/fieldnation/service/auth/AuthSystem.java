@@ -373,7 +373,7 @@ public class AuthSystem implements AuthTopicConstants {
                     _account = null;
                     _accountManager.invalidateAuthToken(getAccountType(), bundle.getString(AccountManager.KEY_AUTHTOKEN));
                     setState(AuthState.NOT_AUTHENTICATED);
-                    _authToken.delete();
+                    if (_authToken != null) _authToken.delete();
                     _authToken = null;
                     return;
                 }
