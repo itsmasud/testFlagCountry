@@ -188,86 +188,86 @@ public class WebCrawlerService extends Service {
 
     private void initNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
-            builder.setLargeIcon((Bitmap) null);
-            builder.setSmallIcon(R.drawable.ic_notif_queued);
-            builder.setContentTitle("Running background sync..");
-            builder.setOnlyAlertOnce(true);
-            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
-            builder.setOngoing(true);
-
-            android.app.Notification notification = builder.build();
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, notification);
-            startForeground(NOTIFICATION_ID, notification);
+//            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+//            builder.setLargeIcon((Bitmap) null);
+//            builder.setSmallIcon(R.drawable.ic_notif_queued);
+//            builder.setContentTitle("Running background sync..");
+//            builder.setOnlyAlertOnce(true);
+//            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+//            builder.setOngoing(true);
+//
+//            android.app.Notification notification = builder.build();
+//            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+//            manager.notify(NOTIFICATION_ID, notification);
+//            startForeground(NOTIFICATION_ID, notification);
         }
     }
 
     private void startNotification() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
-            builder.setLargeIcon((Bitmap) null);
-            builder.setSmallIcon(R.drawable.ic_notif_queued);
-            builder.setContentTitle("Running background sync..");
-            builder.setOnlyAlertOnce(true);
-            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
-            builder.setOngoing(true);
-
-            android.app.Notification notification = builder.build();
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, notification);
-            startForeground(NOTIFICATION_ID, notification);
+//            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+//            builder.setLargeIcon((Bitmap) null);
+//            builder.setSmallIcon(R.drawable.ic_notif_queued);
+//            builder.setContentTitle("Running background sync..");
+//            builder.setOnlyAlertOnce(true);
+//            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+//            builder.setOngoing(true);
+//
+//            android.app.Notification notification = builder.build();
+//            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+//            manager.notify(NOTIFICATION_ID, notification);
+//            startForeground(NOTIFICATION_ID, notification);
         } else {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setLargeIcon((Bitmap) null);
-            builder.setSmallIcon(R.drawable.ic_notif_queued);
-            builder.setContentTitle("Running background sync..");
-            builder.setOnlyAlertOnce(true);
-            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
-            builder.setOngoing(true);
-
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            android.app.Notification notification = builder.build();
-            manager.notify(NOTIFICATION_ID, notification);
-            startForeground(NOTIFICATION_ID, notification);
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//            builder.setLargeIcon((Bitmap) null);
+//            builder.setSmallIcon(R.drawable.ic_notif_queued);
+//            builder.setContentTitle("Running background sync..");
+//            builder.setOnlyAlertOnce(true);
+//            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+//            builder.setOngoing(true);
+//
+//            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+//            android.app.Notification notification = builder.build();
+//            manager.notify(NOTIFICATION_ID, notification);
+//            startForeground(NOTIFICATION_ID, notification);
         }
     }
 
     private void completeNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
-            builder.setLargeIcon((Bitmap) null);
-            builder.setSmallIcon(R.drawable.ic_notif_queued);
-            builder.setContentTitle("Background sync complete");
-            builder.setOnlyAlertOnce(true);
-            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
-            builder.setOngoing(true);
-
-            android.app.Notification notification = builder.build();
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, notification);
-        } else {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-            builder.setLargeIcon((Bitmap) null);
-            builder.setSmallIcon(R.drawable.ic_notif_queued);
-            builder.setContentTitle("Background sync complete");
-            builder.setOnlyAlertOnce(true);
-            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
-            builder.setOngoing(true);
-
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            android.app.Notification notification = builder.build();
-            manager.notify(NOTIFICATION_ID, notification);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            android.app.Notification.Builder builder = new android.app.Notification.Builder(App.get(), NotificationDef.OTHER_CHANNEL);
+//            builder.setLargeIcon((Bitmap) null);
+//            builder.setSmallIcon(R.drawable.ic_notif_queued);
+//            builder.setContentTitle("Background sync complete");
+//            builder.setOnlyAlertOnce(true);
+//            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+//            builder.setOngoing(true);
+//
+//            android.app.Notification notification = builder.build();
+//            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+//            manager.notify(NOTIFICATION_ID, notification);
+//        } else {
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+//            builder.setLargeIcon((Bitmap) null);
+//            builder.setSmallIcon(R.drawable.ic_notif_queued);
+//            builder.setContentTitle("Background sync complete");
+//            builder.setOnlyAlertOnce(true);
+//            builder.setCategory(android.app.Notification.CATEGORY_PROGRESS);
+//            builder.setOngoing(true);
+//
+//            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+//            android.app.Notification notification = builder.build();
+//            manager.notify(NOTIFICATION_ID, notification);
+//        }
     }
 
     private void cancelNotification() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            stopForeground(STOP_FOREGROUND_REMOVE);
-        else {
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.cancel(NOTIFICATION_ID);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+//            stopForeground(STOP_FOREGROUND_REMOVE);
+//        else {
+//            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+//            manager.cancel(NOTIFICATION_ID);
+//        }
     }
 
     private synchronized void incrementPendingRequestCounter(int val) {

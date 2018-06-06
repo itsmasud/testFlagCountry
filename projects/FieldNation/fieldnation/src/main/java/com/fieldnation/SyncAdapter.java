@@ -20,9 +20,9 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
                               SyncResult syncResult) {
-        Intent intent = new Intent(getContext(), WebCrawlerService.class);
-        intent.putExtra("force", true);
-        getContext().startService(intent);
+        //Intent intent = new Intent(getContext(), WebCrawlerService.class);
+        //intent.putExtra("force", true);
+        //getContext().startService(intent);
     }
 
 }
