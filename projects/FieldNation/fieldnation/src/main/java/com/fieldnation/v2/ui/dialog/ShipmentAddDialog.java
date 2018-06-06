@@ -545,7 +545,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult, Parcelable extraData) {
+        public void onComplete(String permission, int grantResult) {
             if (permission.equals(Manifest.permission.CAMERA)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     _scan_onClick.onClick(null);

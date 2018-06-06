@@ -156,7 +156,7 @@ public class ContactTileView extends RelativeLayout {
 
     private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
-        public void onComplete(String permission, int grantResult, Parcelable extraData) {
+        public void onComplete(String permission, int grantResult) {
 
             if (permission.equals(Manifest.permission.CALL_PHONE)) {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {

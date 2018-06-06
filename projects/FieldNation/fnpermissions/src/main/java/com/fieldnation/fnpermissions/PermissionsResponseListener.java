@@ -32,10 +32,9 @@ public abstract class PermissionsResponseListener extends Pigeon implements Cons
         if (address.equals(ADDRESS_COMPLETE)) {
             Bundle bundle = (Bundle) message;
             onComplete(bundle.getString("permission"),
-                    bundle.getInt("grantResult"),
-                    bundle.getParcelable("extraData"));
+                    bundle.getInt("grantResult"));
         }
     }
 
-    public abstract void onComplete(String permission, int grantResult, Parcelable extras);
+    public abstract void onComplete(String permission, int grantResult);
 }
